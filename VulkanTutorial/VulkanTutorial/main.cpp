@@ -12,9 +12,9 @@
 
 int
 WINAPI WinMain(_In_ HINSTANCE moduleInstanceHandle,
-	_In_opt_ HINSTANCE /*previousModuleInstanceHandle*/,
-	_In_ LPSTR /*commandLine*/,
-	_In_ int /*showCommand*/)
+			   _In_opt_ HINSTANCE /*previousModuleInstanceHandle*/,
+			   _In_ LPSTR /*commandLine*/,
+			   _In_ int /*showCommand*/)
 {
 	glfwInit();
 
