@@ -1,0 +1,54 @@
+# To build a new Visual Studio solution and use Vulkan, you should do the following:
+
+- Create a Visual Studio Solution as an Empty Project.
+
+- Set x64
+
+- Go to Project properties -> set All Configurations
+
+- Go to Project properties -> Debugging -> set $(OutDir) in Working Directory
+
+- Go to project properties -> General -> Configuration Type -> choose Aplication(.exe)
+
+- Go to project properties -> C/C++ -> General -> add the following in Additional Include Directories
+C:\VulkanSDK\1.1.108.0\Include
+$(SolutionDir)../external\glm
+$(SolutionDir)../external\glfw-3.3.bin.WIN64\include
+$(SolutionDir)../
+
+- Go to project properties -> Linker -> General -> add the following in Additional Library Directories
+C:\VulkanSDK\1.1.108.0\Lib
+$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019
+
+- Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
+vulkan-1.lib
+glfw3.lib
+
+- Add main.cpp file with the following code
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+
+int main() {
+	glfwInit();
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
+
+	glm::mat4 matrix;
+	glm::vec4 vec;
+	auto test = matrix * vec;
+
+	while (!glfwWindowShouldClose(window)) {
+		glfwPollEvents();
+	}
+
+	glfwDestroyWindow(window);
+
+	glfwTerminate();
+}
+
+- Compile in Debug/Release modes and run. You should see a window with "Vulkan window" title
