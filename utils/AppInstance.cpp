@@ -13,27 +13,24 @@ AppInstance::AppInstance() {
 	appInfo.pApplicationName = nullptr;
 	appInfo.pEngineName = nullptr;
 	appInfo.apiVersion = 0;
-
-	// Get extensions required by GLFW to be able to Vulkan surfaces for GLFW windows.
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-	assert(glfwExtensions != nullptr);
 	
-	VkInstanceCreateInfo instanceInfo = {};
-#ifdef NDEBUG
-	instanceInfo.enabledLayerCount = 0;
-	instanceInfo.ppEnabledLayerNames = nullptr;
-#else
-	std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-	setValidationLayers(validationLayers, instanceInfo);
-#endif
-
+	// The instance is the connection between our application and the Vulkan library.
+	VkInstanceCreateInfo instanceInfo = {};	
 	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceInfo.pNext = nullptr;
 	instanceInfo.flags = 0;
 	instanceInfo.pApplicationInfo = &appInfo;
-	instanceInfo.enabledExtensionCount = glfwExtensionCount;
-	instanceInfo.ppEnabledExtensionNames = glfwExtensions;	
+
+	// Set instance extensions
+	const std::vector<const char*> instanceExtensions = getInstanceExtensions();
+	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
+	instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? nullptr : instanceExtensions.data();
+	
+	// Get instance layers
+	const std::vector<const char*> instanceLayers = getInstanceLayers();
+	instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
+	instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
+	
 	vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
 }
 
@@ -42,15 +39,19 @@ AppInstance::~AppInstance() {
 	vkDestroyInstance(mInstance, nullptr);
 }
 
-void
-AppInstance::setValidationLayers(const std::vector<const char*>& validationLayers, VkInstanceCreateInfo& instanceInfo) {
-	assert(checkValidationLayerSupport(validationLayers));
-	instanceInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-	instanceInfo.ppEnabledLayerNames = validationLayers.data();
+std::vector<const char*>
+AppInstance::getInstanceLayers() {
+	std::vector<const char*> instanceLayers;
+#ifndef NDEBUG // Debug
+	instanceLayers.emplace_back("VK_LAYER_KHRONOS_validation");
+	assert(areInstanceLayersSupported(instanceLayers));
+#endif
+
+	return instanceLayers;
 }
 
 bool 
-AppInstance::checkValidationLayerSupport(const std::vector<const char*>& layers) {
+AppInstance::areInstanceLayersSupported(const std::vector<const char*>& layers) {
 	uint32_t layerCount;
 	vkChecker(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
 
@@ -74,5 +75,20 @@ AppInstance::checkValidationLayerSupport(const std::vector<const char*>& layers)
 	}
 
 	return true;
+}
+
+std::vector<const char*>
+AppInstance::getInstanceExtensions() {	
+	// Get extensions required by GLFW to be able to Vulkan surfaces for GLFW windows.
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	assert(glfwExtensions != nullptr);
+
+	std::vector<const char*> instanceExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+#ifndef NDEBUG // Debug
+	instanceExtensions.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+
+	return instanceExtensions;
 }
 }

@@ -7,13 +7,13 @@
 
 namespace vk {
 inline void glfwChecker(const int returnCode) {
-#ifndef NDEBUG
+#ifndef NDEBUG // Debug
 	assert(returnCode == GLFW_TRUE);
 #endif
 }
 
 inline void vkChecker(const VkResult result) {
-#ifndef NDEBUG
+#ifndef NDEBUG // Debug
 	assert(result == VK_SUCCESS);
 #endif
 }

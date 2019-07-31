@@ -4,7 +4,7 @@
 
 - Set x64
 
-- Go to Project properties -> set All Configurations
+# Go to Project properties -> set All Configurations
 
 - Go to Project properties -> Debugging -> set $(OutDir) in Working Directory
 
@@ -23,6 +23,11 @@ $(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019
 - Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
 vulkan-1.lib
 glfw3.lib
+
+# Go to Project properties -> set Release.
+
+- Go to project properties -> C/C++ -> Preprocessor -> add NDEBUG in Preprocessor Definitions
+
 
 - Add main.cpp file with the following code
 #define GLFW_INCLUDE_VULKAN
