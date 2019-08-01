@@ -7,6 +7,7 @@
 
 namespace vk {
 class DebugMessenger;
+class LogicalDevice;
 class PhysicalDevice;
 
 // VkInstance wrappers with methods to create/destroy/get it.
@@ -40,6 +41,7 @@ private:
 #endif
 
 	PhysicalDevice* mPhysicalDevice = nullptr;
+	LogicalDevice* mLogicalDevice = nullptr;
 };
 }
 

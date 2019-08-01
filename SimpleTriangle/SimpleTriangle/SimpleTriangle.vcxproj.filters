@@ -14,6 +14,9 @@
     <ClCompile Include="..\..\utils\PhysicalDevice.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\LogicalDevice.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -34,6 +37,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\PhysicalDevice.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\LogicalDevice.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

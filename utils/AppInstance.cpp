@@ -2,6 +2,7 @@
 
 #include "DebugMessenger.h"
 #include "DebugUtils.h"
+#include "LogicalDevice.h"
 #include "PhysicalDevice.h"
 
 namespace vk {
@@ -48,6 +49,7 @@ AppInstance::AppInstance() {
 #endif
 
 	mPhysicalDevice = new PhysicalDevice(mInstance);
+	mLogicalDevice = new LogicalDevice(*mPhysicalDevice);
 }
 
 AppInstance::~AppInstance() {
@@ -59,6 +61,7 @@ AppInstance::~AppInstance() {
 #endif
 
 	delete mPhysicalDevice;
+	delete mLogicalDevice;
 
 	vkDestroyInstance(mInstance, nullptr);
 }
