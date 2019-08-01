@@ -6,6 +6,10 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class DebugMessenger;
+class PhysicalDevice;
+
+// VkInstance wrappers with methods to create/destroy/get it.
 class AppInstance {
 public:
 	// Preconditions:
@@ -25,7 +29,17 @@ private:
 	// to interface with different systems, like for example, the window system.
 	static std::vector<const char*> getInstanceExtensions();
 
-	VkInstance mInstance = nullptr;
+#ifndef NDEBUG // Debug
+	static VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo();
+#endif
+
+	VkInstance mInstance = VK_NULL_HANDLE;	
+
+#ifndef NDEBUG // Debug
+	DebugMessenger* mMessenger = nullptr;
+#endif
+
+	PhysicalDevice* mPhysicalDevice = nullptr;
 };
 }
 

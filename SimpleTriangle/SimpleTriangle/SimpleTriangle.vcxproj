@@ -131,12 +131,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\utils\AppInstance.cpp" />
+    <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
+    <ClCompile Include="..\..\utils\PhysicalDevice.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
-    <ClInclude Include="..\..\utils\ErrorChecks.h" />
+    <ClInclude Include="..\..\utils\DebugMessenger.h" />
+    <ClInclude Include="..\..\utils\DebugUtils.h" />
+    <ClInclude Include="..\..\utils\PhysicalDevice.h" />
     <ClInclude Include="..\..\utils\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

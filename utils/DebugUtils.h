@@ -1,5 +1,5 @@
-#ifndef UTILS_ERROR_CHECKS
-#define UTILS_ERROR_CHECKS
+#ifndef UTILS_DEBUG_UTILS
+#define UTILS_DEBUG_UTILS
 
 #include <cassert>
 #include <GLFW/glfw3.h>

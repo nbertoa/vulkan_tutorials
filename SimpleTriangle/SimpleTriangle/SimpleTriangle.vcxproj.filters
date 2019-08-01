@@ -8,6 +8,12 @@
     <ClCompile Include="..\..\utils\AppInstance.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\DebugMessenger.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\PhysicalDevice.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -18,10 +24,16 @@
     <ClInclude Include="..\..\utils\Window.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\utils\ErrorChecks.h">
+    <ClInclude Include="..\..\utils\AppInstance.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\utils\AppInstance.h">
+    <ClInclude Include="..\..\utils\DebugUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\DebugMessenger.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PhysicalDevice.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

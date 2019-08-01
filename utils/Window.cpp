@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "utils/ErrorChecks.h"
+#include "DebugUtils.h"
 
 namespace vk {
 Window::Window(const int width, const int height, const char* title) {

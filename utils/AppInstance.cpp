@@ -1,6 +1,8 @@
 #include "AppInstance.h"
 
-#include "utils/ErrorChecks.h"
+#include "DebugMessenger.h"
+#include "DebugUtils.h"
+#include "PhysicalDevice.h"
 
 namespace vk {
 AppInstance::AppInstance() {
@@ -17,9 +19,16 @@ AppInstance::AppInstance() {
 	// The instance is the connection between our application and the Vulkan library.
 	VkInstanceCreateInfo instanceInfo = {};	
 	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	instanceInfo.pNext = nullptr;
 	instanceInfo.flags = 0;
 	instanceInfo.pApplicationInfo = &appInfo;
+
+	// Add instance layer to be able to debug instance creation/destruction
+#ifndef NDEBUG // Debug
+	const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = messengerCreateInfo();
+	instanceInfo.pNext = reinterpret_cast<const VkDebugUtilsMessengerCreateInfoEXT*>(&debugMessengerCreateInfo);
+#else
+	instanceInfo.pNext = nullptr;
+#endif
 
 	// Set instance extensions
 	const std::vector<const char*> instanceExtensions = getInstanceExtensions();
@@ -32,10 +41,25 @@ AppInstance::AppInstance() {
 	instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
 	
 	vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
+
+	// In debug mode, we need to create the debug messenger.
+#ifndef NDEBUG // Debug
+	mMessenger = new DebugMessenger(mInstance, debugMessengerCreateInfo);
+#endif
+
+	mPhysicalDevice = new PhysicalDevice(mInstance);
 }
 
 AppInstance::~AppInstance() {
-	assert(mInstance != nullptr);
+	assert(mInstance != VK_NULL_HANDLE);
+
+#ifndef NDEBUG // Debug
+	assert(mMessenger != nullptr);
+	delete mMessenger;
+#endif
+
+	delete mPhysicalDevice;
+
 	vkDestroyInstance(mInstance, nullptr);
 }
 
@@ -91,4 +115,24 @@ AppInstance::getInstanceExtensions() {
 
 	return instanceExtensions;
 }
+
+#ifndef NDEBUG
+VkDebugUtilsMessengerCreateInfoEXT
+AppInstance::messengerCreateInfo() {
+	VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+	createInfo.messageSeverity =
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+	createInfo.messageType =
+		VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+	createInfo.pfnUserCallback = DebugMessenger::debugCallback;
+	createInfo.pUserData = nullptr;
+
+	return createInfo;
+}
+#endif
 }

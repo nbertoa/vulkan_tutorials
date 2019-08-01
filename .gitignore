@@ -115,3 +115,6 @@
 /VulkanTutorial/.vs/VulkanTutorial/v16/ipch/AutoPCH/908ed5d5f4bf24c7/MAIN.ipch
 /VulkanTutorial/VulkanTutorial/x64/Release/VulkanTutorial.Build.CppClean.log
 /VulkanTutorial/VulkanTutorial/x64/Release/VulkanTutorial.vcxproj.FileListAbsolute.txt
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/4102e4c30188b3d0/MAIN.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/c1882ff0982d4c7a/DEBUGMESSENGER.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/c78dbc7c9d40931d/PHYSICALDEVICE.ipch
