@@ -17,7 +17,7 @@ public:
 	LogicalDevice(const PhysicalDevice& physicalDevice);
 	~LogicalDevice();
 
-	const VkQueue& graphicsQueue() const { assert(mGraphicsQueue != VK_NULL_HANDLE); return mGraphicsQueue; }
+	VkQueue graphicsQueue() const { assert(mGraphicsQueue != VK_NULL_HANDLE); return mGraphicsQueue; }
 
 private:
 	VkDevice mDevice = VK_NULL_HANDLE;

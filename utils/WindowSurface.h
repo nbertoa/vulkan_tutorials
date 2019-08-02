@@ -15,10 +15,10 @@ namespace vk {
 // In this case, we use the VK_KHR_surface extension.
 class WindowSurface {
 public:
-	WindowSurface(const VkInstance& instance, GLFWwindow& glfwWindow);
+	WindowSurface(const VkInstance instance, GLFWwindow& glfwWindow);
 	~WindowSurface();
 
-	const VkSurfaceKHR& vkSurface() const { assert(mSurface != VK_NULL_HANDLE); return mSurface; }
+	VkSurfaceKHR vkSurface() const { assert(mSurface != VK_NULL_HANDLE); return mSurface; }
 
 private:
 	VkInstance mInstance = VK_NULL_HANDLE;

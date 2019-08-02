@@ -52,7 +52,7 @@ AppInstance::AppInstance(GLFWwindow& glfwWindow) {
 	mMessenger = new DebugMessenger(mInstance, debugMessengerCreateInfo);
 #endif
 
-	mPhysicalDevice = new PhysicalDevice(mInstance);
+	mPhysicalDevice = new PhysicalDevice(mInstance, mWindowSurface->vkSurface());
 	mLogicalDevice = new LogicalDevice(*mPhysicalDevice);
 }
 

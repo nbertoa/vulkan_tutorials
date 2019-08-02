@@ -6,7 +6,7 @@
 #include "DebugUtils.h"
 
 namespace vk {
-DebugMessenger::DebugMessenger(const VkInstance& instance, const VkDebugUtilsMessengerCreateInfoEXT& messengerCreateInfo)
+DebugMessenger::DebugMessenger(const VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo)
 	: mInstance(instance)
 {
 	assert(mInstance != VK_NULL_HANDLE);

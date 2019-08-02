@@ -7,7 +7,7 @@ namespace vk {
 // VkDebugUtilsMessengerEXT wrapper to be able to create/destroy/set its callback easily.
 class DebugMessenger {
 public:
-	DebugMessenger(const VkInstance& instance, const VkDebugUtilsMessengerCreateInfoEXT& messengerCreateInfo);
+	DebugMessenger(const VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo);
 	~DebugMessenger();
 	
 	// Instance layers have no way to relay the messages back to our program. 

@@ -3,7 +3,7 @@
 #include "DebugUtils.h"
 
 namespace vk {
-WindowSurface::WindowSurface(const VkInstance& instance, GLFWwindow& glfwWindow)
+WindowSurface::WindowSurface(const VkInstance instance, GLFWwindow& glfwWindow)
 	: mInstance(instance)
 {
 	assert(mInstance != VK_NULL_HANDLE);
