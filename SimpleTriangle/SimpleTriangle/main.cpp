@@ -3,9 +3,9 @@
 
 int main() {
 	vk::Window window(800, 600, "Vulkan window");
-	vk::AppInstance instance;
+	vk::AppInstance instance(window.glfwWindow());
 
-	while (!glfwWindowShouldClose(&window.glfwWindow())) {
+	while (glfwWindowShouldClose(&window.glfwWindow()) != 0) {
 		glfwPollEvents();
 	}
 }

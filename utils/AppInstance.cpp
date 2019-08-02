@@ -4,9 +4,10 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "PhysicalDevice.h"
+#include "WindowSurface.h"
 
 namespace vk {
-AppInstance::AppInstance() {
+AppInstance::AppInstance(GLFWwindow& glfwWindow) {
 	// This is optional but it may provide some useful information to the driver to optimize 
 	// for our specific application, for example, because it ises a well-known graphics 
 	// engine with certain special behavior,
@@ -42,6 +43,9 @@ AppInstance::AppInstance() {
 	instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
 	
 	vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
+	assert(mInstance != VK_NULL_HANDLE);
+
+	mWindowSurface = new WindowSurface(mInstance, glfwWindow);
 
 	// In debug mode, we need to create the debug messenger.
 #ifndef NDEBUG // Debug
@@ -54,6 +58,8 @@ AppInstance::AppInstance() {
 
 AppInstance::~AppInstance() {
 	assert(mInstance != VK_NULL_HANDLE);
+
+	delete mWindowSurface;
 
 #ifndef NDEBUG // Debug
 	assert(mMessenger != nullptr);
