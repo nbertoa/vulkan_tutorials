@@ -2,6 +2,7 @@
 #define UTILS_LOGICAL_DEVICE
 
 #include <cassert>
+#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
@@ -18,10 +19,16 @@ public:
 	~LogicalDevice();
 
 	VkQueue graphicsQueue() const { assert(mGraphicsQueue != VK_NULL_HANDLE); return mGraphicsQueue; }
+	VkQueue presentationQueue() const { assert(mPresentationQueue != VK_NULL_HANDLE); return mPresentationQueue; }
 
 private:
+	static std::vector<VkDeviceQueueCreateInfo> buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDevice);
+
 	VkDevice mDevice = VK_NULL_HANDLE;
+
+	// Command queues for graphics commands and presentation commands respectively.
 	VkQueue mGraphicsQueue = VK_NULL_HANDLE;
+	VkQueue mPresentationQueue = VK_NULL_HANDLE;
 };
 }
 
