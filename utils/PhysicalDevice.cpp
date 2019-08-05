@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "DebugUtils.h"
+#include "WindowSurface.h"
 
 namespace vk {
-PhysicalDevice::PhysicalDevice(const VkInstance instance, const VkSurfaceKHR surface) 
+PhysicalDevice::PhysicalDevice(const VkInstance instance, const WindowSurface& windowSurface)
 	: mDeviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME }
 {
 	assert(instance != VK_NULL_HANDLE);
-	assert(surface != VK_NULL_HANDLE);
 
 	uint32_t physicalDeviceCount = 0;
 	vkChecker(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr));
@@ -22,21 +22,14 @@ PhysicalDevice::PhysicalDevice(const VkInstance instance, const VkSurfaceKHR sur
 	vkChecker(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data()));
 
 	for (const VkPhysicalDevice& device : physicalDevices) {
-		assert(device != VK_NULL_HANDLE);
-
-		VkPhysicalDeviceProperties deviceProperties;
-		vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
-		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && 
-			isGraphicQueueFamilySupportedByPhysicalDevice(device, surface, mGraphicsSupportQueueFamilyIndex) &&
-			isSurfaceSupportedByPhysicalDevice(device, surface, mSurfaceSupportQueueFamilyIndex) && 
-			areDeviceExtensionsSupportedByPhysicalDevice(device, mDeviceExtensions)) {
-			mDevice = device;
+		assert(device != VK_NULL_HANDLE);		
+		if (isPhysicalDeviceSuitable(device, windowSurface)) {
+			mPhysicalDevice = device;
 			break;
 		}
 	}
 
-	assert(mDevice != VK_NULL_HANDLE);	
+	assert(mPhysicalDevice != VK_NULL_HANDLE);
 }
 
 bool 
@@ -112,5 +105,25 @@ PhysicalDevice::areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDev
 #endif
 
 	return requiredExtensions.empty();
+}
+
+bool 
+PhysicalDevice::isSwapChainSupported(const VkPhysicalDevice physicalDevice, const WindowSurface& windowSurface) {
+	assert(physicalDevice != VK_NULL_HANDLE);
+	return windowSurface.surfaceFormats(physicalDevice).empty() == false && windowSurface.presentModes(physicalDevice).empty() == false;
+}
+
+bool
+PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, const WindowSurface& windowSurface) {
+	assert(physicalDevice != VK_NULL_HANDLE);
+
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+
+	return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+		   isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mGraphicsSupportQueueFamilyIndex) &&
+		   isSurfaceSupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mSurfaceSupportQueueFamilyIndex) &&
+		   areDeviceExtensionsSupportedByPhysicalDevice(physicalDevice, mDeviceExtensions) && 
+		   isSwapChainSupported(physicalDevice, windowSurface);
 }
 }

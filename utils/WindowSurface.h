@@ -2,6 +2,7 @@
 #define UTILS_WINDOW_SURFACE
 
 #include <cassert>
+#include <vector>
 #include <vulkan/vulkan.h>
 
 struct GLFWwindow;
@@ -19,6 +20,9 @@ public:
 	~WindowSurface();
 
 	VkSurfaceKHR vkSurface() const { assert(mSurface != VK_NULL_HANDLE); return mSurface; }
+	VkSurfaceCapabilitiesKHR surfaceCapabilities(const VkPhysicalDevice physicalDevice) const;
+	std::vector<VkSurfaceFormatKHR> surfaceFormats(const VkPhysicalDevice physicalDevice) const;
+	std::vector<VkPresentModeKHR> presentModes(const VkPhysicalDevice physicalDevice) const;
 
 private:
 	VkInstance mInstance = VK_NULL_HANDLE;

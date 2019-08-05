@@ -8,51 +8,22 @@
 
 namespace vk {
 AppInstance::AppInstance(GLFWwindow& glfwWindow) {
-	// This is optional but it may provide some useful information to the driver to optimize 
-	// for our specific application, for example, because it ises a well-known graphics 
-	// engine with certain special behavior,
-	VkApplicationInfo appInfo = {};
-	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	appInfo.pNext = nullptr;
-	appInfo.pApplicationName = nullptr;
-	appInfo.pEngineName = nullptr;
-	appInfo.apiVersion = 0;
-	
-	// The instance is the connection between our application and the Vulkan library.
-	VkInstanceCreateInfo instanceInfo = {};	
-	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	instanceInfo.flags = 0;
-	instanceInfo.pApplicationInfo = &appInfo;
-
-	// Add instance layer to be able to debug instance creation/destruction
+	const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
 #ifndef NDEBUG // Debug
 	const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = messengerCreateInfo();
-	instanceInfo.pNext = reinterpret_cast<const VkDebugUtilsMessengerCreateInfoEXT*>(&debugMessengerCreateInfo);
-#else
-	instanceInfo.pNext = nullptr;
+	debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
 #endif
 
-	// Set instance extensions
-	const std::vector<const char*> instanceExtensions = getInstanceExtensions();
-	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
-	instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? nullptr : instanceExtensions.data();
-	
-	// Get instance layers
-	const std::vector<const char*> instanceLayers = getInstanceLayers();
-	instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
-	instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
-	
-	vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
-	assert(mInstance != VK_NULL_HANDLE);
+	createInstance(debugMessengerCreateInfoPtr);
 
 	mWindowSurface = new WindowSurface(mInstance, glfwWindow);
 
 	// In debug mode, we need to create the debug messenger.
 #ifndef NDEBUG // Debug
-	mMessenger = new DebugMessenger(mInstance, debugMessengerCreateInfo);
+	mMessenger = new DebugMessenger(mInstance, *debugMessengerCreateInfoPtr);
 #endif
 
-	mPhysicalDevice = new PhysicalDevice(mInstance, mWindowSurface->vkSurface());
+	mPhysicalDevice = new PhysicalDevice(mInstance, *mWindowSurface);
 	mLogicalDevice = new LogicalDevice(*mPhysicalDevice);
 }
 
@@ -72,6 +43,41 @@ AppInstance::~AppInstance() {
 	vkDestroyInstance(mInstance, nullptr);
 }
 
+void 
+AppInstance::createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerInfo) {
+	assert(mInstance == VK_NULL_HANDLE);
+
+	// This is optional but it may provide some useful information to the driver to optimize 
+	// for our specific application, for example, because it ises a well-known graphics 
+	// engine with certain special behavior,
+	VkApplicationInfo appInfo = {};
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pNext = nullptr;
+	appInfo.pApplicationName = nullptr;
+	appInfo.pEngineName = nullptr;
+	appInfo.apiVersion = 0;
+
+	// The instance is the connection between our application and the Vulkan library.
+	VkInstanceCreateInfo instanceInfo = {};
+	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	instanceInfo.flags = 0;
+	instanceInfo.pApplicationInfo = &appInfo;
+	instanceInfo.pNext = debugMessengerInfo;
+
+	// Set instance extensions
+	const std::vector<const char*> instanceExtensions = getRequiredInstanceExtensions();
+	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
+	instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? nullptr : instanceExtensions.data();
+
+	// Get instance layers
+	const std::vector<const char*> instanceLayers = getInstanceLayers();
+	instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
+	instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
+
+	vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
+	assert(mInstance != VK_NULL_HANDLE);
+}
+
 std::vector<const char*>
 AppInstance::getInstanceLayers() {
 	std::vector<const char*> instanceLayers;
@@ -84,14 +90,14 @@ AppInstance::getInstanceLayers() {
 }
 
 bool 
-AppInstance::areInstanceLayersSupported(const std::vector<const char*>& layers) {
+AppInstance::areInstanceLayersSupported(const std::vector<const char*>& requiredLayers) {
 	uint32_t layerCount;
 	vkChecker(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
 
 	std::vector<VkLayerProperties> availableLayers(layerCount);
 	vkChecker(vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 
-	for (const char* layerName : layers) {
+	for (const char* layerName : requiredLayers) {
 		assert(layerName != nullptr);
 		bool layerFound = false;
 
@@ -111,7 +117,7 @@ AppInstance::areInstanceLayersSupported(const std::vector<const char*>& layers) 
 }
 
 std::vector<const char*>
-AppInstance::getInstanceExtensions() {	
+AppInstance::getRequiredInstanceExtensions() {	
 	// Get extensions required by GLFW to be able to Vulkan surfaces for GLFW windows.
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);

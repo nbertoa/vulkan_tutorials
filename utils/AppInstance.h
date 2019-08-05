@@ -24,6 +24,8 @@ public:
 	const VkInstance& vkInstance() const { assert(mInstance != nullptr);  return mInstance; }
 
 private:
+	void createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerInfo);
+
 	// Validation layers are optional components that hook into Vulkan function calls
 	// to apply additional operations. We use them for debugging functionality.
 	static std::vector<const char*> getInstanceLayers();
@@ -31,7 +33,7 @@ private:
 
 	// Vulkan is a platform agnostic API, which means that we need an extension
 	// to interface with different systems, like for example, the window system.
-	static std::vector<const char*> getInstanceExtensions();
+	static std::vector<const char*> getRequiredInstanceExtensions();
 
 #ifndef NDEBUG // Debug
 	static VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo();

@@ -22,9 +22,11 @@ public:
 	VkQueue presentationQueue() const { assert(mPresentationQueue != VK_NULL_HANDLE); return mPresentationQueue; }
 
 private:
+	void createLogicalDevice(const PhysicalDevice& physicalDevice);
+
 	static std::vector<VkDeviceQueueCreateInfo> buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDevice);
 
-	VkDevice mDevice = VK_NULL_HANDLE;
+	VkDevice mLogicalDevice = VK_NULL_HANDLE;
 
 	// Command queues for graphics commands and presentation commands respectively.
 	VkQueue mGraphicsQueue = VK_NULL_HANDLE;
