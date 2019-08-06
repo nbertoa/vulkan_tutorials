@@ -12,6 +12,7 @@ public:
 	~Window();
 
 	GLFWwindow& glfwWindow() const { assert(mWindow != nullptr); return *mWindow; }
+	void widthAndHeight(uint32_t& width, uint32_t& height) const;
 
 private:
 	GLFWwindow* mWindow = nullptr;

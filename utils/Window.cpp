@@ -27,4 +27,14 @@ Window::~Window() {
 	glfwDestroyWindow(mWindow);
 	glfwTerminate();
 }
+
+void 
+Window::widthAndHeight(uint32_t& width, uint32_t& height) const {
+	assert(mWindow != nullptr);
+	int w;
+	int h;
+	glfwGetWindowSize(mWindow, &w, &h);
+	width = static_cast<uint32_t>(w);
+	height = static_cast<uint32_t>(h);
+}
 }

@@ -20,6 +20,9 @@
     <ClCompile Include="..\..\utils\WindowSurface.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\SwapChain.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -46,6 +49,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\WindowSurface.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\SwapChain.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
