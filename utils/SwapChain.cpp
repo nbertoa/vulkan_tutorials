@@ -8,16 +8,20 @@
 #include "WindowSurface.h"
 
 namespace vk {
-SwapChain::SwapChain(const Window& window, const WindowSurface& windowSurface, const VkPhysicalDevice physicalDevice) {
+SwapChain::SwapChain(const Window& window, const WindowSurface& windowSurface, const VkPhysicalDevice physicalDevice) 
+	: mSurfaceFormat(swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice)))
+{
 	assert(physicalDevice != VK_NULL_HANDLE);
 
 	uint32_t windowWidth;
 	uint32_t windowHeight;
 	window.widthAndHeight(windowWidth, windowHeight);
 
-	const VkSurfaceFormatKHR surfaceFormat = swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice));
 	const VkPresentModeKHR presentMode = swapChainPresentMode(windowSurface.presentModes(physicalDevice));
-	const VkExtent2D extent = swapChainExtent(windowSurface.surfaceCapabilities(physicalDevice), windowWidth, windowHeight);
+	const VkSurfaceCapabilitiesKHR surfaceCapabilities = windowSurface.surfaceCapabilities(physicalDevice);
+	mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
+
+	const uint32_t imageCount = swapChainImageCount(surfaceCapabilities);
 }
 
 VkSurfaceFormatKHR 
@@ -72,5 +76,21 @@ SwapChain::swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, 
 
 		return actualExtent;
 	}
+}
+
+uint32_t
+SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities) {
+	// As we may sometimes have to wait on the driver to complete internal operations
+	// before we can acquire another image to render to, then we request at least
+	// one more image than the minumum.
+	uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
+
+	// We should also make sure to not exceed the maximum number of images while
+	// doing this, where 0 is a special value that means that there is no maximum.
+	if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount) {
+		imageCount = surfaceCapabilities.maxImageCount;
+	}
+
+	return imageCount;
 }
 }
