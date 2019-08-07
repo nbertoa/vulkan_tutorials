@@ -17,19 +17,34 @@ PhysicalDevice::PhysicalDevice(const VkInstance instance, const WindowSurface& w
 	vkChecker(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr));
 	assert(physicalDeviceCount > 0);
 
-	// Get the first discrete GPU device that supports the queue families we need. 
+	// Get all the suitable physical devices
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
 	vkChecker(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data()));
-
+	std::vector<VkPhysicalDevice> suitablePhysicalDevices;
 	for (const VkPhysicalDevice& device : physicalDevices) {
 		assert(device != VK_NULL_HANDLE);		
 		if (isPhysicalDeviceSuitable(device, windowSurface)) {
+			suitablePhysicalDevices.push_back(device);
+		}
+	}
+
+	assert(suitablePhysicalDevices.empty() == false && "There is no suitable physical device.");
+
+	// From all the suitable physical devices, we get the first that is a discrete GPU.
+	// Otherwise, we get the first device in the list.
+	for (const VkPhysicalDevice& device : suitablePhysicalDevices) {
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			mPhysicalDevice = device;
 			break;
 		}
 	}
 
-	assert(mPhysicalDevice != VK_NULL_HANDLE);
+	if (mPhysicalDevice == VK_NULL_HANDLE) {
+		mPhysicalDevice = suitablePhysicalDevices.front();
+	}
 }
 
 bool 
@@ -117,11 +132,7 @@ bool
 PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, const WindowSurface& windowSurface) {
 	assert(physicalDevice != VK_NULL_HANDLE);
 
-	VkPhysicalDeviceProperties deviceProperties;
-	vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
-
-	return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-		   isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mGraphicsSupportQueueFamilyIndex) &&
+	return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mGraphicsSupportQueueFamilyIndex) &&
 		   isSurfaceSupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mSurfaceSupportQueueFamilyIndex) &&
 		   areDeviceExtensionsSupportedByPhysicalDevice(physicalDevice, mDeviceExtensions) && 
 		   isSwapChainSupported(physicalDevice, windowSurface);

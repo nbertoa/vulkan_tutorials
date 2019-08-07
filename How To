@@ -1,22 +1,26 @@
 # To build a new Visual Studio solution and use Vulkan, you should do the following:
 
+- Download and install Vulkan SDK from https://www.lunarg.com/vulkan-sdk/
+
 - Create a Visual Studio Solution as an Empty Project.
 
 - Set x64
 
-# Go to Project properties -> set All Configurations
+# Go to Project properties -> set All Configurations and x64
 
 - Go to Project properties -> Debugging -> set $(OutDir) in Working Directory
 
 - Go to project properties -> General -> Configuration Type -> choose Aplication(.exe)
 
 - Go to project properties -> C/C++ -> General -> add the following in Additional Include Directories
+(if Vulkan version or installation directory is different, then change the first line as needed) 
 C:\VulkanSDK\1.1.108.0\Include
 $(SolutionDir)../external\glm
 $(SolutionDir)../external\glfw-3.3.bin.WIN64\include
 $(SolutionDir)../
 
 - Go to project properties -> Linker -> General -> add the following in Additional Library Directories
+(if Vulkan version or installation directory is different, then change the first line as needed)
 C:\VulkanSDK\1.1.108.0\Lib
 $(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019
 
@@ -56,4 +60,4 @@ int main() {
 	glfwTerminate();
 }
 
-- Compile in Debug/Release modes and run. You should see a window with "Vulkan window" title
+- Compile in Debug/Release modes and run. You should see a window with "Vulkan window" title.
