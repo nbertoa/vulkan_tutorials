@@ -71,7 +71,7 @@ PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDe
 }
 
 bool
-PhysicalDevice::isSurfaceSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex) {
+PhysicalDevice::isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex) {
 	assert(physicalDevice != VK_NULL_HANDLE);
 	assert(surface != VK_NULL_HANDLE);
 
@@ -133,7 +133,7 @@ PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
 	assert(physicalDevice != VK_NULL_HANDLE);
 
 	return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mGraphicsSupportQueueFamilyIndex) &&
-		   isSurfaceSupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mSurfaceSupportQueueFamilyIndex) &&
+		   isPresentationSupportedByPhysicalDevice(physicalDevice, windowSurface.vkSurface(), mPresentationSupportQueueFamilyIndex) &&
 		   areDeviceExtensionsSupportedByPhysicalDevice(physicalDevice, mDeviceExtensions) && 
 		   isSwapChainSupported(physicalDevice, windowSurface);
 }

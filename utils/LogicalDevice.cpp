@@ -1,21 +1,26 @@
 #include "LogicalDevice.h"
 
 #include "DebugUtils.h"
-#include "PhysicalDevice.h"
 
 namespace vk {
-LogicalDevice::LogicalDevice(const PhysicalDevice& physicalDevice) {
-	createLogicalDevice(physicalDevice);
+LogicalDevice::LogicalDevice(const VkInstance instance, const WindowSurface& windowSurface)
+	: mPhysicalDevice(new PhysicalDevice(instance, windowSurface))
+{
+	createLogicalDevice(*mPhysicalDevice);
 
-	vkGetDeviceQueue(mLogicalDevice, physicalDevice.graphicsSupportQueueFamilyIndex(), 0, &mGraphicsQueue);
+	vkGetDeviceQueue(mLogicalDevice, mPhysicalDevice->graphicsSupportQueueFamilyIndex(), 0, &mGraphicsQueue);
 	assert(mGraphicsQueue != VK_NULL_HANDLE);
 
-	vkGetDeviceQueue(mLogicalDevice, physicalDevice.surfaceSupportQueueFamilyIndex(), 0, &mPresentationQueue);
+	vkGetDeviceQueue(mLogicalDevice, mPhysicalDevice->presentationSupportQueueFamilyIndex(), 0, &mPresentationQueue);
 	assert(mPresentationQueue != VK_NULL_HANDLE);
 }
 
 LogicalDevice::~LogicalDevice() {
 	assert(mLogicalDevice != VK_NULL_HANDLE);
+	assert(mPhysicalDevice != nullptr);
+
+	delete mPhysicalDevice;
+
 	vkDestroyDevice(mLogicalDevice, nullptr);
 }
 
@@ -59,8 +64,8 @@ LogicalDevice::buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDe
 	createInfoVector.emplace_back(queueCreateInfo);
 
 	// Only if graphics and presentation support queue family indices are different, we add a new create info.
-	if (physicalDevice.graphicsSupportQueueFamilyIndex() != physicalDevice.surfaceSupportQueueFamilyIndex()) {
-		queueCreateInfo.queueFamilyIndex = physicalDevice.surfaceSupportQueueFamilyIndex();
+	if (physicalDevice.graphicsSupportQueueFamilyIndex() != physicalDevice.presentationSupportQueueFamilyIndex()) {
+		queueCreateInfo.queueFamilyIndex = physicalDevice.presentationSupportQueueFamilyIndex();
 		createInfoVector.emplace_back(queueCreateInfo);
 	}
 

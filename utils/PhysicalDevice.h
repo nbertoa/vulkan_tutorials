@@ -16,13 +16,13 @@ public:
 
 	VkPhysicalDevice vkPhysicalDevice() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mPhysicalDevice; }
 	uint32_t graphicsSupportQueueFamilyIndex() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mGraphicsSupportQueueFamilyIndex; }
-	uint32_t surfaceSupportQueueFamilyIndex() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mSurfaceSupportQueueFamilyIndex; }
+	uint32_t presentationSupportQueueFamilyIndex() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mPresentationSupportQueueFamilyIndex; }
 	const std::vector<const char*>& deviceExtensions() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mDeviceExtensions; }
 	
 private:
 	static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex);
 
-	static bool isSurfaceSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex);
+	static bool isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex);
 
 	static bool areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const std::vector<const char*>& deviceExtensions);
 
@@ -33,7 +33,7 @@ private:
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 
 	uint32_t mGraphicsSupportQueueFamilyIndex = 0;
-	uint32_t mSurfaceSupportQueueFamilyIndex = 0;
+	uint32_t mPresentationSupportQueueFamilyIndex = 0;
 
 	std::vector<const char*> mDeviceExtensions;
 };

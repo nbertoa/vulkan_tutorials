@@ -5,7 +5,8 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class Window;
+class LogicalDevice;
+class PhysicalDevice;
 class WindowSurface;
 
 // VkSwapChain wrapper to be able to create/destroy/get swap chain easily.
@@ -15,7 +16,8 @@ class WindowSurface;
 // The swapchain images are represented by VkImage objects.
 class SwapChain {
 public:
-	SwapChain(const Window& window, const WindowSurface& windowSurface, const VkPhysicalDevice physicalDevice);
+	SwapChain(const uint32_t windowWidth, const uint32_t windowHeight, const WindowSurface& windowSurface, const LogicalDevice& logicalDevice);
+	~SwapChain();
 	
 private:
 	static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
@@ -30,8 +32,11 @@ private:
 
 	static uint32_t swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
 
-	VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
-	VkSurfaceFormatKHR mSurfaceFormat;
+	static void setQueueFamilies(const PhysicalDevice& physicalDevice, VkSwapchainCreateInfoKHR& swapChainCreateInfo);
+
+	const LogicalDevice& mLogicalDevice;
+	VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;	
+	VkFormat mImageFormat;
 	VkExtent2D mExtent;
 };
 }

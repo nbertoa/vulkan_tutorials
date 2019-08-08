@@ -5,20 +5,15 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-struct GLFWwindow;
-
 namespace vk {
 class DebugMessenger;
-class LogicalDevice;
-class PhysicalDevice;
-class WindowSurface;
 
 // VkInstance wrappers with methods to create/destroy/get it.
 class AppInstance {
 public:
 	// Preconditions:
 	// - GLFW must be initialized.
-	AppInstance(GLFWwindow& glfwWindow);
+	AppInstance();
 	~AppInstance();
 
 	const VkInstance& vkInstance() const { assert(mInstance != nullptr);  return mInstance; }
@@ -40,14 +35,10 @@ private:
 #endif
 
 	VkInstance mInstance = VK_NULL_HANDLE;	
-	WindowSurface* mWindowSurface = nullptr;
 
 #ifndef NDEBUG // Debug
 	DebugMessenger* mMessenger = nullptr;
 #endif
-
-	PhysicalDevice* mPhysicalDevice = nullptr;
-	LogicalDevice* mLogicalDevice = nullptr;
 };
 }
 

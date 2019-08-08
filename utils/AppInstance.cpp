@@ -2,12 +2,9 @@
 
 #include "DebugMessenger.h"
 #include "DebugUtils.h"
-#include "LogicalDevice.h"
-#include "PhysicalDevice.h"
-#include "WindowSurface.h"
 
 namespace vk {
-AppInstance::AppInstance(GLFWwindow& glfwWindow) {
+AppInstance::AppInstance() {
 	const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
 #ifndef NDEBUG // Debug
 	const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = messengerCreateInfo();
@@ -16,30 +13,20 @@ AppInstance::AppInstance(GLFWwindow& glfwWindow) {
 
 	createInstance(debugMessengerCreateInfoPtr);
 
-	mWindowSurface = new WindowSurface(mInstance, glfwWindow);
-
 	// In debug mode, we need to create the debug messenger.
 #ifndef NDEBUG // Debug
 	mMessenger = new DebugMessenger(mInstance, *debugMessengerCreateInfoPtr);
 #endif
-
-	mPhysicalDevice = new PhysicalDevice(mInstance, *mWindowSurface);
-	mLogicalDevice = new LogicalDevice(*mPhysicalDevice);
 }
 
 AppInstance::~AppInstance() {
 	assert(mInstance != VK_NULL_HANDLE);
-
-	delete mWindowSurface;
-
+	
 #ifndef NDEBUG // Debug
 	assert(mMessenger != nullptr);
 	delete mMessenger;
 #endif
-
-	delete mPhysicalDevice;
-	delete mLogicalDevice;
-
+	
 	vkDestroyInstance(mInstance, nullptr);
 }
 

@@ -4,24 +4,47 @@
 #include <cassert>
 #include <limits>
 
-#include "Window.h"
+#include "DebugUtils.h"
+#include "LogicalDevice.h"
+#include "PhysicalDevice.h"
 #include "WindowSurface.h"
 
 namespace vk {
-SwapChain::SwapChain(const Window& window, const WindowSurface& windowSurface, const VkPhysicalDevice physicalDevice) 
-	: mSurfaceFormat(swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice)))
+SwapChain::SwapChain(const uint32_t windowWidth, const uint32_t windowHeight, const WindowSurface& windowSurface, const LogicalDevice& logicalDevice) 
+	: mLogicalDevice(logicalDevice)
 {
-	assert(physicalDevice != VK_NULL_HANDLE);
+	const PhysicalDevice& physicalDevice = logicalDevice.physicalDevice();
 
-	uint32_t windowWidth;
-	uint32_t windowHeight;
-	window.widthAndHeight(windowWidth, windowHeight);
-
-	const VkPresentModeKHR presentMode = swapChainPresentMode(windowSurface.presentModes(physicalDevice));
-	const VkSurfaceCapabilitiesKHR surfaceCapabilities = windowSurface.surfaceCapabilities(physicalDevice);
+	const VkSurfaceFormatKHR surfaceFormat = swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
+	const VkSurfaceCapabilitiesKHR surfaceCapabilities = windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
 	mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
+	mImageFormat = surfaceFormat.format;
+	   
+	VkSwapchainCreateInfoKHR createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	createInfo.surface = windowSurface.vkSurface();
+	createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
+	createInfo.imageFormat = mImageFormat;
+	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageExtent = mExtent;
+	createInfo.imageArrayLayers = 1; // More than this is needed for stereoscopic 3D applications
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // Render to them directly (color attachment)
+	createInfo.preTransform = surfaceCapabilities.currentTransform;
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.presentMode = swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
+	createInfo.clipped = VK_TRUE;
+	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	const uint32_t imageCount = swapChainImageCount(surfaceCapabilities);
+	setQueueFamilies(physicalDevice, createInfo);
+
+	vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(), &createInfo, nullptr, &mSwapChain));
+	assert(mSwapChain != VK_NULL_HANDLE);
+}
+
+SwapChain::~SwapChain() {
+	assert(mSwapChain != VK_NULL_HANDLE);
+
+	vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
 }
 
 VkSurfaceFormatKHR 
@@ -92,5 +115,27 @@ SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabiliti
 	}
 
 	return imageCount;
+}
+
+void
+SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice, VkSwapchainCreateInfoKHR& swapChainCreateInfo) {
+	// If the graphics queue family and presentation queue family are the same, which will be
+	// the case on most hardware, then we should stick to exclusive mode (best performance).
+	const uint32_t queueFamilyIndices[] =
+	{
+		physicalDevice.graphicsSupportQueueFamilyIndex(),
+		physicalDevice.presentationSupportQueueFamilyIndex()
+	};
+
+	if (queueFamilyIndices[0] != queueFamilyIndices[1]) {
+		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		swapChainCreateInfo.queueFamilyIndexCount = 2;
+		swapChainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
+	}
+	else {
+		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapChainCreateInfo.queueFamilyIndexCount = 0;
+		swapChainCreateInfo.pQueueFamilyIndices = nullptr;
+	}
 }
 }

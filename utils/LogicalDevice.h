@@ -5,8 +5,10 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "PhysicalDevice.h"
+
 namespace vk {
-class PhysicalDevice;
+class WindowSurface;
 
 // VkDevice wrapper to be able to create/destroy/get it easily.
 // VkDevice objects represent logical connections to physical devices. 
@@ -15,11 +17,14 @@ class PhysicalDevice;
 // All queues in a queue family support the same operations.
 class LogicalDevice {
 public:
-	LogicalDevice(const PhysicalDevice& physicalDevice);
+	LogicalDevice(const VkInstance instance, const WindowSurface& windowSurface);
 	~LogicalDevice();
 
+	VkDevice vkDevice() const { assert(mLogicalDevice != VK_NULL_HANDLE);  return mLogicalDevice; }
 	VkQueue graphicsQueue() const { assert(mGraphicsQueue != VK_NULL_HANDLE); return mGraphicsQueue; }
 	VkQueue presentationQueue() const { assert(mPresentationQueue != VK_NULL_HANDLE); return mPresentationQueue; }
+
+	const PhysicalDevice& physicalDevice() const { assert(mPhysicalDevice != nullptr); return *mPhysicalDevice; }
 
 private:
 	void createLogicalDevice(const PhysicalDevice& physicalDevice);
@@ -31,6 +36,8 @@ private:
 	// Command queues for graphics commands and presentation commands respectively.
 	VkQueue mGraphicsQueue = VK_NULL_HANDLE;
 	VkQueue mPresentationQueue = VK_NULL_HANDLE;
+
+	PhysicalDevice* mPhysicalDevice = nullptr;
 };
 }
 
