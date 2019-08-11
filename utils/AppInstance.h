@@ -22,7 +22,7 @@ public:
     }
 
 private:
-    void createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerInfo);
+    void createInstance();
 
     // Validation layers are optional components that hook into Vulkan function calls
     // to apply additional operations. We use them for debugging functionality.

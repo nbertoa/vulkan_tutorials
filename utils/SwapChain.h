@@ -39,9 +39,20 @@ private:
 
     static void setQueueFamilies(const PhysicalDevice& physicalDevice, 
                                  VkSwapchainCreateInfoKHR& swapChainCreateInfo);
+    
+    void createSwapChain(const uint32_t windowWidth,
+                         const uint32_t windowHeight,
+                         const WindowSurface& windowSurface);
+
+    void setImageCount();
 
     const LogicalDevice& mLogicalDevice;
+    
     VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
+
+    std::vector<VkImage> mSwapChainImages;
+    std::vector<VkImageView> mSwapChainImageViews;
+
     VkFormat mImageFormat;
     VkExtent2D mExtent;
 };

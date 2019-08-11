@@ -15,40 +15,12 @@ SwapChain::SwapChain(const uint32_t windowWidth,
                      const WindowSurface& windowSurface, 
                      const LogicalDevice& logicalDevice)
     : mLogicalDevice(logicalDevice) {
-    const PhysicalDevice& physicalDevice = logicalDevice.physicalDevice();
 
-    const VkSurfaceFormatKHR surfaceFormat = 
-        swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
-    const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
-        windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
-    mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
-    mImageFormat = surfaceFormat.format;
+    createSwapChain(windowWidth,
+                    windowHeight,
+                    windowSurface);
 
-    VkSwapchainCreateInfoKHR createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = windowSurface.vkSurface();
-    createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
-    createInfo.imageFormat = mImageFormat;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
-    createInfo.imageExtent = mExtent;
-    // More than this is needed for stereoscopic 3D applications
-    createInfo.imageArrayLayers = 1; 
-    // Render to them directly (color attachment)
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; 
-    createInfo.preTransform = surfaceCapabilities.currentTransform;
-    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = 
-        swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
-    createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
-
-    setQueueFamilies(physicalDevice, createInfo);
-
-    vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(),
-                                   &createInfo, 
-                                   nullptr, 
-                                   &mSwapChain));
-    assert(mSwapChain != VK_NULL_HANDLE);
+    setImageCount();
 }
 
 SwapChain::~SwapChain() {
@@ -155,5 +127,62 @@ SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice,
         swapChainCreateInfo.queueFamilyIndexCount = 0;
         swapChainCreateInfo.pQueueFamilyIndices = nullptr;
     }
+}
+
+void 
+SwapChain::setImageCount() {
+    assert(mSwapChainImages.empty());
+    assert(mSwapChain != VK_NULL_HANDLE);
+
+    uint32_t swapChainImageCount;
+    vkChecker(vkGetSwapchainImagesKHR(mLogicalDevice.vkDevice(),
+                                      mSwapChain,
+                                      &swapChainImageCount,
+                                      nullptr));
+    mSwapChainImages.resize(swapChainImageCount);
+    vkChecker(vkGetSwapchainImagesKHR(mLogicalDevice.vkDevice(),
+                                      mSwapChain,
+                                      &swapChainImageCount,
+                                      mSwapChainImages.data()));
+}
+
+void
+SwapChain::createSwapChain(const uint32_t windowWidth,
+                           const uint32_t windowHeight,
+                           const WindowSurface& windowSurface) {
+    const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
+
+    const VkSurfaceFormatKHR surfaceFormat =
+        swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
+    const VkSurfaceCapabilitiesKHR surfaceCapabilities =
+        windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
+    mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
+    mImageFormat = surfaceFormat.format;
+
+    VkSwapchainCreateInfoKHR createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    createInfo.surface = windowSurface.vkSurface();
+    createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
+    createInfo.imageFormat = mImageFormat;
+    createInfo.imageColorSpace = surfaceFormat.colorSpace;
+    createInfo.imageExtent = mExtent;
+    // More than this is needed for stereoscopic 3D applications
+    createInfo.imageArrayLayers = 1;
+    // Render to them directly (color attachment)
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    createInfo.preTransform = surfaceCapabilities.currentTransform;
+    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    createInfo.presentMode =
+        swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
+    createInfo.clipped = VK_TRUE;
+    createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+    setQueueFamilies(physicalDevice, createInfo);
+
+    vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(),
+                                   &createInfo,
+                                   nullptr,
+                                   &mSwapChain));
+    assert(mSwapChain != VK_NULL_HANDLE);
 }
 }

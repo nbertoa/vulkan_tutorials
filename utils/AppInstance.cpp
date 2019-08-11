@@ -5,18 +5,7 @@
 
 namespace vk {
 AppInstance::AppInstance() {
-    const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
-#ifndef NDEBUG // Debug
-    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = messengerCreateInfo();
-    debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
-#endif
-
-    createInstance(debugMessengerCreateInfoPtr);
-
-    // In debug mode, we need to create the debug messenger.
-#ifndef NDEBUG // Debug
-    mMessenger = new DebugMessenger(mInstance, *debugMessengerCreateInfoPtr);
-#endif
+    createInstance();
 }
 
 AppInstance::~AppInstance() {
@@ -31,8 +20,14 @@ AppInstance::~AppInstance() {
 }
 
 void
-AppInstance::createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerInfo) {
+AppInstance::createInstance() {
     assert(mInstance == VK_NULL_HANDLE);
+
+    const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
+#ifndef NDEBUG // Debug
+    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = messengerCreateInfo();
+    debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
+#endif
 
     // This is optional but it may provide some useful information to the driver to optimize 
     // for our specific application, for example, because it ises a well-known graphics 
@@ -49,7 +44,7 @@ AppInstance::createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMesse
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.flags = 0;
     instanceInfo.pApplicationInfo = &appInfo;
-    instanceInfo.pNext = debugMessengerInfo;
+    instanceInfo.pNext = debugMessengerCreateInfoPtr;
 
     // Set instance extensions
     const std::vector<const char*> instanceExtensions = getRequiredInstanceExtensions();
@@ -63,6 +58,11 @@ AppInstance::createInstance(const VkDebugUtilsMessengerCreateInfoEXT* debugMesse
 
     vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
     assert(mInstance != VK_NULL_HANDLE);
+
+    // In debug mode, we need to create the debug messenger.
+#ifndef NDEBUG // Debug
+    mMessenger = new DebugMessenger(mInstance, *debugMessengerCreateInfoPtr);
+#endif
 }
 
 std::vector<const char*>

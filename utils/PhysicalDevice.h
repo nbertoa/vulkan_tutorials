@@ -50,7 +50,18 @@ private:
                                      const WindowSurface& windowSurface);
 
     bool isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
-                                  const WindowSurface& windowSurface);
+                                  const WindowSurface& windowSurface,
+                                  uint32_t& graphicsSupportQueueFamilyIndex,
+                                  uint32_t& presentationSupportQueueFamilyIndex) const;
+    struct PhysicalDeviceInfo {
+        VkPhysicalDevice mDevice = VK_NULL_HANDLE;
+        uint32_t mGraphicsSupportQueueFamilyIndex = 0;
+        uint32_t mPresentationSupportQueueFamilyIndex = 0;
+    };
+    std::vector<PhysicalDeviceInfo> getCandidateDevices(const VkInstance instance,
+                                                        const WindowSurface& windowSurface) const;
+
+    void setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDeviceInfo>& candidateDevices);
 
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 

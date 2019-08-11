@@ -7,18 +7,7 @@ LogicalDevice::LogicalDevice(const VkInstance instance,
                              const WindowSurface& windowSurface)
     : mPhysicalDevice(new PhysicalDevice(instance, windowSurface)) {
     createLogicalDevice(*mPhysicalDevice);
-
-    vkGetDeviceQueue(mLogicalDevice, 
-                     mPhysicalDevice->graphicsSupportQueueFamilyIndex(), 
-                     0, 
-                     &mGraphicsQueue);
-    assert(mGraphicsQueue != VK_NULL_HANDLE);
-
-    vkGetDeviceQueue(mLogicalDevice, 
-                     mPhysicalDevice->presentationSupportQueueFamilyIndex(), 
-                     0, 
-                     &mPresentationQueue);
-    assert(mPresentationQueue != VK_NULL_HANDLE);
+    setQueues();
 }
 
 LogicalDevice::~LogicalDevice() {
@@ -26,7 +15,6 @@ LogicalDevice::~LogicalDevice() {
     assert(mPhysicalDevice != nullptr);
 
     delete mPhysicalDevice;
-
     vkDestroyDevice(mLogicalDevice, nullptr);
 }
 
@@ -82,5 +70,23 @@ LogicalDevice::buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDe
     }
 
     return createInfoVector;
+}
+
+void
+LogicalDevice::setQueues() {
+    assert(mLogicalDevice != VK_NULL_HANDLE);
+    assert(mPhysicalDevice != nullptr);
+
+    vkGetDeviceQueue(mLogicalDevice,
+                     mPhysicalDevice->graphicsSupportQueueFamilyIndex(),
+                     0,
+                     &mGraphicsQueue);
+    assert(mGraphicsQueue != VK_NULL_HANDLE);
+
+    vkGetDeviceQueue(mLogicalDevice,
+                     mPhysicalDevice->presentationSupportQueueFamilyIndex(),
+                     0,
+                     &mPresentationQueue);
+    assert(mPresentationQueue != VK_NULL_HANDLE);
 }
 }

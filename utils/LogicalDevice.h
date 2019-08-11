@@ -44,6 +44,8 @@ private:
     void createLogicalDevice(const PhysicalDevice& physicalDevice);
 
     static std::vector<VkDeviceQueueCreateInfo> buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDevice);
+   
+    void setQueues();
 
     VkDevice mLogicalDevice = VK_NULL_HANDLE;
 
