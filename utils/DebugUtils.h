@@ -8,13 +8,13 @@
 namespace vk {
 inline void glfwChecker(const int returnCode) {
 #ifndef NDEBUG // Debug
-	assert(returnCode == GLFW_TRUE);
+    assert(returnCode == GLFW_TRUE);
 #endif
 }
 
 inline void vkChecker(const VkResult result) {
 #ifndef NDEBUG // Debug
-	assert(result == VK_SUCCESS);
+    assert(result == VK_SUCCESS);
 #endif
 }
 }

@@ -16,17 +16,22 @@ namespace vk {
 // In this case, we use the VK_KHR_surface extension.
 class WindowSurface {
 public:
-	WindowSurface(const VkInstance instance, GLFWwindow& glfwWindow);
-	~WindowSurface();
+    WindowSurface(const VkInstance instance, 
+                  GLFWwindow& glfwWindow);
+    ~WindowSurface();
 
-	VkSurfaceKHR vkSurface() const { assert(mSurface != VK_NULL_HANDLE); return mSurface; }
-	VkSurfaceCapabilitiesKHR surfaceCapabilities(const VkPhysicalDevice physicalDevice) const;
-	std::vector<VkSurfaceFormatKHR> surfaceFormats(const VkPhysicalDevice physicalDevice) const;
-	std::vector<VkPresentModeKHR> presentModes(const VkPhysicalDevice physicalDevice) const;
+    VkSurfaceKHR vkSurface() const { 
+        assert(mSurface != VK_NULL_HANDLE); 
+        return mSurface; 
+    }
+
+    VkSurfaceCapabilitiesKHR surfaceCapabilities(const VkPhysicalDevice physicalDevice) const;
+    std::vector<VkSurfaceFormatKHR> surfaceFormats(const VkPhysicalDevice physicalDevice) const;
+    std::vector<VkPresentModeKHR> presentModes(const VkPhysicalDevice physicalDevice) const;
 
 private:
-	VkInstance mInstance = VK_NULL_HANDLE;
-	VkSurfaceKHR mSurface = VK_NULL_HANDLE;
+    VkInstance mInstance = VK_NULL_HANDLE;
+    VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 };
 }
 

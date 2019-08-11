@@ -10,132 +10,150 @@
 #include "WindowSurface.h"
 
 namespace vk {
-SwapChain::SwapChain(const uint32_t windowWidth, const uint32_t windowHeight, const WindowSurface& windowSurface, const LogicalDevice& logicalDevice) 
-	: mLogicalDevice(logicalDevice)
-{
-	const PhysicalDevice& physicalDevice = logicalDevice.physicalDevice();
+SwapChain::SwapChain(const uint32_t windowWidth, 
+                     const uint32_t windowHeight, 
+                     const WindowSurface& windowSurface, 
+                     const LogicalDevice& logicalDevice)
+    : mLogicalDevice(logicalDevice) {
+    const PhysicalDevice& physicalDevice = logicalDevice.physicalDevice();
 
-	const VkSurfaceFormatKHR surfaceFormat = swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
-	const VkSurfaceCapabilitiesKHR surfaceCapabilities = windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
-	mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
-	mImageFormat = surfaceFormat.format;
-	   
-	VkSwapchainCreateInfoKHR createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	createInfo.surface = windowSurface.vkSurface();
-	createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
-	createInfo.imageFormat = mImageFormat;
-	createInfo.imageColorSpace = surfaceFormat.colorSpace;
-	createInfo.imageExtent = mExtent;
-	createInfo.imageArrayLayers = 1; // More than this is needed for stereoscopic 3D applications
-	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // Render to them directly (color attachment)
-	createInfo.preTransform = surfaceCapabilities.currentTransform;
-	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-	createInfo.presentMode = swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
-	createInfo.clipped = VK_TRUE;
-	createInfo.oldSwapchain = VK_NULL_HANDLE;
+    const VkSurfaceFormatKHR surfaceFormat = 
+        swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
+    const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
+        windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
+    mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
+    mImageFormat = surfaceFormat.format;
 
-	setQueueFamilies(physicalDevice, createInfo);
+    VkSwapchainCreateInfoKHR createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    createInfo.surface = windowSurface.vkSurface();
+    createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
+    createInfo.imageFormat = mImageFormat;
+    createInfo.imageColorSpace = surfaceFormat.colorSpace;
+    createInfo.imageExtent = mExtent;
+    // More than this is needed for stereoscopic 3D applications
+    createInfo.imageArrayLayers = 1; 
+    // Render to them directly (color attachment)
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; 
+    createInfo.preTransform = surfaceCapabilities.currentTransform;
+    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    createInfo.presentMode = 
+        swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
+    createInfo.clipped = VK_TRUE;
+    createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(), &createInfo, nullptr, &mSwapChain));
-	assert(mSwapChain != VK_NULL_HANDLE);
+    setQueueFamilies(physicalDevice, createInfo);
+
+    vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(),
+                                   &createInfo, 
+                                   nullptr, 
+                                   &mSwapChain));
+    assert(mSwapChain != VK_NULL_HANDLE);
 }
 
 SwapChain::~SwapChain() {
-	assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain != VK_NULL_HANDLE);
 
-	vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
+    vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
 }
 
-VkSurfaceFormatKHR 
+VkSurfaceFormatKHR
 SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats) {
-	assert(surfaceFormats.empty() == false);
+    assert(surfaceFormats.empty() == false);
 
-	for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats) {
-		if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
-			surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
-			return surfaceFormat;
-		}
-	}
+    for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats) {
+        if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
+            surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            return surfaceFormat;
+        }
+    }
 
-	return surfaceFormats[0];
+    return surfaceFormats[0];
 }
 
-VkPresentModeKHR 
+VkPresentModeKHR
 SwapChain::swapChainPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
-	// Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
-	// So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
-	// is not available.
+    // Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
+    // So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
+    // is not available.
 
-	VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
+    VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 
-	for (const VkPresentModeKHR presentMode : presentModes) {
-		if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-			return presentMode;
-		}
-		else if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-			bestMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-		}
-	}
+    for (const VkPresentModeKHR presentMode : presentModes) {
+        if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+            return presentMode;
+        } else if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+            bestMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+        }
+    }
 
-	return bestMode;
+    return bestMode;
 }
 
-VkExtent2D 
-SwapChain::swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, const uint32_t windowWidth, const uint32_t windowHeight) {
-	// Vulkan tells us to match the resolution of the window by setting the width and height in the currentExtent member.
-	// However, some window managers do allow us to differ here and this is indicated by setting the width
-	// and height in currentExtent to a special value. It is the maximum value of uint32_t.
-	// In that case, we will pick the resolution that best matches the window within the minImageExtent and maxImageExtent bounds.
+VkExtent2D
+SwapChain::swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, 
+                           const uint32_t windowWidth, 
+                           const uint32_t windowHeight) {
+    // Vulkan tells us to match the resolution of the window by setting the width 
+    // and height in the currentExtent member.
+    // However, some window managers do allow us to differ here and 
+    // this is indicated by setting the width and height in currentExtent to a special value. 
+    // It is the maximum value of uint32_t.
+    // In that case, we will pick the resolution that best matches the window 
+    // within the minImageExtent and maxImageExtent bounds.
 
-	if (surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
-		return surfaceCapabilities.currentExtent;
-	}
-	else {
-		VkExtent2D actualExtent = { windowWidth , windowHeight };
+    if (surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+        return surfaceCapabilities.currentExtent;
+    } else {
+        VkExtent2D actualExtent = {windowWidth, windowHeight};
 
-		actualExtent.width = std::max(surfaceCapabilities.minImageExtent.width, std::min(surfaceCapabilities.maxImageExtent.width, actualExtent.width));
-		actualExtent.height = std::max(surfaceCapabilities.minImageExtent.height, std::min(surfaceCapabilities.maxImageExtent.height, actualExtent.height));
+        actualExtent.width = std::max(surfaceCapabilities.minImageExtent.width, 
+                                      std::min(surfaceCapabilities.maxImageExtent.width, 
+                                               actualExtent.width));
+        actualExtent.height = std::max(surfaceCapabilities.minImageExtent.height, 
+                                       std::min(surfaceCapabilities.maxImageExtent.height, 
+                                                actualExtent.height));
 
-		return actualExtent;
-	}
+        return actualExtent;
+    }
 }
 
 uint32_t
 SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities) {
-	// As we may sometimes have to wait on the driver to complete internal operations
-	// before we can acquire another image to render to, then we request at least
-	// one more image than the minumum.
-	uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
+    // As we may sometimes have to wait on the driver to complete internal operations
+    // before we can acquire another image to render to, then we request at least
+    // one more image than the minumum.
+    uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
 
-	// We should also make sure to not exceed the maximum number of images while
-	// doing this, where 0 is a special value that means that there is no maximum.
-	if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount) {
-		imageCount = surfaceCapabilities.maxImageCount;
-	}
+    // We should also make sure to not exceed the maximum number of images while
+    // doing this, where 0 is a special value that means that there is no maximum.
+    if (surfaceCapabilities.maxImageCount > 0 && 
+        imageCount > surfaceCapabilities.maxImageCount) {
+        imageCount = surfaceCapabilities.maxImageCount;
+    }
 
-	return imageCount;
+    return imageCount;
 }
 
 void
-SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice, VkSwapchainCreateInfoKHR& swapChainCreateInfo) {
-	// If the graphics queue family and presentation queue family are the same, which will be
-	// the case on most hardware, then we should stick to exclusive mode (best performance).
-	const uint32_t queueFamilyIndices[] =
-	{
-		physicalDevice.graphicsSupportQueueFamilyIndex(),
-		physicalDevice.presentationSupportQueueFamilyIndex()
-	};
+SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice, 
+                            VkSwapchainCreateInfoKHR& swapChainCreateInfo) {
+    // If the graphics queue family and presentation queue family are the same, which will be
+    // the case on most hardware, then we should stick to exclusive mode (best performance).
+    const uint32_t queueFamilyIndices[] =
+    {
+        physicalDevice.graphicsSupportQueueFamilyIndex(),
+        physicalDevice.presentationSupportQueueFamilyIndex()
+    };
 
-	if (queueFamilyIndices[0] != queueFamilyIndices[1]) {
-		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-		swapChainCreateInfo.queueFamilyIndexCount = 2;
-		swapChainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
-	}
-	else {
-		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		swapChainCreateInfo.queueFamilyIndexCount = 0;
-		swapChainCreateInfo.pQueueFamilyIndices = nullptr;
-	}
+    if (queueFamilyIndices[0] != queueFamilyIndices[1]) {
+        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        swapChainCreateInfo.queueFamilyIndexCount = 2;
+        swapChainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
+    } else {
+        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        swapChainCreateInfo.queueFamilyIndexCount = 0;
+        swapChainCreateInfo.pQueueFamilyIndices = nullptr;
+    }
 }
 }

@@ -12,30 +12,52 @@ class WindowSurface;
 // It represents a physical device installed in the system.
 class PhysicalDevice {
 public:
-	PhysicalDevice(const VkInstance instance, const WindowSurface& windowSurface);
+    PhysicalDevice(const VkInstance instance, const WindowSurface& windowSurface);
 
-	VkPhysicalDevice vkPhysicalDevice() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mPhysicalDevice; }
-	uint32_t graphicsSupportQueueFamilyIndex() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mGraphicsSupportQueueFamilyIndex; }
-	uint32_t presentationSupportQueueFamilyIndex() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mPresentationSupportQueueFamilyIndex; }
-	const std::vector<const char*>& deviceExtensions() const { assert(mPhysicalDevice != VK_NULL_HANDLE); return mDeviceExtensions; }
-	
+    VkPhysicalDevice vkPhysicalDevice() const { 
+        assert(mPhysicalDevice != VK_NULL_HANDLE); 
+        return mPhysicalDevice; 
+    }
+
+    uint32_t graphicsSupportQueueFamilyIndex() const { 
+        assert(mPhysicalDevice != VK_NULL_HANDLE); 
+        return mGraphicsSupportQueueFamilyIndex; 
+    }
+
+    uint32_t presentationSupportQueueFamilyIndex() const { 
+        assert(mPhysicalDevice != VK_NULL_HANDLE); 
+        return mPresentationSupportQueueFamilyIndex; 
+    }
+
+    const std::vector<const char*>& deviceExtensions() const { 
+        assert(mPhysicalDevice != VK_NULL_HANDLE); 
+        return mDeviceExtensions; 
+    }
+
 private:
-	static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex);
+    static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
+                                                              const VkSurfaceKHR surface, 
+                                                              uint32_t& queueFamilyIndex);
 
-	static bool isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, uint32_t& queueFamilyIndex);
+    static bool isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
+                                                        const VkSurfaceKHR surface, 
+                                                        uint32_t& queueFamilyIndex);
 
-	static bool areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, const std::vector<const char*>& deviceExtensions);
+    static bool areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
+                                                             const std::vector<const char*>& deviceExtensions);
 
-	static bool isSwapChainSupported(const VkPhysicalDevice physicalDevice, const WindowSurface& windowSurface);
+    static bool isSwapChainSupported(const VkPhysicalDevice physicalDevice, 
+                                     const WindowSurface& windowSurface);
 
-	bool isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, const WindowSurface& windowSurface);
+    bool isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
+                                  const WindowSurface& windowSurface);
 
-	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
+    VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 
-	uint32_t mGraphicsSupportQueueFamilyIndex = 0;
-	uint32_t mPresentationSupportQueueFamilyIndex = 0;
+    uint32_t mGraphicsSupportQueueFamilyIndex = 0;
+    uint32_t mPresentationSupportQueueFamilyIndex = 0;
 
-	std::vector<const char*> mDeviceExtensions;
+    std::vector<const char*> mDeviceExtensions;
 };
 }
 
