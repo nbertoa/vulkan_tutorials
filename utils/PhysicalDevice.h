@@ -36,7 +36,6 @@ public:
 
 private:
     static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
-                                                              const VkSurfaceKHR surface, 
                                                               uint32_t& queueFamilyIndex);
 
     static bool isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 

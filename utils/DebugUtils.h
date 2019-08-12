@@ -6,17 +6,21 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+#ifndef NDEBUG // Debug
 inline void glfwChecker(const int returnCode) {
-#ifndef NDEBUG // Debug
     assert(returnCode == GLFW_TRUE);
+} 
+#else
+inline void glfwChecker(const int) {}
 #endif
-}
 
-inline void vkChecker(const VkResult result) {
 #ifndef NDEBUG // Debug
+inline void vkChecker(const VkResult result) {
     assert(result == VK_SUCCESS);
-#endif
 }
+#else
+inline void vkChecker(const VkResult ) {}
+#endif
 }
 
 #endif

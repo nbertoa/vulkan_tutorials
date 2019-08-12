@@ -17,10 +17,8 @@ PhysicalDevice::PhysicalDevice(const VkInstance instance,
 
 bool
 PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
-                                                              const VkSurfaceKHR surface,
                                                               uint32_t& queueFamilyIndex) {
     assert(physicalDevice != VK_NULL_HANDLE);
-    assert(surface != VK_NULL_HANDLE);
 
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, 
@@ -130,7 +128,6 @@ PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice,
     assert(physicalDevice != VK_NULL_HANDLE);
 
     return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, 
-                                                         windowSurface.vkSurface(), 
                                                          graphicsSupportQueueFamilyIndex) &&
            isPresentationSupportedByPhysicalDevice(physicalDevice, 
                                                    windowSurface.vkSurface(), 

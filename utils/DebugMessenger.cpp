@@ -36,10 +36,10 @@ DebugMessenger::~DebugMessenger() {
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL
-DebugMessenger::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                              VkDebugUtilsMessageTypeFlagsEXT messageType,
+DebugMessenger::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
+                              VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
                               const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
-                              void* userData) {
+                              void* /*userData*/) {
     assert(callbackData != nullptr);
     std::cerr << "Validation layer: " << callbackData->pMessage << std::endl;
     return VK_FALSE;
