@@ -17,20 +17,37 @@
 C:\VulkanSDK\1.1.108.0\Include
 $(SolutionDir)../external\glm
 $(SolutionDir)../external\glfw-3.3.bin.WIN64\include
+$(SolutionDir)../external\tbb\include
 $(SolutionDir)../
 
 - Go to project properties -> Linker -> General -> add the following in Additional Library Directories
 (if Vulkan version or installation directory is different, then change the first line as needed)
 C:\VulkanSDK\1.1.108.0\Lib
 $(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019
+$(SolutionDir)../external\tbb\lib
 
 - Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
 vulkan-1.lib
 glfw3.lib
 
+# Go to Project properties -> set Debug
+
+- Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
+tbb_debug.lib
+tbb_preview_debug.lib
+tbbmalloc_debug.lib
+tbbproxy_debug.lib
+
+
 # Go to Project properties -> set Release.
 
 - Go to project properties -> C/C++ -> Preprocessor -> add NDEBUG in Preprocessor Definitions
+
+- Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
+tbb.lib
+tbb_preview.lib
+tbbmalloc.lib
+tbbproxy.lib
 
 
 - Add main.cpp file with the following code

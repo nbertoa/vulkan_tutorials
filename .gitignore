@@ -127,3 +127,6 @@
 /SimpleTriangle/SimpleTriangle/x64/Release/SimpleTriangle.Build.CppClean.log
 /SimpleTriangle/SimpleTriangle/x64/Release/SimpleTriangle.vcxproj.FileListAbsolute.txt
 /SimpleTriangle/.vs/SimpleTriangle/v16/Browse.VC.opendb
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/8eb20c09b4bfd4c3/SHADERMODULE.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/ab856ff0636db59a/DEBUGMESSENGER.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/e01bfa8facca26b2/SHADERMANAGER.ipch
