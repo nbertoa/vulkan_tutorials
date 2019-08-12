@@ -20,11 +20,18 @@ SwapChain::SwapChain(const uint32_t windowWidth,
                     windowHeight,
                     windowSurface);
 
-    setImageCount();
+    setImagesAndViews();
 }
 
 SwapChain::~SwapChain() {
     assert(mSwapChain != VK_NULL_HANDLE);
+
+    for (const VkImageView view : mSwapChainImageViews) {
+        assert(view != VK_NULL_HANDLE);
+        vkDestroyImageView(mLogicalDevice.vkDevice(),
+                           view,
+                           nullptr);
+    }
 
     vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
 }
@@ -130,10 +137,11 @@ SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice,
 }
 
 void 
-SwapChain::setImageCount() {
+SwapChain::setImagesAndViews() {
     assert(mSwapChainImages.empty());
     assert(mSwapChain != VK_NULL_HANDLE);
 
+    // Images
     uint32_t swapChainImageCount;
     vkChecker(vkGetSwapchainImagesKHR(mLogicalDevice.vkDevice(),
                                       mSwapChain,
@@ -144,6 +152,36 @@ SwapChain::setImageCount() {
                                       mSwapChain,
                                       &swapChainImageCount,
                                       mSwapChainImages.data()));
+
+    // Image views
+    VkImageViewCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    // How the image data should be interpreted?
+    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    createInfo.format = mImageFormat;
+    // Default components
+    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    // Subresource range field describes what the image's purpose
+    // is and which part of the image should be accessed.
+    // Our images will be used as color targets without any 
+    // mipmapping levels or multiple layers.
+    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    createInfo.subresourceRange.baseMipLevel = 0;
+    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.baseArrayLayer = 0;
+    createInfo.subresourceRange.layerCount = 1;
+
+    mSwapChainImageViews.resize(swapChainImageCount);
+    for (uint32_t i = 0; i < swapChainImageCount; ++i) {
+        createInfo.image = mSwapChainImages[i];
+        vkChecker(vkCreateImageView(mLogicalDevice.vkDevice(),
+                                    &createInfo,
+                                    nullptr,
+                                    &mSwapChainImageViews[i]));
+    }
 }
 
 void

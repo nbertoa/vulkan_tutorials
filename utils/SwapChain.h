@@ -16,7 +16,7 @@ class WindowSurface;
 // The swapchain images are represented by VkImage objects.
 class SwapChain {
 public:
-    SwapChain(const uint32_t windowWidth, 
+    SwapChain(const uint32_t windowWidth,          
               const uint32_t windowHeight, 
               const WindowSurface& windowSurface, 
               const LogicalDevice& logicalDevice);
@@ -44,12 +44,16 @@ private:
                          const uint32_t windowHeight,
                          const WindowSurface& windowSurface);
 
-    void setImageCount();
+    void setImagesAndViews();
 
     const LogicalDevice& mLogicalDevice;
     
     VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 
+    // Image and views. To use a image in the render pipeline
+    // we need to create its corresponding image view.
+    // An image view is quite literally a view into an image. 
+    // It describes how to access the image and which part of the image to access.
     std::vector<VkImage> mSwapChainImages;
     std::vector<VkImageView> mSwapChainImageViews;
 
