@@ -1,6 +1,7 @@
 #ifndef UTILS_SWAP_CHAIN
 #define UTILS_SWAP_CHAIN
 
+#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -21,6 +22,24 @@ public:
               const WindowSurface& windowSurface, 
               const LogicalDevice& logicalDevice);
     ~SwapChain();
+
+    // The viewport describes the region of the framebuffer that the output
+    // will be rendered too.
+    // It defines the transformation from the image to the framebuffer.
+    const VkViewport& viewport() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mViewport;
+    }
+
+    // While viewports define the transformation from the image to the framebuffer,
+    // scissor rectangles define in which regions pixels will actually be stored.
+    // Any pixels outside the scissor rectangles will be discarded by the rasterizer.
+    const VkRect2D& scissorRect() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mScissorRect;
+    }
+
+    VkPipelineViewportStateCreateInfo pipelineViewportCreateInfo() const;
 
 private:
     static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
@@ -45,6 +64,7 @@ private:
                          const WindowSurface& windowSurface);
 
     void setImagesAndViews();
+    void setViewportAndScissorRect();
 
     const LogicalDevice& mLogicalDevice;
     
@@ -59,6 +79,9 @@ private:
 
     VkFormat mImageFormat;
     VkExtent2D mExtent;
+
+    VkViewport mViewport = {};
+    VkRect2D mScissorRect = {};
 };
 }
 

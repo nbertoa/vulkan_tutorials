@@ -26,6 +26,18 @@
     <ClCompile Include="..\..\utils\ShaderModule.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineVertexInputStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineInputAssemblyStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineRasterizationStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineMultisampleStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -58,6 +70,18 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\ShaderModule.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineVertexInputStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineInputAssemblyStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineRasterizationStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineMultisampleStateFactory.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

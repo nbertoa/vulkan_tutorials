@@ -1,22 +1,22 @@
 #include "ShaderModule.h"
 
-#include <cassert>
 #include <fstream> 
 
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
 namespace vk {
-ShaderModule::ShaderModule(const char* shaderByteCodePath, const LogicalDevice& logicalDevice)
+ShaderModule::ShaderModule(const std::string& shaderByteCodePath, 
+                           const VkShaderStageFlagBits shaderStageFlag,
+                           const LogicalDevice& logicalDevice)
     : mLogicalDevice(logicalDevice)
+    , mShaderStageFlag(shaderStageFlag)
     , mShaderByteCodePath(shaderByteCodePath)
 {
-    assert(mShaderByteCodePath != nullptr);
     createShaderModule();
 }
 
 ShaderModule::~ShaderModule() {
-    assert(mShaderByteCodePath != nullptr);
     assert(mShaderModule != VK_NULL_HANDLE);
 
     vkDestroyShaderModule(mLogicalDevice.vkDevice(), 
@@ -24,10 +24,21 @@ ShaderModule::~ShaderModule() {
                           nullptr);
 }
 
-std::vector<char>
-ShaderModule::readFile(const char* filename) {
-    assert(filename != nullptr);
+VkPipelineShaderStageCreateInfo 
+ShaderModule::pipelineShaderStageCreateInfo() const {
+    assert(mShaderModule != VK_NULL_HANDLE);
 
+    VkPipelineShaderStageCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    createInfo.stage = mShaderStageFlag;
+    createInfo.module = mShaderModule;
+    createInfo.pName = "main";
+
+    return createInfo;
+}
+
+std::vector<char>
+ShaderModule::readFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
     assert(file.is_open());
 
@@ -42,7 +53,6 @@ ShaderModule::readFile(const char* filename) {
 
 void
 ShaderModule::createShaderModule() {
-    assert(mShaderByteCodePath != nullptr);
     assert(mShaderModule == VK_NULL_HANDLE);
 
     const std::vector<char> shaderByteCode = readFile(mShaderByteCodePath);

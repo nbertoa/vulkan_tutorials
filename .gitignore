@@ -130,3 +130,7 @@
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/8eb20c09b4bfd4c3/SHADERMODULE.ipch
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/ab856ff0636db59a/DEBUGMESSENGER.ipch
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/e01bfa8facca26b2/SHADERMANAGER.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/15c0aacba4e1b991/PIPELINEINPUTASSEMBLYSTATEFACTORY.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/b5ebde78fb5e969c/PIPELINERASTERIZATIONSTATEFACTORY.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/e3680c190b6421e7/PIPELINEVERTEXINPUTSTATEFACTORY.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/efaf632ef5fa8dc6/PIPELINEMULTISAMPLESTATEFACTORY.ipch

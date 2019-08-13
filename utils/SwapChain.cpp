@@ -1,7 +1,6 @@
 #include "SwapChain.h"
 
 #include <algorithm>
-#include <cassert>
 #include <limits>
 
 #include "DebugUtils.h"
@@ -21,6 +20,8 @@ SwapChain::SwapChain(const uint32_t windowWidth,
                     windowSurface);
 
     setImagesAndViews();
+
+    setViewportAndScissorRect();
 }
 
 SwapChain::~SwapChain() {
@@ -34,6 +35,20 @@ SwapChain::~SwapChain() {
     }
 
     vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
+}
+
+VkPipelineViewportStateCreateInfo 
+SwapChain::pipelineViewportCreateInfo() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+
+    VkPipelineViewportStateCreateInfo createInfo  = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    createInfo.viewportCount = 1;
+    createInfo.pViewports = &mViewport;
+    createInfo.scissorCount = 1;
+    createInfo.pScissors = &mScissorRect;
+
+    return createInfo;
 }
 
 VkSurfaceFormatKHR
@@ -182,6 +197,21 @@ SwapChain::setImagesAndViews() {
                                     nullptr,
                                     &mSwapChainImageViews[i]));
     }
+}
+
+void
+SwapChain::setViewportAndScissorRect() {
+    assert(mSwapChain != VK_NULL_HANDLE);
+
+    mViewport.x = 0.0f;
+    mViewport.y = 0.0f;
+    mViewport.width = static_cast<float>(mExtent.width);
+    mViewport.height = static_cast<float>(mExtent.height);
+    mViewport.minDepth = 0.0f;
+    mViewport.maxDepth = 1.0f;
+
+    mScissorRect.offset = {0, 0};
+    mScissorRect.extent = mExtent;
 }
 
 void
