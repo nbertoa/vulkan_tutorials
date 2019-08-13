@@ -38,6 +38,12 @@
     <ClCompile Include="..\..\utils\PipelineMultisampleStateFactory.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineDepthStencilStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineColorBlendStateFactory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -82,6 +88,12 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\PipelineMultisampleStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineDepthStencilStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineColorBlendStateFactory.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

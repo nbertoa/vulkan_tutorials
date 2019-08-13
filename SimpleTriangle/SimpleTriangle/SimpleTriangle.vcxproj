@@ -134,6 +134,8 @@
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
     <ClCompile Include="..\..\utils\LogicalDevice.cpp" />
     <ClCompile Include="..\..\utils\PhysicalDevice.cpp" />
+    <ClCompile Include="..\..\utils\PipelineColorBlendStateFactory.cpp" />
+    <ClCompile Include="..\..\utils\PipelineDepthStencilStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineInputAssemblyStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineMultisampleStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineRasterizationStateFactory.cpp" />
@@ -150,6 +152,8 @@
     <ClInclude Include="..\..\utils\DebugUtils.h" />
     <ClInclude Include="..\..\utils\LogicalDevice.h" />
     <ClInclude Include="..\..\utils\PhysicalDevice.h" />
+    <ClInclude Include="..\..\utils\PipelineColorBlendStateFactory.h" />
+    <ClInclude Include="..\..\utils\PipelineDepthStencilStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineInputAssemblyStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineMultisampleStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineRasterizationStateFactory.h" />
