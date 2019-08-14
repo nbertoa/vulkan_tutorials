@@ -27,13 +27,11 @@ public:
     }
 
 private:
-    void createPipelineLayout();
+    void createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+                              const std::vector<VkPushConstantRange>& pushConstantRanges);
 
     const LogicalDevice& mLogicalDevice;
     VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
-
-    std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
-    std::vector<VkPushConstantRange> mPushConstantRanges;
 };
 }
 

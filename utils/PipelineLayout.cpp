@@ -8,20 +8,18 @@ PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
                                const VkDescriptorSetLayout& descriptorSetLayout,
                                const VkPushConstantRange& pushConstantRange)
     : mLogicalDevice(logicalDevice)
-    , mDescriptorSetLayouts{ descriptorSetLayout }
-    , mPushConstantRanges{ pushConstantRange }
 {
-    createPipelineLayout();
+    createPipelineLayout({descriptorSetLayout},
+                         {pushConstantRange});
 }
 
 PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
                                const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                                const std::vector<VkPushConstantRange>& pushConstantRanges)
     : mLogicalDevice(logicalDevice)
-    , mDescriptorSetLayouts(descriptorSetLayouts)
-    , mPushConstantRanges(pushConstantRanges)
 {
-    createPipelineLayout();
+    createPipelineLayout(descriptorSetLayouts,
+                         pushConstantRanges);
 }
 
 PipelineLayout::~PipelineLayout() {
@@ -32,15 +30,16 @@ PipelineLayout::~PipelineLayout() {
 }
 
 void
-PipelineLayout::createPipelineLayout() {
+PipelineLayout::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+                                     const std::vector<VkPushConstantRange>& pushConstantRanges) {
     assert(mPipelineLayout == VK_NULL_HANDLE);
 
     VkPipelineLayoutCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    createInfo.setLayoutCount = static_cast<uint32_t>(mDescriptorSetLayouts.size());
-    createInfo.pSetLayouts = mDescriptorSetLayouts.empty() ? nullptr : mDescriptorSetLayouts.data();
-    createInfo.pushConstantRangeCount = static_cast<uint32_t>(mPushConstantRanges.size());
-    createInfo.pPushConstantRanges = mPushConstantRanges.empty() ? nullptr : mPushConstantRanges.data();
+    createInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+    createInfo.pSetLayouts = descriptorSetLayouts.empty() ? nullptr : descriptorSetLayouts.data();
+    createInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
+    createInfo.pPushConstantRanges = pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
 
     vkChecker(vkCreatePipelineLayout(mLogicalDevice.vkDevice(),
                                      &createInfo,
