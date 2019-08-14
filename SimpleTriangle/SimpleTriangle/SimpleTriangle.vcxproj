@@ -134,6 +134,7 @@
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
     <ClCompile Include="..\..\utils\LogicalDevice.cpp" />
     <ClCompile Include="..\..\utils\PhysicalDevice.cpp" />
+    <ClCompile Include="..\..\utils\PipelineLayout.cpp" />
     <ClCompile Include="..\..\utils\PipelineStateFactory.cpp" />
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="..\..\utils\DebugUtils.h" />
     <ClInclude Include="..\..\utils\LogicalDevice.h" />
     <ClInclude Include="..\..\utils\PhysicalDevice.h" />
+    <ClInclude Include="..\..\utils\PipelineLayout.h" />
     <ClInclude Include="..\..\utils\PipelineStateFactory.h" />
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />

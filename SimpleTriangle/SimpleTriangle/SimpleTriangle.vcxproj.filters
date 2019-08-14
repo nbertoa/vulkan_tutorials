@@ -29,6 +29,9 @@
     <ClCompile Include="..\..\utils\PipelineStateFactory.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\PipelineLayout.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -64,6 +67,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\PipelineStateFactory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\PipelineLayout.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
