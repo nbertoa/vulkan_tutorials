@@ -140,6 +140,7 @@
     <ClCompile Include="..\..\utils\PipelineMultisampleStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineRasterizationStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineVertexInputStateFactory.cpp" />
+    <ClCompile Include="..\..\utils\RenderPass.cpp" />
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="..\..\utils\PipelineMultisampleStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineRasterizationStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineVertexInputStateFactory.h" />
+    <ClInclude Include="..\..\utils\RenderPass.h" />
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\Window.h" />
