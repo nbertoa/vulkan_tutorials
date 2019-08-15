@@ -136,4 +136,11 @@
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/efaf632ef5fa8dc6/PIPELINEMULTISAMPLESTATEFACTORY.ipch
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/c9859f3c3966c9a6/PIPELINEDEPTHSTENCILSTATEFACTORY.ipch
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/dce55db68465c565/PIPELINECOLORBLENDSTATEFACTORY.ipch
+<<<<<<< HEAD
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/288aba274cf9354b/RENDERPASS.ipch
+=======
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/478d130b18c6ae21/PIPELINESTATEFACTORY.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/6cd1c6ea5ba0a3c1/PIPELINESTATEFACTORY.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/45199fb22ef97420/PIPELINELAYOUT.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/4f60c200758823c0/PIPELINELAYOUT.ipch
+>>>>>>> a17dfb0250d4ef89117d19527af4fe535c13eb98

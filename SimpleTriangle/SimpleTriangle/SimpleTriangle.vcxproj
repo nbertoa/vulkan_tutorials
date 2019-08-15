@@ -134,6 +134,7 @@
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
     <ClCompile Include="..\..\utils\LogicalDevice.cpp" />
     <ClCompile Include="..\..\utils\PhysicalDevice.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\..\utils\PipelineColorBlendStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineDepthStencilStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineInputAssemblyStateFactory.cpp" />
@@ -141,6 +142,10 @@
     <ClCompile Include="..\..\utils\PipelineRasterizationStateFactory.cpp" />
     <ClCompile Include="..\..\utils\PipelineVertexInputStateFactory.cpp" />
     <ClCompile Include="..\..\utils\RenderPass.cpp" />
+=======
+    <ClCompile Include="..\..\utils\PipelineLayout.cpp" />
+    <ClCompile Include="..\..\utils\PipelineStateFactory.cpp" />
+>>>>>>> a17dfb0250d4ef89117d19527af4fe535c13eb98
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
@@ -153,6 +158,7 @@
     <ClInclude Include="..\..\utils\DebugUtils.h" />
     <ClInclude Include="..\..\utils\LogicalDevice.h" />
     <ClInclude Include="..\..\utils\PhysicalDevice.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\..\utils\PipelineColorBlendStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineDepthStencilStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineInputAssemblyStateFactory.h" />
@@ -160,6 +166,10 @@
     <ClInclude Include="..\..\utils\PipelineRasterizationStateFactory.h" />
     <ClInclude Include="..\..\utils\PipelineVertexInputStateFactory.h" />
     <ClInclude Include="..\..\utils\RenderPass.h" />
+=======
+    <ClInclude Include="..\..\utils\PipelineLayout.h" />
+    <ClInclude Include="..\..\utils\PipelineStateFactory.h" />
+>>>>>>> a17dfb0250d4ef89117d19527af4fe535c13eb98
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\Window.h" />

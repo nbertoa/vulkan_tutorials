@@ -26,22 +26,10 @@
     <ClCompile Include="..\..\utils\ShaderModule.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineVertexInputStateFactory.cpp">
+    <ClCompile Include="..\..\utils\PipelineStateFactory.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineInputAssemblyStateFactory.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineRasterizationStateFactory.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineMultisampleStateFactory.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineDepthStencilStateFactory.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\PipelineColorBlendStateFactory.cpp">
+    <ClCompile Include="..\..\utils\PipelineLayout.cpp">
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utils\RenderPass.cpp">
@@ -81,22 +69,10 @@
     <ClInclude Include="..\..\utils\ShaderModule.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineVertexInputStateFactory.h">
+    <ClInclude Include="..\..\utils\PipelineStateFactory.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineInputAssemblyStateFactory.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineRasterizationStateFactory.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineMultisampleStateFactory.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineDepthStencilStateFactory.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\utils\PipelineColorBlendStateFactory.h">
+    <ClInclude Include="..\..\utils\PipelineLayout.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\RenderPass.h">
