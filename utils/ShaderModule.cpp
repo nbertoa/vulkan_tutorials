@@ -6,9 +6,9 @@
 #include "LogicalDevice.h"
 
 namespace vk {
-ShaderModule::ShaderModule(const std::string& shaderByteCodePath, 
-                           const VkShaderStageFlagBits shaderStageFlag,
-                           const LogicalDevice& logicalDevice)
+ShaderModule::ShaderModule(const LogicalDevice& logicalDevice,
+                           const std::string& shaderByteCodePath,
+                           const VkShaderStageFlagBits shaderStageFlag)
     : mLogicalDevice(logicalDevice)
     , mShaderStageFlag(shaderStageFlag)
     , mShaderByteCodePath(shaderByteCodePath)

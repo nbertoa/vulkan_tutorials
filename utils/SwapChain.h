@@ -41,6 +41,11 @@ public:
 
     VkPipelineViewportStateCreateInfo pipelineViewportCreateInfo() const;
 
+    VkFormat imageFormat() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mImageFormat;
+    }
+
 private:
     static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
 

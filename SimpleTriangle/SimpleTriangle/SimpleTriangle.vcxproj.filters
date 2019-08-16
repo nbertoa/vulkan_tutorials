@@ -35,6 +35,9 @@
     <ClCompile Include="..\..\utils\RenderPass.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\GraphicsPipeline.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -76,6 +79,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\RenderPass.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\GraphicsPipeline.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

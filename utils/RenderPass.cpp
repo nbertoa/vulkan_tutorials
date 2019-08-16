@@ -1,7 +1,5 @@
 #include "RenderPass.h"
 
-#include <cassert>
-
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 

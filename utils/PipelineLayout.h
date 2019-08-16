@@ -17,8 +17,8 @@ public:
                    const VkDescriptorSetLayout& descriptorSetLayout,
                    const VkPushConstantRange& pushConstantRange);
     PipelineLayout(const LogicalDevice& logicalDevice,
-                   const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                   const std::vector<VkPushConstantRange>& pushConstantRanges);
+                   const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = std::vector<VkDescriptorSetLayout>(),
+                   const std::vector<VkPushConstantRange>& pushConstantRanges = std::vector<VkPushConstantRange>());
     ~PipelineLayout();
 
     const VkPipelineLayout& pipelineLayout() const {

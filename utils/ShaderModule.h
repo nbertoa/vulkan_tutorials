@@ -16,9 +16,9 @@ class LogicalDevice;
 class ShaderModule {
 public:
     // shaderStageFlag indicates the shader type.
-    ShaderModule(const std::string& shaderFilepath, 
-                 const VkShaderStageFlagBits shaderStageFlag,
-                 const LogicalDevice& logicalDevice);
+    ShaderModule(const LogicalDevice& logicalDevice,
+                 const std::string& shaderFilepath,
+                 const VkShaderStageFlagBits shaderStageFlag);
     ~ShaderModule();
 
     VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo() const;

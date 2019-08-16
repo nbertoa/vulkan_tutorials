@@ -1,6 +1,7 @@
 #ifndef UTILS_RENDER_PASS
 #define UTILS_RENDER_PASS
 
+#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -16,6 +17,11 @@ public:
                const std::vector<VkAttachmentDescription>& attachmentDescriptions,
                const std::vector<VkSubpassDescription>& subpassDescriptions);
     ~RenderPass();
+
+    VkRenderPass vkRenderPass() const {
+        assert(mRenderPass != VK_NULL_HANDLE);
+        return mRenderPass;
+    }
     
 private:
     const LogicalDevice& mLogicalDevice;
