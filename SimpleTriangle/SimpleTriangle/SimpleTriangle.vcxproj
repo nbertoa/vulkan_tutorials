@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\utils\AppInstance.cpp" />
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
+    <ClCompile Include="..\..\utils\FrameBuffers.cpp" />
     <ClCompile Include="..\..\utils\GraphicsPipeline.cpp" />
     <ClCompile Include="..\..\utils\LogicalDevice.cpp" />
     <ClCompile Include="..\..\utils\PhysicalDevice.cpp" />
@@ -142,12 +143,14 @@
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="..\..\utils\WindowSurface.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
     <ClInclude Include="..\..\utils\DebugMessenger.h" />
     <ClInclude Include="..\..\utils\DebugUtils.h" />
+    <ClInclude Include="..\..\utils\FrameBuffers.h" />
     <ClInclude Include="..\..\utils\GraphicsPipeline.h" />
     <ClInclude Include="..\..\utils\LogicalDevice.h" />
     <ClInclude Include="..\..\utils\PhysicalDevice.h" />
@@ -158,6 +161,7 @@
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\Window.h" />
     <ClInclude Include="..\..\utils\WindowSurface.h" />
+    <ClInclude Include="App.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

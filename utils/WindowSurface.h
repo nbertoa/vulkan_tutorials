@@ -8,6 +8,9 @@
 struct GLFWwindow;
 
 namespace vk {
+class AppInstance;
+class Window;
+
 // VkSurface wrapper to be able to create/destroy/get the vulkan surface easily.
 // Since Vulkan is a platform agnostic API, it cannot interface directly with the window
 // system on its own. 
@@ -16,8 +19,8 @@ namespace vk {
 // In this case, we use the VK_KHR_surface extension.
 class WindowSurface {
 public:
-    WindowSurface(const VkInstance instance, 
-                  GLFWwindow& glfwWindow);
+    WindowSurface(const AppInstance& appInstance,
+                  Window& window);
     ~WindowSurface();
 
     VkSurfaceKHR vkSurface() const { 
@@ -30,7 +33,7 @@ public:
     std::vector<VkPresentModeKHR> presentModes(const VkPhysicalDevice physicalDevice) const;
 
 private:
-    VkInstance mInstance = VK_NULL_HANDLE;
+    const AppInstance& mAppInstance;
     VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 };
 }

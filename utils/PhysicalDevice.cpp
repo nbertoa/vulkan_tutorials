@@ -4,14 +4,15 @@
 #include <unordered_set>
 #include <vector>
 
+#include "AppInstance.h"
 #include "DebugUtils.h"
 #include "WindowSurface.h"
 
 namespace vk {
-PhysicalDevice::PhysicalDevice(const VkInstance instance, 
+PhysicalDevice::PhysicalDevice(const AppInstance& appInstance,
                                const WindowSurface& windowSurface)
     : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} {
-    setPhysicalDevice(getCandidateDevices(instance,
+    setPhysicalDevice(getCandidateDevices(appInstance,
                                           windowSurface));
 }
 
@@ -139,17 +140,15 @@ PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice,
 }
 
 std::vector<PhysicalDevice::PhysicalDeviceInfo>
-PhysicalDevice::getCandidateDevices(const VkInstance instance,
+PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
                                     const WindowSurface& windowSurface) const {
-    assert(instance != VK_NULL_HANDLE);
-
     uint32_t physicalDeviceCount = 0;
-    vkChecker(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr));
+    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(), &physicalDeviceCount, nullptr));
     assert(physicalDeviceCount > 0);
 
     // Get all the suitable physical devices
     std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-    vkChecker(vkEnumeratePhysicalDevices(instance,
+    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(),
                                          &physicalDeviceCount,
                                          physicalDevices.data()));
     std::vector<PhysicalDeviceInfo> candidatePhysicalDevices;

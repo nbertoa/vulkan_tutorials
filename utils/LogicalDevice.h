@@ -8,6 +8,7 @@
 #include "PhysicalDevice.h"
 
 namespace vk {
+class AppInstance;
 class WindowSurface;
 
 // VkDevice wrapper to be able to create/destroy/get it easily.
@@ -17,7 +18,8 @@ class WindowSurface;
 // All queues in a queue family support the same operations.
 class LogicalDevice {
 public:
-    LogicalDevice(const VkInstance instance, const WindowSurface& windowSurface);
+    LogicalDevice(const AppInstance& appInstance, 
+                  const WindowSurface& windowSurface);
     ~LogicalDevice();
 
     VkDevice vkDevice() const { 

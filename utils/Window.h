@@ -20,6 +20,8 @@ public:
     }
 
     void widthAndHeight(uint32_t& width, uint32_t& height) const;
+    uint32_t width() const;
+    uint32_t height() const;
 
 private:
     GLFWwindow* mWindow = nullptr;

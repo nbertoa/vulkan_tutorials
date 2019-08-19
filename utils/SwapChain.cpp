@@ -6,17 +6,16 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "PhysicalDevice.h"
+#include "Window.h"
 #include "WindowSurface.h"
 
 namespace vk {
-SwapChain::SwapChain(const uint32_t windowWidth, 
-                     const uint32_t windowHeight, 
-                     const WindowSurface& windowSurface, 
-                     const LogicalDevice& logicalDevice)
+SwapChain::SwapChain(const LogicalDevice& logicalDevice,
+                     const Window& window,
+                     const WindowSurface& windowSurface)
     : mLogicalDevice(logicalDevice) {
-
-    createSwapChain(windowWidth,
-                    windowHeight,
+       
+    createSwapChain(window,
                     windowSurface);
 
     setImagesAndViews();
@@ -215,10 +214,13 @@ SwapChain::setViewportAndScissorRect() {
 }
 
 void
-SwapChain::createSwapChain(const uint32_t windowWidth,
-                           const uint32_t windowHeight,
+SwapChain::createSwapChain(const Window& window,
                            const WindowSurface& windowSurface) {
     const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
+
+    uint32_t windowWidth;
+    uint32_t windowHeight;
+    window.widthAndHeight(windowWidth, windowHeight);
 
     const VkSurfaceFormatKHR surfaceFormat =
         swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));

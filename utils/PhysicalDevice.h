@@ -6,13 +6,15 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class AppInstance;
 class WindowSurface;
 
 // VkPhysicalDevice wrapper to be able to create/destroy/get it easily.
 // It represents a physical device installed in the system.
 class PhysicalDevice {
 public:
-    PhysicalDevice(const VkInstance instance, const WindowSurface& windowSurface);
+    PhysicalDevice(const AppInstance& appInstance, 
+                   const WindowSurface& windowSurface);
 
     VkPhysicalDevice vkPhysicalDevice() const { 
         assert(mPhysicalDevice != VK_NULL_HANDLE); 
@@ -57,7 +59,7 @@ private:
         uint32_t mGraphicsSupportQueueFamilyIndex = 0;
         uint32_t mPresentationSupportQueueFamilyIndex = 0;
     };
-    std::vector<PhysicalDeviceInfo> getCandidateDevices(const VkInstance instance,
+    std::vector<PhysicalDeviceInfo> getCandidateDevices(const AppInstance& appInstance,
                                                         const WindowSurface& windowSurface) const;
 
     void setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDeviceInfo>& candidateDevices);

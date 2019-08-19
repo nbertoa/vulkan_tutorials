@@ -3,9 +3,9 @@
 #include "DebugUtils.h"
 
 namespace vk {
-LogicalDevice::LogicalDevice(const VkInstance instance, 
+LogicalDevice::LogicalDevice(const AppInstance& appInstance, 
                              const WindowSurface& windowSurface)
-    : mPhysicalDevice(new PhysicalDevice(instance, windowSurface)) {
+    : mPhysicalDevice(new PhysicalDevice(appInstance, windowSurface)) {
     createLogicalDevice(*mPhysicalDevice);
     setQueues();
 }

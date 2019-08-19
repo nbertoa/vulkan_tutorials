@@ -38,6 +38,10 @@
     <ClCompile Include="..\..\utils\GraphicsPipeline.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\FrameBuffers.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -84,5 +88,9 @@
     <ClInclude Include="..\..\utils\GraphicsPipeline.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\utils\FrameBuffers.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h" />
   </ItemGroup>
 </Project>

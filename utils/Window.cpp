@@ -41,4 +41,22 @@ Window::widthAndHeight(uint32_t& width, uint32_t& height) const {
     width = static_cast<uint32_t>(w);
     height = static_cast<uint32_t>(h);
 }
+
+uint32_t
+Window::width() const {
+    assert(mWindow != nullptr);
+    int w;
+    int h;
+    glfwGetWindowSize(mWindow, &w, &h);
+    return static_cast<uint32_t>(w);
+}
+
+uint32_t
+Window::height() const {
+    assert(mWindow != nullptr);
+    int w;
+    int h;
+    glfwGetWindowSize(mWindow, &w, &h);
+    return static_cast<uint32_t>(h);
+}
 }

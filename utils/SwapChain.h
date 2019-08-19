@@ -8,6 +8,7 @@
 namespace vk {
 class LogicalDevice;
 class PhysicalDevice;
+class Window;
 class WindowSurface;
 
 // VkSwapChain wrapper to be able to create/destroy/get swap chain easily.
@@ -17,10 +18,9 @@ class WindowSurface;
 // The swapchain images are represented by VkImage objects.
 class SwapChain {
 public:
-    SwapChain(const uint32_t windowWidth,          
-              const uint32_t windowHeight, 
-              const WindowSurface& windowSurface, 
-              const LogicalDevice& logicalDevice);
+    SwapChain(const LogicalDevice& logicalDevice,
+              const Window& window, 
+              const WindowSurface& windowSurface);
     ~SwapChain();
 
     // The viewport describes the region of the framebuffer that the output
@@ -46,6 +46,21 @@ public:
         return mImageFormat;
     }
 
+    const std::vector<VkImageView>& imageViews() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mSwapChainImageViews;
+    }
+
+    uint32_t imageWidth() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mExtent.width;
+    }
+
+    uint32_t imageHeight() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mExtent.height;
+    }
+
 private:
     static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
 
@@ -64,8 +79,7 @@ private:
     static void setQueueFamilies(const PhysicalDevice& physicalDevice, 
                                  VkSwapchainCreateInfoKHR& swapChainCreateInfo);
     
-    void createSwapChain(const uint32_t windowWidth,
-                         const uint32_t windowHeight,
+    void createSwapChain(const Window& window,
                          const WindowSurface& windowSurface);
 
     void setImagesAndViews();
