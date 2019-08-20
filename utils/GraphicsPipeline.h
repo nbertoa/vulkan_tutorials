@@ -41,6 +41,9 @@ public:
                      const VkPipelineDynamicStateCreateInfo* dynamicState);
     ~GraphicsPipeline();
 
+    GraphicsPipeline(const GraphicsPipeline&) = delete;
+    const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
+
 private:
     const LogicalDevice& mLogicalDevice;
     std::unique_ptr<PipelineLayout> mPipelineLayout;

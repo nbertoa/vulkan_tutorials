@@ -21,6 +21,9 @@ public:
                    const std::vector<VkPushConstantRange>& pushConstantRanges = std::vector<VkPushConstantRange>());
     ~PipelineLayout();
 
+    PipelineLayout(const PipelineLayout&) = delete;
+    const PipelineLayout& operator=(const PipelineLayout&) = delete;
+
     const VkPipelineLayout& pipelineLayout() const {
         assert(mPipelineLayout != VK_NULL_HANDLE);
         return mPipelineLayout;

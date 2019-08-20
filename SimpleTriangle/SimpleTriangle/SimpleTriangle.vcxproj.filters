@@ -42,6 +42,9 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="..\..\utils\SystemManager.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -92,5 +95,8 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="App.h" />
+    <ClInclude Include="..\..\utils\SystemManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

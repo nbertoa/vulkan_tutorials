@@ -21,6 +21,9 @@ public:
                  const VkShaderStageFlagBits shaderStageFlag);
     ~ShaderModule();
 
+    ShaderModule(const ShaderModule&) = delete;
+    const ShaderModule& operator=(const ShaderModule&) = delete;
+
     VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo() const;
 
     const std::string& shaderByteCodePath() const { 

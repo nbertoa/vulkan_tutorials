@@ -61,7 +61,7 @@ AppInstance::createInstance() {
 
     // In debug mode, we need to create the debug messenger.
 #ifndef NDEBUG // Debug
-    mMessenger = new DebugMessenger(mInstance, *debugMessengerCreateInfoPtr);
+    mMessenger = new DebugMessenger(*this, *debugMessengerCreateInfoPtr);
 #endif
 }
 

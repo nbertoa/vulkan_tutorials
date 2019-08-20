@@ -22,6 +22,9 @@ public:
                   const WindowSurface& windowSurface);
     ~LogicalDevice();
 
+    LogicalDevice(const LogicalDevice&) = delete;
+    const LogicalDevice& operator=(const LogicalDevice&) = delete;
+
     VkDevice vkDevice() const { 
         assert(mLogicalDevice != VK_NULL_HANDLE);  
         return mLogicalDevice; 

@@ -22,6 +22,8 @@ public:
     WindowSurface(const AppInstance& appInstance,
                   Window& window);
     ~WindowSurface();
+    WindowSurface(const WindowSurface&) = delete;
+    const WindowSurface& operator=(const WindowSurface&) = delete;
 
     VkSurfaceKHR vkSurface() const { 
         assert(mSurface != VK_NULL_HANDLE); 

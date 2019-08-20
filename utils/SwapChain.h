@@ -23,6 +23,9 @@ public:
               const WindowSurface& windowSurface);
     ~SwapChain();
 
+    SwapChain(const SwapChain&) = delete;
+    const SwapChain& operator=(const SwapChain&) = delete;
+
     // The viewport describes the region of the framebuffer that the output
     // will be rendered too.
     // It defines the transformation from the image to the framebuffer.

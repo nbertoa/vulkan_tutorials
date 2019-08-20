@@ -16,6 +16,9 @@ public:
     AppInstance();
     ~AppInstance();
 
+    AppInstance(const AppInstance&) = delete;
+    const AppInstance& operator=(const AppInstance&) = delete;
+
     const VkInstance& vkInstance() const { 
         assert(mInstance != nullptr);  
         return mInstance; 

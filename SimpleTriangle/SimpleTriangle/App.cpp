@@ -1,32 +1,30 @@
 #include "App.h"
 
+#include "utils/PipelineStateFactory.h"
+
 using namespace vk;
 
 App::App(const uint32_t windowWidth,
          const uint32_t windowHeight,
          const char* windowTitle)
-    : mWindow(new Window(windowWidth, windowHeight, windowTitle))
-    , mAppInstance(new AppInstance())
-    , mWindowSurface(new WindowSurface(*mAppInstance, *mWindow))
-    , mLogicalDevice(new LogicalDevice(*mAppInstance, *mWindowSurface))
-    , mSwapChain(new SwapChain(*mLogicalDevice, *mWindow, *mWindowSurface))
+    : mSystemManager(windowWidth, windowHeight, windowTitle)
     , mRenderPass(createRenderPass())
 {
     VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = 
         PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                                        VK_FALSE);
-    VkPipelineViewportStateCreateInfo viewportCreateInfo = mSwapChain->pipelineViewportCreateInfo();
+    VkPipelineViewportStateCreateInfo viewportCreateInfo = mSystemManager.swapChain().pipelineViewportCreateInfo();
     VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = PipelineStateFactory::defaultRasterizationState();
     VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = PipelineStateFactory::disableMultisampleState();
     VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo =
         PipelineStateFactory::colorBlendState(PipelineStateFactory::disableColorBlendAttachmentState());
 
-    const ShaderModule vertexShaderModule(*mLogicalDevice,
-                                    "../../SimpleTriangle/resources/shaders/vert.spv",
-                                    VK_SHADER_STAGE_VERTEX_BIT);
+    const ShaderModule vertexShaderModule(mSystemManager.logicalDevice(),
+                                          "../../SimpleTriangle/resources/shaders/vert.spv",
+                                          VK_SHADER_STAGE_VERTEX_BIT);
 
-    const ShaderModule fragmentShaderModule(*mLogicalDevice,
+    const ShaderModule fragmentShaderModule(mSystemManager.logicalDevice(),
                                             "../../SimpleTriangle/resources/shaders/frag.spv",
                                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
@@ -36,8 +34,8 @@ App::App(const uint32_t windowWidth,
         fragmentShaderModule.pipelineShaderStageCreateInfo(),
     };
 
-    std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(*mLogicalDevice));
-    mGraphicsPipeline.reset(new GraphicsPipeline(*mLogicalDevice,
+    std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(mSystemManager.logicalDevice()));
+    mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
                                                  *mRenderPass,
                                                  0,
                                                  pipelineLayout,
@@ -51,27 +49,22 @@ App::App(const uint32_t windowWidth,
                                                  &colorBlendStateCreateInfo,
                                                  nullptr));
 
-    mFrameBuffers.reset(new FrameBuffers(*mLogicalDevice,
-                                         *mSwapChain,
+    mFrameBuffers.reset(new FrameBuffers(mSystemManager.logicalDevice(),
+                                         mSystemManager.swapChain(),
                                          *mRenderPass));
 }
 
 void 
 App::run() {
-    assert(mWindow != nullptr);
-
-    while (glfwWindowShouldClose(&mWindow->glfwWindow()) == 0) {
+    while (glfwWindowShouldClose(&mSystemManager.window().glfwWindow()) == 0) {
         glfwPollEvents();
     }
 }
 
 RenderPass*
 App::createRenderPass() const {
-    assert(mSwapChain != nullptr);
-    assert(mLogicalDevice != nullptr);
-
     VkAttachmentDescription attachmentDescription = {};
-    attachmentDescription.format = mSwapChain->imageFormat();
+    attachmentDescription.format = mSystemManager.swapChain().imageFormat();
     attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
     attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -89,7 +82,7 @@ App::createRenderPass() const {
     subpassDescription.colorAttachmentCount = 1;
     subpassDescription.pColorAttachments = &attachmentReference;
 
-    return new RenderPass(*mLogicalDevice,
+    return new RenderPass(mSystemManager.logicalDevice(),
                           {attachmentDescription},
                           {subpassDescription});
 }

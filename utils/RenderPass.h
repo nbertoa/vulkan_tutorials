@@ -18,6 +18,9 @@ public:
                const std::vector<VkSubpassDescription>& subpassDescriptions);
     ~RenderPass();
 
+    RenderPass(const RenderPass&) = delete;
+    const RenderPass& operator=(const RenderPass&) = delete;
+
     VkRenderPass vkRenderPass() const {
         assert(mRenderPass != VK_NULL_HANDLE);
         return mRenderPass;

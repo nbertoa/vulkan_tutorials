@@ -16,6 +16,9 @@ public:
     PhysicalDevice(const AppInstance& appInstance, 
                    const WindowSurface& windowSurface);
 
+    PhysicalDevice(const PhysicalDevice&) = delete;
+    const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+
     VkPhysicalDevice vkPhysicalDevice() const { 
         assert(mPhysicalDevice != VK_NULL_HANDLE); 
         return mPhysicalDevice; 

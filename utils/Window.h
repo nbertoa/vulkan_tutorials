@@ -14,6 +14,9 @@ public:
            const char* title);
     ~Window();
 
+    Window(const Window&) = delete;
+    const Window& operator=(const Window&) = delete;
+
     GLFWwindow& glfwWindow() const { 
         assert(mWindow != nullptr); 
         return *mWindow; 

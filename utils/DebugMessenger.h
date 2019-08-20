@@ -4,12 +4,17 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class AppInstance;
+
 // VkDebugUtilsMessengerEXT wrapper to be able to create/destroy/set its callback easily.
 class DebugMessenger {
 public:
-    DebugMessenger(const VkInstance instance,
+    DebugMessenger(const AppInstance& mAppInstance,
                    const VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo);
     ~DebugMessenger();
+
+    DebugMessenger(const DebugMessenger&) = delete;
+    const DebugMessenger& operator=(const DebugMessenger&) = delete;
 
     // Instance layers have no way to relay the messages back to our program. 
     // To receive those messages, we need to create a callback function.
@@ -19,7 +24,7 @@ public:
                                                         void* userData);
 
 private:
-    VkInstance mInstance = VK_NULL_HANDLE;
+    const AppInstance& mAppInstance;
     VkDebugUtilsMessengerEXT mMessenger = VK_NULL_HANDLE;
 };
 }

@@ -20,6 +20,9 @@ public:
                  const RenderPass& renderPass);
     ~FrameBuffers();
 
+    FrameBuffers(const FrameBuffers&) = delete;
+    const FrameBuffers& operator=(const FrameBuffers&) = delete;
+
 private:
     const LogicalDevice& mLogicalDevice;
     std::vector<VkFramebuffer> mFrameBuffers;

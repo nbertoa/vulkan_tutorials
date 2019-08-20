@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\utils\PipelineStateFactory.cpp" />
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
+    <ClCompile Include="..\..\utils\SystemManager.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="..\..\utils\WindowSurface.cpp" />
     <ClCompile Include="App.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="..\..\utils\PipelineStateFactory.h" />
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
+    <ClInclude Include="..\..\utils\SystemManager.h" />
     <ClInclude Include="..\..\utils\Window.h" />
     <ClInclude Include="..\..\utils\WindowSurface.h" />
     <ClInclude Include="App.h" />
