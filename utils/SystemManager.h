@@ -5,11 +5,12 @@
 #include <memory>
 #include <vulkan/vulkan.h>
 
-#include "utils/AppInstance.h"
-#include "utils/LogicalDevice.h"
-#include "utils/SwapChain.h"
-#include "utils/Window.h"
-#include "utils/WindowSurface.h"
+#include "AppInstance.h"
+#include "CommandPool.h"
+#include "LogicalDevice.h"
+#include "SwapChain.h"
+#include "Window.h"
+#include "WindowSurface.h"
 
 namespace vk {
 class SystemManager {
@@ -46,14 +47,26 @@ public:
         return *mSwapChain;
     }
 
+    const CommandPool& graphicsCommandPool() const {
+        assert(mGraphicsCommandPool != nullptr);
+        return *mGraphicsCommandPool;
+    }
+
+    const CommandPool& presentationCommandPool() const {
+        assert(mPresentationCommandPool != nullptr);
+        return *mPresentationCommandPool;
+    }
+
 private:
     // The member variables declaration order is important because
     // the destruction order must be this.
-    std::unique_ptr<vk::Window> mWindow;
-    std::unique_ptr<vk::AppInstance> mAppInstance;
-    std::unique_ptr<vk::WindowSurface> mWindowSurface;
-    std::unique_ptr<vk::LogicalDevice> mLogicalDevice;
-    std::unique_ptr<vk::SwapChain> mSwapChain;
+    std::unique_ptr<Window> mWindow;
+    std::unique_ptr<AppInstance> mAppInstance;
+    std::unique_ptr<WindowSurface> mWindowSurface;
+    std::unique_ptr<LogicalDevice> mLogicalDevice;
+    std::unique_ptr<SwapChain> mSwapChain;
+    std::unique_ptr<CommandPool> mGraphicsCommandPool;
+    std::unique_ptr<CommandPool> mPresentationCommandPool;
 };
 }
 

@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\utils\SystemManager.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\CommandPool.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -96,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="App.h" />
     <ClInclude Include="..\..\utils\SystemManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\CommandPool.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
