@@ -142,6 +142,7 @@
     <ClCompile Include="..\..\utils\RenderPass.cpp" />
     <ClCompile Include="..\..\utils\PipelineLayout.cpp" />
     <ClCompile Include="..\..\utils\PipelineStateFactory.cpp" />
+    <ClCompile Include="..\..\utils\Semaphore.cpp" />
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
     <ClCompile Include="..\..\utils\SystemManager.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="..\..\utils\RenderPass.h" />
     <ClInclude Include="..\..\utils\PipelineLayout.h" />
     <ClInclude Include="..\..\utils\PipelineStateFactory.h" />
+    <ClInclude Include="..\..\utils\Semaphore.h" />
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\SystemManager.h" />

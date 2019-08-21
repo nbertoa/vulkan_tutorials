@@ -8,6 +8,7 @@
 namespace vk {
 class LogicalDevice;
 class PhysicalDevice;
+class Semaphore;
 class Surface;
 class Window;
 
@@ -25,6 +26,9 @@ public:
 
     SwapChain(const SwapChain&) = delete;
     const SwapChain& operator=(const SwapChain&) = delete;
+
+    // Returns the swap chain's acquired image index 
+    uint32_t acquireNextImage(const Semaphore& semaphore);
 
     // The viewport describes the region of the framebuffer that the output
     // will be rendered too.

@@ -6,6 +6,7 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "PhysicalDevice.h"
+#include "Semaphore.h"
 #include "Surface.h"
 #include "Window.h"
 
@@ -34,6 +35,19 @@ SwapChain::~SwapChain() {
     }
 
     vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
+}
+
+uint32_t 
+SwapChain::acquireNextImage(const Semaphore& semaphore) {
+    uint32_t imageIndex;
+    vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
+                                    mSwapChain,
+                                    std::numeric_limits<uint64_t>::max(),
+                                    semaphore.vkSemaphore(),
+                                    VK_NULL_HANDLE,
+                                    &imageIndex));
+
+    return imageIndex;
 }
 
 VkPipelineViewportStateCreateInfo 
