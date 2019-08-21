@@ -9,7 +9,7 @@
 
 namespace vk {
 class AppInstance;
-class WindowSurface;
+class Surface;
 
 // VkDevice wrapper to be able to create/destroy/get it easily.
 // VkDevice objects represent logical connections to physical devices. 
@@ -19,7 +19,7 @@ class WindowSurface;
 class LogicalDevice {
 public:
     LogicalDevice(const AppInstance& appInstance, 
-                  const WindowSurface& windowSurface);
+                  const Surface& surface);
     ~LogicalDevice();
 
     LogicalDevice(const LogicalDevice&) = delete;

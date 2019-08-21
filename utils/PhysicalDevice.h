@@ -7,14 +7,14 @@
 
 namespace vk {
 class AppInstance;
-class WindowSurface;
+class Surface;
 
 // VkPhysicalDevice wrapper to be able to create/destroy/get it easily.
 // It represents a physical device installed in the system.
 class PhysicalDevice {
 public:
     PhysicalDevice(const AppInstance& appInstance, 
-                   const WindowSurface& windowSurface);
+                   const Surface& surface);
 
     PhysicalDevice(const PhysicalDevice&) = delete;
     const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
@@ -51,10 +51,10 @@ private:
                                                              const std::vector<const char*>& deviceExtensions);
 
     static bool isSwapChainSupported(const VkPhysicalDevice physicalDevice, 
-                                     const WindowSurface& windowSurface);
+                                     const Surface& surface);
 
     bool isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
-                                  const WindowSurface& windowSurface,
+                                  const Surface& surface,
                                   uint32_t& graphicsSupportQueueFamilyIndex,
                                   uint32_t& presentationSupportQueueFamilyIndex) const;
     struct PhysicalDeviceInfo {
@@ -63,7 +63,7 @@ private:
         uint32_t mPresentationSupportQueueFamilyIndex = 0;
     };
     std::vector<PhysicalDeviceInfo> getCandidateDevices(const AppInstance& appInstance,
-                                                        const WindowSurface& windowSurface) const;
+                                                        const Surface& surface) const;
 
     void setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDeviceInfo>& candidateDevices);
 

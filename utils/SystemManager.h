@@ -8,9 +8,9 @@
 #include "AppInstance.h"
 #include "CommandPool.h"
 #include "LogicalDevice.h"
+#include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
-#include "WindowSurface.h"
 
 namespace vk {
 class SystemManager {
@@ -32,9 +32,9 @@ public:
         return *mAppInstance;
     }
 
-    const WindowSurface& windowSurface() const {
-        assert(mWindowSurface != nullptr);
-        return *mWindowSurface;
+    const Surface& surface() const {
+        assert(mSurface != nullptr);
+        return *mSurface;
     }
 
     const LogicalDevice& logicalDevice() const {
@@ -62,7 +62,7 @@ private:
     // the destruction order must be this.
     std::unique_ptr<Window> mWindow;
     std::unique_ptr<AppInstance> mAppInstance;
-    std::unique_ptr<WindowSurface> mWindowSurface;
+    std::unique_ptr<Surface> mSurface;
     std::unique_ptr<LogicalDevice> mLogicalDevice;
     std::unique_ptr<SwapChain> mSwapChain;
     std::unique_ptr<CommandPool> mGraphicsCommandPool;

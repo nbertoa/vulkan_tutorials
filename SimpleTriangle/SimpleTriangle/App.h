@@ -5,11 +5,12 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "utils/SystemManager.h"
+#include "utils/CommandBuffers.h"
 #include "utils/FrameBuffers.h"
 #include "utils/GraphicsPipeline.h"
 #include "utils/RenderPass.h"
 #include "utils/ShaderModule.h"
+#include "utils/SystemManager.h"
 
 class App {
 public:
@@ -27,6 +28,7 @@ private:
     std::unique_ptr<vk::FrameBuffers> mFrameBuffers; 
     std::unique_ptr<vk::RenderPass> mRenderPass;
     std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
+    std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
 };
 
 #endif 

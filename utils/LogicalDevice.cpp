@@ -4,8 +4,8 @@
 
 namespace vk {
 LogicalDevice::LogicalDevice(const AppInstance& appInstance, 
-                             const WindowSurface& windowSurface)
-    : mPhysicalDevice(new PhysicalDevice(appInstance, windowSurface)) {
+                             const Surface& surface)
+    : mPhysicalDevice(new PhysicalDevice(appInstance, surface)) {
     createLogicalDevice(*mPhysicalDevice);
     setQueues();
 }

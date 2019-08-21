@@ -6,9 +6,9 @@ SystemManager::SystemManager(const uint32_t windowWidth,
                              const char* windowTitle)
     : mWindow(new Window(windowWidth, windowHeight, windowTitle))
     , mAppInstance(new AppInstance())
-    , mWindowSurface(new WindowSurface(*mAppInstance, *mWindow))
-    , mLogicalDevice(new LogicalDevice(*mAppInstance, *mWindowSurface))
-    , mSwapChain(new SwapChain(*mLogicalDevice, *mWindow, *mWindowSurface)) 
+    , mSurface(new Surface(*mAppInstance, *mWindow))
+    , mLogicalDevice(new LogicalDevice(*mAppInstance, *mSurface))
+    , mSwapChain(new SwapChain(*mLogicalDevice, *mWindow, *mSurface)) 
     , mGraphicsCommandPool(new CommandPool(*mLogicalDevice, CommandPool::Type::GRAPHICS))
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, CommandPool::Type::PRESENTATION))
 {

@@ -8,8 +8,8 @@
 namespace vk {
 class LogicalDevice;
 class PhysicalDevice;
+class Surface;
 class Window;
-class WindowSurface;
 
 // VkSwapChain wrapper to be able to create/destroy/get swap chain easily.
 // The swapchain provides the ability to present rendering results
@@ -20,7 +20,7 @@ class SwapChain {
 public:
     SwapChain(const LogicalDevice& logicalDevice,
               const Window& window, 
-              const WindowSurface& windowSurface);
+              const Surface& surface);
     ~SwapChain();
 
     SwapChain(const SwapChain&) = delete;
@@ -64,6 +64,11 @@ public:
         return mExtent.height;
     }
 
+    const VkExtent2D& imageExtent() const {
+        assert(mSwapChain != VK_NULL_HANDLE);
+        return mExtent;
+    }
+
 private:
     static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
 
@@ -83,7 +88,7 @@ private:
                                  VkSwapchainCreateInfoKHR& swapChainCreateInfo);
     
     void createSwapChain(const Window& window,
-                         const WindowSurface& windowSurface);
+                         const Surface& surface);
 
     void setImagesAndViews();
     void setViewportAndScissorRect();

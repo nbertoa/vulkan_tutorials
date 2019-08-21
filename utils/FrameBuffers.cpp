@@ -1,7 +1,5 @@
 #include "FrameBuffers.h"
 
-#include <cassert>
-
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
@@ -46,4 +44,12 @@ FrameBuffers::~FrameBuffers() {
                              nullptr);
     }
 }
+
+VkFramebuffer 
+FrameBuffers::buffer(const size_t bufferIndex) const {
+    assert(bufferIndex < mFrameBuffers.size());
+    assert(mFrameBuffers[bufferIndex] != VK_NULL_HANDLE);
+    return mFrameBuffers[bufferIndex];
+}
+
 }

@@ -6,17 +6,17 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "PhysicalDevice.h"
+#include "Surface.h"
 #include "Window.h"
-#include "WindowSurface.h"
 
 namespace vk {
 SwapChain::SwapChain(const LogicalDevice& logicalDevice,
                      const Window& window,
-                     const WindowSurface& windowSurface)
+                     const Surface& surface)
     : mLogicalDevice(logicalDevice) {
        
     createSwapChain(window,
-                    windowSurface);
+                    surface);
 
     setImagesAndViews();
 
@@ -215,23 +215,23 @@ SwapChain::setViewportAndScissorRect() {
 
 void
 SwapChain::createSwapChain(const Window& window,
-                           const WindowSurface& windowSurface) {
+                           const Surface& surface) {
     const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
 
     uint32_t windowWidth;
     uint32_t windowHeight;
     window.widthAndHeight(windowWidth, windowHeight);
 
-    const VkSurfaceFormatKHR surfaceFormat =
-        swapChainSurfaceFormat(windowSurface.surfaceFormats(physicalDevice.vkPhysicalDevice()));
-    const VkSurfaceCapabilitiesKHR surfaceCapabilities =
-        windowSurface.surfaceCapabilities(physicalDevice.vkPhysicalDevice());
+    const VkSurfaceFormatKHR surfaceFormat = 
+        swapChainSurfaceFormat(surface.formats(physicalDevice.vkPhysicalDevice()));
+    const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
+        surface.capabilities(physicalDevice.vkPhysicalDevice());
     mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
     mImageFormat = surfaceFormat.format;
 
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = windowSurface.vkSurface();
+    createInfo.surface = surface.vkSurface();
     createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
     createInfo.imageFormat = mImageFormat;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -243,7 +243,7 @@ SwapChain::createSwapChain(const Window& window,
     createInfo.preTransform = surfaceCapabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode =
-        swapChainPresentMode(windowSurface.presentModes(physicalDevice.vkPhysicalDevice()));
+        swapChainPresentMode(surface.presentModes(physicalDevice.vkPhysicalDevice()));
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 

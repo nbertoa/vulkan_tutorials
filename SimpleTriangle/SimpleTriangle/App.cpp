@@ -52,6 +52,30 @@ App::App(const uint32_t windowWidth,
     mFrameBuffers.reset(new FrameBuffers(mSystemManager.logicalDevice(),
                                          mSystemManager.swapChain(),
                                          *mRenderPass));
+
+    mCommandBuffers.reset(new CommandBuffers(mSystemManager.logicalDevice(),
+                                             mSystemManager.graphicsCommandPool(),
+                                             mFrameBuffers->bufferCount(),
+                                             VK_COMMAND_BUFFER_LEVEL_PRIMARY));
+
+    for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
+        mCommandBuffers->beginRecording(i,
+                                        VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
+
+        mCommandBuffers->beginPass(i,
+                                   *mRenderPass,
+                                   mFrameBuffers->buffer(i),
+                                   mSystemManager.swapChain().imageExtent());
+        mCommandBuffers->bindPipeline(i,
+                                      *mGraphicsPipeline);
+        mCommandBuffers->draw(i,
+                              3,
+                              1,
+                              0,
+                              0);
+        mCommandBuffers->endPass(i);
+        mCommandBuffers->endRecording(i);
+    }
 }
 
 void 

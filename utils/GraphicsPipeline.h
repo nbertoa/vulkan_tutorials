@@ -1,6 +1,8 @@
 #ifndef UTILS_GRAPHICS_PIPELINE
 #define UTILS_GRAPHICS_PIPELINE
 
+#include <cassert>
+
 #include <memory>
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -43,6 +45,11 @@ public:
 
     GraphicsPipeline(const GraphicsPipeline&) = delete;
     const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
+
+    VkPipeline vkPipeline() const {
+        assert(mPipeline != VK_NULL_HANDLE);
+        return mPipeline;
+    }
 
 private:
     const LogicalDevice& mLogicalDevice;

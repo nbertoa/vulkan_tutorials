@@ -1,12 +1,13 @@
-#include "WindowSurface.h"
+#include "Surface.h"
 
 #include "AppInstance.h"
 #include "DebugUtils.h"
+#include "PhysicalDevice.h"
 #include "Window.h"
 
 namespace vk {
-WindowSurface::WindowSurface(const AppInstance& appInstance,
-                             Window& window)
+Surface::Surface(const AppInstance& appInstance,
+                       Window& window)
     : mAppInstance(appInstance) {
     vkChecker(glfwCreateWindowSurface(mAppInstance.vkInstance(),
                                       &window.glfwWindow(),
@@ -15,13 +16,13 @@ WindowSurface::WindowSurface(const AppInstance& appInstance,
     assert(mSurface != VK_NULL_HANDLE);
 }
 
-WindowSurface::~WindowSurface() {
+Surface::~Surface() {
     assert(mSurface != VK_NULL_HANDLE);
     vkDestroySurfaceKHR(mAppInstance.vkInstance(), mSurface, nullptr);
 }
 
 VkSurfaceCapabilitiesKHR
-WindowSurface::surfaceCapabilities(const VkPhysicalDevice physicalDevice) const {
+Surface::capabilities(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
     assert(mSurface != VK_NULL_HANDLE);
 
@@ -34,7 +35,7 @@ WindowSurface::surfaceCapabilities(const VkPhysicalDevice physicalDevice) const 
 }
 
 std::vector<VkSurfaceFormatKHR>
-WindowSurface::surfaceFormats(const VkPhysicalDevice physicalDevice) const {
+Surface::formats(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
     assert(mSurface != VK_NULL_HANDLE);
 
@@ -58,7 +59,7 @@ WindowSurface::surfaceFormats(const VkPhysicalDevice physicalDevice) const {
 }
 
 std::vector<VkPresentModeKHR>
-WindowSurface::presentModes(const VkPhysicalDevice physicalDevice) const {
+Surface::presentModes(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
     assert(mSurface != VK_NULL_HANDLE);
 

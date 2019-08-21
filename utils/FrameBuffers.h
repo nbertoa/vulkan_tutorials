@@ -1,6 +1,7 @@
 #ifndef UTILS_FRAME_BUFFERS
 #define UTILS_FRAME_BUFFERS
 
+#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -22,6 +23,13 @@ public:
 
     FrameBuffers(const FrameBuffers&) = delete;
     const FrameBuffers& operator=(const FrameBuffers&) = delete;
+
+    size_t bufferCount() const {
+        assert(mFrameBuffers.empty() == false);
+        return mFrameBuffers.size();
+    }
+
+    VkFramebuffer buffer(const size_t bufferIndex) const;
 
 private:
     const LogicalDevice& mLogicalDevice;

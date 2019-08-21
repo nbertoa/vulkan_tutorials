@@ -6,14 +6,14 @@
 
 #include "AppInstance.h"
 #include "DebugUtils.h"
-#include "WindowSurface.h"
+#include "Surface.h"
 
 namespace vk {
 PhysicalDevice::PhysicalDevice(const AppInstance& appInstance,
-                               const WindowSurface& windowSurface)
+                               const Surface& surface)
     : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} {
     setPhysicalDevice(getCandidateDevices(appInstance,
-                                          windowSurface));
+                                          surface));
 }
 
 bool
@@ -115,15 +115,15 @@ PhysicalDevice::areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDev
 
 bool
 PhysicalDevice::isSwapChainSupported(const VkPhysicalDevice physicalDevice, 
-                                     const WindowSurface& windowSurface) {
+                                     const Surface& surface) {
     assert(physicalDevice != VK_NULL_HANDLE);
-    return windowSurface.surfaceFormats(physicalDevice).empty() == false && 
-           windowSurface.presentModes(physicalDevice).empty() == false;
+    return surface.formats(physicalDevice).empty() == false && 
+           surface.presentModes(physicalDevice).empty() == false;
 }
 
 bool
 PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
-                                         const WindowSurface& windowSurface,
+                                         const Surface& surface,
                                          uint32_t& graphicsSupportQueueFamilyIndex,
                                          uint32_t& presentationSupportQueueFamilyIndex) const {
     assert(physicalDevice != VK_NULL_HANDLE);
@@ -131,19 +131,21 @@ PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice,
     return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, 
                                                          graphicsSupportQueueFamilyIndex) &&
            isPresentationSupportedByPhysicalDevice(physicalDevice, 
-                                                   windowSurface.vkSurface(), 
+                                                   surface.vkSurface(), 
                                                    presentationSupportQueueFamilyIndex) &&
            areDeviceExtensionsSupportedByPhysicalDevice(physicalDevice, 
                                                         mDeviceExtensions) &&
            isSwapChainSupported(physicalDevice, 
-                                windowSurface);
+                                surface);
 }
 
 std::vector<PhysicalDevice::PhysicalDeviceInfo>
 PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
-                                    const WindowSurface& windowSurface) const {
+                                    const Surface& surface) const {
     uint32_t physicalDeviceCount = 0;
-    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(), &physicalDeviceCount, nullptr));
+    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(), 
+                                         &physicalDeviceCount, 
+                                         nullptr));
     assert(physicalDeviceCount > 0);
 
     // Get all the suitable physical devices
@@ -158,7 +160,7 @@ PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
         uint32_t graphicsSupportQueueFamilyIndex;
         uint32_t presentationSupportQueueFamilyIndex;
         if (isPhysicalDeviceSuitable(device, 
-                                     windowSurface,
+                                     surface,
                                      graphicsSupportQueueFamilyIndex,
                                      presentationSupportQueueFamilyIndex)) {
             PhysicalDeviceInfo physicalDeviceInfo;
