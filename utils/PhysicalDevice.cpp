@@ -11,7 +11,8 @@
 namespace vk {
 PhysicalDevice::PhysicalDevice(const AppInstance& appInstance,
                                const Surface& surface)
-    : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} {
+    : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} 
+{
     setPhysicalDevice(getCandidateDevices(appInstance,
                                           surface));
 }

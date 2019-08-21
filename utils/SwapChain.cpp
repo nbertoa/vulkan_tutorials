@@ -13,8 +13,8 @@ namespace vk {
 SwapChain::SwapChain(const LogicalDevice& logicalDevice,
                      const Window& window,
                      const Surface& surface)
-    : mLogicalDevice(logicalDevice) {
-       
+    : mLogicalDevice(logicalDevice) 
+{       
     createSwapChain(window,
                     surface);
 

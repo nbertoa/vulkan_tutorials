@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include <cassert>
+
 #include "utils/PipelineStateFactory.h"
 
 using namespace vk;
@@ -7,79 +9,24 @@ using namespace vk;
 App::App(const uint32_t windowWidth,
          const uint32_t windowHeight,
          const char* windowTitle)
-    : mSystemManager(windowWidth, windowHeight, windowTitle)
+    : mSystemManager(windowWidth, 
+                     windowHeight, 
+                     windowTitle)
     , mRenderPass(createRenderPass())
+    , mGraphicsPipeline(createPipeline())
+    , mFrameBuffers(new FrameBuffers(mSystemManager.logicalDevice(),
+                                     mSystemManager.swapChain(),
+                                     *mRenderPass))
+    , mCommandBuffers(new CommandBuffers(mSystemManager.logicalDevice(),
+                                         mSystemManager.graphicsCommandPool(),
+                                         mFrameBuffers->bufferCount(),
+                                         VK_COMMAND_BUFFER_LEVEL_PRIMARY)) 
 {
-    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = 
-        PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                                                       VK_FALSE);
-    VkPipelineViewportStateCreateInfo viewportCreateInfo = mSystemManager.swapChain().pipelineViewportCreateInfo();
-    VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = PipelineStateFactory::defaultRasterizationState();
-    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = PipelineStateFactory::disableMultisampleState();
-    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo =
-        PipelineStateFactory::colorBlendState(PipelineStateFactory::disableColorBlendAttachmentState());
-
-    const ShaderModule vertexShaderModule(mSystemManager.logicalDevice(),
-                                          "../../SimpleTriangle/resources/shaders/vert.spv",
-                                          VK_SHADER_STAGE_VERTEX_BIT);
-
-    const ShaderModule fragmentShaderModule(mSystemManager.logicalDevice(),
-                                            "../../SimpleTriangle/resources/shaders/frag.spv",
-                                            VK_SHADER_STAGE_FRAGMENT_BIT);
-
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos = 
-    {
-        vertexShaderModule.pipelineShaderStageCreateInfo(),
-        fragmentShaderModule.pipelineShaderStageCreateInfo(),
-    };
-
-    std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(mSystemManager.logicalDevice()));
-    mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
-                                                 *mRenderPass,
-                                                 0,
-                                                 pipelineLayout,
-                                                 shaderStageCreateInfos,
-                                                 &vertexInputStateCreateInfo,
-                                                 &inputAssemblyStateCreateInfo,
-                                                 &viewportCreateInfo,
-                                                 &rasterizationStateCreateInfo,
-                                                 &multisampleStateCreateInfo,
-                                                 nullptr,
-                                                 &colorBlendStateCreateInfo,
-                                                 nullptr));
-
-    mFrameBuffers.reset(new FrameBuffers(mSystemManager.logicalDevice(),
-                                         mSystemManager.swapChain(),
-                                         *mRenderPass));
-
-    mCommandBuffers.reset(new CommandBuffers(mSystemManager.logicalDevice(),
-                                             mSystemManager.graphicsCommandPool(),
-                                             mFrameBuffers->bufferCount(),
-                                             VK_COMMAND_BUFFER_LEVEL_PRIMARY));
-
-    for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
-        mCommandBuffers->beginRecording(i,
-                                        VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
-
-        mCommandBuffers->beginPass(i,
-                                   *mRenderPass,
-                                   mFrameBuffers->buffer(i),
-                                   mSystemManager.swapChain().imageExtent());
-        mCommandBuffers->bindPipeline(i,
-                                      *mGraphicsPipeline);
-        mCommandBuffers->draw(i,
-                              3,
-                              1,
-                              0,
-                              0);
-        mCommandBuffers->endPass(i);
-        mCommandBuffers->endRecording(i);
-    }
 }
 
 void 
 App::run() {
+    recordCommandBuffers();
     while (glfwWindowShouldClose(&mSystemManager.window().glfwWindow()) == 0) {
         glfwPollEvents();
     }
@@ -109,4 +56,69 @@ App::createRenderPass() const {
     return new RenderPass(mSystemManager.logicalDevice(),
                           {attachmentDescription},
                           {subpassDescription});
+}
+
+GraphicsPipeline*
+App::createPipeline() {
+
+    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo =
+        PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+                                                       VK_FALSE);
+    VkPipelineViewportStateCreateInfo viewportCreateInfo = mSystemManager.swapChain().pipelineViewportCreateInfo();
+    VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = PipelineStateFactory::defaultRasterizationState();
+    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = PipelineStateFactory::disableMultisampleState();
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo =
+        PipelineStateFactory::colorBlendState(PipelineStateFactory::disableColorBlendAttachmentState());
+
+    const ShaderModule vertexShaderModule(mSystemManager.logicalDevice(),
+                                          "../../SimpleTriangle/resources/shaders/vert.spv",
+                                          VK_SHADER_STAGE_VERTEX_BIT);
+
+    const ShaderModule fragmentShaderModule(mSystemManager.logicalDevice(),
+                                            "../../SimpleTriangle/resources/shaders/frag.spv",
+                                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos =
+    {
+        vertexShaderModule.pipelineShaderStageCreateInfo(),
+        fragmentShaderModule.pipelineShaderStageCreateInfo(),
+    };
+
+    std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(mSystemManager.logicalDevice()));
+    return new GraphicsPipeline(mSystemManager.logicalDevice(),
+                                *mRenderPass,
+                                0,
+                                pipelineLayout,
+                                shaderStageCreateInfos,
+                                &vertexInputStateCreateInfo,
+                                &inputAssemblyStateCreateInfo,
+                                &viewportCreateInfo,
+                                &rasterizationStateCreateInfo,
+                                &multisampleStateCreateInfo,
+                                nullptr,
+                                &colorBlendStateCreateInfo,
+                                nullptr);
+}
+
+void
+App::recordCommandBuffers() {
+    assert(mCommandBuffers != nullptr);
+    assert(mFrameBuffers != nullptr);
+    for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
+        CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(i);
+
+        commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
+
+        commandBuffer.beginPass(*mRenderPass,
+                                mFrameBuffers->buffer(i),
+                                mSystemManager.swapChain().imageExtent());
+        commandBuffer.bindPipeline(*mGraphicsPipeline);
+        commandBuffer.draw(3,
+                           1,
+                           0,
+                           0);
+        commandBuffer.endPass();
+        commandBuffer.endRecording();
+    }
 }

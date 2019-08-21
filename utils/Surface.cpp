@@ -8,7 +8,8 @@
 namespace vk {
 Surface::Surface(const AppInstance& appInstance,
                        Window& window)
-    : mAppInstance(appInstance) {
+    : mAppInstance(appInstance) 
+{
     vkChecker(glfwCreateWindowSurface(mAppInstance.vkInstance(),
                                       &window.glfwWindow(),
                                       nullptr, 

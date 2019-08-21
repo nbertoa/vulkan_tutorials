@@ -21,13 +21,16 @@ public:
     void run();
 private:
     vk::RenderPass* createRenderPass() const;
+    vk::GraphicsPipeline* createPipeline();
+
+    void recordCommandBuffers();
 
     // The member variables declaration order is important because
     // the destruction order must be this.
-    vk::SystemManager mSystemManager;
-    std::unique_ptr<vk::FrameBuffers> mFrameBuffers; 
+    vk::SystemManager mSystemManager;     
     std::unique_ptr<vk::RenderPass> mRenderPass;
     std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
+    std::unique_ptr<vk::FrameBuffers> mFrameBuffers;
     std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
 };
 

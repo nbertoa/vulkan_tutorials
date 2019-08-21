@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\utils\Surface.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\CommandBuffer.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -108,6 +111,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\Surface.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\CommandBuffer.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
