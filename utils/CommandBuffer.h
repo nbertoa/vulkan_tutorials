@@ -9,6 +9,7 @@ class CommandPool;
 class GraphicsPipeline;
 class LogicalDevice;
 class RenderPass;
+class Semaphore;
 
 // VkCommandBuffer wrapper to be able to create and use it easily.
 // Command buffers are objects used to record commands which can be
@@ -41,6 +42,11 @@ public:
               const uint32_t instanceCount,
               const uint32_t firstVertex,
               const uint32_t firstInstance);
+
+    void submit(const VkQueue queue,
+                const Semaphore& waitSemaphore,
+                const Semaphore& signalSemaphore,
+                const VkPipelineStageFlags waitStage);
 
 private:
     VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;

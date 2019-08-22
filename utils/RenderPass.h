@@ -15,7 +15,8 @@ class RenderPass {
 public:
     RenderPass(const LogicalDevice& logicalDevice,
                const std::vector<VkAttachmentDescription>& attachmentDescriptions,
-               const std::vector<VkSubpassDescription>& subpassDescriptions);
+               const std::vector<VkSubpassDescription>& subpassDescriptions,
+               const std::vector<VkSubpassDependency>& subpassDependencies);
     ~RenderPass();
 
     RenderPass(const RenderPass&) = delete;

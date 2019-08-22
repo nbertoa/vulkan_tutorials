@@ -5,6 +5,7 @@
 #include "GraphicsPipeline.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
+#include "Semaphore.h"
 
 namespace vk {
 CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
@@ -94,5 +95,36 @@ CommandBuffer::draw(const uint32_t vertexCount,
               instanceCount,
               firstVertex,
               firstInstance);
+}
+
+void 
+CommandBuffer::submit(const VkQueue queue, 
+                      const Semaphore& waitSemaphore,
+                      const Semaphore& signalSemaphore,
+                      const VkPipelineStageFlags waitStage) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+    assert(queue != VK_NULL_HANDLE);
+    
+    VkSubmitInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    
+    // Set semaphore to wait on before execution begins and in which
+    // stage of the pipeline to wait.
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &waitSemaphore.vkSemaphore();
+    info.pWaitDstStageMask = &waitStage;
+
+    // Set command buffer
+    info.commandBufferCount = 1;
+    info.pCommandBuffers = &mCommandBuffer;
+
+    // Specify which semaphores to signal once the command buffer has finished execution.
+    info.signalSemaphoreCount = 1;
+    info.pSignalSemaphores = &signalSemaphore.vkSemaphore();
+
+    vkChecker(vkQueueSubmit(queue,
+                            1,
+                            &info,
+                            VK_NULL_HANDLE));
 }
 }

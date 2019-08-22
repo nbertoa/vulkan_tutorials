@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "utils/DebugUtils.h"
 #include "utils/PipelineStateFactory.h"
 
 using namespace vk;
@@ -21,19 +22,25 @@ App::App(const uint32_t windowWidth,
                                          mSystemManager.graphicsCommandPool(),
                                          mFrameBuffers->bufferCount(),
                                          VK_COMMAND_BUFFER_LEVEL_PRIMARY)) 
+    , mImageAvailableSemaphore(mSystemManager.logicalDevice())
+    , mRenderFinishedSemaphore(mSystemManager.logicalDevice())
 {
+    recordCommandBuffers();
 }
 
 void 
-App::run() {
-    recordCommandBuffers();
+App::run() {   
     while (glfwWindowShouldClose(&mSystemManager.window().glfwWindow()) == 0) {
         glfwPollEvents();
+        submitCommandBufferAndPresent();
     }
+
+    vkChecker(vkDeviceWaitIdle(mSystemManager.logicalDevice().vkDevice()));
 }
 
 RenderPass*
 App::createRenderPass() const {
+    // Create attachment descriptions
     VkAttachmentDescription attachmentDescription = {};
     attachmentDescription.format = mSystemManager.swapChain().imageFormat();
     attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -44,6 +51,7 @@ App::createRenderPass() const {
     attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+    // Create sub pass descriptions
     VkAttachmentReference attachmentReference = {};
     attachmentReference.attachment = 0;
     attachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -53,9 +61,33 @@ App::createRenderPass() const {
     subpassDescription.colorAttachmentCount = 1;
     subpassDescription.pColorAttachments = &attachmentReference;
 
+    // Create subpass dependencies
+    VkSubpassDependency dependency = {};
+    // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
+    // depending on whether it is specified in srcSubpass or dstSubpass.
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL; 
+    dependency.dstSubpass = 0; // Our subpass (we have only 1)
+
+    // Specify the operations to wait on and the stages in which these operations occur.
+    // We need to wait for the swap chain to finish reading from the image
+    // before we can access it.
+    // This can be accomplished by waiting on the color attachment output stage itself.
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+
+    // The operations that should wait on this are in the color attachment stage
+    // adn involve the reading and writing of the color attachment.
+    // These settings will prevent the transition from happening until it is
+    // actually necessary (and allowed): when we want to start writing colors
+    // to it.
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                               VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
     return new RenderPass(mSystemManager.logicalDevice(),
                           {attachmentDescription},
-                          {subpassDescription});
+                          {subpassDescription},
+                          {dependency});
 }
 
 GraphicsPipeline*
@@ -121,4 +153,22 @@ App::recordCommandBuffers() {
         commandBuffer.endPass();
         commandBuffer.endRecording();
     }
+}
+
+void 
+App::submitCommandBufferAndPresent() {
+    assert(mCommandBuffers != nullptr);
+
+    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(mImageAvailableSemaphore);
+    assert(swapChainImageIndex < static_cast<uint32_t>(mCommandBuffers->bufferCount()));
+
+    CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
+    commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
+                         mImageAvailableSemaphore,
+                         mRenderFinishedSemaphore,
+                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+
+    mSystemManager.swapChain().present(mSystemManager.logicalDevice().presentationQueue(),
+                                       mRenderFinishedSemaphore,
+                                       swapChainImageIndex);
 }

@@ -39,6 +39,8 @@ SwapChain::~SwapChain() {
 
 uint32_t 
 SwapChain::acquireNextImage(const Semaphore& semaphore) {
+    assert(mSwapChain != VK_NULL_HANDLE);
+
     uint32_t imageIndex;
     vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
                                     mSwapChain,
@@ -48,6 +50,31 @@ SwapChain::acquireNextImage(const Semaphore& semaphore) {
                                     &imageIndex));
 
     return imageIndex;
+}
+
+void
+SwapChain::present(const VkQueue queue,
+                   const Semaphore& waitSemaphore,
+                   const uint32_t imageIndex) {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(queue != VK_NULL_HANDLE);
+
+    VkPresentInfoKHR info = {};
+    info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    
+    // Semaphore to wait on before presentation can happen.
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &waitSemaphore.vkSemaphore();
+
+    // Set swap chain to present the image and the
+    // index of the image for it.
+    info.swapchainCount = 1;
+    info.pSwapchains = &mSwapChain;
+    info.pImageIndices = &imageIndex;
+
+    vkChecker(vkQueuePresentKHR(queue,
+                                &info));
+
 }
 
 VkPipelineViewportStateCreateInfo 

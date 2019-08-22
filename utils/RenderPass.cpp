@@ -6,7 +6,8 @@
 namespace vk {
 RenderPass::RenderPass(const LogicalDevice& logicalDevice,
                        const std::vector<VkAttachmentDescription>& attachmentDescriptions,
-                       const std::vector<VkSubpassDescription>& subpassDescriptions)
+                       const std::vector<VkSubpassDescription>& subpassDescriptions,
+                       const std::vector<VkSubpassDependency>& subpassDependencies)
     : mLogicalDevice(logicalDevice)
 {
     VkRenderPassCreateInfo createInfo = {};
@@ -15,6 +16,8 @@ RenderPass::RenderPass(const LogicalDevice& logicalDevice,
     createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data();
     createInfo.subpassCount = static_cast<uint32_t>(subpassDescriptions.size());
     createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : subpassDescriptions.data();
+    createInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
+    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : subpassDependencies.data();
 
     vkChecker(vkCreateRenderPass(mLogicalDevice.vkDevice(),
                                  &createInfo,

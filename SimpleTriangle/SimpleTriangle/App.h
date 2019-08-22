@@ -9,6 +9,7 @@
 #include "utils/FrameBuffers.h"
 #include "utils/GraphicsPipeline.h"
 #include "utils/RenderPass.h"
+#include "utils/Semaphore.h"
 #include "utils/ShaderModule.h"
 #include "utils/SystemManager.h"
 
@@ -25,6 +26,8 @@ private:
 
     void recordCommandBuffers();
 
+    void submitCommandBufferAndPresent();
+
     // The member variables declaration order is important because
     // the destruction order must be this.
     vk::SystemManager mSystemManager;     
@@ -32,6 +35,9 @@ private:
     std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
     std::unique_ptr<vk::FrameBuffers> mFrameBuffers;
     std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
+
+    vk::Semaphore mImageAvailableSemaphore;
+    vk::Semaphore mRenderFinishedSemaphore;
 };
 
 #endif 

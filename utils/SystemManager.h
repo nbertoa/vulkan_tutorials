@@ -42,7 +42,7 @@ public:
         return *mLogicalDevice;
     }
 
-    const SwapChain& swapChain() const {
+    SwapChain& swapChain() const {
         assert(mSwapChain != nullptr);
         return *mSwapChain;
     }
