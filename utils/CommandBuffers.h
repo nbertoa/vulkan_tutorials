@@ -13,7 +13,8 @@ class GraphicsPipeline;
 class LogicalDevice;
 class RenderPass;
 
-// VkCommandBuffer list wrapper to be able to create and record them easily.
+// VkCommandBuffer list wrapper to be able to 
+// create and record them easily.
 class CommandBuffers {
 public:
     CommandBuffers(const LogicalDevice& logicalDevice,

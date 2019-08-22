@@ -9,7 +9,8 @@
 namespace vk {
 class LogicalDevice;
 
-// VkShaderModule wrapper to be able to create/destroy/get/handle shader module easily.
+// VkShaderModule wrapper to be able to create/destroy/get/handle 
+// shader module easily.
 // VkShaderModule is just a thin wrapper around the shader bytecode that 
 // we have previously loaded from a file and the functions defined in it.
 // We assume the entry point of the shader is "main".

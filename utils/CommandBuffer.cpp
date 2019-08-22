@@ -118,7 +118,8 @@ CommandBuffer::submit(const VkQueue queue,
     info.commandBufferCount = 1;
     info.pCommandBuffers = &mCommandBuffer;
 
-    // Specify which semaphores to signal once the command buffer has finished execution.
+    // Specify which semaphores to signal once the command 
+    // buffer has finished execution.
     info.signalSemaphoreCount = 1;
     info.pSignalSemaphores = &signalSemaphore.vkSemaphore();
 

@@ -22,7 +22,8 @@ public:
     static VkPipelineVertexInputStateCreateInfo emptyVertexInputState();
 
     // The rasterizer takes the geometry that is shaped by the vertices 
-    // from the vertex shader and turns into fragments to be colored by the fragment shader:
+    // from the vertex shader and turns into fragments to be colored by 
+    // the fragment shader:
     //
     // No depth clamping
     // Fill polygon

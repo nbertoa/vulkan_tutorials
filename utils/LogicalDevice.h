@@ -12,9 +12,12 @@ class AppInstance;
 class Surface;
 
 // VkDevice wrapper to be able to create/destroy/get it easily.
-// VkDevice objects represent logical connections to physical devices. 
-// The created logical device is then the primary interface to the physical device.
-// Each device exposes a number of queue families each having one or more queues. 
+// VkDevice objects represent logical connections to 
+// physical devices. 
+// The created logical device is then the primary interface 
+// to the physical device.
+// Each device exposes a number of queue families each having 
+// one or more queues. 
 // All queues in a queue family support the same operations.
 class LogicalDevice {
 public:
@@ -48,7 +51,8 @@ public:
 private:
     void createLogicalDevice(const PhysicalDevice& physicalDevice);
 
-    static std::vector<VkDeviceQueueCreateInfo> buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDevice);
+    static std::vector<VkDeviceQueueCreateInfo> 
+    buildDeviceQueueCreateInfoVector(const PhysicalDevice& physicalDevice);
    
     void setQueues();
 
