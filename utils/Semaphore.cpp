@@ -16,8 +16,14 @@ Semaphore::Semaphore(const LogicalDevice& logicalDevice)
                                 &mSemaphore));
 }
 
+Semaphore::Semaphore(Semaphore&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mSemaphore(std::move(other.mSemaphore))
+{
+    other.mSemaphore = VK_NULL_HANDLE;
+}
+
 Semaphore::~Semaphore() {
-    assert(mSemaphore != VK_NULL_HANDLE);
     vkDestroySemaphore(mLogicalDevice.vkDevice(),
                        mSemaphore,
                        nullptr);

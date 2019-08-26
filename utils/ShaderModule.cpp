@@ -17,11 +17,17 @@ ShaderModule::ShaderModule(const LogicalDevice& logicalDevice,
 }
 
 ShaderModule::~ShaderModule() {
-    assert(mShaderModule != VK_NULL_HANDLE);
-
     vkDestroyShaderModule(mLogicalDevice.vkDevice(), 
                           mShaderModule, 
                           nullptr);
+}
+ShaderModule::ShaderModule(ShaderModule&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mShaderStageFlag(other.mShaderStageFlag)
+    , mShaderByteCodePath(std::move(other.mShaderByteCodePath))
+    , mShaderModule(other.mShaderModule)
+{
+    other.mShaderModule = VK_NULL_HANDLE;
 }
 
 VkPipelineShaderStageCreateInfo 

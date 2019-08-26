@@ -20,6 +20,7 @@ public:
                    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = std::vector<VkDescriptorSetLayout>(),
                    const std::vector<VkPushConstantRange>& pushConstantRanges = std::vector<VkPushConstantRange>());
     ~PipelineLayout();
+    PipelineLayout(PipelineLayout&& other) noexcept;
 
     PipelineLayout(const PipelineLayout&) = delete;
     const PipelineLayout& operator=(const PipelineLayout&) = delete;

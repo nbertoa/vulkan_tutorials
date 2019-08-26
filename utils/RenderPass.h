@@ -18,6 +18,7 @@ public:
                const std::vector<VkSubpassDescription>& subpassDescriptions,
                const std::vector<VkSubpassDependency>& subpassDependencies);
     ~RenderPass();
+    RenderPass(RenderPass&& other) noexcept;
 
     RenderPass(const RenderPass&) = delete;
     const RenderPass& operator=(const RenderPass&) = delete;

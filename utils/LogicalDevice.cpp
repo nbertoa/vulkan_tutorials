@@ -12,11 +12,20 @@ LogicalDevice::LogicalDevice(const AppInstance& appInstance,
 }
 
 LogicalDevice::~LogicalDevice() {
-    assert(mLogicalDevice != VK_NULL_HANDLE);
-    assert(mPhysicalDevice != nullptr);
-
     delete mPhysicalDevice;
     vkDestroyDevice(mLogicalDevice, nullptr);
+}
+
+LogicalDevice::LogicalDevice(LogicalDevice&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mGraphicsQueue(other.mGraphicsQueue)
+    , mPresentationQueue(other.mPresentationQueue)
+    , mPhysicalDevice(other.mPhysicalDevice)
+{
+    other.mLogicalDevice = VK_NULL_HANDLE;
+    other.mGraphicsQueue = VK_NULL_HANDLE;
+    other.mPresentationQueue = VK_NULL_HANDLE;
+    mPhysicalDevice = nullptr;
 }
 
 void

@@ -15,6 +15,7 @@ public:
     // - GLFW must be initialized first.
     AppInstance();
     ~AppInstance();
+    AppInstance(AppInstance&& other) noexcept;
 
     AppInstance(const AppInstance&) = delete;
     const AppInstance& operator=(const AppInstance&) = delete;

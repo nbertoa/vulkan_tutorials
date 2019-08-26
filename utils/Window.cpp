@@ -27,9 +27,14 @@ Window::Window(const uint32_t width,
 }
 
 Window::~Window() {
-    assert(mWindow != nullptr);
     glfwDestroyWindow(mWindow);
     glfwTerminate();
+}
+
+Window::Window(Window&& other) noexcept
+    : mWindow(other.mWindow)
+{
+    other.mWindow = nullptr;
 }
 
 void

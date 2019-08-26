@@ -25,6 +25,8 @@ public:
     Surface(const AppInstance& appInstance,
             Window& window);
     ~Surface();
+    Surface(Surface&& other) noexcept;
+
     Surface(const Surface&) = delete;
     const Surface& operator=(const Surface&) = delete;
 

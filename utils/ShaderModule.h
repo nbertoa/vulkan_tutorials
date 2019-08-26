@@ -21,6 +21,7 @@ public:
                  const std::string& shaderFilepath,
                  const VkShaderStageFlagBits shaderStageFlag);
     ~ShaderModule();
+    ShaderModule(ShaderModule&& other) noexcept;
 
     ShaderModule(const ShaderModule&) = delete;
     const ShaderModule& operator=(const ShaderModule&) = delete;

@@ -21,6 +21,7 @@ public:
                  const SwapChain& swapChain,
                  const RenderPass& renderPass);
     ~FrameBuffers();
+    FrameBuffers(FrameBuffers&& other) noexcept;
 
     FrameBuffers(const FrameBuffers&) = delete;
     const FrameBuffers& operator=(const FrameBuffers&) = delete;

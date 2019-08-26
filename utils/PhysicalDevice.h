@@ -16,6 +16,8 @@ public:
     PhysicalDevice(const AppInstance& appInstance, 
                    const Surface& surface);
 
+    PhysicalDevice(PhysicalDevice&& other) noexcept;
+
     PhysicalDevice(const PhysicalDevice&) = delete;
     const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 

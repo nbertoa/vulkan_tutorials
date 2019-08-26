@@ -9,14 +9,24 @@ AppInstance::AppInstance() {
 }
 
 AppInstance::~AppInstance() {
-    assert(mInstance != VK_NULL_HANDLE);
-
 #ifndef NDEBUG // Debug
-    assert(mMessenger != nullptr);
     delete mMessenger;
 #endif
 
     vkDestroyInstance(mInstance, nullptr);
+}
+
+AppInstance::AppInstance(AppInstance&& other) noexcept 
+    : mInstance(other.mInstance)
+#ifndef NDEBUG // Debug
+    , mMessenger(other.mMessenger)
+#endif
+{
+    other.mInstance = VK_NULL_HANDLE;
+
+#ifndef NDEBUG // Debug
+    other.mMessenger = nullptr;
+#endif    
 }
 
 void

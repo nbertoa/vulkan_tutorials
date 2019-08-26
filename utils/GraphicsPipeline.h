@@ -42,6 +42,7 @@ public:
                      const VkPipelineColorBlendStateCreateInfo* colorBlendState,
                      const VkPipelineDynamicStateCreateInfo* dynamicState);
     ~GraphicsPipeline();
+    GraphicsPipeline(GraphicsPipeline&& other) noexcept;
 
     GraphicsPipeline(const GraphicsPipeline&) = delete;
     const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;

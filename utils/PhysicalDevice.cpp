@@ -16,6 +16,14 @@ PhysicalDevice::PhysicalDevice(const AppInstance& appInstance,
     setPhysicalDevice(getCandidateDevices(appInstance,
                                           surface));
 }
+PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
+    : mPhysicalDevice(other.mPhysicalDevice)
+    , mGraphicsSupportQueueFamilyIndex(other.mGraphicsSupportQueueFamilyIndex)
+    , mPresentationSupportQueueFamilyIndex(other.mPresentationSupportQueueFamilyIndex)
+    , mDeviceExtensions(std::move(other.mDeviceExtensions))
+{
+    other.mPhysicalDevice = VK_NULL_HANDLE;
+}
 
 bool
 PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 

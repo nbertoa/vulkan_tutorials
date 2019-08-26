@@ -21,10 +21,15 @@ CommandPool::CommandPool(const LogicalDevice& logicalDevice,
 }
 
 CommandPool::~CommandPool() {
-    assert(mCommandPool != VK_NULL_HANDLE);
-
     vkDestroyCommandPool(mLogicalDevice.vkDevice(),
                          mCommandPool,
                          nullptr);
+}
+
+CommandPool::CommandPool(CommandPool&& other) noexcept 
+    : mLogicalDevice(other.mLogicalDevice)
+    , mCommandPool(other.mCommandPool)
+{
+    other.mCommandPool = VK_NULL_HANDLE;
 }
 }

@@ -9,7 +9,7 @@
 #include "utils/FrameBuffers.h"
 #include "utils/GraphicsPipeline.h"
 #include "utils/RenderPass.h"
-#include "utils/Semaphore.h"
+#include "utils/Semaphores.h"
 #include "utils/ShaderModule.h"
 #include "utils/SystemManager.h"
 
@@ -36,8 +36,8 @@ private:
     std::unique_ptr<vk::FrameBuffers> mFrameBuffers;
     std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
 
-    vk::Semaphore mImageAvailableSemaphore;
-    vk::Semaphore mRenderFinishedSemaphore;
+    vk::Semaphores mImageAvailableSemaphores;
+    vk::Semaphores mRenderFinishedSemaphores;
 };
 
 #endif 

@@ -25,7 +25,9 @@ DebugMessenger::DebugMessenger(const AppInstance& appInstance,
 }
 
 DebugMessenger::~DebugMessenger() {
-    assert(mMessenger != VK_NULL_HANDLE);
+    if (mMessenger == VK_NULL_HANDLE) {
+        return;
+    }
 
     // The function to destroy a debug utils messenger is an extension function, 
     // so it is not automatically loaded. We need to look up its address
@@ -37,6 +39,13 @@ DebugMessenger::~DebugMessenger() {
     function(mAppInstance.vkInstance(), 
              mMessenger, 
              nullptr);
+}
+
+DebugMessenger::DebugMessenger(DebugMessenger&& other) noexcept
+    : mAppInstance(other.mAppInstance)
+    , mMessenger(other.mMessenger)
+{
+    other.mMessenger = VK_NULL_HANDLE;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL

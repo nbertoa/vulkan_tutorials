@@ -28,6 +28,11 @@ public:
 
     CommandBuffer(const VkCommandBuffer commandBuffer);
 
+    CommandBuffer(CommandBuffer&& other) noexcept;
+
+    CommandBuffer(const CommandBuffer&) = delete;
+    const CommandBuffer& operator=(const CommandBuffer&) = delete;
+
     void beginRecording(const VkCommandBufferUsageFlags usageFlags);
     void endRecording();
 

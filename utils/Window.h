@@ -13,6 +13,7 @@ public:
            const uint32_t height, 
            const char* title);
     ~Window();
+    Window(Window&& other) noexcept;
 
     Window(const Window&) = delete;
     const Window& operator=(const Window&) = delete;

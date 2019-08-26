@@ -22,6 +22,13 @@ Surface::~Surface() {
     vkDestroySurfaceKHR(mAppInstance.vkInstance(), mSurface, nullptr);
 }
 
+Surface::Surface(Surface&& other) noexcept
+    : mAppInstance(other.mAppInstance)
+    , mSurface(other.mSurface)
+{
+    other.mSurface = VK_NULL_HANDLE;
+}
+
 VkSurfaceCapabilitiesKHR
 Surface::capabilities(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);

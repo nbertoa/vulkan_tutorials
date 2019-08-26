@@ -21,6 +21,8 @@ public:
 
     SystemManager(const SystemManager&) = delete;
     const SystemManager& operator=(const SystemManager&) = delete;
+    SystemManager(SystemManager&&) = delete;
+    SystemManager& operator=(SystemManager&&) = delete;
 
     const Window& window() const {
         assert(mWindow != nullptr);

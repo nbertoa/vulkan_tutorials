@@ -24,6 +24,7 @@ public:
     LogicalDevice(const AppInstance& appInstance, 
                   const Surface& surface);
     ~LogicalDevice();
+    LogicalDevice(LogicalDevice&& other) noexcept;
 
     LogicalDevice(const LogicalDevice&) = delete;
     const LogicalDevice& operator=(const LogicalDevice&) = delete;

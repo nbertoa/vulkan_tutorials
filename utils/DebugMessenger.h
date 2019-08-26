@@ -12,6 +12,7 @@ public:
     DebugMessenger(const AppInstance& mAppInstance,
                    const VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo);
     ~DebugMessenger();
+    DebugMessenger(DebugMessenger&& other) noexcept;
 
     DebugMessenger(const DebugMessenger&) = delete;
     const DebugMessenger& operator=(const DebugMessenger&) = delete;

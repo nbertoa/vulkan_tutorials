@@ -32,4 +32,10 @@ CommandBuffers::CommandBuffers(const LogicalDevice& logicalDevice,
        mCommandBuffers.push_back(CommandBuffer(commandBuffer));
     }
 }
+
+CommandBuffers::CommandBuffers(CommandBuffers&& other) noexcept 
+    : mCommandBuffers(std::move(other.mCommandBuffers))
+{
+
+}
 }

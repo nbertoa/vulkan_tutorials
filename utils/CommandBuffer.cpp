@@ -28,6 +28,11 @@ CommandBuffer::CommandBuffer(const VkCommandBuffer commandBuffer)
 {
     assert(mCommandBuffer != VK_NULL_HANDLE);
 }
+CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept 
+    : mCommandBuffer(other.mCommandBuffer)
+{
+    other.mCommandBuffer = VK_NULL_HANDLE;
+}
 
 void
 CommandBuffer::beginRecording(const VkCommandBufferUsageFlags usageFlags) {

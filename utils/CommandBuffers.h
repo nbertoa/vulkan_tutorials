@@ -21,6 +21,10 @@ public:
                    const CommandPool& commandPool,
                    const size_t bufferCount,
                    const VkCommandBufferLevel level);
+    CommandBuffers(CommandBuffers&& other) noexcept;
+
+    CommandBuffers(const CommandBuffers&) = delete;
+    const CommandBuffers& operator=(const CommandBuffers&) = delete;
 
     size_t bufferCount() const {
         assert(mCommandBuffers.empty() == false);

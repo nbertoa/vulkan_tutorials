@@ -37,6 +37,19 @@ SwapChain::~SwapChain() {
     vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
 }
 
+SwapChain::SwapChain(SwapChain&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mSwapChain(other.mSwapChain)
+    , mSwapChainImages(std::move(mSwapChainImages))
+    , mSwapChainImageViews(std::move(mSwapChainImageViews))
+    , mImageFormat(other.mImageFormat)
+    , mExtent(other.mExtent)
+    , mViewport(other.mViewport)
+    , mScissorRect(other.mScissorRect)
+{
+    other.mSwapChain = VK_NULL_HANDLE;
+}
+
 uint32_t 
 SwapChain::acquireNextImage(const Semaphore& semaphore) {
     assert(mSwapChain != VK_NULL_HANDLE);

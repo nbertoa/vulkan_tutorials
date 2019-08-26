@@ -63,4 +63,12 @@ GraphicsPipeline::~GraphicsPipeline() {
                       nullptr);
 }
 
+GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mPipelineLayout(std::move(other.mPipelineLayout))
+    , mPipeline(other.mPipeline)
+{
+    other.mPipeline = VK_NULL_HANDLE;
+}
+
 }

@@ -29,6 +29,7 @@ public:
     CommandPool(const LogicalDevice& logicalDevice,
                 const Type type);
     ~CommandPool();
+    CommandPool(CommandPool&& other) noexcept;
 
     CommandPool(const CommandPool&) = delete;
     const CommandPool& operator=(const CommandPool&) = delete;

@@ -25,8 +25,12 @@ class LogicalDevice;
 // begins execution.
 class Semaphore {
 public:
-    Semaphore(const LogicalDevice& logicalDevice);
+    Semaphore(const LogicalDevice& logicalDevice);    
     ~Semaphore();
+    Semaphore(Semaphore&& other) noexcept;
+
+    Semaphore(const Semaphore&) = delete;
+    const Semaphore& operator=(const Semaphore&) = delete;
     
     const VkSemaphore& vkSemaphore() const {
         assert(mSemaphore != VK_NULL_HANDLE);

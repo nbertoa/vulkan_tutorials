@@ -23,6 +23,7 @@ public:
               const Window& window, 
               const Surface& surface);
     ~SwapChain();
+    SwapChain(SwapChain&& other) noexcept;
 
     SwapChain(const SwapChain&) = delete;
     const SwapChain& operator=(const SwapChain&) = delete;
@@ -112,8 +113,8 @@ private:
     std::vector<VkImage> mSwapChainImages;
     std::vector<VkImageView> mSwapChainImageViews;
 
-    VkFormat mImageFormat;
-    VkExtent2D mExtent;
+    VkFormat mImageFormat = {};
+    VkExtent2D mExtent = {};
 
     VkViewport mViewport = {};
     VkRect2D mScissorRect = {};

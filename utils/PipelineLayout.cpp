@@ -23,10 +23,16 @@ PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
 }
 
 PipelineLayout::~PipelineLayout() {
-    assert(mPipelineLayout != VK_NULL_HANDLE);
     vkDestroyPipelineLayout(mLogicalDevice.vkDevice(),
                             mPipelineLayout,
                             nullptr);
+}
+
+PipelineLayout::PipelineLayout(PipelineLayout&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mPipelineLayout(other.mPipelineLayout)
+{
+    other.mPipelineLayout = VK_NULL_HANDLE;
 }
 
 void

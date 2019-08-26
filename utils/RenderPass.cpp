@@ -27,11 +27,16 @@ RenderPass::RenderPass(const LogicalDevice& logicalDevice,
 }
 
 RenderPass::~RenderPass() {
-    assert(mRenderPass != VK_NULL_HANDLE);
-
     vkDestroyRenderPass(mLogicalDevice.vkDevice(),
                         mRenderPass,
                         nullptr);
+}
+
+RenderPass::RenderPass(RenderPass&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mRenderPass(other.mRenderPass)
+{
+    other.mRenderPass = VK_NULL_HANDLE;
 }
 
 }

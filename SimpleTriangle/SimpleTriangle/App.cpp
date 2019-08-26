@@ -22,8 +22,8 @@ App::App(const uint32_t windowWidth,
                                          mSystemManager.graphicsCommandPool(),
                                          mFrameBuffers->bufferCount(),
                                          VK_COMMAND_BUFFER_LEVEL_PRIMARY)) 
-    , mImageAvailableSemaphore(mSystemManager.logicalDevice())
-    , mRenderFinishedSemaphore(mSystemManager.logicalDevice())
+    , mImageAvailableSemaphores(mSystemManager.logicalDevice(), mFrameBuffers->bufferCount())
+    , mRenderFinishedSemaphores(mSystemManager.logicalDevice(), mFrameBuffers->bufferCount())
 {
     recordCommandBuffers();
 }
@@ -35,6 +35,11 @@ App::run() {
         submitCommandBufferAndPresent();
     }
 
+    // We need to wait on the hsot for the completion of outstanding
+    // operations for a given queue.
+    // vkDeviceWaitIdle is equivalent to submitting fences to all
+    // the queues owned yb the device a and waiting with an infinite 
+    // timeout for these fences to signal.
     vkChecker(vkDeviceWaitIdle(mSystemManager.logicalDevice().vkDevice()));
 }
 
@@ -159,16 +164,19 @@ void
 App::submitCommandBufferAndPresent() {
     assert(mCommandBuffers != nullptr);
 
-    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(mImageAvailableSemaphore);
+    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.nextAvailableSemaphore();
+    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores.nextAvailableSemaphore();
+
+    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < static_cast<uint32_t>(mCommandBuffers->bufferCount()));
 
     CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
     commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
-                         mImageAvailableSemaphore,
-                         mRenderFinishedSemaphore,
+                         imageAvailableSemaphore,
+                         renderFinishedSemaphore,
                          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 
     mSystemManager.swapChain().present(mSystemManager.logicalDevice().presentationQueue(),
-                                       mRenderFinishedSemaphore,
+                                       renderFinishedSemaphore,
                                        swapChainImageIndex);
 }

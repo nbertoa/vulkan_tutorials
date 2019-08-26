@@ -35,14 +35,19 @@ FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
 }
 
 FrameBuffers::~FrameBuffers() {
-    assert(mFrameBuffers.empty() == false);
-
     for (const VkFramebuffer frameBuffer : mFrameBuffers) {
         assert(frameBuffer != VK_NULL_HANDLE);
         vkDestroyFramebuffer(mLogicalDevice.vkDevice(),
                              frameBuffer,
                              nullptr);
     }
+}
+
+FrameBuffers::FrameBuffers(FrameBuffers&& other) noexcept
+    : mLogicalDevice(other.mLogicalDevice)
+    , mFrameBuffers(std::move(other.mFrameBuffers))
+{
+
 }
 
 VkFramebuffer 
