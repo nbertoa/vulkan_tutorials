@@ -198,3 +198,6 @@
 /SimpleTriangle/SimpleTriangle/x64/Debug/vc.nativecodeanalysis.all.xml
 /SimpleTriangle/x64/Debug/SimpleTriangle.exe.lastcodeanalysissucceeded
 /SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/e865edf97addfcc9/SEMAPHORES.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/1f92ce4505cafda8/FENCES.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/327e9f3c27e876bf/GRAPHICSPIPELINE.ipch
+/SimpleTriangle/.vs/SimpleTriangle/v16/ipch/AutoPCH/f9d78ba61681733/FENCE.ipch

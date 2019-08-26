@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 
 #include "utils/CommandBuffers.h"
+#include "utils/Fences.h"
 #include "utils/FrameBuffers.h"
 #include "utils/GraphicsPipeline.h"
 #include "utils/RenderPass.h"
@@ -38,6 +39,7 @@ private:
 
     vk::Semaphores mImageAvailableSemaphores;
     vk::Semaphores mRenderFinishedSemaphores;
+    vk::Fences mFences;
 };
 
 #endif 

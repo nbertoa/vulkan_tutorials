@@ -135,6 +135,8 @@
     <ClCompile Include="..\..\utils\CommandBuffers.cpp" />
     <ClCompile Include="..\..\utils\CommandPool.cpp" />
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
+    <ClCompile Include="..\..\utils\Fence.cpp" />
+    <ClCompile Include="..\..\utils\Fences.cpp" />
     <ClCompile Include="..\..\utils\FrameBuffers.cpp" />
     <ClCompile Include="..\..\utils\GraphicsPipeline.cpp" />
     <ClCompile Include="..\..\utils\LogicalDevice.cpp" />
@@ -159,6 +161,8 @@
     <ClInclude Include="..\..\utils\CommandPool.h" />
     <ClInclude Include="..\..\utils\DebugMessenger.h" />
     <ClInclude Include="..\..\utils\DebugUtils.h" />
+    <ClInclude Include="..\..\utils\Fence.h" />
+    <ClInclude Include="..\..\utils\Fences.h" />
     <ClInclude Include="..\..\utils\FrameBuffers.h" />
     <ClInclude Include="..\..\utils\GraphicsPipeline.h" />
     <ClInclude Include="..\..\utils\LogicalDevice.h" />

@@ -22,8 +22,12 @@ App::App(const uint32_t windowWidth,
                                          mSystemManager.graphicsCommandPool(),
                                          mFrameBuffers->bufferCount(),
                                          VK_COMMAND_BUFFER_LEVEL_PRIMARY)) 
-    , mImageAvailableSemaphores(mSystemManager.logicalDevice(), mFrameBuffers->bufferCount())
-    , mRenderFinishedSemaphores(mSystemManager.logicalDevice(), mFrameBuffers->bufferCount())
+    , mImageAvailableSemaphores(mSystemManager.logicalDevice(), 
+                                mFrameBuffers->bufferCount())
+    , mRenderFinishedSemaphores(mSystemManager.logicalDevice(), 
+                                mFrameBuffers->bufferCount())
+    , mFences(mSystemManager.logicalDevice(),
+              mFrameBuffers->bufferCount())
 {
     recordCommandBuffers();
 }
@@ -105,8 +109,9 @@ App::createPipeline() {
     VkPipelineViewportStateCreateInfo viewportCreateInfo = mSystemManager.swapChain().pipelineViewportCreateInfo();
     VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = PipelineStateFactory::defaultRasterizationState();
     VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = PipelineStateFactory::disableMultisampleState();
-    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo =
-        PipelineStateFactory::colorBlendState(PipelineStateFactory::disableColorBlendAttachmentState());
+
+    const VkPipelineColorBlendAttachmentState colorBlendAttachmentState = PipelineStateFactory::enableColorBlendAttachmentState();
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = PipelineStateFactory::colorBlendState(colorBlendAttachmentState);
 
     const ShaderModule vertexShaderModule(mSystemManager.logicalDevice(),
                                           "../../SimpleTriangle/resources/shaders/vert.spv",
@@ -164,8 +169,11 @@ void
 App::submitCommandBufferAndPresent() {
     assert(mCommandBuffers != nullptr);
 
+    const Fence& fence = mFences.nextAvailableFence();
+    fence.waitAndReset();
+
     Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.nextAvailableSemaphore();
-    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores.nextAvailableSemaphore();
+    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores.nextAvailableSemaphore();    
 
     const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < static_cast<uint32_t>(mCommandBuffers->bufferCount()));
@@ -174,6 +182,7 @@ App::submitCommandBufferAndPresent() {
     commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
                          imageAvailableSemaphore,
                          renderFinishedSemaphore,
+                         fence,
                          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 
     mSystemManager.swapChain().present(mSystemManager.logicalDevice().presentationQueue(),

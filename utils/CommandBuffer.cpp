@@ -2,6 +2,7 @@
 
 #include "CommandPool.h"
 #include "DebugUtils.h"
+#include "Fence.h"
 #include "GraphicsPipeline.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
@@ -106,6 +107,7 @@ void
 CommandBuffer::submit(const VkQueue queue, 
                       const Semaphore& waitSemaphore,
                       const Semaphore& signalSemaphore,
+                      const Fence& inFlightFence,
                       const VkPipelineStageFlags waitStage) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(queue != VK_NULL_HANDLE);
@@ -131,6 +133,6 @@ CommandBuffer::submit(const VkQueue queue,
     vkChecker(vkQueueSubmit(queue,
                             1,
                             &info,
-                            VK_NULL_HANDLE));
+                            inFlightFence.vkFence()));
 }
 }

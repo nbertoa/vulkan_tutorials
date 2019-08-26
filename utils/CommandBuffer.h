@@ -6,6 +6,7 @@
 
 namespace vk {
 class CommandPool;
+class Fence;
 class GraphicsPipeline;
 class LogicalDevice;
 class RenderPass;
@@ -51,6 +52,7 @@ public:
     void submit(const VkQueue queue,
                 const Semaphore& waitSemaphore,
                 const Semaphore& signalSemaphore,
+                const Fence& inFlightFence,
                 const VkPipelineStageFlags waitStage);
 
 private:
