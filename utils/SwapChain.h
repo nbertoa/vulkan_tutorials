@@ -73,6 +73,9 @@ public:
         return mExtent.height;
     }
 
+    // The swap extent is the resolution of the swap chain images
+    // and it is almost always exactly equal to the resolution of 
+    // the window we are drawing to.
     const VkExtent2D& imageExtent() const {
         assert(mSwapChain != VK_NULL_HANDLE);
         return mExtent;
@@ -81,7 +84,7 @@ public:
 private:
     static VkSurfaceFormatKHR swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
 
-    // The swap chain presentation mode is the most importatn setting for the swap chain because 
+    // The swap chain presentation mode is the most important setting for the swap chain because 
     // it represents the actual conditions for showing images to the screen.
     static VkPresentModeKHR swapChainPresentMode(const std::vector<VkPresentModeKHR>& presentModes);
 

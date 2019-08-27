@@ -54,6 +54,9 @@ uint32_t
 SwapChain::acquireNextImage(const Semaphore& semaphore) {
     assert(mSwapChain != VK_NULL_HANDLE);
 
+    // The third parameter specifies a timeout in nanoseconds 
+    // for an image to become available. Using the maximum
+    // vaule of a 64 bit unsigned integer disables the timeout.
     uint32_t imageIndex;
     vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
                                     mSwapChain,
@@ -109,6 +112,9 @@ SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surface
     assert(surfaceFormats.empty() == false);
 
     for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats) {
+        // For the color space we will use SRGB if it is available,
+        // because it results in more accurate perceived colors.
+        // For the format, we will use the standard RGB.
         if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
             surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
             return surfaceFormat;
@@ -120,10 +126,37 @@ SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surface
 
 VkPresentModeKHR
 SwapChain::swapChainPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
+    // VK_PRESENT_MODE_IMMEDIATE_KHR:
+    // Images submitted by your application are transferred to the screen
+    // right away, which may result in tearing.
+    // 
+    // VK_PRESENT_MODE_FIFO_KHR:
+    // The swap chain is a queue where the display takes an image
+    // from the front of the queue when the display is refreshed
+    // and the program inserts rendered images at the back of the queue.
+    // If the queue is full then the program has to wait.
+    // This is most similar to vertical sync as found in modern games.
+    // The moment that the display is refreshed is known as "vertical blank".
+    //
+    // VK_PRESENT_MODE_FIFO_RELAXED_KHR:
+    // This mode only differs from the previous one if the application
+    // is late and the queue was empty at the last vertical blank.
+    // Instead of waiting for the next vertical blank, the image is
+    // transferred right away when it finally arrives.
+    // This may result in visible tearing.
+    //
+    // VK_PRESENT_MODE_MAILBOX_KHR:
+    // This is another variation of the second mode.
+    // Instead of blocking the application when the queue is full,
+    // the images that are already queued are simply replaced with the
+    // newer ones. This mode can be used to implement triple buffering,
+    // which allows you to avoid tearing with significantly less 
+    // latency issues than standard vertical sync that uses
+    // double buffering.
+
     // Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
     // So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
     // is not available.
-
     VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 
     for (const VkPresentModeKHR presentMode : presentModes) {
@@ -185,6 +218,15 @@ SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabiliti
 void
 SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice, 
                             VkSwapchainCreateInfoKHR& swapChainCreateInfo) {
+    // VK_SHARING_MODE_EXCLUSIVE:
+    // An image is owned by one queue family at a time and
+    // the ownership must be explicitly transfered before using it
+    // in another queue family. This options offers the best performances.
+    //
+    // VK_SHARING_MODE_CONCURRENT:
+    // Images can be used across multiple queue families
+    // without explicit ownership transfers.
+    
     // If the graphics queue family and presentation queue family are the same, which will be
     // the case on most hardware, then we should stick to exclusive mode (best performance).
     const uint32_t queueFamilyIndices[] =
@@ -224,10 +266,14 @@ SwapChain::setImagesAndViews() {
     // Image views
     VkImageViewCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    // How the image data should be interpreted?
+    // How the image data should be interpreted.
     createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
     createInfo.format = mImageFormat;
-    // Default components
+    // Allows you to swizzle the color channels around.
+    // For example, you can map all of the channels to the red channel
+    // for a monocrhome texture. You can also map constant values
+    // of 0 and 1 to a channel.
+    // We stick to the default mapping.
     createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
     createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
     createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -256,13 +302,17 @@ void
 SwapChain::setViewportAndScissorRect() {
     assert(mSwapChain != VK_NULL_HANDLE);
 
+    // This will almost always be (0, 0) and width and height.
     mViewport.x = 0.0f;
     mViewport.y = 0.0f;
     mViewport.width = static_cast<float>(mExtent.width);
     mViewport.height = static_cast<float>(mExtent.height);
+    // Specify the range of depth values to use for the framebuffer.
     mViewport.minDepth = 0.0f;
     mViewport.maxDepth = 1.0f;
 
+    // We want to drwa to the entire framebuffer, so we 
+    // will specify a scissor rectangle that covers it entirely.
     mScissorRect.offset = {0, 0};
     mScissorRect.extent = mExtent;
 }
@@ -285,20 +335,43 @@ SwapChain::createSwapChain(const Window& window,
 
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    // Which surface the swap chain should be tied to.
     createInfo.surface = surface.vkSurface();
     createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
     createInfo.imageFormat = mImageFormat;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = mExtent;
-    // More than this is needed for stereoscopic 3D applications
+    // Specifies the amount of layers each image consists of.
+    // More than this is needed only for stereoscopic 3D applications
     createInfo.imageArrayLayers = 1;
-    // Render to them directly (color attachment)
+    // Specifies waht kind of operations we will
+    //use the images in the swap chain for.
+    // In our case, we will render to them directly,
+    // which means that they are used as color attachment.
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    // Specify if a certain transform should be applied to images
+    // in the swap chain (for example, a 90 degree clockwise rotation
+    // or horizontal flip).
+    // We do not want any transformation, so we specify the current
+    // transformation.
     createInfo.preTransform = surfaceCapabilities.currentTransform;
+    // Specify if the alpha channel should be used for
+    // blending with other windows in the window system.
+    // We want to ignore the alpha channel.
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    // Refer to swapChainPresentMode() method
     createInfo.presentMode =
         swapChainPresentMode(surface.presentModes(physicalDevice.vkPhysicalDevice()));
+    // Specify if you want to ignore the color of pixels that are 
+    // obscured, for example because another window is in 
+    // front of them.
     createInfo.clipped = VK_TRUE;
+    // With Vulkan it is possible that your swap chain becomes
+    // invalid or unoptimized while your application is running,
+    // for example because the window was resized. In that case,
+    // the swap chain actually needs to be recreated from
+    // scratch and a refeence to the old one must be specified 
+    // in this field. 
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     setQueueFamilies(physicalDevice, createInfo);

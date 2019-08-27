@@ -16,12 +16,19 @@ FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
     
     VkFramebufferCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    createInfo.renderPass = renderPass.vkRenderPass();
-    createInfo.attachmentCount = 1;
+    // Specify witch which render pass the framebuffer needs 
+    // to be compatible.
+    createInfo.renderPass = renderPass.vkRenderPass();    
     createInfo.width = swapChain.imageWidth();
     createInfo.height = swapChain.imageHeight();
+    // The number of layers in image arrays (our swap chain
+    // images are single images)
     createInfo.layers = 1;
     
+    // Specify the VkImageView objects that should be bound to
+    // to the respective attachment descriptions in the render
+    // pass attachments array.
+    createInfo.attachmentCount = 1;
     for (size_t i = 0; i < imageViews.size(); ++i) {
         assert(imageViews[i] != VK_NULL_HANDLE);
         VkImageView attachments[] = {imageViews[i]};

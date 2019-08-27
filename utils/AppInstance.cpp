@@ -44,6 +44,7 @@ AppInstance::createInstance() {
     // engine with certain special behavior,
     VkApplicationInfo appInfo = {};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    // Point to extension information in the future.
     appInfo.pNext = nullptr;
     appInfo.pApplicationName = nullptr;
     appInfo.pEngineName = nullptr;
@@ -52,11 +53,11 @@ AppInstance::createInstance() {
     // The instance is the connection between our application and the Vulkan library.
     VkInstanceCreateInfo instanceInfo = {};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    instanceInfo.flags = 0;
     instanceInfo.pApplicationInfo = &appInfo;
+    instanceInfo.flags = 0;    
     instanceInfo.pNext = debugMessengerCreateInfoPtr;
 
-    // Set instance extensions
+    // Specify the desired global extensions
     const std::vector<const char*> instanceExtensions = getRequiredInstanceExtensions();
     instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
     instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? nullptr : instanceExtensions.data();
@@ -66,7 +67,9 @@ AppInstance::createInstance() {
     instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
     instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
 
-    vkChecker(vkCreateInstance(&instanceInfo, nullptr, &mInstance));
+    vkChecker(vkCreateInstance(&instanceInfo,
+                               nullptr,
+                               &mInstance));
     assert(mInstance != VK_NULL_HANDLE);
 
     // In debug mode, we need to create the debug messenger.
@@ -115,7 +118,10 @@ AppInstance::areInstanceLayersSupported(const std::vector<const char*>& required
 
 std::vector<const char*>
 AppInstance::getRequiredInstanceExtensions() {
-    // Get extensions required by GLFW to be able to Vulkan surfaces for GLFW windows.
+    // Vulkan is a platform agnostic API, which means that you need an extension
+    // to interface with the window system.
+    // GLFW has a handy built-in function that returns the extension(s)
+    // it needs to do that which we can pass to the struct.
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
     assert(glfwExtensions != nullptr);
@@ -133,16 +139,20 @@ VkDebugUtilsMessengerCreateInfoEXT
 AppInstance::messengerCreateInfo() {
     VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    // Specify all the types of severities you would like 
+    // your callback to be called for.
     createInfo.messageSeverity =
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+    // Filter which types of messages your callback
+    // is notified about.
     createInfo.messageType =
         VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
         VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
         VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+    // Pointer to the callback function. 
     createInfo.pfnUserCallback = DebugMessenger::debugCallback;
-    createInfo.pUserData = nullptr;
 
     return createInfo;
 }

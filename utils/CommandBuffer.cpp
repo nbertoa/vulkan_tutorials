@@ -16,8 +16,17 @@ CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
     VkCommandBufferAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     info.commandPool = commandPool.vkCommandPool();
-    info.level = level;
     info.commandBufferCount = 1;
+
+    // Specify if the allocated command buffers are primary
+    // or secondary command buffers.
+    // VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
+    // to a queue for execution, but cannot be called
+    // from other command buffers.
+    // VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
+    // directly, but can be called from primary command
+    // buffers.
+    info.level = level;   
 
     vkChecker(vkAllocateCommandBuffers(logicalDevice.vkDevice(),
                                        &info,
@@ -41,7 +50,23 @@ CommandBuffer::beginRecording(const VkCommandBufferUsageFlags usageFlags) {
 
     VkCommandBufferBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    // Specify how we are going to use the command buffer. The 
+    // following values are available:
+    // VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
+    // will be rerecorded right after executing it once.
+    // VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
+    // secondary command buffer that will be entirely within a single
+    // render pass.
+    // VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
+    // buffer can be resubmitted while it is also already pending 
+    // execution.
     info.flags = usageFlags;
+
+    // This is only relevant for secondary command buffers
+    // It specifies which state to inherit from the calling
+    // primary command buffers.
+    info.pInheritanceInfo = nullptr;
 
     vkChecker(vkBeginCommandBuffer(mCommandBuffer,
                                    &info));
@@ -60,14 +85,22 @@ CommandBuffer::beginPass(const RenderPass& renderPass,
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(frameBuffer != VK_NULL_HANDLE);
 
-    VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+    
 
     VkRenderPassBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     info.renderPass = renderPass.vkRenderPass();
     info.framebuffer = frameBuffer;
+    // Size of the render area which defines where shader
+    // loads and stores will take place. The pixels outside
+    // this region will have undefined values.
     info.renderArea.offset = {0, 0};
     info.renderArea.extent = imageExtent;
+
+    // Define the clear values to use for
+    // VK_ATTACHMENT_LOAD_OP_CLEAR, which we need as
+    // load operation for the color attachment.
+    VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
     info.clearValueCount = 1;
     info.pClearValues = &clearColor;
 

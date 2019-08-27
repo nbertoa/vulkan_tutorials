@@ -21,6 +21,10 @@ public:
     // Used when you hardcode vertex data directly in the vertex shader.
     static VkPipelineVertexInputStateCreateInfo emptyVertexInputState();
 
+    static VkPipelineVertexInputStateCreateInfo 
+    vertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions,
+                     const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions);
+
     // The rasterizer takes the geometry that is shaped by the vertices 
     // from the vertex shader and turns into fragments to be colored by 
     // the fragment shader:

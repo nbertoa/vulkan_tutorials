@@ -43,9 +43,20 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
     // Layout
     createInfo.layout = mPipelineLayout->pipelineLayout();
 
-    // Render pass
+    // Specify the render pass and the index of the sub pass
+    // where this graphics pipeline will be used.
     createInfo.renderPass = renderPass.vkRenderPass();
     createInfo.subpass = subPassIndex;
+
+    // Vulkan allows you to create a new graphics pipeline by
+    // deriving from an existing pipeline. The idea of pipeline
+    // derivatives is that it is less expensive to set up pipelines
+    // when they have much functionality in common with an existing
+    // pipeline and switching between pipelines from the same
+    // parent can also be done quicker.
+    // We disable this.
+    createInfo.basePipelineHandle = VK_NULL_HANDLE;
+    createInfo.basePipelineIndex = -1;
 
     vkChecker(vkCreateGraphicsPipelines(mLogicalDevice.vkDevice(),
                                         VK_NULL_HANDLE,
