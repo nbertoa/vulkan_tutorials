@@ -78,7 +78,7 @@ SwapChain::present(const VkQueue queue,
     VkPresentInfoKHR info = {};
     info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     
-    // Semaphore to wait on before presentation can happen.
+    // Semaphores to wait on before presentation can happen.
     info.waitSemaphoreCount = 1;
     info.pWaitSemaphores = &waitSemaphore.vkSemaphore();
 
@@ -87,6 +87,12 @@ SwapChain::present(const VkQueue queue,
     info.swapchainCount = 1;
     info.pSwapchains = &mSwapChain;
     info.pImageIndices = &imageIndex;
+
+    // This allows you to specify an array of VkResult values to check
+    // for every individual swap chain if presentation was successful.
+    // It is not necessary if you are only using a single swap chain,
+    // because you can simply use the return value of the present method.
+    info.pResults = nullptr;
 
     vkChecker(vkQueuePresentKHR(queue,
                                 &info));
