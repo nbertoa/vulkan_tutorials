@@ -41,6 +41,14 @@ public:
         return mDeviceExtensions; 
     }
 
+    // memoryTypeFilter will be used to specify the bit field of memory types
+    // that are suitable.
+    // Returns the memory property index of this physical device that is
+    // suitable. If there is not a suitable memory property, then it returns
+    // std::numeric_limits<uint32_t>::max()
+    uint32_t memoryPropertyIndex(const uint32_t memoryTypeFilter,
+                                 const VkMemoryPropertyFlags memoryPropertyFlags) const;
+
 private:
     static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
                                                               uint32_t& queueFamilyIndex);

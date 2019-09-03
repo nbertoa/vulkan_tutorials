@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\utils\AppInstance.cpp" />
+    <ClCompile Include="..\..\utils\Buffer.cpp" />
     <ClCompile Include="..\..\utils\CommandBuffer.cpp" />
     <ClCompile Include="..\..\utils\CommandBuffers.cpp" />
     <ClCompile Include="..\..\utils\CommandPool.cpp" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
+    <ClInclude Include="..\..\utils\Buffer.h" />
     <ClInclude Include="..\..\utils\CommandBuffer.h" />
     <ClInclude Include="..\..\utils\CommandBuffers.h" />
     <ClInclude Include="..\..\utils\CommandPool.h" />

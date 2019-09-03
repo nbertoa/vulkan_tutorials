@@ -25,6 +25,54 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
     other.mPhysicalDevice = VK_NULL_HANDLE;
 }
 
+uint32_t 
+PhysicalDevice::memoryPropertyIndex(const uint32_t memoryTypeFilter,
+                                    const VkMemoryPropertyFlags memoryPropertyFlags) const {
+
+    uint32_t memoryPropertyIndex = std::numeric_limits<uint32_t>::max();
+
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
+                                        &memoryProperties);
+
+    // We have two arrays memoryTypes and memoryHeaps in the 
+    // memory properties structure.
+    // Memory heaps are distinct memory resources like dedicated VRAM
+    // and swap space in RAM for when VRAM runs out.
+    // The different types of memory exist within these heaps.
+    //
+    // memoryTypeFilter will be used to specify the bit field of memory types
+    // that are suitable.
+    // That means that we can find the index of a suitable memory type
+    // by simply iterating over them and checking if the corresponding
+    // bit is set to 1.
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i) {
+        // We can find the index of a suitable memory type
+        // by simply iterating over them and checking if the corresponding
+        // bit is set to 1.
+        if (memoryTypeFilter & (1 << i)) {
+            // The memoryTypes array consists of VkMemoryType structs that specify
+            // the heap and properties of each type of memory.
+            // The properties of the memory, like being able to map it so we can 
+            // write it to it from the CPU.
+            const VkMemoryPropertyFlags currentMemoryPropertyFlags = memoryProperties.memoryTypes[i].propertyFlags;
+
+            // We may have more than one desiderable property, so we should
+            // check if the result of the bitwise AND is not just non-zero,
+            // but equal to the desired properties bit field.
+            // If there is a memory type suitable for the buffer that also
+            // has all of the properties we need, then we return its index,
+            // otherwise, std::numeric_limits<uint32_t>::max().
+            if ((currentMemoryPropertyFlags & memoryPropertyFlags) == memoryPropertyFlags) {
+                memoryPropertyIndex = i;
+                break;
+            }
+        }
+    }
+
+    return memoryPropertyIndex;
+}
+
 bool
 PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
                                                               uint32_t& queueFamilyIndex) {

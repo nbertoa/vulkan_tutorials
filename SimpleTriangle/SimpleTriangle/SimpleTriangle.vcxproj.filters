@@ -67,6 +67,9 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="..\..\utils\Buffer.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -142,5 +145,8 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="..\..\utils\Buffer.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
