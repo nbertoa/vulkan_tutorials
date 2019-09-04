@@ -26,10 +26,10 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
 }
 
 uint32_t 
-PhysicalDevice::memoryPropertyIndex(const uint32_t memoryTypeFilter,
-                                    const VkMemoryPropertyFlags memoryPropertyFlags) const {
+PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
+                                const VkMemoryPropertyFlags memoryPropertyFlags) const {
 
-    uint32_t memoryPropertyIndex = std::numeric_limits<uint32_t>::max();
+    uint32_t typeIndex = std::numeric_limits<uint32_t>::max();
 
     VkPhysicalDeviceMemoryProperties memoryProperties;
     vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
@@ -64,13 +64,13 @@ PhysicalDevice::memoryPropertyIndex(const uint32_t memoryTypeFilter,
             // has all of the properties we need, then we return its index,
             // otherwise, std::numeric_limits<uint32_t>::max().
             if ((currentMemoryPropertyFlags & memoryPropertyFlags) == memoryPropertyFlags) {
-                memoryPropertyIndex = i;
+                typeIndex = i;
                 break;
             }
         }
     }
 
-    return memoryPropertyIndex;
+    return typeIndex;
 }
 
 bool

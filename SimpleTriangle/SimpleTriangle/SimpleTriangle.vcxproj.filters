@@ -70,6 +70,9 @@
     <ClCompile Include="..\..\utils\Buffer.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\DeviceMemory.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="..\..\utils\Buffer.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\DeviceMemory.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

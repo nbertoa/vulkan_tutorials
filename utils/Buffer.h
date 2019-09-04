@@ -1,7 +1,10 @@
 #ifndef UTILS_BUFFER
 #define UTILS_BUFFER
 
+#include <memory>
 #include <vulkan/vulkan.h>
+
+#include "DeviceMemory.h"
 
 namespace vk {
 class LogicalDevice;
@@ -18,19 +21,61 @@ public:
     Buffer(const LogicalDevice& logicalDevice,
            const VkDeviceSize sizeInBytes, 
            const VkBufferUsageFlags usageFlags,
-           const VkSharingMode sharingMode);
+           const VkSharingMode sharingMode,
+           const VkMemoryPropertyFlags memoryPropertyFlags);
     ~Buffer();
 
     Buffer(Buffer&& other) noexcept;
 
     Buffer(const Buffer&) = delete;
-    const Buffer& operator=(const Buffer&) = delete;
+    const Buffer& operator=(const Buffer&) = delete;   
+    
+    // The driver may not immediately copy the data
+    // into the buffer memory, for example because
+    // of caching.
+    // It is also possible that writes to the buffer
+    // are not visible in the mapped memory yet.
+    // There are two ways to deal with that problem:
+    // - Use a memory heap that is host coherent,
+    // indicated with VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    // - Call vkFlushMappedMemoryRanges to after writing
+    // to the mapped memory, and call vkInvalidateMappedMemoryRanges
+    // before reading from the mapped memory.
+    //
+    // The first approach ensures that the mapped memory
+    // always matches the contents of the allocated memory.
+    // Do keep in mind that this may lead to slightly worse
+    // performance thatn explicit flushing.
+    //
+    // Flushing memory ranges or using a coherent memory heap
+    // means that the driver will be aware of our writes to
+    // the buffer, but it does not mean that they are actually
+    // visible on the GPU yet. The transfer of data to the GPU
+    // is an operation that happens in the background and the
+    // specification simply tells us that it is guaranteed
+    // to be complete as of the next call to vkQueueSubmit.
+    void copyToMemory(void* sourceData, 
+                      const VkDeviceSize offset,
+                      const VkDeviceSize size,
+                      const VkMemoryMapFlags flags);
 
-    VkMemoryRequirements memoryRequirements() const;
+    VkDeviceSize size() const {
+        assert(mBuffer != VK_NULL_HANDLE);
+        return mSizeInBytes;
+    }
 
 private:
-    const LogicalDevice& mLogicalDevice;
+    VkMemoryRequirements memoryRequirements() const;
+
+    static VkBuffer createBuffer(const LogicalDevice& logicalDevice,
+                                 const VkDeviceSize sizeInBytes,
+                                 const VkBufferUsageFlags usageFlags,
+                                 const VkSharingMode sharingMode);
+
+    const LogicalDevice& mLogicalDevice;    
     VkBuffer mBuffer = VK_NULL_HANDLE;
+    const VkDeviceSize mSizeInBytes = 0;
+    DeviceMemory mDeviceMemory;
 };
 }
 
