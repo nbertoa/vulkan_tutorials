@@ -28,8 +28,21 @@ App::App(const uint32_t windowWidth,
                                 mFrameBuffers->bufferCount())
     , mFences(mSystemManager.logicalDevice(),
               mFrameBuffers->bufferCount())
+    , mVertices{ {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+                 {{0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
+                 {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}}
+    , mBuffer(mSystemManager.logicalDevice(),
+              sizeof(Vertex) * mVertices.size(),
+              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+              VK_SHARING_MODE_EXCLUSIVE,
+              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
 {
     recordCommandBuffers();
+
+    mBuffer.copyToMemory(mVertices.data(),
+                         0,
+                         sizeof(Vertex) * mVertices.size(),
+                         0);
 }
 
 void 
@@ -153,7 +166,19 @@ App::createRenderPass() const {
 GraphicsPipeline*
 App::createPipeline() {
 
-    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
+    const std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions
+    {
+        Vertex::vertexInputBindingDescription()
+    };
+    
+    const std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescription = 
+        Vertex::vertexInputAttributeDescription();
+
+    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = 
+        PipelineStateFactory::vertexInputState(vertexInputBindingDescriptions,
+                                               vertexInputAttributeDescription);
+
+    //VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo =
         PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                                        VK_FALSE);
@@ -207,7 +232,8 @@ App::recordCommandBuffers() {
                                 mFrameBuffers->buffer(i),
                                 mSystemManager.swapChain().imageExtent());
         commandBuffer.bindPipeline(*mGraphicsPipeline);
-        commandBuffer.draw(3,
+        commandBuffer.bindVertexBuffer(mBuffer);
+        commandBuffer.draw(static_cast<uint32_t>(mVertices.size()),
                            1,
                            0,
                            0);

@@ -27,7 +27,7 @@ Vertex::vertexInputAttributeDescription() {
     descriptions[0].offset = offsetof(Vertex, mPosition);
 
     descriptions[1].binding = 0;
-    descriptions[1].location = descriptions[0].location + 1;
+    descriptions[1].location = 1;
     descriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     descriptions[1].offset = offsetof(Vertex, mColor);
 

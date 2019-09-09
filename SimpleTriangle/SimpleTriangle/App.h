@@ -5,6 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "utils/Buffer.h"
 #include "utils/CommandBuffers.h"
 #include "utils/Fences.h"
 #include "utils/FrameBuffers.h"
@@ -13,6 +14,8 @@
 #include "utils/Semaphores.h"
 #include "utils/ShaderModule.h"
 #include "utils/SystemManager.h"
+
+#include "Vertex.h"
 
 class App {
 public:
@@ -40,6 +43,10 @@ private:
     vk::Semaphores mImageAvailableSemaphores;
     vk::Semaphores mRenderFinishedSemaphores;
     vk::Fences mFences;
+
+    std::vector<Vertex> mVertices;
+
+    vk::Buffer mBuffer;
 };
 
 #endif 
