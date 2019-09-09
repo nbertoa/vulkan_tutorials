@@ -5,6 +5,7 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class Buffer;
 class CommandPool;
 class Fence;
 class GraphicsPipeline;
@@ -43,6 +44,8 @@ public:
     void endPass();
 
     void bindPipeline(const GraphicsPipeline& graphicsPipeline);
+
+    void bindVertexBuffer(const Buffer& buffer);
 
     void draw(const uint32_t vertexCount,
               const uint32_t instanceCount,

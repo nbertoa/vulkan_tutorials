@@ -1,6 +1,7 @@
 #ifndef UTILS_BUFFER
 #define UTILS_BUFFER
 
+#include <cassert>
 #include <memory>
 #include <vulkan/vulkan.h>
 
@@ -28,7 +29,12 @@ public:
     Buffer(Buffer&& other) noexcept;
 
     Buffer(const Buffer&) = delete;
-    const Buffer& operator=(const Buffer&) = delete;   
+    const Buffer& operator=(const Buffer&) = delete;  
+    
+    VkBuffer vkBuffer() const {
+        assert(mBuffer != VK_NULL_HANDLE);
+        return mBuffer;
+    }
     
     // The driver may not immediately copy the data
     // into the buffer memory, for example because

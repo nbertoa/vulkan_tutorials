@@ -1,5 +1,6 @@
 #include "CommandBuffer.h"
 
+#include "Buffer.h"
 #include "CommandPool.h"
 #include "DebugUtils.h"
 #include "Fence.h"
@@ -121,6 +122,20 @@ CommandBuffer::bindPipeline(const GraphicsPipeline& graphicsPipeline) {
     vkCmdBindPipeline(mCommandBuffer,
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
                       graphicsPipeline.vkPipeline());
+}
+
+void 
+CommandBuffer::bindVertexBuffer(const Buffer& buffer) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+
+    VkBuffer buffers[] = { buffer.vkBuffer() };
+    VkDeviceSize offsets[] = {0};
+
+    vkCmdBindVertexBuffers(mCommandBuffer,
+                           0, // first vertex buffer to bind
+                           1, // number of vertex buffers to bind
+                           buffers,
+                           offsets); // Byte offsets to start reading vertex data from
 }
 
 void
