@@ -75,6 +75,8 @@
     <ClCompile Include="..\..\utils\vertex\PosColorVertex.cpp">
       <Filter>utils\vertex</Filter>
     </ClCompile>
+    <ClCompile Include="RenderPassCreator.cpp" />
+    <ClCompile Include="GraphicsPipelineCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -161,5 +163,10 @@
     <ClInclude Include="..\..\utils\vertex\PosColorVertex.h">
       <Filter>utils\vertex</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\utils\CreatorDefinitions.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPassCreator.h" />
+    <ClInclude Include="GraphicsPipelineCreator.h" />
   </ItemGroup>
 </Project>

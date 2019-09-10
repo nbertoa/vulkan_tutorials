@@ -7,6 +7,7 @@
 
 #include "utils/Buffer.h"
 #include "utils/CommandBuffers.h"
+#include "utils/CreatorDefinitions.h"
 #include "utils/Fences.h"
 #include "utils/FrameBuffers.h"
 #include "utils/GraphicsPipeline.h"
@@ -14,18 +15,18 @@
 #include "utils/Semaphores.h"
 #include "utils/ShaderModule.h"
 #include "utils/SystemManager.h"
-#include "utils/vertex/PosColorVertex.h"
 
 class App {
 public:
     App(const uint32_t windowWidth,
         const uint32_t windowHeight,
-        const char* windowTitle);
+        const char* windowTitle,
+        const vk::RenderPassCreator& renderPassCreator,
+        const vk::GraphicsPipelineCreator& graphicsPipelineCreator);
 
     void run();
 private:
-    vk::RenderPass* createRenderPass() const;
-    vk::GraphicsPipeline* createPipeline();
+    void createBuffers();
 
     void recordCommandBuffers();
 
@@ -43,9 +44,7 @@ private:
     vk::Semaphores mRenderFinishedSemaphores;
     vk::Fences mFences;
 
-    std::vector<vk::PosColorVertex> mVertices;
-
-    vk::Buffer mBuffer;
+    std::unique_ptr<vk::Buffer> mVertexBuffer;
 };
 
 #endif 

@@ -48,9 +48,9 @@ public:
     void bindVertexBuffer(const Buffer& buffer);
 
     void draw(const uint32_t vertexCount,
-              const uint32_t instanceCount,
-              const uint32_t firstVertex,
-              const uint32_t firstInstance);
+              const uint32_t instanceCount = 1,
+              const uint32_t firstVertex = 0,
+              const uint32_t firstInstance = 0);
 
     void submit(const VkQueue queue,
                 const Semaphore& waitSemaphore,

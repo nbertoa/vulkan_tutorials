@@ -155,7 +155,9 @@
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="..\..\utils\Surface.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="GraphicsPipelineCreator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderPassCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="..\..\utils\CommandBuffer.h" />
     <ClInclude Include="..\..\utils\CommandBuffers.h" />
     <ClInclude Include="..\..\utils\CommandPool.h" />
+    <ClInclude Include="..\..\utils\CreatorDefinitions.h" />
     <ClInclude Include="..\..\utils\DebugMessenger.h" />
     <ClInclude Include="..\..\utils\DebugUtils.h" />
     <ClInclude Include="..\..\utils\DeviceMemory.h" />
@@ -184,6 +187,8 @@
     <ClInclude Include="..\..\utils\Window.h" />
     <ClInclude Include="..\..\utils\Surface.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="GraphicsPipelineCreator.h" />
+    <ClInclude Include="RenderPassCreator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

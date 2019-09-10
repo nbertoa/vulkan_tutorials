@@ -1,5 +1,5 @@
-#ifndef UTILS
-#define UTILS_BASE_VERTEX
+#ifndef UTILS_VERTEX_POS_COLOR_VERTEX
+#define UTILS_VERTEX_POS_COLOR_VERTEX
 
 #include <glm/glm.hpp>
 #include <vector>
