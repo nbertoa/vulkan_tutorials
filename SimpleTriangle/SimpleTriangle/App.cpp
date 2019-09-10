@@ -28,11 +28,11 @@ App::App(const uint32_t windowWidth,
                                 mFrameBuffers->bufferCount())
     , mFences(mSystemManager.logicalDevice(),
               mFrameBuffers->bufferCount())
-    , mVertices{ {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                 {{0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
-                 {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}}
+    , mVertices{ {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+                 {{0.5f,  0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+                 {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}}
     , mBuffer(mSystemManager.logicalDevice(),
-              sizeof(Vertex) * mVertices.size(),
+              sizeof(PosColorVertex) * mVertices.size(),
               VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
               VK_SHARING_MODE_EXCLUSIVE,
               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
@@ -41,7 +41,7 @@ App::App(const uint32_t windowWidth,
 
     mBuffer.copyToMemory(mVertices.data(),
                          0,
-                         sizeof(Vertex) * mVertices.size(),
+                         sizeof(PosColorVertex) * mVertices.size(),
                          0);
 }
 
@@ -165,29 +165,35 @@ App::createRenderPass() const {
 
 GraphicsPipeline*
 App::createPipeline() {
-
-    const std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions
-    {
-        Vertex::vertexInputBindingDescription()
-    };
+    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
+    PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
     
-    const std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescription = 
-        Vertex::vertexInputAttributeDescription();
+    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescription;
+    PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescription);
 
-    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = 
-        PipelineStateFactory::vertexInputState(vertexInputBindingDescriptions,
-                                               vertexInputAttributeDescription);
+    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo;
+    PipelineStateFactory::vertexInputState(vertexInputBindingDescriptions,
+                                           vertexInputAttributeDescription,
+                                           vertexInputStateCreateInfo);
 
-    //VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = PipelineStateFactory::emptyVertexInputState();
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo =
-        PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                                                       VK_FALSE);
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo;
+    PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+                                                   VK_FALSE,
+                                                   inputAssemblyStateCreateInfo);
+
     VkPipelineViewportStateCreateInfo viewportCreateInfo = mSystemManager.swapChain().pipelineViewportCreateInfo();
-    VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = PipelineStateFactory::defaultRasterizationState();
-    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = PipelineStateFactory::disableMultisampleState();
 
-    const VkPipelineColorBlendAttachmentState colorBlendAttachmentState = PipelineStateFactory::enableColorBlendAttachmentState();
-    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = PipelineStateFactory::colorBlendState(colorBlendAttachmentState);
+    VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo;
+    PipelineStateFactory::defaultRasterizationState(rasterizationStateCreateInfo);
+
+    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo;
+    PipelineStateFactory::disableMultisampleState(multisampleStateCreateInfo);
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachmentState;
+    PipelineStateFactory::enableColorBlendAttachmentState(colorBlendAttachmentState);
+
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo;
+    PipelineStateFactory::colorBlendState(colorBlendAttachmentState, colorBlendStateCreateInfo);
 
     const ShaderModule vertexShaderModule(mSystemManager.logicalDevice(),
                                           "../../SimpleTriangle/resources/shaders/vert.spv",
@@ -231,13 +237,18 @@ App::recordCommandBuffers() {
         commandBuffer.beginPass(*mRenderPass,
                                 mFrameBuffers->buffer(i),
                                 mSystemManager.swapChain().imageExtent());
+
         commandBuffer.bindPipeline(*mGraphicsPipeline);
+
         commandBuffer.bindVertexBuffer(mBuffer);
+
         commandBuffer.draw(static_cast<uint32_t>(mVertices.size()),
                            1,
                            0,
                            0);
+
         commandBuffer.endPass();
+
         commandBuffer.endRecording();
     }
 }

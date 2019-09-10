@@ -14,8 +14,7 @@
 #include "utils/Semaphores.h"
 #include "utils/ShaderModule.h"
 #include "utils/SystemManager.h"
-
-#include "Vertex.h"
+#include "utils/vertex/PosColorVertex.h"
 
 class App {
 public:
@@ -44,7 +43,7 @@ private:
     vk::Semaphores mRenderFinishedSemaphores;
     vk::Fences mFences;
 
-    std::vector<Vertex> mVertices;
+    std::vector<vk::PosColorVertex> mVertices;
 
     vk::Buffer mBuffer;
 };

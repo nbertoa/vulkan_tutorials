@@ -66,17 +66,22 @@
     <ClCompile Include="..\..\utils\Fences.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="..\..\utils\Buffer.cpp">
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utils\DeviceMemory.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\vertex\PosColorVertex.cpp">
+      <Filter>utils\vertex</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
       <UniqueIdentifier>{26d65a7a-4866-4769-acaa-33e596110ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils\vertex">
+      <UniqueIdentifier>{2ffe6acb-5dd3-4747-b460-b226d66c1a24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,12 +152,14 @@
     <ClInclude Include="..\..\utils\Fences.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h" />
     <ClInclude Include="..\..\utils\Buffer.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\DeviceMemory.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\vertex\PosColorVertex.h">
+      <Filter>utils\vertex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

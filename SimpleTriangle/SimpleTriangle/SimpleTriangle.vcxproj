@@ -151,11 +151,11 @@
     <ClCompile Include="..\..\utils\ShaderModule.cpp" />
     <ClCompile Include="..\..\utils\SwapChain.cpp" />
     <ClCompile Include="..\..\utils\SystemManager.cpp" />
+    <ClCompile Include="..\..\utils\vertex\PosColorVertex.cpp" />
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="..\..\utils\Surface.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
@@ -180,10 +180,10 @@
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\SystemManager.h" />
+    <ClInclude Include="..\..\utils\vertex\PosColorVertex.h" />
     <ClInclude Include="..\..\utils\Window.h" />
     <ClInclude Include="..\..\utils\Surface.h" />
     <ClInclude Include="App.h" />
-    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

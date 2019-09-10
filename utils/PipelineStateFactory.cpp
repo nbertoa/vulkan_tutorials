@@ -1,32 +1,29 @@
 #include "PipelineStateFactory.h"
 
 namespace vk {
-VkPipelineVertexInputStateCreateInfo 
-PipelineStateFactory::emptyVertexInputState() {
-    VkPipelineVertexInputStateCreateInfo createInfo = {};
+void 
+PipelineStateFactory::emptyVertexInputState(VkPipelineVertexInputStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     createInfo.vertexBindingDescriptionCount = 0;
     createInfo.vertexAttributeDescriptionCount = 0;
-
-    return createInfo;
 }
 
-VkPipelineVertexInputStateCreateInfo
+void
 PipelineStateFactory::vertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions,
-                                       const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions) {
-    VkPipelineVertexInputStateCreateInfo createInfo = {};
+                                       const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions,
+                                       VkPipelineVertexInputStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     createInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
     createInfo.pVertexBindingDescriptions = bindingDescriptions.empty() ? nullptr : bindingDescriptions.data();
     createInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
     createInfo.pVertexAttributeDescriptions = attributeDescriptions.empty() ? nullptr : attributeDescriptions.data();
-
-    return createInfo;
 }
 
-VkPipelineRasterizationStateCreateInfo
-PipelineStateFactory::defaultRasterizationState() {
-    VkPipelineRasterizationStateCreateInfo createInfo = {};
+void
+PipelineStateFactory::defaultRasterizationState(VkPipelineRasterizationStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     // If true, then frafments that are beyond the near and far planes
     // are clamped to them as opposed to discarding them.
@@ -53,13 +50,11 @@ PipelineStateFactory::defaultRasterizationState() {
     // a constant value or biasing them based on a fragment's slope.
     // We do not use this.
     createInfo.depthBiasEnable = VK_FALSE;
-
-    return createInfo;
 }
 
-VkPipelineMultisampleStateCreateInfo
-PipelineStateFactory::disableMultisampleState() {
-    VkPipelineMultisampleStateCreateInfo createInfo = {};
+void
+PipelineStateFactory::disableMultisampleState(VkPipelineMultisampleStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     createInfo.sampleShadingEnable = VK_FALSE;
     createInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
@@ -67,13 +62,12 @@ PipelineStateFactory::disableMultisampleState() {
     createInfo.pSampleMask = nullptr;
     createInfo.alphaToCoverageEnable = VK_FALSE;
     createInfo.alphaToOneEnable = VK_FALSE;
-
-    return createInfo;
 }
 
-VkPipelineInputAssemblyStateCreateInfo
+void
 PipelineStateFactory::createInputAssemblyState(const VkPrimitiveTopology primitiveTopology,
-                                               const VkBool32 primitiveRestartEnable) {
+                                               const VkBool32 primitiveRestartEnable,
+                                               VkPipelineInputAssemblyStateCreateInfo& createInfo) {
     // VK_PRIMITIVE_TOPOLOGY_POINT_LIST: points from vertices
     // VK_PRIMITIVE_TOPOLOGY_LINE_LIST: line from every two vertices without reuse
     // VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: the end vertex of every line is 
@@ -83,19 +77,17 @@ PipelineStateFactory::createInputAssemblyState(const VkPrimitiveTopology primiti
     // VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: the second and third vertex of
     // every triangle are used as first two vertices of the next triangle.
 
-    VkPipelineInputAssemblyStateCreateInfo createInfo = {};
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     // What kind of geometry will be drawn from the vertices
     createInfo.topology = primitiveTopology;
     // If the primitive restart should be enabled or not.
     createInfo.primitiveRestartEnable = primitiveRestartEnable;
-
-    return createInfo;
 }
 
-VkPipelineDepthStencilStateCreateInfo
-PipelineStateFactory::defaultDepthStencilState() {
-    VkPipelineDepthStencilStateCreateInfo createInfo = {};
+void
+PipelineStateFactory::defaultDepthStencilState(VkPipelineDepthStencilStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     createInfo.depthTestEnable = VK_TRUE;
     createInfo.depthWriteEnable = VK_TRUE;
@@ -106,25 +98,21 @@ PipelineStateFactory::defaultDepthStencilState() {
     createInfo.stencilTestEnable = VK_FALSE;
     createInfo.front = {};
     createInfo.back = {};
-
-    return createInfo;
 }
 
-VkPipelineColorBlendAttachmentState
-PipelineStateFactory::disableColorBlendAttachmentState() {
-    VkPipelineColorBlendAttachmentState state = {};
+void
+PipelineStateFactory::disableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state) {
+    state = {};
     state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
         VK_COLOR_COMPONENT_G_BIT |
         VK_COLOR_COMPONENT_B_BIT |
         VK_COLOR_COMPONENT_A_BIT;
     state.blendEnable = VK_FALSE;
-
-    return state;
 }
 
-VkPipelineColorBlendAttachmentState
-PipelineStateFactory::enableColorBlendAttachmentState() {
-    VkPipelineColorBlendAttachmentState state = {};
+void
+PipelineStateFactory::enableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state) {
+    state = {};
     state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
         VK_COLOR_COMPONENT_G_BIT |
         VK_COLOR_COMPONENT_B_BIT |
@@ -136,29 +124,25 @@ PipelineStateFactory::enableColorBlendAttachmentState() {
     state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
     state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
     state.alphaBlendOp = VK_BLEND_OP_ADD;
-
-    return state;
 }
 
-VkPipelineColorBlendStateCreateInfo
-PipelineStateFactory::colorBlendState(const VkPipelineColorBlendAttachmentState& colorBlendAttachmentState) {
-    VkPipelineColorBlendStateCreateInfo createInfo = {};
+void
+PipelineStateFactory::colorBlendState(const VkPipelineColorBlendAttachmentState& colorBlendAttachmentState,
+                                      VkPipelineColorBlendStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     createInfo.logicOpEnable = VK_FALSE;
     createInfo.attachmentCount = 1;
     createInfo.pAttachments = &colorBlendAttachmentState;
-
-    return createInfo;
 }
 
-VkPipelineColorBlendStateCreateInfo
-PipelineStateFactory::colorBlendState(const std::vector<VkPipelineColorBlendAttachmentState>& colorBlendAttachmentStates) {
-    VkPipelineColorBlendStateCreateInfo createInfo = {};
+void
+PipelineStateFactory::colorBlendState(const std::vector<VkPipelineColorBlendAttachmentState>& colorBlendAttachmentStates,
+                                      VkPipelineColorBlendStateCreateInfo& createInfo) {
+    createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     createInfo.logicOpEnable = VK_FALSE;
     createInfo.attachmentCount = static_cast<uint32_t>(colorBlendAttachmentStates.size());
     createInfo.pAttachments = colorBlendAttachmentStates.data();
-
-    return createInfo;
 }
 }
