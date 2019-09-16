@@ -38,7 +38,6 @@
     <ClCompile Include="..\..\utils\FrameBuffers.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp" />
     <ClCompile Include="..\..\utils\SystemManager.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -77,6 +76,10 @@
     </ClCompile>
     <ClCompile Include="RenderPassCreator.cpp" />
     <ClCompile Include="GraphicsPipelineCreator.cpp" />
+    <ClCompile Include="..\..\utils\BaseApp.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTriangleApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -126,7 +129,6 @@
     <ClInclude Include="..\..\utils\FrameBuffers.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="App.h" />
     <ClInclude Include="..\..\utils\SystemManager.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -168,5 +170,9 @@
     </ClInclude>
     <ClInclude Include="RenderPassCreator.h" />
     <ClInclude Include="GraphicsPipelineCreator.h" />
+    <ClInclude Include="..\..\utils\BaseApp.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTriangleApp.h" />
   </ItemGroup>
 </Project>
