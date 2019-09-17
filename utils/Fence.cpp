@@ -28,6 +28,26 @@ Fence::~Fence() {
                    nullptr);
 }
 
+void
+Fence::wait() const {
+    assert(mFence != VK_NULL_HANDLE);
+
+    vkChecker(vkWaitForFences(mLogicalDevice.vkDevice(),
+                              1,
+                              &mFence,
+                              VK_TRUE,
+                              std::numeric_limits<uint64_t>::max()));
+}
+
+void
+Fence::reset() const {
+    assert(mFence != VK_NULL_HANDLE);
+
+    vkChecker(vkResetFences(mLogicalDevice.vkDevice(),
+                            1,
+                            &mFence));
+}
+
 void 
 Fence::waitAndReset() const {
     assert(mFence != VK_NULL_HANDLE);

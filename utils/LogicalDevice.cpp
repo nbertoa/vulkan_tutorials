@@ -94,6 +94,12 @@ LogicalDevice::setQueues() {
     assert(mGraphicsQueue != VK_NULL_HANDLE);
 
     vkGetDeviceQueue(mLogicalDevice,
+                     mPhysicalDevice->transferSupportQueueFamilyIndex(),
+                     0,
+                     &mTransferQueue);
+    assert(mTransferQueue != VK_NULL_HANDLE);
+
+    vkGetDeviceQueue(mLogicalDevice,
                      mPhysicalDevice->presentationSupportQueueFamilyIndex(),
                      0,
                      &mPresentationQueue);

@@ -47,14 +47,18 @@ public:
 
     void bindVertexBuffer(const Buffer& buffer);
 
+    void copyBuffer(const Buffer& sourceBuffer,
+                    const Buffer& destinationBuffer,
+                    const VkBufferCopy& bufferCopy);
+
     void draw(const uint32_t vertexCount,
               const uint32_t instanceCount = 1,
               const uint32_t firstVertex = 0,
               const uint32_t firstInstance = 0);
 
     void submit(const VkQueue queue,
-                const Semaphore& waitSemaphore,
-                const Semaphore& signalSemaphore,
+                const Semaphore* waitSemaphore,
+                const Semaphore* signalSemaphore,
                 const Fence& inFlightFence,
                 const VkPipelineStageFlags waitStage);
 

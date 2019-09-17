@@ -8,6 +8,8 @@
 #include "DeviceMemory.h"
 
 namespace vk {
+class CommandPool;
+class Fence;
 class LogicalDevice;
 
 // VkBuffer's wrapper to be able to create/destroy
@@ -70,6 +72,25 @@ public:
                           const VkDeviceSize offset,
                           const VkDeviceSize size,
                           const VkMemoryMapFlags flags);
+
+    // These methods assumes the buffer was created with
+    // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
+    // The methods without size parameter are going to use
+    // the sourceBuffer size.
+    // The methods without the fence parameter, creates
+    // an internal fence and wait for completion.
+    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                      const VkDeviceSize size,
+                                      const CommandPool& transferCommandPool,
+                                      const Fence& fence);
+    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                      const VkDeviceSize size,
+                                      const CommandPool& transferCommandPool);
+    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                      const CommandPool& transferCommandPool,
+                                      const Fence& fence);
+    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                      const CommandPool& transferCommandPool);
 
     VkDeviceSize size() const {
         assert(mBuffer != VK_NULL_HANDLE);

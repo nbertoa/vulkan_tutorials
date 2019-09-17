@@ -37,6 +37,8 @@ public:
         return mFence;
     }
 
+    void wait() const;
+    void reset() const;
     void waitAndReset() const;
 
 private:

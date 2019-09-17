@@ -1,6 +1,9 @@
 #include "Buffer.h"
 
+#include "CommandBuffer.h"
+#include "CommandPool.h"
 #include "DebugUtils.h"
+#include "Fence.h"
 #include "LogicalDevice.h"
 
 namespace vk {
@@ -68,6 +71,69 @@ Buffer::copyToHostMemory(void* sourceData,
 
     vkUnmapMemory(mLogicalDevice.vkDevice(),
                   mDeviceMemory.vkDeviceMemory());
+}
+
+void 
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                     const VkDeviceSize size,
+                                     const CommandPool& transferCommandPool,
+                                     const Fence& fence) {
+    assert(size > 0);
+
+    CommandBuffer commandBuffer(mLogicalDevice,
+                                transferCommandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+    VkBufferCopy bufferCopy = {};
+    bufferCopy.size = size;
+    commandBuffer.copyBuffer(sourceBuffer,
+                             *this,
+                             bufferCopy);
+
+    commandBuffer.endRecording();
+
+    commandBuffer.submit(mLogicalDevice.transferQueue(),
+                         nullptr,
+                         nullptr,
+                         fence,
+                         VK_PIPELINE_STAGE_TRANSFER_BIT);
+
+}
+
+void
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                     const VkDeviceSize size,
+                                     const CommandPool& transferCommandPool) {
+    Fence fence(mLogicalDevice);
+    fence.waitAndReset();
+    copyFromBufferToDeviceMemory(sourceBuffer,
+                                 size,
+                                 transferCommandPool,
+                                 fence);
+    fence.wait();
+}
+
+void
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                     const CommandPool& transferCommandPool,
+                                     const Fence& fence) {
+    copyFromBufferToDeviceMemory(sourceBuffer,
+                                 sourceBuffer.size(),
+                                 transferCommandPool,
+                                 fence);
+}
+
+void
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
+                                     const CommandPool& transferCommandPool) {
+    Fence fence(mLogicalDevice);
+    fence.waitAndReset();
+    copyFromBufferToDeviceMemory(sourceBuffer,
+                                 transferCommandPool,
+                                 fence);
+    fence.wait();
 }
 
 VkMemoryRequirements 

@@ -5,7 +5,8 @@
 
 namespace vk {
 CommandPool::CommandPool(const LogicalDevice& logicalDevice,
-                         const Type type)
+                         const Type type,
+                         const VkCommandPoolCreateFlags flags)
     : mLogicalDevice(logicalDevice)
 {
     VkCommandPoolCreateInfo createInfo = {};
@@ -29,11 +30,7 @@ CommandPool::CommandPool(const LogicalDevice& logicalDevice,
     // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT: Allow 
     // command buffers to be rerecorded individually, without this flag
     // they all have to be reset together.
-    // 
-    // We will only record the command buffers at the beginning
-    // of the program and then execute them many times in the main loop,
-    // so we are not going to use either of these flags.
-    createInfo.flags = 0;
+    createInfo.flags = flags;
     
     vkChecker(vkCreateCommandPool(mLogicalDevice.vkDevice(),
                                   &createInfo,

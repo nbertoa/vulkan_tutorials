@@ -62,8 +62,8 @@ BaseApp::submitCommandBufferAndPresent() {
 
     CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
     commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
-                         imageAvailableSemaphore,
-                         renderFinishedSemaphore,
+                         &imageAvailableSemaphore,
+                         &renderFinishedSemaphore,
                          fence,
                          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 

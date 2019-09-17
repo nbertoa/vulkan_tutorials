@@ -18,7 +18,8 @@ SystemManager::SystemManager(const uint32_t windowWidth,
     , mGraphicsCommandPool(new CommandPool(*mLogicalDevice, 
                                            CommandPool::Type::GRAPHICS))
     , mTransferCommandPool(new CommandPool(*mLogicalDevice,
-                                           CommandPool::Type::TRANSFER))
+                                           CommandPool::Type::TRANSFER,
+                                           VK_COMMAND_POOL_CREATE_TRANSIENT_BIT))
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, 
                                                CommandPool::Type::PRESENTATION))
 {

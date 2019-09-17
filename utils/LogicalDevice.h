@@ -39,6 +39,11 @@ public:
         return mGraphicsQueue; 
     }
 
+    VkQueue transferQueue() const {
+        assert(mTransferQueue != VK_NULL_HANDLE);
+        return mTransferQueue;
+    }
+
     VkQueue presentationQueue() const { 
         assert(mPresentationQueue != VK_NULL_HANDLE); 
         return mPresentationQueue; 
@@ -61,6 +66,7 @@ private:
 
     // Command queues for graphics commands and presentation commands respectively.
     VkQueue mGraphicsQueue = VK_NULL_HANDLE;
+    VkQueue mTransferQueue = VK_NULL_HANDLE;
     VkQueue mPresentationQueue = VK_NULL_HANDLE;
 
     PhysicalDevice* mPhysicalDevice = nullptr;

@@ -28,7 +28,8 @@ public:
     };
 
     CommandPool(const LogicalDevice& logicalDevice,
-                const Type type);
+                const Type type,
+                const VkCommandPoolCreateFlags flags = 0);
     ~CommandPool();
     CommandPool(CommandPool&& other) noexcept;
 
