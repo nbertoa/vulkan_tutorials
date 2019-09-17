@@ -31,8 +31,7 @@ public:
     // Returns the swap chain's acquired image index 
     uint32_t acquireNextImage(const Semaphore& semaphore);
 
-    void present(const VkQueue queue, 
-                 const Semaphore& waitSemaphore,
+    void present(const Semaphore& waitSemaphore,
                  const uint32_t imageIndex);
 
     // The viewport describes the region of the framebuffer that the output

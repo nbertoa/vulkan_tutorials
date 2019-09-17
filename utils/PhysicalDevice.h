@@ -31,6 +31,11 @@ public:
         return mGraphicsSupportQueueFamilyIndex; 
     }
 
+    uint32_t transferSupportQueueFamilyIndex() const {
+        assert(mPhysicalDevice != VK_NULL_HANDLE);
+        return mTransferSupportQueueFamilyIndex;
+    }
+
     uint32_t presentationSupportQueueFamilyIndex() const { 
         assert(mPhysicalDevice != VK_NULL_HANDLE); 
         return mPresentationSupportQueueFamilyIndex; 
@@ -57,6 +62,9 @@ private:
     static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
                                                               uint32_t& queueFamilyIndex);
 
+    static bool isTransferQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice,
+                                                               uint32_t& queueFamilyIndex);
+
     static bool isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
                                                         const VkSurfaceKHR surface, 
                                                         uint32_t& queueFamilyIndex);
@@ -70,10 +78,12 @@ private:
     bool isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
                                   const Surface& surface,
                                   uint32_t& graphicsSupportQueueFamilyIndex,
+                                  uint32_t& transferSupportQueueFamilyIndex,
                                   uint32_t& presentationSupportQueueFamilyIndex) const;
     struct PhysicalDeviceInfo {
         VkPhysicalDevice mDevice = VK_NULL_HANDLE;
         uint32_t mGraphicsSupportQueueFamilyIndex = 0;
+        uint32_t mTransferSupportQueueFamilyIndex = 0;
         uint32_t mPresentationSupportQueueFamilyIndex = 0;
     };
     std::vector<PhysicalDeviceInfo> getCandidateDevices(const AppInstance& appInstance,
@@ -84,6 +94,7 @@ private:
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 
     uint32_t mGraphicsSupportQueueFamilyIndex = 0;
+    uint32_t mTransferSupportQueueFamilyIndex = 0;
     uint32_t mPresentationSupportQueueFamilyIndex = 0;
 
     std::vector<const char*> mDeviceExtensions;

@@ -102,6 +102,34 @@ PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDe
 }
 
 bool
+PhysicalDevice::isTransferQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice,
+                                                              uint32_t& queueFamilyIndex) {
+    assert(physicalDevice != VK_NULL_HANDLE);
+
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,
+                                             &queueFamilyCount,
+                                             nullptr);
+
+    std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,
+                                             &queueFamilyCount,
+                                             queueFamilyProperties.data());
+
+    queueFamilyIndex = 0;
+    for (const VkQueueFamilyProperties& queueFamilyProperty : queueFamilyProperties) {
+        if (queueFamilyProperty.queueCount > 0 &&
+            queueFamilyProperty.queueFlags & VK_QUEUE_TRANSFER_BIT) {
+            return true;
+        }
+
+        ++queueFamilyIndex;
+    }
+
+    return false;
+}
+
+bool
 PhysicalDevice::isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
                                                         const VkSurfaceKHR surface, 
                                                         uint32_t& queueFamilyIndex) {
@@ -182,11 +210,14 @@ bool
 PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
                                          const Surface& surface,
                                          uint32_t& graphicsSupportQueueFamilyIndex,
+                                         uint32_t& transferSupportQueueFamilyIndex,
                                          uint32_t& presentationSupportQueueFamilyIndex) const {
     assert(physicalDevice != VK_NULL_HANDLE);
 
     return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, 
                                                          graphicsSupportQueueFamilyIndex) &&
+           isTransferQueueFamilySupportedByPhysicalDevice(physicalDevice,
+                                                          transferSupportQueueFamilyIndex) &&
            isPresentationSupportedByPhysicalDevice(physicalDevice, 
                                                    surface.vkSurface(), 
                                                    presentationSupportQueueFamilyIndex) &&
@@ -215,14 +246,17 @@ PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
         assert(device != VK_NULL_HANDLE);
 
         uint32_t graphicsSupportQueueFamilyIndex;
+        uint32_t transferSupportQueueFamilyIndex;
         uint32_t presentationSupportQueueFamilyIndex;
         if (isPhysicalDeviceSuitable(device, 
                                      surface,
                                      graphicsSupportQueueFamilyIndex,
+                                     transferSupportQueueFamilyIndex,
                                      presentationSupportQueueFamilyIndex)) {
             PhysicalDeviceInfo physicalDeviceInfo;
             physicalDeviceInfo.mDevice = device;
             physicalDeviceInfo.mGraphicsSupportQueueFamilyIndex = graphicsSupportQueueFamilyIndex;
+            physicalDeviceInfo.mTransferSupportQueueFamilyIndex = transferSupportQueueFamilyIndex;
             physicalDeviceInfo.mPresentationSupportQueueFamilyIndex = presentationSupportQueueFamilyIndex;
             candidatePhysicalDevices.push_back(physicalDeviceInfo);
         }
@@ -245,6 +279,7 @@ PhysicalDevice::setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDevi
         if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
             mPhysicalDevice = deviceInfo.mDevice;
             mGraphicsSupportQueueFamilyIndex = deviceInfo.mGraphicsSupportQueueFamilyIndex;
+            mTransferSupportQueueFamilyIndex = deviceInfo.mTransferSupportQueueFamilyIndex;
             mPresentationSupportQueueFamilyIndex = deviceInfo.mPresentationSupportQueueFamilyIndex;
             break;
         }
@@ -254,6 +289,7 @@ PhysicalDevice::setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDevi
         const PhysicalDeviceInfo& deviceInfo = candidateDevices.front();
         mPhysicalDevice = deviceInfo.mDevice;
         mGraphicsSupportQueueFamilyIndex = deviceInfo.mGraphicsSupportQueueFamilyIndex;
+        mTransferSupportQueueFamilyIndex = deviceInfo.mTransferSupportQueueFamilyIndex;
         mPresentationSupportQueueFamilyIndex = deviceInfo.mPresentationSupportQueueFamilyIndex;
     }
 }

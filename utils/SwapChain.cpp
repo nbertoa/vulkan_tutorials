@@ -69,11 +69,9 @@ SwapChain::acquireNextImage(const Semaphore& semaphore) {
 }
 
 void
-SwapChain::present(const VkQueue queue,
-                   const Semaphore& waitSemaphore,
+SwapChain::present(const Semaphore& waitSemaphore,
                    const uint32_t imageIndex) {
     assert(mSwapChain != VK_NULL_HANDLE);
-    assert(queue != VK_NULL_HANDLE);
 
     VkPresentInfoKHR info = {};
     info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -94,7 +92,7 @@ SwapChain::present(const VkQueue queue,
     // because you can simply use the return value of the present method.
     info.pResults = nullptr;
 
-    vkChecker(vkQueuePresentKHR(queue,
+    vkChecker(vkQueuePresentKHR(mLogicalDevice.presentationQueue(),
                                 &info));
 
 }

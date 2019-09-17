@@ -24,6 +24,8 @@ SimpleTriangleApp::SimpleTriangleApp(const uint32_t windowWidth,
 void 
 SimpleTriangleApp::createBuffers() {
     assert(mVertexBuffer == nullptr);
+    assert(mCpuVertexBuffer == nullptr);
+    assert(mGpuVertexBuffer == nullptr);
 
     std::vector<vk::PosColorVertex> vertices
     {
@@ -40,10 +42,29 @@ SimpleTriangleApp::createBuffers() {
                                    VK_SHARING_MODE_EXCLUSIVE,
                                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
 
-    mVertexBuffer->copyToMemory(vertices.data(),
-                                0,
-                                verticesSize,
-                                0);
+    mVertexBuffer->copyToHostMemory(vertices.data(),
+                                    0,
+                                    verticesSize,
+                                    0);
+
+    mCpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                      verticesSize,
+                                      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                                      VK_SHARING_MODE_EXCLUSIVE,
+                                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
+
+    mCpuVertexBuffer->copyToHostMemory(vertices.data(),
+                                       0,
+                                       verticesSize,
+                                       0);
+
+    mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                      verticesSize,
+                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+                                      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                      VK_SHARING_MODE_EXCLUSIVE,
+                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 }
 
 void

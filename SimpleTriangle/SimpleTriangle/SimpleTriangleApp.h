@@ -17,6 +17,9 @@ protected:
     void recordCommandBuffers();
 
     std::unique_ptr<vk::Buffer> mVertexBuffer;
+
+    std::unique_ptr<vk::Buffer> mCpuVertexBuffer;
+    std::unique_ptr<vk::Buffer> mGpuVertexBuffer;
 };
 
 #endif 

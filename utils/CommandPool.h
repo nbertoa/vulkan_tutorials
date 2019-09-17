@@ -23,6 +23,7 @@ class CommandPool {
 public:
     enum class Type {
         GRAPHICS,
+        TRANSFER,
         PRESENTATION
     };
 

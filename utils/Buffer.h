@@ -60,10 +60,16 @@ public:
     // is an operation that happens in the background and the
     // specification simply tells us that it is guaranteed
     // to be complete as of the next call to vkQueueSubmit.
-    void copyToMemory(void* sourceData, 
-                      const VkDeviceSize offset,
-                      const VkDeviceSize size,
-                      const VkMemoryMapFlags flags);
+    //
+    // Preconditions !!!
+    // This method cannot be used if you allocated the buffer
+    // from a memory type that is device local, like 
+    // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
+    // You should use copyToDeviceMemory instead.
+    void copyToHostMemory(void* sourceData, 
+                          const VkDeviceSize offset,
+                          const VkDeviceSize size,
+                          const VkMemoryMapFlags flags);
 
     VkDeviceSize size() const {
         assert(mBuffer != VK_NULL_HANDLE);

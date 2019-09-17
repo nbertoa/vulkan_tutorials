@@ -67,8 +67,7 @@ BaseApp::submitCommandBufferAndPresent() {
                          fence,
                          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 
-    mSystemManager.swapChain().present(mSystemManager.logicalDevice().presentationQueue(),
-                                       renderFinishedSemaphore,
+    mSystemManager.swapChain().present(renderFinishedSemaphore,
                                        swapChainImageIndex);
 }
 }

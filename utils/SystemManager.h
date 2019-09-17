@@ -54,6 +54,11 @@ public:
         return *mGraphicsCommandPool;
     }
 
+    const CommandPool& transferCommandPool() const {
+        assert(mTransferCommandPool != nullptr);
+        return *mTransferCommandPool;
+    }
+
     const CommandPool& presentationCommandPool() const {
         assert(mPresentationCommandPool != nullptr);
         return *mPresentationCommandPool;
@@ -68,6 +73,7 @@ private:
     std::unique_ptr<LogicalDevice> mLogicalDevice;
     std::unique_ptr<SwapChain> mSwapChain;
     std::unique_ptr<CommandPool> mGraphicsCommandPool;
+    std::unique_ptr<CommandPool> mTransferCommandPool;
     std::unique_ptr<CommandPool> mPresentationCommandPool;
 };
 }

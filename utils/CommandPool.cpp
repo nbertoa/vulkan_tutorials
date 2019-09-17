@@ -13,11 +13,14 @@ CommandPool::CommandPool(const LogicalDevice& logicalDevice,
     // Command buffers are executed by submitting them on one of the device queues,
     // like the graphics and presentation queues. Each command pool can only allocate
     // command buffers that are submitted on a single type of queue.
-    // We are going to record commands for drawing, which is wyh we have chosen
-    // the graphics queue family.
-    createInfo.queueFamilyIndex = 
-        type == Type::GRAPHICS ? mLogicalDevice.physicalDevice().graphicsSupportQueueFamilyIndex()
-                               : mLogicalDevice.physicalDevice().presentationSupportQueueFamilyIndex();
+    if (type == Type::GRAPHICS) {
+        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().graphicsSupportQueueFamilyIndex();
+    } else if (type == Type::TRANSFER) {
+        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().transferSupportQueueFamilyIndex();
+    } else {
+        assert(type == Type::PRESENTATION);
+        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().presentationSupportQueueFamilyIndex();
+    }
 
     // There are two posible flags for command pools:
     // VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: Hint that command buffers

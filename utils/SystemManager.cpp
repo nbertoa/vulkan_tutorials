@@ -17,6 +17,8 @@ SystemManager::SystemManager(const uint32_t windowWidth,
                                *mSurface))
     , mGraphicsCommandPool(new CommandPool(*mLogicalDevice, 
                                            CommandPool::Type::GRAPHICS))
+    , mTransferCommandPool(new CommandPool(*mLogicalDevice,
+                                           CommandPool::Type::TRANSFER))
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, 
                                                CommandPool::Type::PRESENTATION))
 {
