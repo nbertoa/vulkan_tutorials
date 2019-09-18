@@ -1,5 +1,7 @@
 #include "FrameBuffers.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
@@ -55,6 +57,12 @@ FrameBuffers::FrameBuffers(FrameBuffers&& other) noexcept
     , mFrameBuffers(std::move(other.mFrameBuffers))
 {
 
+}
+
+size_t 
+FrameBuffers::bufferCount() const {
+    assert(mFrameBuffers.empty() == false);
+    return mFrameBuffers.size();
 }
 
 VkFramebuffer 

@@ -1,5 +1,6 @@
 #include "PhysicalDevice.h"
 
+#include <cassert>
 #include <iostream>
 #include <unordered_set>
 #include <vector>
@@ -23,6 +24,36 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
     , mDeviceExtensions(std::move(other.mDeviceExtensions))
 {
     other.mPhysicalDevice = VK_NULL_HANDLE;
+}
+
+VkPhysicalDevice 
+PhysicalDevice::vkPhysicalDevice() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    return mPhysicalDevice;
+}
+
+uint32_t 
+PhysicalDevice::graphicsSupportQueueFamilyIndex() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    return mGraphicsSupportQueueFamilyIndex;
+}
+
+uint32_t 
+PhysicalDevice::transferSupportQueueFamilyIndex() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    return mTransferSupportQueueFamilyIndex;
+}
+
+uint32_t 
+PhysicalDevice::presentationSupportQueueFamilyIndex() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    return mPresentationSupportQueueFamilyIndex;
+}
+
+const std::vector<const char*>& 
+PhysicalDevice::deviceExtensions() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    return mDeviceExtensions;
 }
 
 uint32_t 
@@ -71,6 +102,11 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
     }
 
     return typeIndex;
+}
+
+bool 
+PhysicalDevice::isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const {
+    return memoryTypeIndex != std::numeric_limits<uint32_t>::max();
 }
 
 bool

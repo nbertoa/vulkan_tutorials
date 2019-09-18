@@ -1,5 +1,7 @@
 #include "CommandBuffer.h"
 
+#include <cassert>
+
 #include "Buffer.h"
 #include "CommandPool.h"
 #include "DebugUtils.h"
@@ -21,14 +23,6 @@ CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
 
     // Specify if the allocated command buffers are primary
     // or secondary command buffers.
-    //
-    // - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
-    // to a queue for execution, but cannot be called
-    // from other command buffers.
-    //
-    // - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
-    // directly, but can be called from primary command
-    // buffers.
     info.level = level;   
 
     vkChecker(vkAllocateCommandBuffers(logicalDevice.vkDevice(),
@@ -54,18 +48,7 @@ CommandBuffer::beginRecording(const VkCommandBufferUsageFlags usageFlags) {
     VkCommandBufferBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    // Specify how we are going to use the command buffer. The 
-    // following values are available:
-    // - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
-    // will be rerecorded right after executing it once.
-    //
-    // - VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
-    // secondary command buffer that will be entirely within a single
-    // render pass.
-    //
-    // - VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
-    // buffer can be resubmitted while it is also already pending 
-    // execution.
+    // Specify how we are going to use the command buffer.
     info.flags = usageFlags;
 
     // This is only relevant for secondary command buffers
@@ -88,9 +71,7 @@ CommandBuffer::beginPass(const RenderPass& renderPass,
                          const VkFramebuffer frameBuffer,
                          const VkExtent2D& imageExtent) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    assert(frameBuffer != VK_NULL_HANDLE);
-
-    
+    assert(frameBuffer != VK_NULL_HANDLE);     
 
     VkRenderPassBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

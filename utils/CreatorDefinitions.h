@@ -9,6 +9,8 @@ class LogicalDevice;
 class RenderPass;
 class SwapChain;
 
+// Methods used as factories by BaseApp to be able
+// to polymorphically create entities (pipeline, render pass, etc)
 using GraphicsPipelineCreator = std::function<GraphicsPipeline*(const LogicalDevice& logicalDevice,
                                                                 const SwapChain& swapChain,
                                                                 const RenderPass& renderPass)>;

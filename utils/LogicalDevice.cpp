@@ -1,5 +1,7 @@
 #include "LogicalDevice.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 
 namespace vk {
@@ -104,5 +106,35 @@ LogicalDevice::setQueues() {
                      0,
                      &mPresentationQueue);
     assert(mPresentationQueue != VK_NULL_HANDLE);
+}
+
+VkDevice 
+LogicalDevice::vkDevice() const {
+    assert(mLogicalDevice != VK_NULL_HANDLE);
+    return mLogicalDevice;
+}
+
+VkQueue 
+LogicalDevice::graphicsQueue() const {
+    assert(mGraphicsQueue != VK_NULL_HANDLE);
+    return mGraphicsQueue;
+}
+
+VkQueue 
+LogicalDevice::transferQueue() const {
+    assert(mTransferQueue != VK_NULL_HANDLE);
+    return mTransferQueue;
+}
+
+VkQueue 
+LogicalDevice::presentationQueue() const {
+    assert(mPresentationQueue != VK_NULL_HANDLE);
+    return mPresentationQueue;
+}
+
+const PhysicalDevice& 
+LogicalDevice::physicalDevice() const {
+    assert(mPhysicalDevice != nullptr);
+    return *mPhysicalDevice;
 }
 }

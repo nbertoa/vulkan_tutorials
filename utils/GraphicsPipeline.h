@@ -1,8 +1,6 @@
 #ifndef UTILS_GRAPHICS_PIPELINE
 #define UTILS_GRAPHICS_PIPELINE
 
-#include <cassert>
-
 #include <memory>
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -13,7 +11,7 @@ namespace vk {
 class LogicalDevice;
 class RenderPass;
 
-// Graphics VkPipeline wrapper to be able to create/destroy/handle it easily.
+// Graphics VkPipeline wrapper.
 // The graphics pipeline consist of the following:
 // - Shader stages: the shader modules that define the functionality
 //   of the programmable stages of the graphics pipeline.
@@ -27,7 +25,8 @@ class RenderPass;
 class GraphicsPipeline {
 public:
     // Notes:
-    // - Ownership of pipelineLayout will be transferred
+    // - Ownership of pipelineLayout will be transferred.
+    // - The parameter of pointer types can be nullptr.
     GraphicsPipeline(const LogicalDevice& logicalDevice,
                      const RenderPass& renderPass,
                      const uint32_t subPassIndex,
@@ -43,14 +42,10 @@ public:
                      const VkPipelineDynamicStateCreateInfo* dynamicState);
     ~GraphicsPipeline();
     GraphicsPipeline(GraphicsPipeline&& other) noexcept;
-
     GraphicsPipeline(const GraphicsPipeline&) = delete;
     const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
 
-    VkPipeline vkPipeline() const {
-        assert(mPipeline != VK_NULL_HANDLE);
-        return mPipeline;
-    }
+    VkPipeline vkPipeline() const;
 
 private:
     const LogicalDevice& mLogicalDevice;

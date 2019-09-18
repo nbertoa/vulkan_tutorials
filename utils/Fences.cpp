@@ -6,12 +6,14 @@
 
 namespace vk {
 Fences::Fences(const LogicalDevice& logicalDevice,
-               const size_t fenceCount) {
+               const size_t fenceCount,
+               const VkFenceCreateFlags flags) {
     assert(fenceCount > 0);
 
     mFences.reserve(fenceCount);
     for (size_t i = 0; i < fenceCount; ++i) {
-        Fence fence(logicalDevice);
+        Fence fence(logicalDevice,
+                    flags);
         mFences.emplace_back(std::move(fence));
     }
 }

@@ -1,5 +1,7 @@
 #include "AppInstance.h"
 
+#include <cassert>
+
 #include "DebugMessenger.h"
 #include "DebugUtils.h"
 
@@ -29,9 +31,16 @@ AppInstance::AppInstance(AppInstance&& other) noexcept
 #endif    
 }
 
+const VkInstance& 
+AppInstance::vkInstance() const {
+    assert(mInstance != nullptr);
+    return mInstance;
+}
+
 void
 AppInstance::createInstance() {
     assert(mInstance == VK_NULL_HANDLE);
+    assert(mMessenger == VK_NULL_HANDLE);
 
     const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
 #ifndef NDEBUG // Debug

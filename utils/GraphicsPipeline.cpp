@@ -1,5 +1,7 @@
 #include "GraphicsPipeline.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
@@ -80,6 +82,12 @@ GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
     , mPipeline(other.mPipeline)
 {
     other.mPipeline = VK_NULL_HANDLE;
+}
+
+VkPipeline 
+GraphicsPipeline::vkPipeline() const {
+    assert(mPipeline != VK_NULL_HANDLE);
+    return mPipeline;
 }
 
 }

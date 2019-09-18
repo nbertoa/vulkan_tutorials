@@ -1,16 +1,14 @@
 #ifndef UTILS_FENCE
 #define UTILS_FENCE
 
-#include <cassert>
 #include <vulkan/vulkan.h>
 
 namespace vk {
 class LogicalDevice;
 
-// VkFence wrapper to be able to create and 
-// handle them easily.
+// VkFence wrapper.
 //  
-// Fences are a synchronization primitive that
+// Fences are a synchronization primitiveS that
 // can be used to insert a dependency from a 
 // queue to the host.
 //
@@ -25,17 +23,18 @@ class LogicalDevice;
 // to become signaled.
 class Fence {
 public:
-    Fence(const LogicalDevice& logicalDevice);
+    // Flags:
+    // VK_FENCE_CREATE_SIGNALED_BIT specifies that the fence object 
+    // is created in the signaled state.
+    // Otherwise, it is created in the unsignaled state.
+    Fence(const LogicalDevice& logicalDevice,
+          const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
     ~Fence();
     Fence(Fence&& other) noexcept;
-
     Fence(const Fence&) = delete;
     const Fence& operator=(const Fence&) = delete;
 
-    const VkFence& vkFence() const {
-        assert(mFence != VK_NULL_HANDLE);
-        return mFence;
-    }
+    const VkFence& vkFence() const;
 
     void wait() const;
     void reset() const;

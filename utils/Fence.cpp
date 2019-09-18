@@ -1,14 +1,17 @@
 #include "Fence.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
 namespace vk {
-Fence::Fence(const LogicalDevice& logicalDevice)
+Fence::Fence(const LogicalDevice& logicalDevice,
+             const VkFenceCreateFlags flags)
     : mLogicalDevice(logicalDevice) {
     VkFenceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    createInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    createInfo.flags = flags;
 
     vkChecker(vkCreateFence(mLogicalDevice.vkDevice(),
                             &createInfo,
@@ -26,6 +29,12 @@ Fence::~Fence() {
     vkDestroyFence(mLogicalDevice.vkDevice(),
                    mFence,
                    nullptr);
+}
+
+const VkFence& 
+Fence::vkFence() const {
+    assert(mFence != VK_NULL_HANDLE);
+    return mFence;
 }
 
 void

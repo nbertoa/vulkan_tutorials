@@ -1,5 +1,7 @@
 #include "CommandBuffers.h"
 
+#include <cassert>
+
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "DebugUtils.h"
@@ -37,5 +39,17 @@ CommandBuffers::CommandBuffers(CommandBuffers&& other) noexcept
     : mCommandBuffers(std::move(other.mCommandBuffers))
 {
 
+}
+
+size_t 
+CommandBuffers::bufferCount() const {
+    assert(mCommandBuffers.empty() == false);
+    return mCommandBuffers.size();
+}
+
+CommandBuffer& 
+CommandBuffers::commandBuffer(const size_t bufferIndex) {
+    assert(bufferIndex < mCommandBuffers.size());
+    return mCommandBuffers[bufferIndex];
 }
 }

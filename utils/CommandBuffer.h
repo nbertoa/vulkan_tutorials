@@ -1,7 +1,6 @@
 #ifndef UTILS_COMMAND_BUFFER
 #define UTILS_COMMAND_BUFFER
 
-#include <cassert>
 #include <vulkan/vulkan.h>
 
 namespace vk {
@@ -13,7 +12,7 @@ class LogicalDevice;
 class RenderPass;
 class Semaphore;
 
-// VkCommandBuffer wrapper to be able to create and use it easily.
+// VkCommandBuffer wrapper.
 // Command buffers are objects used to record commands which can be
 // subsequently submitted to a device queue for execution.
 // There are two levels of command buffers: 
@@ -24,17 +23,35 @@ class Semaphore;
 //   submitted to queues.
 class CommandBuffer {
 public:
+    // Level:
+    // - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
+    // to a queue for execution, but cannot be called
+    // from other command buffers.
+    //
+    // - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
+    // directly, but can be called from primary command
+    // buffers.
     CommandBuffer(const LogicalDevice& logicalDevice,
                   const CommandPool& commandPool,
                   const VkCommandBufferLevel level);
-
     CommandBuffer(const VkCommandBuffer commandBuffer);
-
     CommandBuffer(CommandBuffer&& other) noexcept;
-
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;
 
+    // Usage flags:
+    // Specify how we are going to use the command buffer. The 
+    // following values are available:
+    // - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
+    // will be rerecorded right after executing it once.
+    //
+    // - VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
+    // secondary command buffer that will be entirely within a single
+    // render pass.
+    //
+    // - VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
+    // buffer can be resubmitted while it is also already pending 
+    // execution.
     void beginRecording(const VkCommandBufferUsageFlags usageFlags);
     void endRecording();
 

@@ -1,14 +1,18 @@
 #ifndef UTILS_APP_INSTANCE
 #define UTILS_APP_INSTANCE
 
-#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
 class DebugMessenger;
 
-// VkInstance wrappers with methods to create/destroy/get it.
+// VkInstance wrapper.
+// There is no global state in Vulkan and all per-application 
+// state is stored in a VkInstance object. 
+// Creating a VkInstance object initializes the Vulkan library 
+// and allows the application to pass information about itself 
+// to the implementation.
 class AppInstance {
 public:
     // Preconditions:
@@ -16,14 +20,10 @@ public:
     AppInstance();
     ~AppInstance();
     AppInstance(AppInstance&& other) noexcept;
-
     AppInstance(const AppInstance&) = delete;
     const AppInstance& operator=(const AppInstance&) = delete;
 
-    const VkInstance& vkInstance() const { 
-        assert(mInstance != nullptr);  
-        return mInstance; 
-    }
+    const VkInstance& vkInstance() const;
 
 private:
     void createInstance();

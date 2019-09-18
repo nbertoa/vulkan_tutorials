@@ -1,5 +1,7 @@
 #include "Buffer.h"
 
+#include <cassert>
+
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "DebugUtils.h"
@@ -38,6 +40,18 @@ Buffer::~Buffer() {
     vkDestroyBuffer(mLogicalDevice.vkDevice(),
                     mBuffer,
                     nullptr);
+}
+
+VkBuffer 
+Buffer::vkBuffer() const {
+    assert(mBuffer != VK_NULL_HANDLE);
+    return mBuffer;
+}
+
+VkDeviceSize 
+Buffer::size() const {
+    assert(mBuffer != VK_NULL_HANDLE);
+    return mSizeInBytes;
 }
 
 Buffer::Buffer(Buffer&& other) noexcept 
@@ -99,7 +113,6 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                          nullptr,
                          fence,
                          VK_PIPELINE_STAGE_TRANSFER_BIT);
-
 }
 
 void
@@ -153,32 +166,6 @@ Buffer::createBuffer(const LogicalDevice& logicalDevice,
                      const VkDeviceSize sizeInBytes,
                      const VkBufferUsageFlags usageFlags,
                      const VkSharingMode sharingMode) {
-    // Usage flags:
-    // - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT specifies that 
-    // the buffer is suitable for passing as an element 
-    // of the pBuffers array to vkCmdBindVertexBuffers.
-    //
-    // - VK_BUFFER_USAGE_INDEX_BUFFER_BIT specifies that 
-    // the buffer is suitable for passing as the buffer 
-    // parameter to vkCmdBindIndexBuffer.
-    //
-    // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT specifies that 
-    // the buffer can be used as the source of a transfer 
-    // command (see the definition of VK_PIPELINE_STAGE_TRANSFER_BIT).
-    //
-    // - VK_BUFFER_USAGE_TRANSFER_DST_BIT specifies that 
-    // the buffer can be used as the destination of 
-    // a transfer command.
-
-    // Sharing Modes:
-    // - VK_SHARING_MODE_EXCLUSIVE specifies that access 
-    // to any range or image subresource of the object 
-    // will be exclusive to a single queue family at a time.
-    //
-    // - VK_SHARING_MODE_CONCURRENT specifies that concurrent 
-    // access to any range or image subresource of the object 
-    // from multiple queue families is supported.
-
     VkBuffer buffer;
 
     VkBufferCreateInfo createInfo = {};

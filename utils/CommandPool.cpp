@@ -1,5 +1,7 @@
 #include "CommandPool.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
@@ -14,22 +16,16 @@ CommandPool::CommandPool(const LogicalDevice& logicalDevice,
     // Command buffers are executed by submitting them on one of the device queues,
     // like the graphics and presentation queues. Each command pool can only allocate
     // command buffers that are submitted on a single type of queue.
+    const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
     if (type == Type::GRAPHICS) {
-        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().graphicsSupportQueueFamilyIndex();
+        createInfo.queueFamilyIndex = physicalDevice.graphicsSupportQueueFamilyIndex();
     } else if (type == Type::TRANSFER) {
-        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().transferSupportQueueFamilyIndex();
+        createInfo.queueFamilyIndex = physicalDevice.transferSupportQueueFamilyIndex();
     } else {
         assert(type == Type::PRESENTATION);
-        createInfo.queueFamilyIndex = mLogicalDevice.physicalDevice().presentationSupportQueueFamilyIndex();
+        createInfo.queueFamilyIndex = physicalDevice.presentationSupportQueueFamilyIndex();
     }
 
-    // There are two posible flags for command pools:
-    // VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: Hint that command buffers
-    // are rerecorded with new commands very often (may change memory
-    // allocation behavior)
-    // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT: Allow 
-    // command buffers to be rerecorded individually, without this flag
-    // they all have to be reset together.
     createInfo.flags = flags;
     
     vkChecker(vkCreateCommandPool(mLogicalDevice.vkDevice(),
@@ -49,5 +45,11 @@ CommandPool::CommandPool(CommandPool&& other) noexcept
     , mCommandPool(other.mCommandPool)
 {
     other.mCommandPool = VK_NULL_HANDLE;
+}
+
+VkCommandPool 
+CommandPool::vkCommandPool() const {
+    assert(mCommandPool != VK_NULL_HANDLE);
+    return mCommandPool;
 }
 }

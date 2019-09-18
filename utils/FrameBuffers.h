@@ -1,7 +1,6 @@
 #ifndef UTILS_FRAME_BUFFERS
 #define UTILS_FRAME_BUFFERS
 
-#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -10,8 +9,7 @@ class LogicalDevice;
 class RenderPass;
 class SwapChain;
 
-// VkFrameBuffer's wrapper to be able to create/destroy/handle 
-// them easily.
+// VkFrameBuffers wrapper.
 // Render passes operate in conjunction with framebuffers. 
 // Framebuffers represent a collection of specific memory 
 // attachments that a render pass instance uses.
@@ -22,15 +20,10 @@ public:
                  const RenderPass& renderPass);
     ~FrameBuffers();
     FrameBuffers(FrameBuffers&& other) noexcept;
-
     FrameBuffers(const FrameBuffers&) = delete;
     const FrameBuffers& operator=(const FrameBuffers&) = delete;
 
-    size_t bufferCount() const {
-        assert(mFrameBuffers.empty() == false);
-        return mFrameBuffers.size();
-    }
-
+    size_t bufferCount() const;
     VkFramebuffer buffer(const size_t bufferIndex) const;
 
 private:

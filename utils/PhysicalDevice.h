@@ -1,7 +1,6 @@
 #ifndef UTILS_PHYSICAL_DEVICE
 #define UTILS_PHYSICAL_DEVICE
 
-#include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -9,42 +8,30 @@ namespace vk {
 class AppInstance;
 class Surface;
 
-// VkPhysicalDevice wrapper to be able to create/destroy/get it easily.
+// VkPhysicalDevice wrapper.
 // It represents a physical device installed in the system.
+//
+// Vulkan separates the concept of physical and logical devices.
+// A physical device usually represents a single complete implementation 
+// of Vulkan(excluding instance - level functionality) available to the host, 
+// of which there are a finite number.
+// A logical device represents an instance of that implementation with its 
+// own stateand resources independent of other logical devices.
 class PhysicalDevice {
 public:
     PhysicalDevice(const AppInstance& appInstance, 
                    const Surface& surface);
-
     PhysicalDevice(PhysicalDevice&& other) noexcept;
-
     PhysicalDevice(const PhysicalDevice&) = delete;
     const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 
-    VkPhysicalDevice vkPhysicalDevice() const { 
-        assert(mPhysicalDevice != VK_NULL_HANDLE); 
-        return mPhysicalDevice; 
-    }
+    VkPhysicalDevice vkPhysicalDevice() const;
 
-    uint32_t graphicsSupportQueueFamilyIndex() const { 
-        assert(mPhysicalDevice != VK_NULL_HANDLE); 
-        return mGraphicsSupportQueueFamilyIndex; 
-    }
+    uint32_t graphicsSupportQueueFamilyIndex() const;
+    uint32_t transferSupportQueueFamilyIndex() const;
+    uint32_t presentationSupportQueueFamilyIndex() const;
 
-    uint32_t transferSupportQueueFamilyIndex() const {
-        assert(mPhysicalDevice != VK_NULL_HANDLE);
-        return mTransferSupportQueueFamilyIndex;
-    }
-
-    uint32_t presentationSupportQueueFamilyIndex() const { 
-        assert(mPhysicalDevice != VK_NULL_HANDLE); 
-        return mPresentationSupportQueueFamilyIndex; 
-    }
-
-    const std::vector<const char*>& deviceExtensions() const { 
-        assert(mPhysicalDevice != VK_NULL_HANDLE); 
-        return mDeviceExtensions; 
-    }
+    const std::vector<const char*>& deviceExtensions() const;
 
     // memoryTypeFilter will be used to specify the bit field of memory types
     // that are suitable.
@@ -54,9 +41,7 @@ public:
     uint32_t memoryTypeIndex(const uint32_t memoryTypeFilter,
                              const VkMemoryPropertyFlags memoryPropertyFlags) const;
 
-    bool isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const {
-        return memoryTypeIndex != std::numeric_limits<uint32_t>::max();
-    }
+    bool isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const;
 
 private:
     static bool isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
