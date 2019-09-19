@@ -1,5 +1,7 @@
 #include "Semaphore.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
@@ -27,5 +29,11 @@ Semaphore::~Semaphore() {
     vkDestroySemaphore(mLogicalDevice.vkDevice(),
                        mSemaphore,
                        nullptr);
+}
+
+const VkSemaphore& 
+Semaphore::vkSemaphore() const {
+    assert(mSemaphore != VK_NULL_HANDLE);
+    return mSemaphore;
 }
 }

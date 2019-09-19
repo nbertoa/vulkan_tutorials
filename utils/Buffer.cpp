@@ -65,8 +65,7 @@ Buffer::Buffer(Buffer&& other) noexcept
 void 
 Buffer::copyToHostMemory(void* sourceData,
                          const VkDeviceSize offset,
-                         const VkDeviceSize size,
-                         const VkMemoryMapFlags flags) {
+                         const VkDeviceSize size) {
     assert(mBuffer != VK_NULL_HANDLE);
     assert(sourceData != nullptr);
     assert(size > 0);
@@ -76,7 +75,7 @@ Buffer::copyToHostMemory(void* sourceData,
                           mDeviceMemory.vkDeviceMemory(),
                           offset,
                           size,
-                          flags,
+                          0,
                           &destinationData));
 
     memcpy(destinationData,

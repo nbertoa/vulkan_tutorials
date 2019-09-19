@@ -37,6 +37,12 @@ Window::Window(Window&& other) noexcept
     other.mWindow = nullptr;
 }
 
+GLFWwindow& 
+Window::glfwWindow() const {
+    assert(mWindow != nullptr);
+    return *mWindow;
+}
+
 void
 Window::widthAndHeight(uint32_t& width, uint32_t& height) const {
     assert(mWindow != nullptr);

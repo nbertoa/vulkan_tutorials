@@ -39,7 +39,7 @@ public:
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-    // Usage flags:
+    // Command Buffer Usage Flags:
     // Specify how we are going to use the command buffer. The 
     // following values are available:
     // - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer

@@ -1,5 +1,7 @@
 #include "PipelineLayout.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
@@ -33,6 +35,12 @@ PipelineLayout::PipelineLayout(PipelineLayout&& other) noexcept
     , mPipelineLayout(other.mPipelineLayout)
 {
     other.mPipelineLayout = VK_NULL_HANDLE;
+}
+
+const VkPipelineLayout& 
+PipelineLayout::pipelineLayout() const {
+    assert(mPipelineLayout != VK_NULL_HANDLE);
+    return mPipelineLayout;
 }
 
 void

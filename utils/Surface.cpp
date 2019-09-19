@@ -1,5 +1,7 @@
 #include "Surface.h"
 
+#include <cassert>
+
 #include "AppInstance.h"
 #include "DebugUtils.h"
 #include "PhysicalDevice.h"
@@ -27,6 +29,12 @@ Surface::Surface(Surface&& other) noexcept
     , mSurface(other.mSurface)
 {
     other.mSurface = VK_NULL_HANDLE;
+}
+
+VkSurfaceKHR 
+Surface::vkSurface() const {
+    assert(mSurface != VK_NULL_HANDLE);
+    return mSurface;
 }
 
 VkSurfaceCapabilitiesKHR

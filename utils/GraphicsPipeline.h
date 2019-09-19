@@ -12,6 +12,7 @@ class LogicalDevice;
 class RenderPass;
 
 // Graphics VkPipeline wrapper.
+// Compute, graphics, and ray tracing pipelines are each represented by VkPipeline handles.
 // The graphics pipeline consist of the following:
 // - Shader stages: the shader modules that define the functionality
 //   of the programmable stages of the graphics pipeline.

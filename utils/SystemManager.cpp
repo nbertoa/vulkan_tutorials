@@ -1,5 +1,7 @@
 #include "SystemManager.h"
 
+#include <cassert>
+
 namespace vk {
 SystemManager::SystemManager(const uint32_t windowWidth,
                              const uint32_t windowHeight,
@@ -23,6 +25,54 @@ SystemManager::SystemManager(const uint32_t windowWidth,
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, 
                                                CommandPool::Type::PRESENTATION))
 {
+}
+
+const Window& 
+SystemManager::window() const {
+    assert(mWindow != nullptr);
+    return *mWindow;
+}
+
+const AppInstance& 
+SystemManager::appInstance() const {
+    assert(mAppInstance != nullptr);
+    return *mAppInstance;
+}
+
+const Surface& 
+SystemManager::surface() const {
+    assert(mSurface != nullptr);
+    return *mSurface;
+}
+
+const LogicalDevice& 
+SystemManager::logicalDevice() const {
+    assert(mLogicalDevice != nullptr);
+    return *mLogicalDevice;
+}
+
+SwapChain& 
+SystemManager::swapChain() const {
+    assert(mSwapChain != nullptr);
+    return *mSwapChain;
+}
+
+const CommandPool& 
+SystemManager::graphicsCommandPool() const {
+    assert(mGraphicsCommandPool != nullptr);
+    return *mGraphicsCommandPool;
+}
+
+const CommandPool& 
+SystemManager::transferCommandPool() const {
+    assert(mTransferCommandPool != nullptr);
+    return *mTransferCommandPool;
+}
+
+const CommandPool& 
+SystemManager::presentationCommandPool() const {
+    assert(mPresentationCommandPool != nullptr);
+    return *mPresentationCommandPool;
 }
 
 }

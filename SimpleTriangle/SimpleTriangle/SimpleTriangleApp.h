@@ -7,10 +7,10 @@
 class SimpleTriangleApp : public vk::BaseApp {
 public:
     SimpleTriangleApp(const uint32_t windowWidth,
-        const uint32_t windowHeight,
-        const char* windowTitle,
-        const vk::RenderPassCreator& renderPassCreator,
-        const vk::GraphicsPipelineCreator& graphicsPipelineCreator);
+                      const uint32_t windowHeight,
+                      const char* windowTitle,
+                      const vk::RenderPassCreator& renderPassCreator,
+                      const vk::GraphicsPipelineCreator& graphicsPipelineCreator);
 
 protected:
     void createBuffers();

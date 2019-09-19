@@ -1,7 +1,6 @@
 #ifndef UTILS_SYSTEM_MANAGER
 #define UTILS_SYSTEM_MANAGER
 
-#include <cassert>
 #include <memory>
 #include <vulkan/vulkan.h>
 
@@ -18,51 +17,19 @@ public:
     SystemManager(const uint32_t windowWidth,
                   const uint32_t windowHeight,
                   const char* windowTitle);
-
     SystemManager(const SystemManager&) = delete;
     const SystemManager& operator=(const SystemManager&) = delete;
     SystemManager(SystemManager&&) = delete;
     SystemManager& operator=(SystemManager&&) = delete;
 
-    const Window& window() const {
-        assert(mWindow != nullptr);
-        return *mWindow;
-    }
-
-    const AppInstance& appInstance() const {
-        assert(mAppInstance != nullptr);
-        return *mAppInstance;
-    }
-
-    const Surface& surface() const {
-        assert(mSurface != nullptr);
-        return *mSurface;
-    }
-
-    const LogicalDevice& logicalDevice() const {
-        assert(mLogicalDevice != nullptr);
-        return *mLogicalDevice;
-    }
-
-    SwapChain& swapChain() const {
-        assert(mSwapChain != nullptr);
-        return *mSwapChain;
-    }
-
-    const CommandPool& graphicsCommandPool() const {
-        assert(mGraphicsCommandPool != nullptr);
-        return *mGraphicsCommandPool;
-    }
-
-    const CommandPool& transferCommandPool() const {
-        assert(mTransferCommandPool != nullptr);
-        return *mTransferCommandPool;
-    }
-
-    const CommandPool& presentationCommandPool() const {
-        assert(mPresentationCommandPool != nullptr);
-        return *mPresentationCommandPool;
-    }
+    const Window& window() const;
+    const AppInstance& appInstance() const;
+    const Surface& surface() const;
+    const LogicalDevice& logicalDevice() const;
+    SwapChain& swapChain() const;
+    const CommandPool& graphicsCommandPool() const;
+    const CommandPool& transferCommandPool() const;
+    const CommandPool& presentationCommandPool() const;
 
 private:
     // The member variables declaration order is important because

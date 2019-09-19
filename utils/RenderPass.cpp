@@ -1,5 +1,7 @@
 #include "RenderPass.h"
 
+#include <cassert>
+
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 
@@ -37,6 +39,12 @@ RenderPass::RenderPass(RenderPass&& other) noexcept
     , mRenderPass(other.mRenderPass)
 {
     other.mRenderPass = VK_NULL_HANDLE;
+}
+
+VkRenderPass 
+RenderPass::vkRenderPass() const {
+    assert(mRenderPass != VK_NULL_HANDLE);
+    return mRenderPass;
 }
 
 }

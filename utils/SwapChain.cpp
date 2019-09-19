@@ -1,6 +1,7 @@
 #include "SwapChain.h"
 
 #include <algorithm>
+#include <cassert>
 #include <limits>
 
 #include "DebugUtils.h"
@@ -94,7 +95,18 @@ SwapChain::present(const Semaphore& waitSemaphore,
 
     vkChecker(vkQueuePresentKHR(mLogicalDevice.presentationQueue(),
                                 &info));
+}
 
+const VkViewport& 
+SwapChain::viewport() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mViewport;
+}
+
+const VkRect2D& 
+SwapChain::scissorRect() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mScissorRect;
 }
 
 VkPipelineViewportStateCreateInfo 
@@ -109,6 +121,36 @@ SwapChain::pipelineViewportCreateInfo() const {
     createInfo.pScissors = &mScissorRect;
 
     return createInfo;
+}
+
+VkFormat
+SwapChain::imageFormat() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mImageFormat;
+}
+
+const std::vector<VkImageView>&
+SwapChain::imageViews() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mSwapChainImageViews;
+}
+
+uint32_t
+SwapChain::imageWidth() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mExtent.width;
+}
+
+uint32_t
+SwapChain::imageHeight() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mExtent.height;
+}
+
+const VkExtent2D&
+SwapChain::imageExtent() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mExtent;
 }
 
 VkSurfaceFormatKHR
@@ -130,34 +172,6 @@ SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surface
 
 VkPresentModeKHR
 SwapChain::swapChainPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
-    // VK_PRESENT_MODE_IMMEDIATE_KHR:
-    // Images submitted by your application are transferred to the screen
-    // right away, which may result in tearing.
-    // 
-    // VK_PRESENT_MODE_FIFO_KHR:
-    // The swap chain is a queue where the display takes an image
-    // from the front of the queue when the display is refreshed
-    // and the program inserts rendered images at the back of the queue.
-    // If the queue is full then the program has to wait.
-    // This is most similar to vertical sync as found in modern games.
-    // The moment that the display is refreshed is known as "vertical blank".
-    //
-    // VK_PRESENT_MODE_FIFO_RELAXED_KHR:
-    // This mode only differs from the previous one if the application
-    // is late and the queue was empty at the last vertical blank.
-    // Instead of waiting for the next vertical blank, the image is
-    // transferred right away when it finally arrives.
-    // This may result in visible tearing.
-    //
-    // VK_PRESENT_MODE_MAILBOX_KHR:
-    // This is another variation of the second mode.
-    // Instead of blocking the application when the queue is full,
-    // the images that are already queued are simply replaced with the
-    // newer ones. This mode can be used to implement triple buffering,
-    // which allows you to avoid tearing with significantly less 
-    // latency issues than standard vertical sync that uses
-    // double buffering.
-
     // Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
     // So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
     // is not available.

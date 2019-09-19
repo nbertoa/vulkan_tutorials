@@ -1,5 +1,6 @@
 #include "ShaderModule.h"
 
+#include <cassert>
 #include <fstream> 
 
 #include "DebugUtils.h"
@@ -41,6 +42,18 @@ ShaderModule::pipelineShaderStageCreateInfo() const {
     createInfo.pName = "main";
 
     return createInfo;
+}
+
+const std::string& 
+ShaderModule::shaderByteCodePath() const {
+    assert(mShaderModule != VK_NULL_HANDLE);
+    return mShaderByteCodePath;
+}
+
+VkShaderStageFlagBits 
+ShaderModule::shaderStageFlag() const {
+    assert(mShaderModule != VK_NULL_HANDLE);
+    return mShaderStageFlag;
 }
 
 std::vector<char>

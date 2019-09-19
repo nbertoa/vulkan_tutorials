@@ -24,7 +24,7 @@ class Surface;
 // of Vulkan(excluding instance - level functionality) available to the host, 
 // of which there are a finite number.
 // A logical device represents an instance of that implementation with its 
-// own stateand resources independent of other logical devices.
+// own state and resources independent of other logical devices.
 class LogicalDevice {
 public:
     LogicalDevice(const AppInstance& appInstance, 

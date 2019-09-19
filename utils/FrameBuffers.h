@@ -9,7 +9,7 @@ class LogicalDevice;
 class RenderPass;
 class SwapChain;
 
-// VkFrameBuffers wrapper.
+// VkFrameBuffer wrapper.
 // Render passes operate in conjunction with framebuffers. 
 // Framebuffers represent a collection of specific memory 
 // attachments that a render pass instance uses.
