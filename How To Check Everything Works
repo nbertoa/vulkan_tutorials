@@ -4,6 +4,11 @@
 
 - Create a Visual Studio Solution as an Empty Project.
 
+- Add a main.cc with the following code:
+
+int main() {
+}
+
 - Set x64
 
 # Go to Project properties -> set All Configurations and x64
@@ -41,14 +46,13 @@ tbbproxy_debug.lib
 
 # Go to Project properties -> set Release.
 
-- Go to project properties -> C/C++ -> Preprocessor -> add NDEBUG in Preprocessor Definitions
-
 - Go to project properties -> Linker -> Input -> add the following in Additional Dependencies
 tbb.lib
 tbb_preview.lib
 tbbmalloc.lib
 tbbproxy.lib
 
+- Go to project properties -> C/C++ -> Preprocessor -> add NDEBUG in Preprocessor Definitions
 
 - Add main.cpp file with the following code
 #define GLFW_INCLUDE_VULKAN
