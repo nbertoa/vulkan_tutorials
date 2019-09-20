@@ -64,6 +64,9 @@ public:
 
     void bindVertexBuffer(const Buffer& buffer);
 
+    void bindIndexBuffer(const Buffer& buffer,
+                         const VkIndexType indexType);
+
     void copyBuffer(const Buffer& sourceBuffer,
                     const Buffer& destinationBuffer,
                     const VkBufferCopy& bufferCopy);
@@ -72,6 +75,13 @@ public:
               const uint32_t instanceCount = 1,
               const uint32_t firstVertex = 0,
               const uint32_t firstInstance = 0);
+
+    void drawIndexed(const uint32_t vertexCount,
+                     const uint32_t indexCount,
+                     const uint32_t instanceCount = 1,
+                     const uint32_t firstIndex = 0,
+                     const uint32_t vertexOffset = 0,
+                     const uint32_t firstInstance = 0);
 
     void submit(const VkQueue queue,
                 const Semaphore* waitSemaphore,

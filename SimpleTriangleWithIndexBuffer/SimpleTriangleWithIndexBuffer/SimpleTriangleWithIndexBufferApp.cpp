@@ -23,16 +23,23 @@ SimpleTriangleWithIndexBufferApp::SimpleTriangleWithIndexBufferApp(const uint32_
 
 void 
 SimpleTriangleWithIndexBufferApp::createBuffers() {
+    createVertexBuffer();
+    createIndexBuffer();
+}
+
+void 
+SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
-    std::vector<vk::PosColorVertex> vertices
+    std::vector<PosColorVertex> screenSpaceVertices
     {
-        {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}
     };
 
-    const size_t verticesSize = sizeof(PosColorVertex) * vertices.size();
+    const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
     Buffer cpuVertexBuffer(mSystemManager.logicalDevice(),
                            verticesSize,
@@ -41,7 +48,7 @@ SimpleTriangleWithIndexBufferApp::createBuffers() {
                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    cpuVertexBuffer.copyToHostMemory(vertices.data(),
+    cpuVertexBuffer.copyToHostMemory(screenSpaceVertices.data(),
                                      0,
                                      verticesSize);
 
@@ -54,6 +61,40 @@ SimpleTriangleWithIndexBufferApp::createBuffers() {
 
     mGpuVertexBuffer->copyFromBufferToDeviceMemory(cpuVertexBuffer,
                                                    mSystemManager.transferCommandPool());
+}
+
+void 
+SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
+    assert(mGpuIndexBuffer == nullptr);
+
+    std::vector<uint32_t> indices
+    {
+        0, 1, 2, // upper-right triangle
+        2, 3, 0, // bottom-left triangle
+    };
+
+    const size_t indicesSize = sizeof(uint32_t) * indices.size();
+
+    Buffer cpuIndexBuffer(mSystemManager.logicalDevice(),
+                          indicesSize,
+                          VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                          VK_SHARING_MODE_EXCLUSIVE,
+                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    cpuIndexBuffer.copyToHostMemory(indices.data(),
+                                    0,
+                                    indicesSize);
+
+    mGpuIndexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                     indicesSize,
+                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+                                     VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                     VK_SHARING_MODE_EXCLUSIVE,
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+
+    mGpuIndexBuffer->copyFromBufferToDeviceMemory(cpuIndexBuffer,
+                                                  mSystemManager.transferCommandPool());
 }
 
 void
@@ -73,7 +114,11 @@ SimpleTriangleWithIndexBufferApp::recordCommandBuffers() {
 
         commandBuffer.bindVertexBuffer(*mGpuVertexBuffer);
 
-        commandBuffer.draw(static_cast<uint32_t>(mGpuVertexBuffer->size() / sizeof(PosColorVertex)));
+        commandBuffer.bindIndexBuffer(*mGpuIndexBuffer,
+                                      VK_INDEX_TYPE_UINT32);
+
+        commandBuffer.drawIndexed(static_cast<uint32_t>(mGpuVertexBuffer->size() / sizeof(PosColorVertex)),
+                                  static_cast<uint32_t>(mGpuIndexBuffer->size() / sizeof(uint32_t)));
 
         commandBuffer.endPass();
 

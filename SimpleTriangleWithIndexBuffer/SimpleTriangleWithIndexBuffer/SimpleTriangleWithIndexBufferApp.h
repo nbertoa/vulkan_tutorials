@@ -14,9 +14,13 @@ public:
 
 protected:
     void createBuffers();
+    void createVertexBuffer();
+    void createIndexBuffer();
+
     void recordCommandBuffers();
 
     std::unique_ptr<vk::Buffer> mGpuVertexBuffer;
+    std::unique_ptr<vk::Buffer> mGpuIndexBuffer;
 };
 
 #endif 

@@ -123,6 +123,17 @@ CommandBuffer::bindVertexBuffer(const Buffer& buffer) {
                            offsets); // Byte offsets to start reading vertex data from
 }
 
+void
+CommandBuffer::bindIndexBuffer(const Buffer& buffer,
+                               const VkIndexType indexType) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+
+    vkCmdBindIndexBuffer(mCommandBuffer,
+                         buffer.vkBuffer(),
+                         0, // Byte offset to start reading index data from
+                         indexType);
+}
+
 void 
 CommandBuffer::copyBuffer(const Buffer& sourceBuffer,
                           const Buffer& destinationBuffer,
@@ -147,6 +158,22 @@ CommandBuffer::draw(const uint32_t vertexCount,
               instanceCount,
               firstVertex,
               firstInstance);
+}
+
+void
+CommandBuffer::drawIndexed(const uint32_t vertexCount,
+                           const uint32_t indexCount,
+                           const uint32_t instanceCount,
+                           const uint32_t firstIndex,
+                           const uint32_t vertexOffset,
+                           const uint32_t firstInstance) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+    vkCmdDrawIndexed(mCommandBuffer,
+                     indexCount,
+                     instanceCount,
+                     firstIndex,
+                     vertexOffset,
+                     firstInstance);
 }
 
 void 
