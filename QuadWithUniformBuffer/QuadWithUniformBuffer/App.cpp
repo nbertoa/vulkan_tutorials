@@ -1,4 +1,4 @@
-#include "SimpleTriangleWithIndexBufferApp.h"
+#include "App.h"
 
 #include <cassert>
 
@@ -6,11 +6,11 @@
 
 using namespace vk;
 
-SimpleTriangleWithIndexBufferApp::SimpleTriangleWithIndexBufferApp(const uint32_t windowWidth,
-                                                                   const uint32_t windowHeight,
-                                                                   const char* windowTitle,
-                                                                   const vk::RenderPassCreator& renderPassCreator,
-                                                                   const vk::GraphicsPipelineCreator& graphicsPipelineCreator)
+App::App(const uint32_t windowWidth,
+         const uint32_t windowHeight,
+         const char* windowTitle,
+         const vk::RenderPassCreator& renderPassCreator,
+         const vk::GraphicsPipelineCreator& graphicsPipelineCreator)
     : BaseApp(windowWidth,
               windowHeight,
               windowTitle,
@@ -21,14 +21,25 @@ SimpleTriangleWithIndexBufferApp::SimpleTriangleWithIndexBufferApp(const uint32_
     recordCommandBuffers();
 }
 
-void 
-SimpleTriangleWithIndexBufferApp::createBuffers() {
-    createVertexBuffer();
-    createIndexBuffer();
+void
+App::processCurrentFrame() {
+    const uint32_t currentSwapChainImageIndex = mSystemManager.swapChain().currentImageIndex();    
+    mMatrixUBO.update(currentSwapChainImageIndex,
+                      mSystemManager.swapChain().imageAspectRatio());
+
+    Buffer& uniformBuffer = mUniformBuffers->buffer(currentSwapChainImageIndex);
+    uniformBuffer.copyToHostMemory(&mMatrixUBO);
 }
 
 void 
-SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
+App::createBuffers() {
+    createVertexBuffer();
+    createIndexBuffer();
+    createUniformBuffer();
+}
+
+void 
+App::createVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
     std::vector<PosColorVertex> screenSpaceVertices
@@ -64,7 +75,7 @@ SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
 }
 
 void 
-SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
+App::createIndexBuffer() {
     assert(mGpuIndexBuffer == nullptr);
 
     std::vector<uint32_t> indices
@@ -98,7 +109,20 @@ SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
 }
 
 void
-SimpleTriangleWithIndexBufferApp::recordCommandBuffers() {
+App::createUniformBuffer() {
+    assert(mUniformBuffers == nullptr);
+
+    mUniformBuffers.reset(new Buffers(mSystemManager.logicalDevice(),
+                                      mSystemManager.swapChain().imageViewCount(),
+                                      sizeof(MatrixUBO),
+                                      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                      VK_SHARING_MODE_EXCLUSIVE,
+                                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
+}
+
+void
+App::recordCommandBuffers() {
     assert(mCommandBuffers != nullptr);
     assert(mFrameBuffers != nullptr);
     for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {

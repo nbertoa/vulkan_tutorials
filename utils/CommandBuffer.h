@@ -76,8 +76,7 @@ public:
               const uint32_t firstVertex = 0,
               const uint32_t firstInstance = 0);
 
-    void drawIndexed(const uint32_t vertexCount,
-                     const uint32_t indexCount,
+    void drawIndexed(const uint32_t indexCount,
                      const uint32_t instanceCount = 1,
                      const uint32_t firstIndex = 0,
                      const uint32_t vertexOffset = 0,

@@ -161,8 +161,7 @@ CommandBuffer::draw(const uint32_t vertexCount,
 }
 
 void
-CommandBuffer::drawIndexed(const uint32_t vertexCount,
-                           const uint32_t indexCount,
+CommandBuffer::drawIndexed(const uint32_t indexCount,
                            const uint32_t instanceCount,
                            const uint32_t firstIndex,
                            const uint32_t vertexOffset,

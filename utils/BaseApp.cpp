@@ -36,6 +36,12 @@ void
 BaseApp::run() {
     while (glfwWindowShouldClose(&mSystemManager.window().glfwWindow()) == 0) {
         glfwPollEvents();
+
+        Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.nextAvailableSemaphore();
+        mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
+
+        processCurrentFrame();
+
         submitCommandBufferAndPresent();
     }
 
@@ -54,10 +60,13 @@ BaseApp::submitCommandBufferAndPresent() {
     const Fence& fence = mFences.nextAvailableFence();
     fence.waitAndReset();
 
-    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.nextAvailableSemaphore();
+    // This semaphore was already obtained in run()
+    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.currentSemaphore();
+
     Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores.nextAvailableSemaphore();
 
-    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
+    // The next image was already obtained in run()
+    const uint32_t swapChainImageIndex = mSystemManager.swapChain().currentImageIndex();
     assert(swapChainImageIndex < static_cast<uint32_t>(mCommandBuffers->bufferCount()));
 
     CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);

@@ -11,6 +11,9 @@
     <ClCompile Include="..\..\utils\Buffer.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\Buffers.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\utils\CommandBuffer.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -21,6 +24,9 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utils\DebugMessenger.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\DescriptorSetLayout.cpp">
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utils\DeviceMemory.cpp">
@@ -79,20 +85,15 @@
     </ClCompile>
     <ClCompile Include="GraphicsPipelineCreator.cpp" />
     <ClCompile Include="RenderPassCreator.cpp" />
-    <ClCompile Include="SimpleTriangleWithIndexBufferApp.cpp" />
-    <ClCompile Include="..\..\utils\DescriptorSetLayout.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\Buffers.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="MatrixUBO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
-      <UniqueIdentifier>{b8788196-f61b-4f3a-8915-1b44aa7c4006}</UniqueIdentifier>
+      <UniqueIdentifier>{aec3c83f-7172-4f79-8a5b-7c37d2c9e814}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils\vertex">
-      <UniqueIdentifier>{7b51cb48-2a57-4084-b6ef-2aece0bfe016}</UniqueIdentifier>
+      <UniqueIdentifier>{84cb242a-d815-4f0b-a085-6eba83f465d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +104,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\Buffer.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\Buffers.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\CommandBuffer.h">
@@ -121,6 +125,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\DebugUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\DescriptorSetLayout.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utils\DeviceMemory.h">
@@ -182,12 +189,7 @@
     </ClInclude>
     <ClInclude Include="GraphicsPipelineCreator.h" />
     <ClInclude Include="RenderPassCreator.h" />
-    <ClInclude Include="SimpleTriangleWithIndexBufferApp.h" />
-    <ClInclude Include="..\..\utils\DescriptorSetLayout.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\utils\Buffers.h">
-      <Filter>utils</Filter>
-    </ClInclude>
+    <ClInclude Include="App.h" />
+    <ClInclude Include="MatrixUBO.h" />
   </ItemGroup>
 </Project>

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{CA1645F4-AE2F-42C6-A056-5AF6EE1E803D}</ProjectGuid>
-    <RootNamespace>SimpleTriangleWithIndexBuffer</RootNamespace>
+    <ProjectGuid>{37EEA976-4A89-4F52-9253-C181ED35AE8D}</ProjectGuid>
+    <RootNamespace>QuadWithUniformBuffer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -87,11 +87,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\tbb\include;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\tbb\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)../external\tbb\lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.108.0\Lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;$(SolutionDir)../external\tbb\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;tbb_debug.lib;tbb_preview_debug.lib;tbbmalloc_debug.lib;tbbproxy_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -118,14 +118,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\tbb\include;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\tbb\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)../external\tbb\lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.108.0\Lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;$(SolutionDir)../external\tbb\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;tbb.lib;tbb_preview.lib;tbbmalloc.lib;tbbproxy.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -159,8 +159,9 @@
     <ClCompile Include="..\..\utils\Window.cpp" />
     <ClCompile Include="GraphicsPipelineCreator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MatrixUBO.cpp" />
     <ClCompile Include="RenderPassCreator.cpp" />
-    <ClCompile Include="SimpleTriangleWithIndexBufferApp.cpp" />
+    <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\utils\AppInstance.h" />
@@ -195,7 +196,8 @@
     <ClInclude Include="..\..\utils\Window.h" />
     <ClInclude Include="GraphicsPipelineCreator.h" />
     <ClInclude Include="RenderPassCreator.h" />
-    <ClInclude Include="SimpleTriangleWithIndexBufferApp.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="MatrixUBO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

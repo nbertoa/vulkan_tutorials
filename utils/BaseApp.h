@@ -26,6 +26,12 @@ public:
     virtual void run();
 
 protected:
+    // Inherited classes should implement this method.
+    // It is responsible to do everything just after the 
+    // event processing and just before the command buffer
+    // submission.
+    virtual void processCurrentFrame() {};
+
     virtual void submitCommandBufferAndPresent();
 
     // The member variables declaration order is important because

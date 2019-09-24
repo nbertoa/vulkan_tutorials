@@ -1,23 +1,15 @@
-#ifndef UTILS_BUFFER
-#define UTILS_BUFFER
+#ifndef UTILS_BUFFERS
+#define UTILS_BUFFERS
 
-#include <memory>
+#include <vector>
 #include <vulkan/vulkan.h>
 
-#include "DeviceMemory.h"
+#include "Buffer.h"
 
 namespace vk {
-class CommandPool;
-class Fence;
 class LogicalDevice;
 
-// VkBuffer wrapper.
-// Buffers represent linear arrays of data which are 
-// used for various purposes by binding them to a
-// graphics or compute pipeline via descriptor sets
-// or via certain commands, or by directly specifying 
-// them as parameters to certain commands.
-class Buffer {
+class Buffers {
 public:
     // Buffer Usage Flags:
     // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT specifies that the buffer can be used 
@@ -114,99 +106,23 @@ public:
     //
     // - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
     //   this type is not cached on the device.Uncached device memory is always device coherent.
-    Buffer(const LogicalDevice& logicalDevice,
-           const VkDeviceSize sizeInBytes, 
-           const VkBufferUsageFlags usageFlags,
-           const VkSharingMode sharingMode,
-           const VkMemoryPropertyFlags memoryPropertyFlags);
-    ~Buffer();
-    Buffer(Buffer&& other) noexcept;
-    Buffer(const Buffer&) = delete;
-    const Buffer& operator=(const Buffer&) = delete;  
-    
-    VkBuffer vkBuffer() const;
+    Buffers(const LogicalDevice& logicalDevice,
+            const size_t bufferCount,
+            const VkDeviceSize sizeInBytes,
+            const VkBufferUsageFlags usageFlags,
+            const VkSharingMode sharingMode,
+            const VkMemoryPropertyFlags memoryPropertyFlags);
+    Buffers(Buffers&& other) noexcept;
+    Buffers(const Buffers&) = delete;
+    const Buffers& operator=(const Buffers&) = delete;
 
-    VkDeviceSize size() const;
-    
-    // The driver may not immediately copy the data
-    // into the buffer memory, for example because
-    // of caching.
-    // It is also possible that writes to the buffer
-    // are not visible in the mapped memory yet.
-    // There are two ways to deal with that problem:
-    // - Use a memory heap that is host coherent,
-    // indicated with VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-    // - Call vkFlushMappedMemoryRanges to after writing
-    // to the mapped memory, and call vkInvalidateMappedMemoryRanges
-    // before reading from the mapped memory.
-    //
-    // The first approach ensures that the mapped memory
-    // always matches the contents of the allocated memory.
-    // Do keep in mind that this may lead to slightly worse
-    // performance than explicit flushing.
-    //
-    // Flushing memory ranges or using a coherent memory heap
-    // means that the driver will be aware of our writes to
-    // the buffer, but it does not mean that they are actually
-    // visible on the GPU yet. The transfer of data to the GPU
-    // is an operation that happens in the background and the
-    // specification simply tells us that it is guaranteed
-    // to be complete as of the next call to vkQueueSubmit.
-    //
-    // Preconditions:
-    // This method cannot be used if you allocated the buffer
-    // from a memory type that is device local like , like 
-    // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT or VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-    // You should use methods like copyFromBufferToDeviceMemory instead.
-    void copyToHostMemory(void* sourceData, 
-                          const VkDeviceSize size,
-                          const VkDeviceSize offset);
+    size_t bufferCount() const;
 
-    // This method will use as "size" the entire buffer size. 
-    void copyToHostMemory(void* sourceData,
-                          const VkDeviceSize offset = 0);
-
-    // These methods assumes the buffer was created with
-    // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
-    // The methods without size parameter are going to use
-    // the sourceBuffer size.
-    // The methods without the fence parameter, will create
-    // an internal fence and wait for completion.
-    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                      const VkDeviceSize size,
-                                      const CommandPool& transferCommandPool,
-                                      const Fence& fence);
-    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                      const VkDeviceSize size,
-                                      const CommandPool& transferCommandPool);
-    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                      const CommandPool& transferCommandPool,
-                                      const Fence& fence);
-    void copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                      const CommandPool& transferCommandPool);
+    Buffer& buffer(const size_t bufferIndex);
 
 private:
-    // Memory requirements:
-    // - size is the size, in bytes, of the memory allocation required for the resource.
-    // - alignment is the alignment, in bytes, of the offset within the 
-    //   allocation required for the resource.
-    // - memoryTypeBits is a bitmaskand contains one bit set for every supported 
-    //   memory type for the resource.Bit i is set ifand only if the memory type i in 
-    //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
-    //   is supported for the resource.
-    VkMemoryRequirements memoryRequirements() const;
-
-    // Read Buffer() constructor to understand the parameters.
-    static VkBuffer createBuffer(const LogicalDevice& logicalDevice,
-                                 const VkDeviceSize sizeInBytes,
-                                 const VkBufferUsageFlags usageFlags,
-                                 const VkSharingMode sharingMode);
-
-    const LogicalDevice& mLogicalDevice;    
-    VkBuffer mBuffer = VK_NULL_HANDLE;
-    const VkDeviceSize mSizeInBytes = 0;
-    DeviceMemory mDeviceMemory;
+    std::vector<Buffer> mBuffers;
 };
 }
 
-#endif 
+#endif

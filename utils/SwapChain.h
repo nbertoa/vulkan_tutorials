@@ -1,6 +1,7 @@
 #ifndef UTILS_SWAP_CHAIN
 #define UTILS_SWAP_CHAIN
 
+#include <limits>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -29,6 +30,10 @@ public:
     // Returns the swap chain's acquired image index 
     uint32_t acquireNextImage(const Semaphore& semaphore);
 
+    // Precondition:
+    // - acquireNextImage must have been called at least once.
+    uint32_t currentImageIndex() const;
+
     void present(const Semaphore& waitSemaphore,
                  const uint32_t imageIndex);
 
@@ -46,10 +51,12 @@ public:
 
     VkFormat imageFormat() const;
 
+    size_t imageViewCount() const;
     const std::vector<VkImageView>& imageViews() const;
 
     uint32_t imageWidth() const;
     uint32_t imageHeight() const;
+    float imageAspectRatio() const;
 
     // The swap extent is the resolution of the swap chain images
     // and it is almost always exactly equal to the resolution of 
@@ -165,6 +172,8 @@ private:
     // It describes how to access the image and which part of the image to access.
     std::vector<VkImage> mSwapChainImages;
     std::vector<VkImageView> mSwapChainImageViews;
+
+    uint32_t mCurrentImageIndex = std::numeric_limits<uint32_t>::max();
 
     VkFormat mImageFormat = {};
     VkExtent2D mExtent = {};

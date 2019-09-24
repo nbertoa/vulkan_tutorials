@@ -42,8 +42,8 @@ SimpleTriangleApp::createBuffers() {
                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     cpuVertexBuffer.copyToHostMemory(vertices.data(),
-                                     0,
-                                     verticesSize);
+                                     verticesSize,
+                                     0);
 
     mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
                                       verticesSize,

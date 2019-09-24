@@ -57,15 +57,16 @@ Buffer::size() const {
 Buffer::Buffer(Buffer&& other) noexcept 
     : mLogicalDevice(other.mLogicalDevice)
     , mBuffer(other.mBuffer)
+    , mSizeInBytes(other.mSizeInBytes)
     , mDeviceMemory(std::move(other.mDeviceMemory))
 {
     other.mBuffer = VK_NULL_HANDLE;
 }
 
 void 
-Buffer::copyToHostMemory(void* sourceData,
-                         const VkDeviceSize offset,
-                         const VkDeviceSize size) {
+Buffer::copyToHostMemory(void* sourceData,                         
+                         const VkDeviceSize size,
+                         const VkDeviceSize offset) {
     assert(mBuffer != VK_NULL_HANDLE);
     assert(sourceData != nullptr);
     assert(size > 0);
@@ -84,6 +85,14 @@ Buffer::copyToHostMemory(void* sourceData,
 
     vkUnmapMemory(mLogicalDevice.vkDevice(),
                   mDeviceMemory.vkDeviceMemory());
+}
+
+void
+Buffer::copyToHostMemory(void* sourceData,
+                         const VkDeviceSize offset) {
+    copyToHostMemory(sourceData,                     
+                     mSizeInBytes,
+                     offset);
 }
 
 void 

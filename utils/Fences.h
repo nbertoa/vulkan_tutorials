@@ -1,6 +1,7 @@
 #ifndef UTILS_FENCES 
 #define UTILS_FENCES
 
+#include <limits>
 #include <vector>
 
 #include "Fence.h"
@@ -18,9 +19,11 @@ public:
     Fences(Fences&& other) noexcept;
                
     Fence& nextAvailableFence();
+    Fence& currentFence();
+
 private:
     std::vector<Fence> mFences;
-    size_t mNextAvailableFence = 0;
+    size_t mCurrentFence = std::numeric_limits<size_t>::max();
 };
 }
 

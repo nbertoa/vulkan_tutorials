@@ -18,7 +18,7 @@ Semaphores::Semaphores(const LogicalDevice& logicalDevice,
 
 Semaphores::Semaphores(Semaphores&& other) noexcept
     : mSemaphores(std::move(mSemaphores))
-    , mNextAvailableSemaphore(other.mNextAvailableSemaphore)
+    , mCurrentSemaphore(other.mCurrentSemaphore)
 {
 
 }
@@ -26,11 +26,16 @@ Semaphores::Semaphores(Semaphores&& other) noexcept
 Semaphore& 
 Semaphores::nextAvailableSemaphore() {
     assert(mSemaphores.empty() == false);
-    assert(mNextAvailableSemaphore < mSemaphores.size());
-
-    Semaphore& semaphore = mSemaphores[mNextAvailableSemaphore];
-    mNextAvailableSemaphore = (mNextAvailableSemaphore + 1) % mSemaphores.size();
+    
+    mCurrentSemaphore = (mCurrentSemaphore + 1) % mSemaphores.size();
+    Semaphore& semaphore = mSemaphores[mCurrentSemaphore];
 
     return semaphore;
+}
+
+Semaphore&
+Semaphores::currentSemaphore() {
+    assert(mCurrentSemaphore < mSemaphores.size());
+    return mSemaphores[mCurrentSemaphore];
 }
 }

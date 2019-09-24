@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <limits>
 
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
@@ -57,16 +56,21 @@ SwapChain::acquireNextImage(const Semaphore& semaphore) {
 
     // The third parameter specifies a timeout in nanoseconds 
     // for an image to become available. Using the maximum
-    // vaule of a 64 bit unsigned integer disables the timeout.
-    uint32_t imageIndex;
+    // value of a 64 bit unsigned integer disables the timeout.
     vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
                                     mSwapChain,
                                     std::numeric_limits<uint64_t>::max(),
                                     semaphore.vkSemaphore(),
                                     VK_NULL_HANDLE,
-                                    &imageIndex));
+                                    &mCurrentImageIndex));
 
-    return imageIndex;
+    return mCurrentImageIndex;
+}
+
+uint32_t 
+SwapChain::currentImageIndex() const {
+    assert(mCurrentImageIndex != std::numeric_limits<uint32_t>::max());
+    return mCurrentImageIndex;
 }
 
 void
@@ -129,6 +133,12 @@ SwapChain::imageFormat() const {
     return mImageFormat;
 }
 
+size_t 
+SwapChain::imageViewCount() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mSwapChainImageViews.size();
+}
+
 const std::vector<VkImageView>&
 SwapChain::imageViews() const {
     assert(mSwapChain != VK_NULL_HANDLE);
@@ -145,6 +155,12 @@ uint32_t
 SwapChain::imageHeight() const {
     assert(mSwapChain != VK_NULL_HANDLE);
     return mExtent.height;
+}
+
+float 
+SwapChain::imageAspectRatio() const {
+    assert(mSwapChain != VK_NULL_HANDLE);
+    return mExtent.width / static_cast<float>(mExtent.height);
 }
 
 const VkExtent2D&

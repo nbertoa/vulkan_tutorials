@@ -20,7 +20,7 @@ Fences::Fences(const LogicalDevice& logicalDevice,
 
 Fences::Fences(Fences&& other) noexcept
     : mFences(std::move(mFences))
-    , mNextAvailableFence(other.mNextAvailableFence)
+    , mCurrentFence(other.mCurrentFence)
 {
 
 }
@@ -28,11 +28,16 @@ Fences::Fences(Fences&& other) noexcept
 Fence&
 Fences::nextAvailableFence() {
     assert(mFences.empty() == false);
-    assert(mNextAvailableFence < mFences.size());
 
-    Fence& fence = mFences[mNextAvailableFence];
-    mNextAvailableFence = (mNextAvailableFence + 1) % mFences.size();
+    mCurrentFence = (mCurrentFence + 1) % mFences.size();
+    Fence& fence = mFences[mCurrentFence];    
 
     return fence;
+}
+
+Fence& 
+Fences::currentFence() {
+    assert(mCurrentFence < mFences.size());
+    return mFences[mCurrentFence];
 }
 }

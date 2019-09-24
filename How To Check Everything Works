@@ -4,7 +4,9 @@
 
 - Create a Visual Studio Solution as an Empty Project.
 
-- Add a main.cc with the following code:
+- Remove folders
+
+- Add a main.cc with the following code (this is to be able to configure C/C++ stuff in Visual Studio):
 
 int main() {
 }
