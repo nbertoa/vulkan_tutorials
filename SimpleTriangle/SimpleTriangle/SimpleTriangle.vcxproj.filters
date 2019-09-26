@@ -80,6 +80,12 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="SimpleTriangleApp.cpp" />
+    <ClCompile Include="..\..\utils\Buffers.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\DescriptorSetLayout.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -174,5 +180,14 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="SimpleTriangleApp.h" />
+    <ClInclude Include="..\..\utils\Buffers.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\DescriptorSetLayout.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utils\ShaderManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

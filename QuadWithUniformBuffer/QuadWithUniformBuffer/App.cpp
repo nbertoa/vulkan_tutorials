@@ -23,10 +23,10 @@ App::App(const uint32_t windowWidth,
 
 void
 App::processCurrentFrame() {
+    // Update uniform buffers
     const uint32_t currentSwapChainImageIndex = mSystemManager.swapChain().currentImageIndex();    
     mMatrixUBO.update(currentSwapChainImageIndex,
                       mSystemManager.swapChain().imageAspectRatio());
-
     Buffer& uniformBuffer = mUniformBuffers->buffer(currentSwapChainImageIndex);
     uniformBuffer.copyToHostMemory(&mMatrixUBO);
 }

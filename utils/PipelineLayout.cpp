@@ -3,16 +3,25 @@
 #include <cassert>
 
 #include "DebugUtils.h"
+#include "DescriptorSetLayout.h"
 #include "LogicalDevice.h"
 
 namespace vk {
 PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
-                               const VkDescriptorSetLayout& descriptorSetLayout,
-                               const VkPushConstantRange& pushConstantRange)
+                               const DescriptorSetLayout* descriptorSetLayout,
+                               const VkPushConstantRange* pushConstantRange)
     : mLogicalDevice(logicalDevice)
 {
-    createPipelineLayout({descriptorSetLayout},
-                         {pushConstantRange});
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+    if (descriptorSetLayout != nullptr) {
+        descriptorSetLayouts.push_back(descriptorSetLayout->vkDescriptorSetLayout());
+    }
+    std::vector<VkPushConstantRange> pushConstantRanges;
+    if (pushConstantRange != nullptr) {
+        pushConstantRanges.push_back(*pushConstantRange);
+    }
+    createPipelineLayout(descriptorSetLayouts,
+                         pushConstantRanges);
 }
 
 PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
@@ -47,7 +56,7 @@ void
 PipelineLayout::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                                      const std::vector<VkPushConstantRange>& pushConstantRanges) {
     assert(mPipelineLayout == VK_NULL_HANDLE);
-
+    
     VkPipelineLayoutCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     createInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());

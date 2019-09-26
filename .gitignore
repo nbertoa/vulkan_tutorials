@@ -323,3 +323,8 @@
 /SimpleTriangleWithIndexBuffer/.vs/SimpleTriangleWithIndexBuffer/v16/ipch/AutoPCH/33b5bca4e0535dc8/BASEAPP.ipch
 /SimpleTriangleWithIndexBuffer/.vs/SimpleTriangleWithIndexBuffer/v16/ipch/AutoPCH/7c02155d95c758af/DESCRIPTORSETLAYOUT.ipch
 /SimpleTriangleWithIndexBuffer/.vs/SimpleTriangleWithIndexBuffer/v16/ipch/AutoPCH/8ae7f94b2b8c3f90/COMMANDBUFFERS.ipch
+/QuadWithUniformBuffer/.vs/QuadWithUniformBuffer/v16/ipch/AutoPCH/18a7851a7e65c548/GRAPHICSPIPELINE.ipch
+/QuadWithUniformBuffer/.vs/QuadWithUniformBuffer/v16/ipch/AutoPCH/a93b126b2632722f/GRAPHICSPIPELINECREATOR.ipch
+/QuadWithUniformBuffer/.vs/QuadWithUniformBuffer/v16/ipch/AutoPCH/c232c53facd16c07/PIPELINELAYOUT.ipch
+/QuadWithUniformBuffer/QuadWithUniformBuffer/resources/shaders/frag.frag
+/QuadWithUniformBuffer/QuadWithUniformBuffer/resources/shaders/vert.vert

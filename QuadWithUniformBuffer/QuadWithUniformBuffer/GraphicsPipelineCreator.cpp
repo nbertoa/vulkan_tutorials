@@ -1,5 +1,6 @@
 #include "GraphicsPipelineCreator.h"
 
+#include "utils/DescriptorSetLayout.h"
 #include "utils/GraphicsPipeline.h"
 #include "utils/LogicalDevice.h"
 #include "utils/PipelineStateFactory.h"
@@ -9,6 +10,24 @@
 #include "utils/vertex/PosColorVertex.h"
 
 using namespace vk;
+
+namespace {
+PipelineLayout* createPipelineLayout(const LogicalDevice& logicalDevice) {
+    VkDescriptorSetLayoutBinding uboDescriptorSetLayoutBinding = {};
+    uboDescriptorSetLayoutBinding.binding = 0;
+    uboDescriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboDescriptorSetLayoutBinding.descriptorCount = 1;
+
+    std::vector<VkDescriptorSetLayoutBinding> uboDescriptorSetLayoutBindings;
+    uboDescriptorSetLayoutBindings.push_back(uboDescriptorSetLayoutBinding);
+
+    DescriptorSetLayout descriptorSetLayout(logicalDevice,
+                                            uboDescriptorSetLayoutBindings);
+
+    return new PipelineLayout(logicalDevice,
+                              &descriptorSetLayout);
+}
+}
 
 GraphicsPipelineCreator graphicsPipelineCreator() {
     return 
@@ -59,7 +78,7 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
                fragmentShaderModule.pipelineShaderStageCreateInfo(),
            };
 
-           std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(logicalDevice));
+           std::unique_ptr<PipelineLayout> pipelineLayout(createPipelineLayout(logicalDevice));
            return new GraphicsPipeline(logicalDevice,
                                        renderPass,
                                        0,

@@ -5,6 +5,7 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class DescriptorSetLayout;
 class LogicalDevice;
 
 // VkPipelineLayout wrapper.
@@ -31,8 +32,8 @@ public:
     // Both offsetand size are in units of bytesand must be a multiple of 4. 
     // The layout of the push constant variables is specified in the shader.
     PipelineLayout(const LogicalDevice& logicalDevice,
-                   const VkDescriptorSetLayout& descriptorSetLayout,
-                   const VkPushConstantRange& pushConstantRange);
+                   const DescriptorSetLayout* descriptorSetLayout,
+                   const VkPushConstantRange* pushConstantRange);
     PipelineLayout(const LogicalDevice& logicalDevice,
                    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = std::vector<VkDescriptorSetLayout>(),
                    const std::vector<VkPushConstantRange>& pushConstantRanges = std::vector<VkPushConstantRange>());

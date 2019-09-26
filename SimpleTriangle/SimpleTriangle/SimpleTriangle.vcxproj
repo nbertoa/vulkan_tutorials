@@ -133,10 +133,12 @@
     <ClCompile Include="..\..\utils\AppInstance.cpp" />
     <ClCompile Include="..\..\utils\BaseApp.cpp" />
     <ClCompile Include="..\..\utils\Buffer.cpp" />
+    <ClCompile Include="..\..\utils\Buffers.cpp" />
     <ClCompile Include="..\..\utils\CommandBuffer.cpp" />
     <ClCompile Include="..\..\utils\CommandBuffers.cpp" />
     <ClCompile Include="..\..\utils\CommandPool.cpp" />
     <ClCompile Include="..\..\utils\DebugMessenger.cpp" />
+    <ClCompile Include="..\..\utils\DescriptorSetLayout.cpp" />
     <ClCompile Include="..\..\utils\DeviceMemory.cpp" />
     <ClCompile Include="..\..\utils\Fence.cpp" />
     <ClCompile Include="..\..\utils\Fences.cpp" />
@@ -164,12 +166,14 @@
     <ClInclude Include="..\..\utils\AppInstance.h" />
     <ClInclude Include="..\..\utils\BaseApp.h" />
     <ClInclude Include="..\..\utils\Buffer.h" />
+    <ClInclude Include="..\..\utils\Buffers.h" />
     <ClInclude Include="..\..\utils\CommandBuffer.h" />
     <ClInclude Include="..\..\utils\CommandBuffers.h" />
     <ClInclude Include="..\..\utils\CommandPool.h" />
     <ClInclude Include="..\..\utils\CreatorDefinitions.h" />
     <ClInclude Include="..\..\utils\DebugMessenger.h" />
     <ClInclude Include="..\..\utils\DebugUtils.h" />
+    <ClInclude Include="..\..\utils\DescriptorSetLayout.h" />
     <ClInclude Include="..\..\utils\DeviceMemory.h" />
     <ClInclude Include="..\..\utils\Fence.h" />
     <ClInclude Include="..\..\utils\Fences.h" />
@@ -182,6 +186,7 @@
     <ClInclude Include="..\..\utils\PipelineStateFactory.h" />
     <ClInclude Include="..\..\utils\Semaphore.h" />
     <ClInclude Include="..\..\utils\Semaphores.h" />
+    <ClInclude Include="..\..\utils\ShaderManager.h" />
     <ClInclude Include="..\..\utils\ShaderModule.h" />
     <ClInclude Include="..\..\utils\SwapChain.h" />
     <ClInclude Include="..\..\utils\SystemManager.h" />
