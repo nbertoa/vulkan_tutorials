@@ -30,6 +30,7 @@
     <ClCompile Include="vertex\PosColorVertex.cpp">
       <Filter>vertex</Filter>
     </ClCompile>
+    <ClCompile Include="DescriptorPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppInstance.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="vertex\PosColorVertex.h">
       <Filter>vertex</Filter>
     </ClInclude>
+    <ClInclude Include="DescriptorPool.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
