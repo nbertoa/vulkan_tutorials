@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "utils/DebugUtils.h"
+#include "DebugUtils.h"
 
 namespace vk {
 BaseApp::BaseApp(const uint32_t windowWidth,

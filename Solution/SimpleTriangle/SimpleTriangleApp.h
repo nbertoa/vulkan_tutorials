@@ -1,8 +1,8 @@
 #ifndef SIMPLE_TRIANGLE_APP
 #define SIMPLE_TRIANGLE_APP
 
-#include "utils/BaseApp.h"
-#include "utils/Buffer.h"
+#include "Utils/BaseApp.h"
+#include "Utils/Buffer.h"
 
 class SimpleTriangleApp : public vk::BaseApp {
 public:
