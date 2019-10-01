@@ -31,6 +31,7 @@
       <Filter>vertex</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorPool.cpp" />
+    <ClCompile Include="DescriptorSets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppInstance.h" />
@@ -66,6 +67,7 @@
       <Filter>vertex</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorPool.h" />
+    <ClInclude Include="DescriptorSets.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">

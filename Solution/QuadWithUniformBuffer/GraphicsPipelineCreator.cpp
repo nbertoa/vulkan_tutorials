@@ -1,13 +1,13 @@
 #include "GraphicsPipelineCreator.h"
 
-#include "utils/DescriptorSetLayout.h"
-#include "utils/GraphicsPipeline.h"
-#include "utils/LogicalDevice.h"
-#include "utils/PipelineStateFactory.h"
-#include "utils/RenderPass.h"
-#include "utils///ShaderModule.h"
-#include "utils/SwapChain.h"
-#include "utils/vertex/PosColorVertex.h"
+#include "Utils/DescriptorSetLayout.h"
+#include "Utils/GraphicsPipeline.h"
+#include "Utils/LogicalDevice.h"
+#include "Utils/PipelineStateFactory.h"
+#include "Utils/RenderPass.h"
+#include "Utils///ShaderModule.h"
+#include "Utils/SwapChain.h"
+#include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
 

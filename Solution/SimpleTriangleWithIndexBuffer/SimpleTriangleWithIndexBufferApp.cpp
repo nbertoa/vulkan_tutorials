@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "utils/vertex/PosColorVertex.h"
+#include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
 

@@ -1,8 +1,8 @@
 #ifndef SIMPLE_TRIANGLE_WITH_INDEX_BUFFER_APP
 #define SIMPLE_TRIANGLE_WITH_INDEX_BUFFER_APP
 
-#include "utils/BaseApp.h"
-#include "utils/Buffer.h"
+#include "Utils/BaseApp.h"
+#include "Utils/Buffer.h"
 
 class SimpleTriangleWithIndexBufferApp : public vk::BaseApp {
 public:

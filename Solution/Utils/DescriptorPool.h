@@ -2,7 +2,7 @@
 #define UTILS_DESCRIPTOR_POOL
 
 #include <vector>
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.h>
 
 namespace vk {
 class LogicalDevice;

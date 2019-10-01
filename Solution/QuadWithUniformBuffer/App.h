@@ -2,8 +2,8 @@
 #define APP
 
 #include "MatrixUBO.h"
-#include "utils/BaseApp.h"
-#include "utils/Buffers.h"
+#include "Utils/BaseApp.h"
+#include "Utils/Buffers.h"
 
 class App : public vk::BaseApp {
 public:

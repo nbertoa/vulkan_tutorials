@@ -149,6 +149,7 @@
     <ClCompile Include="DebugMessenger.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
+    <ClCompile Include="DescriptorSets.cpp" />
     <ClCompile Include="DeviceMemory.cpp" />
     <ClCompile Include="Fence.cpp" />
     <ClCompile Include="Fences.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="DescriptorPool.h" />
     <ClInclude Include="DescriptorSetLayout.h" />
+    <ClInclude Include="DescriptorSets.h" />
     <ClInclude Include="DeviceMemory.h" />
     <ClInclude Include="Fence.h" />
     <ClInclude Include="Fences.h" />

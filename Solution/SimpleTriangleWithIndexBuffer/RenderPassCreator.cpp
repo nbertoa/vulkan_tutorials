@@ -1,8 +1,8 @@
 #include "RenderPassCreator.h"
 
-#include "utils/LogicalDevice.h"
-#include "utils/RenderPass.h"
-#include "utils/SwapChain.h"
+#include "Utils/LogicalDevice.h"
+#include "Utils/RenderPass.h"
+#include "Utils/SwapChain.h"
 
 using namespace vk;
 
