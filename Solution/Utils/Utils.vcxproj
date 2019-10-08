@@ -139,7 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AppInstance.cpp" />
+    <ClCompile Include="Instance.cpp" />
     <ClCompile Include="BaseApp.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Buffers.cpp" />
@@ -157,6 +157,7 @@
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="LogicalDevice.cpp" />
     <ClCompile Include="PhysicalDevice.cpp" />
+    <ClCompile Include="PhysicalDeviceData.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="PipelineStateFactory.cpp" />
     <ClCompile Include="RenderPass.cpp" />
@@ -170,7 +171,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppInstance.h" />
+    <ClInclude Include="Instance.h" />
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Buffers.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="LogicalDevice.h" />
     <ClInclude Include="PhysicalDevice.h" />
+    <ClInclude Include="PhysicalDeviceData.h" />
     <ClInclude Include="PipelineLayout.h" />
     <ClInclude Include="PipelineStateFactory.h" />
     <ClInclude Include="RenderPass.h" />

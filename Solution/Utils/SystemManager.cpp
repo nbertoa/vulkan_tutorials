@@ -9,10 +9,10 @@ SystemManager::SystemManager(const uint32_t windowWidth,
     : mWindow(new Window(windowWidth, 
                          windowHeight, 
                          windowTitle))
-    , mAppInstance(new AppInstance())
-    , mSurface(new Surface(*mAppInstance, 
+    , mInstance(new Instance())
+    , mSurface(new Surface(*mInstance,
                            *mWindow))
-    , mLogicalDevice(new LogicalDevice(*mAppInstance, 
+    , mLogicalDevice(new LogicalDevice(*mInstance,
                                        *mSurface))
     , mSwapChain(new SwapChain(*mLogicalDevice, 
                                *mWindow, 
@@ -33,10 +33,10 @@ SystemManager::window() const {
     return *mWindow;
 }
 
-const AppInstance& 
-SystemManager::appInstance() const {
-    assert(mAppInstance != nullptr);
-    return *mAppInstance;
+const Instance&
+SystemManager::instance() const {
+    assert(mInstance != nullptr);
+    return *mInstance;
 }
 
 const Surface& 

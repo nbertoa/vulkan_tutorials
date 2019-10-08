@@ -1,20 +1,17 @@
 #include "PhysicalDevice.h"
 
 #include <cassert>
-#include <iostream>
-#include <unordered_set>
-#include <vector>
 
-#include "AppInstance.h"
 #include "DebugUtils.h"
+#include "Instance.h"
 #include "Surface.h"
 
 namespace vk {
-PhysicalDevice::PhysicalDevice(const AppInstance& appInstance,
+PhysicalDevice::PhysicalDevice(const Instance& instance,
                                const Surface& surface)
     : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} 
 {
-    setPhysicalDevice(getCandidateDevices(appInstance,
+    setPhysicalDevice(getCandidateDevices(instance,
                                           surface));
 }
 PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
@@ -109,192 +106,19 @@ PhysicalDevice::isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const {
     return memoryTypeIndex != std::numeric_limits<uint32_t>::max();
 }
 
-bool
-PhysicalDevice::isGraphicQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
-                                                              uint32_t& queueFamilyIndex) {
-    assert(physicalDevice != VK_NULL_HANDLE);
-
-    uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, 
-                                             &queueFamilyCount, 
-                                             nullptr);
-
-    std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, 
-                                             &queueFamilyCount, 
-                                             queueFamilyProperties.data());
-
-    queueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : queueFamilyProperties) {
-        if (queueFamilyProperty.queueCount > 0 && 
-            queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-            return true;
-        }
-
-        ++queueFamilyIndex;
-    }
-
-    return false;
-}
-
-bool
-PhysicalDevice::isTransferQueueFamilySupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice,
-                                                              uint32_t& queueFamilyIndex) {
-    assert(physicalDevice != VK_NULL_HANDLE);
-
-    uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,
-                                             &queueFamilyCount,
-                                             nullptr);
-
-    std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,
-                                             &queueFamilyCount,
-                                             queueFamilyProperties.data());
-
-    queueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : queueFamilyProperties) {
-        if (queueFamilyProperty.queueCount > 0 &&
-            queueFamilyProperty.queueFlags & VK_QUEUE_TRANSFER_BIT) {
-            return true;
-        }
-
-        ++queueFamilyIndex;
-    }
-
-    return false;
-}
-
-bool
-PhysicalDevice::isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
-                                                        const VkSurfaceKHR surface, 
-                                                        uint32_t& queueFamilyIndex) {
-    assert(physicalDevice != VK_NULL_HANDLE);
-    assert(surface != VK_NULL_HANDLE);
-
-    uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, 
-                                             &queueFamilyCount, 
-                                             nullptr);
-
-    std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, 
-                                             &queueFamilyCount, 
-                                             queueFamilyProperties.data());
-
-    queueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : queueFamilyProperties) {
-        if (queueFamilyProperty.queueCount > 0) {
-            VkBool32 supported = false;
-            vkChecker(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, 
-                                                           queueFamilyIndex, 
-                                                           surface,
-                                                           &supported));
-            if (supported) {
-                return true;
-            }
-        }
-
-        ++queueFamilyIndex;
-    }
-
-    return false;
-}
-
-bool
-PhysicalDevice::areDeviceExtensionsSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice, 
-                                                             const std::vector<const char*>& deviceExtensions) {
-    assert(physicalDevice != VK_NULL_HANDLE);
-
-    uint32_t extensionCount;
-    vkChecker(vkEnumerateDeviceExtensionProperties(physicalDevice, 
-                                                   nullptr,
-                                                   &extensionCount,
-                                                   nullptr));
-
-    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-    vkChecker(vkEnumerateDeviceExtensionProperties(physicalDevice, 
-                                                   nullptr,
-                                                   &extensionCount, 
-                                                   availableExtensions.data()));
-
-    std::unordered_set<std::string> requiredExtensions(deviceExtensions.begin(), 
-                                                       deviceExtensions.end());
-
-    for (const VkExtensionProperties& extensionProperty : availableExtensions) {
-        requiredExtensions.erase(extensionProperty.extensionName);
-    }
-
-#ifndef NDEBUG // Debug
-    for (const std::string& extensionProperty : requiredExtensions) {
-        std::cerr << "Unsupported extension property: " << extensionProperty << std::endl;
-    }
-#endif
-
-    return requiredExtensions.empty();
-}
-
-bool
-PhysicalDevice::isSwapChainSupported(const VkPhysicalDevice physicalDevice, 
-                                     const Surface& surface) {
-    assert(physicalDevice != VK_NULL_HANDLE);
-    return surface.formats(physicalDevice).empty() == false && 
-           surface.presentModes(physicalDevice).empty() == false;
-}
-
-bool
-PhysicalDevice::isPhysicalDeviceSuitable(const VkPhysicalDevice physicalDevice, 
-                                         const Surface& surface,
-                                         uint32_t& graphicsSupportQueueFamilyIndex,
-                                         uint32_t& transferSupportQueueFamilyIndex,
-                                         uint32_t& presentationSupportQueueFamilyIndex) const {
-    assert(physicalDevice != VK_NULL_HANDLE);
-
-    return isGraphicQueueFamilySupportedByPhysicalDevice(physicalDevice, 
-                                                         graphicsSupportQueueFamilyIndex) &&
-           isTransferQueueFamilySupportedByPhysicalDevice(physicalDevice,
-                                                          transferSupportQueueFamilyIndex) &&
-           isPresentationSupportedByPhysicalDevice(physicalDevice, 
-                                                   surface.vkSurface(), 
-                                                   presentationSupportQueueFamilyIndex) &&
-           areDeviceExtensionsSupportedByPhysicalDevice(physicalDevice, 
-                                                        mDeviceExtensions) &&
-           isSwapChainSupported(physicalDevice, 
-                                surface);
-}
-
-std::vector<PhysicalDevice::PhysicalDeviceInfo>
-PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
+std::vector<PhysicalDeviceData>
+PhysicalDevice::getCandidateDevices(const Instance& instance,
                                     const Surface& surface) const {
-    uint32_t physicalDeviceCount = 0;
-    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(), 
-                                         &physicalDeviceCount, 
-                                         nullptr));
-    assert(physicalDeviceCount > 0);
-
-    // Get all the suitable physical devices
-    std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-    vkChecker(vkEnumeratePhysicalDevices(appInstance.vkInstance(),
-                                         &physicalDeviceCount,
-                                         physicalDevices.data()));
-    std::vector<PhysicalDeviceInfo> candidatePhysicalDevices;
+    const std::vector<VkPhysicalDevice> physicalDevices = instance.physicalDevices();
+    std::vector<PhysicalDeviceData> candidatePhysicalDevices;
     for (const VkPhysicalDevice& device : physicalDevices) {
         assert(device != VK_NULL_HANDLE);
 
-        uint32_t graphicsSupportQueueFamilyIndex;
-        uint32_t transferSupportQueueFamilyIndex;
-        uint32_t presentationSupportQueueFamilyIndex;
-        if (isPhysicalDeviceSuitable(device, 
-                                     surface,
-                                     graphicsSupportQueueFamilyIndex,
-                                     transferSupportQueueFamilyIndex,
-                                     presentationSupportQueueFamilyIndex)) {
-            PhysicalDeviceInfo physicalDeviceInfo;
-            physicalDeviceInfo.mDevice = device;
-            physicalDeviceInfo.mGraphicsSupportQueueFamilyIndex = graphicsSupportQueueFamilyIndex;
-            physicalDeviceInfo.mTransferSupportQueueFamilyIndex = transferSupportQueueFamilyIndex;
-            physicalDeviceInfo.mPresentationSupportQueueFamilyIndex = presentationSupportQueueFamilyIndex;
-            candidatePhysicalDevices.push_back(physicalDeviceInfo);
+        PhysicalDeviceData deviceData(device,
+                                      surface,
+                                      mDeviceExtensions);
+        if (deviceData.isSupported()) {
+            candidatePhysicalDevices.push_back(deviceData);
         }
     }
 
@@ -302,31 +126,28 @@ PhysicalDevice::getCandidateDevices(const AppInstance& appInstance,
 }
 
 void
-PhysicalDevice::setPhysicalDevice(const std::vector<PhysicalDevice::PhysicalDeviceInfo>& candidateDevices) {
+PhysicalDevice::setPhysicalDevice(const std::vector<PhysicalDeviceData>& candidateDevices) {
     assert(candidateDevices.empty() == false && "There is no suitable physical device.");
     assert(mPhysicalDevice == VK_NULL_HANDLE);
 
+    const PhysicalDeviceData* chosenDeviceData = &candidateDevices.front();
+
     // From all the suitable physical devices, we get the first that is a discrete GPU.
     // Otherwise, we get the first device in the list.
-    for (const PhysicalDeviceInfo& deviceInfo : candidateDevices) {
+    for (const PhysicalDeviceData& deviceData : candidateDevices) {
         VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(deviceInfo.mDevice, &deviceProperties);
+        vkGetPhysicalDeviceProperties(deviceData.vkPhysicalDevice(), 
+                                      &deviceProperties);
 
         if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-            mPhysicalDevice = deviceInfo.mDevice;
-            mGraphicsSupportQueueFamilyIndex = deviceInfo.mGraphicsSupportQueueFamilyIndex;
-            mTransferSupportQueueFamilyIndex = deviceInfo.mTransferSupportQueueFamilyIndex;
-            mPresentationSupportQueueFamilyIndex = deviceInfo.mPresentationSupportQueueFamilyIndex;
+            chosenDeviceData = &deviceData;
             break;
         }
     }
-
-    if (mPhysicalDevice == VK_NULL_HANDLE) {
-        const PhysicalDeviceInfo& deviceInfo = candidateDevices.front();
-        mPhysicalDevice = deviceInfo.mDevice;
-        mGraphicsSupportQueueFamilyIndex = deviceInfo.mGraphicsSupportQueueFamilyIndex;
-        mTransferSupportQueueFamilyIndex = deviceInfo.mTransferSupportQueueFamilyIndex;
-        mPresentationSupportQueueFamilyIndex = deviceInfo.mPresentationSupportQueueFamilyIndex;
-    }
+        
+    mPhysicalDevice = chosenDeviceData->vkPhysicalDevice();
+    mGraphicsSupportQueueFamilyIndex = chosenDeviceData->graphicsSupportQueueFamilyIndex();
+    mTransferSupportQueueFamilyIndex = chosenDeviceData->transferSupportQueueFamilyIndex();
+    mPresentationSupportQueueFamilyIndex = chosenDeviceData->presentationSupportQueueFamilyIndex();
 }
 }

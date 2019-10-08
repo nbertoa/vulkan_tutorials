@@ -2,30 +2,27 @@
 
 #include <cassert>
 
-#include "AppInstance.h"
 #include "DebugUtils.h"
+#include "Instance.h"
 #include "PhysicalDevice.h"
 #include "Window.h"
 
 namespace vk {
-Surface::Surface(const AppInstance& appInstance,
-                       Window& window)
-    : mAppInstance(appInstance) 
+Surface::Surface(const Instance& instance,
+                 const Window& window)
+    : mInstance(instance)
 {
-    vkChecker(glfwCreateWindowSurface(mAppInstance.vkInstance(),
-                                      &window.glfwWindow(),
-                                      nullptr, 
-                                      &mSurface));
-    assert(mSurface != VK_NULL_HANDLE);
+    window.createSurfaceForWindow(mInstance,
+                                  mSurface);
 }
 
 Surface::~Surface() {
     assert(mSurface != VK_NULL_HANDLE);
-    vkDestroySurfaceKHR(mAppInstance.vkInstance(), mSurface, nullptr);
+    vkDestroySurfaceKHR(mInstance.vkInstance(), mSurface, nullptr);
 }
 
 Surface::Surface(Surface&& other) noexcept
-    : mAppInstance(other.mAppInstance)
+    : mInstance(other.mInstance)
     , mSurface(other.mSurface)
 {
     other.mSurface = VK_NULL_HANDLE;
@@ -38,7 +35,7 @@ Surface::vkSurface() const {
 }
 
 VkSurfaceCapabilitiesKHR
-Surface::capabilities(const VkPhysicalDevice physicalDevice) const {
+Surface::physicalDeviceSurfaceCapabilities(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
     assert(mSurface != VK_NULL_HANDLE);
 
@@ -51,18 +48,17 @@ Surface::capabilities(const VkPhysicalDevice physicalDevice) const {
 }
 
 std::vector<VkSurfaceFormatKHR>
-Surface::formats(const VkPhysicalDevice physicalDevice) const {
+Surface::physicalDeviceSurfaceFormats(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
     assert(mSurface != VK_NULL_HANDLE);
-
-    std::vector<VkSurfaceFormatKHR> surfaceFormats;
-
+    
     uint32_t surfaceFormatCount;
     vkChecker(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, 
                                                    mSurface, 
                                                    &surfaceFormatCount, 
                                                    nullptr));
 
+    std::vector<VkSurfaceFormatKHR> surfaceFormats;
     if (surfaceFormatCount > 0) {
         surfaceFormats.resize(surfaceFormatCount);
         vkChecker(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, 
@@ -75,11 +71,9 @@ Surface::formats(const VkPhysicalDevice physicalDevice) const {
 }
 
 std::vector<VkPresentModeKHR>
-Surface::presentModes(const VkPhysicalDevice physicalDevice) const {
+Surface::physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice) const {
     assert(physicalDevice != VK_NULL_HANDLE);
-    assert(mSurface != VK_NULL_HANDLE);
-
-    std::vector<VkPresentModeKHR> presentModes;
+    assert(mSurface != VK_NULL_HANDLE);    
 
     uint32_t presentModeCount;
     vkChecker(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, 
@@ -87,6 +81,7 @@ Surface::presentModes(const VkPhysicalDevice physicalDevice) const {
                                                         &presentModeCount, 
                                                         nullptr));
 
+    std::vector<VkPresentModeKHR> presentModes;
     if (presentModeCount > 0) {
         presentModes.resize(presentModeCount);
         vkChecker(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, 
@@ -96,5 +91,20 @@ Surface::presentModes(const VkPhysicalDevice physicalDevice) const {
     }
 
     return presentModes;
+}
+
+bool 
+Surface::isPhysicalDeviceSupported(const VkPhysicalDevice physicalDevice,
+                                   const uint32_t queueFamilyIndex) const {
+    assert(mSurface != VK_NULL_HANDLE);
+    assert(physicalDevice != VK_NULL_HANDLE);
+
+    VkBool32 supported = false;
+    vkChecker(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice,
+                                                   queueFamilyIndex,
+                                                   mSurface,
+                                                   &supported));
+
+    return supported;
 }
 }

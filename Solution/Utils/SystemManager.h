@@ -4,8 +4,8 @@
 #include <memory>
 #include <vulkan/vulkan.h>
 
-#include "AppInstance.h"
 #include "CommandPool.h"
+#include "Instance.h"
 #include "LogicalDevice.h"
 #include "Surface.h"
 #include "SwapChain.h"
@@ -23,7 +23,7 @@ public:
     SystemManager& operator=(SystemManager&&) = delete;
 
     const Window& window() const;
-    const AppInstance& appInstance() const;
+    const Instance& instance() const;
     const Surface& surface() const;
     const LogicalDevice& logicalDevice() const;
     SwapChain& swapChain() const;
@@ -35,7 +35,7 @@ private:
     // The member variables declaration order is important because
     // the destruction order must be this.
     std::unique_ptr<Window> mWindow;
-    std::unique_ptr<AppInstance> mAppInstance;
+    std::unique_ptr<Instance> mInstance;
     std::unique_ptr<Surface> mSurface;
     std::unique_ptr<LogicalDevice> mLogicalDevice;
     std::unique_ptr<SwapChain> mSwapChain;

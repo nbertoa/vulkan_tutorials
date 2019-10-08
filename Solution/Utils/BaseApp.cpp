@@ -34,7 +34,7 @@ BaseApp::BaseApp(const uint32_t windowWidth,
 
 void
 BaseApp::run() {
-    while (glfwWindowShouldClose(&mSystemManager.window().glfwWindow()) == 0) {
+    while (mSystemManager.window().shouldCloseWindow() == false) {
         glfwPollEvents();
 
         Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores.nextAvailableSemaphore();

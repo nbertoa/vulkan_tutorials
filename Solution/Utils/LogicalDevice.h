@@ -7,7 +7,7 @@
 #include "PhysicalDevice.h"
 
 namespace vk {
-class AppInstance;
+class Instance;
 class Surface;
 
 // VkDevice wrapper.
@@ -27,7 +27,7 @@ class Surface;
 // own state and resources independent of other logical devices.
 class LogicalDevice {
 public:
-    LogicalDevice(const AppInstance& appInstance, 
+    LogicalDevice(const Instance& instance,
                   const Surface& surface);
     ~LogicalDevice();
     LogicalDevice(LogicalDevice&& other) noexcept;

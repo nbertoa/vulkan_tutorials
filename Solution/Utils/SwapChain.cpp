@@ -361,9 +361,9 @@ SwapChain::createSwapChain(const Window& window,
     window.widthAndHeight(windowWidth, windowHeight);
 
     const VkSurfaceFormatKHR surfaceFormat = 
-        swapChainSurfaceFormat(surface.formats(physicalDevice.vkPhysicalDevice()));
+        swapChainSurfaceFormat(surface.physicalDeviceSurfaceFormats(physicalDevice.vkPhysicalDevice()));
     const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
-        surface.capabilities(physicalDevice.vkPhysicalDevice());
+        surface.physicalDeviceSurfaceCapabilities(physicalDevice.vkPhysicalDevice());
     mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
     mImageFormat = surfaceFormat.format;
 
@@ -395,7 +395,7 @@ SwapChain::createSwapChain(const Window& window,
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     // Refer to swapChainPresentMode() method
     createInfo.presentMode =
-        swapChainPresentMode(surface.presentModes(physicalDevice.vkPhysicalDevice()));
+        swapChainPresentMode(surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice()));
     // Specify if you want to ignore the color of pixels that are 
     // obscured, for example because another window is in 
     // front of them.

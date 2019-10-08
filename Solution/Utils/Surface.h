@@ -5,45 +5,61 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class AppInstance;
+class Instance;
 class Window;
 
+//
 // VkSurfaceKHR wrapper.
+//
 // Since Vulkan is a platform agnostic API, it cannot interface directly with the window
 // system on its own. 
+//
 // To establish the connection between Vulkan and the window system to present
 // results to the screen, we need to use the WSI (Window System Integration) extensions.
-// In this case, we use the VK_KHR_surface extension.
+//
 // A VkSurfaceKHR object abstracts a native platform surface or window object for use 
-// with Vulkan. The VK_KHR_surface extension declares the VkSurfaceKHR object, 
-// and provides a function for destroying VkSurfaceKHR objects. 
+// with Vulkan. 
+//
+// The VK_KHR_surface extension declares the VkSurfaceKHR object, and provides a function 
+// for destroying VkSurfaceKHR objects. 
+//
 // Separate platform-specific extensions each provide a function for creating a 
 // VkSurfaceKHR object for the respective platform.
+//
+// You need the Surface to:
+// - Create the SwapChain
+// - Get the candidate devices to create the PhysicalDevice
+//
 class Surface {
 public:
-    Surface(const AppInstance& appInstance,
-            Window& window);
+    Surface(const Instance& instance,
+            const Window& window);
     ~Surface();
     Surface(Surface&& other) noexcept;
     Surface(const Surface&) = delete;
     const Surface& operator=(const Surface&) = delete;
 
-    VkSurfaceKHR vkSurface() const;
+    VkSurfaceKHR 
+    vkSurface() const;
 
-    // Basic capabilities of the surface, needed in order to create a swap chain.
+    // This is needed to create the SwapChain
     // VkSurfaceCapabilitiesKHR:
     // - physicalDevice is the physical device that will be associated with the 
     //   swapchain to be created, as described for vkCreateSwapchainKHR.
     // - surface is the surface that will be associated with the swapchain.
     // - pSurfaceCapabilities is a pointer to an instance of the VkSurfaceCapabilitiesKHR 
     //   structure in which the capabilities are returned.
-    VkSurfaceCapabilitiesKHR capabilities(const VkPhysicalDevice physicalDevice) const;
+    VkSurfaceCapabilitiesKHR 
+    physicalDeviceSurfaceCapabilities(const VkPhysicalDevice physicalDevice) const;
 
+    // This is needed to create the SwapChain
     // VkSurfaceFormatKHR:
     // - format is a VkFormat that is compatible with the specified surface.
     // - colorSpace is a presentation VkColorSpaceKHR that is compatible with the surface.
-    std::vector<VkSurfaceFormatKHR> formats(const VkPhysicalDevice physicalDevice) const;
+    std::vector<VkSurfaceFormatKHR> 
+    physicalDeviceSurfaceFormats(const VkPhysicalDevice physicalDevice) const;
 
+    // This is needed to create the SwapChain
     // VkPresentModeKHR:
     // - VK_PRESENT_MODE_IMMEDIATE_KHR specifies that the presentation engine does 
     //   not wait for a vertical blanking period to update the current image, meaning 
@@ -97,10 +113,15 @@ public:
     //   The application can indicate the image contents have been updated by making a presentation 
     //   request, but this does not guarantee the timing of when it will be updated.
     //   This mode may result in visible tearing if rendering to the image is not timed correctly.
-    std::vector<VkPresentModeKHR> presentModes(const VkPhysicalDevice physicalDevice) const;
+    std::vector<VkPresentModeKHR> 
+    physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice) const;
+
+    bool 
+    isPhysicalDeviceSupported(const VkPhysicalDevice physicalDevice,
+                              const uint32_t queueFamilyIndex) const;
 
 private:
-    const AppInstance& mAppInstance;
+    const Instance& mInstance;
     VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 };
 }

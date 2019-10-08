@@ -6,11 +6,11 @@
 #include "DebugUtils.h"
 
 namespace vk {
-AppInstance::AppInstance() {
+Instance::AppInstance() {
     createInstance();
 }
 
-AppInstance::~AppInstance() {
+Instance::~AppInstance() {
 #ifndef NDEBUG // Debug
     delete mMessenger;
 #endif
@@ -18,7 +18,7 @@ AppInstance::~AppInstance() {
     vkDestroyInstance(mInstance, nullptr);
 }
 
-AppInstance::AppInstance(AppInstance&& other) noexcept 
+Instance::AppInstance(AppInstance&& other) noexcept
     : mInstance(other.mInstance)
 #ifndef NDEBUG // Debug
     , mMessenger(other.mMessenger)
@@ -32,7 +32,7 @@ AppInstance::AppInstance(AppInstance&& other) noexcept
 }
 
 const VkInstance& 
-AppInstance::vkInstance() const {
+Instance::vkInstance() const {
     assert(mInstance != nullptr);
     return mInstance;
 }

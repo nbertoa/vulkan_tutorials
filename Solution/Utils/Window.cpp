@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include "DebugUtils.h"
+#include "Instance.h"
 
 namespace vk {
 Window::Window(const uint32_t width, 
@@ -13,10 +14,12 @@ Window::Window(const uint32_t width,
     glfwChecker(glfwInit());
 
     // Avoid OpenGL context creation
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_CLIENT_API, 
+                   GLFW_NO_API);
 
     // Avoid window resizing
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, 
+                   GLFW_FALSE);
 
     mWindow = glfwCreateWindow(static_cast<int>(width), 
                                static_cast<int>(height), 
@@ -37,14 +40,27 @@ Window::Window(Window&& other) noexcept
     other.mWindow = nullptr;
 }
 
-GLFWwindow& 
-Window::glfwWindow() const {
+void 
+Window::createSurfaceForWindow(const Instance& instance,
+                               VkSurfaceKHR& surface) const {
     assert(mWindow != nullptr);
-    return *mWindow;
+
+    vkChecker(glfwCreateWindowSurface(instance.vkInstance(),
+                                      mWindow,
+                                      nullptr,
+                                      &surface));
+}
+
+bool 
+Window::shouldCloseWindow() const {
+    assert(mWindow != nullptr);
+
+    return glfwWindowShouldClose(mWindow) != 0;
 }
 
 void
-Window::widthAndHeight(uint32_t& width, uint32_t& height) const {
+Window::widthAndHeight(uint32_t& width, 
+                       uint32_t& height) const {
     assert(mWindow != nullptr);
     int w;
     int h;
@@ -58,7 +74,9 @@ Window::width() const {
     assert(mWindow != nullptr);
     int w;
     int h;
-    glfwGetWindowSize(mWindow, &w, &h);
+    glfwGetWindowSize(mWindow, 
+                      &w,
+                      &h);
     return static_cast<uint32_t>(w);
 }
 
@@ -67,7 +85,9 @@ Window::height() const {
     assert(mWindow != nullptr);
     int w;
     int h;
-    glfwGetWindowSize(mWindow, &w, &h);
+    glfwGetWindowSize(mWindow, 
+                      &w, 
+                      &h);
     return static_cast<uint32_t>(h);
 }
 }
