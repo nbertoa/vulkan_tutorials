@@ -12,18 +12,21 @@ SystemManager::SystemManager(const uint32_t windowWidth,
     , mInstance(new Instance())
     , mSurface(new Surface(*mInstance,
                            *mWindow))
-    , mLogicalDevice(new LogicalDevice(*mInstance,
-                                       *mSurface))
+    , mPhysicalDevice(new PhysicalDevice(*mInstance,
+                                         *mSurface))
+    , mLogicalDevice(new LogicalDevice(*mPhysicalDevice))
     , mSwapChain(new SwapChain(*mLogicalDevice, 
-                               *mWindow, 
+                               *mPhysicalDevice,
+                               mWindow->width(),
+                               mWindow->height(),
                                *mSurface))
     , mGraphicsCommandPool(new CommandPool(*mLogicalDevice, 
-                                           CommandPool::Type::GRAPHICS))
+                                           mPhysicalDevice->graphicsSupportQueueFamilyIndex()))
     , mTransferCommandPool(new CommandPool(*mLogicalDevice,
-                                           CommandPool::Type::TRANSFER,
+                                           mPhysicalDevice->transferSupportQueueFamilyIndex(),
                                            VK_COMMAND_POOL_CREATE_TRANSIENT_BIT))
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, 
-                                               CommandPool::Type::PRESENTATION))
+                                               mPhysicalDevice->presentationSupportQueueFamilyIndex()))
 {
 }
 
@@ -43,6 +46,12 @@ const Surface&
 SystemManager::surface() const {
     assert(mSurface != nullptr);
     return *mSurface;
+}
+
+const PhysicalDevice&
+SystemManager::physicalDevice() const {
+    assert(mPhysicalDevice != nullptr);
+    return *mPhysicalDevice;
 }
 
 const LogicalDevice& 

@@ -16,13 +16,14 @@ CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
                              const CommandPool& commandPool,
                              const VkCommandBufferLevel level) {
 
+    // VkCommandBufferAllocateInfo:
+    // - commandPool is the command pool from which the command buffers are allocated.
+    // - level is a VkCommandBufferLevel value specifying the command buffer level.
+    // - commandBufferCount is the number of command buffers to allocate from the pool.
     VkCommandBufferAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     info.commandPool = commandPool.vkCommandPool();
     info.commandBufferCount = 1;
-
-    // Specify if the allocated command buffers are primary
-    // or secondary command buffers.
     info.level = level;   
 
     vkChecker(vkAllocateCommandBuffers(logicalDevice.vkDevice(),
@@ -45,15 +46,15 @@ void
 CommandBuffer::beginRecording(const VkCommandBufferUsageFlags usageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
 
+    // VkCommandBufferBeginInfo:
+    // - flags is a bitmask of VkCommandBufferUsageFlagBits specifying 
+    //   usage behavior for the command buffer.
+    // - pInheritanceInfo is a pointer to a VkCommandBufferInheritanceInfo structure, 
+    //   used if commandBuffer is a secondary command buffer.If this is a primary 
+    //   command buffer, then this value is ignored.
     VkCommandBufferBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-    // Specify how we are going to use the command buffer.
     info.flags = usageFlags;
-
-    // This is only relevant for secondary command buffers
-    // It specifies which state to inherit from the calling
-    // primary command buffers.
     info.pInheritanceInfo = nullptr;
 
     vkChecker(vkBeginCommandBuffer(mCommandBuffer,
@@ -73,19 +74,26 @@ CommandBuffer::beginPass(const RenderPass& renderPass,
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(frameBuffer != VK_NULL_HANDLE);     
 
+    // VkRenderPassBeginInfo:
+    // - renderPass is the render pass to begin an instance of.
+    // - framebuffer is the framebuffer containing the attachments 
+    //   that are used with the render pass.
+    // - renderArea is the render area that is affected by the render 
+    //   pass instance.
+    // - clearValueCount is the number of elements in pClearValues.
+    // - pClearValues is a pointer to an array of clearValueCount VkClearValue 
+    //   structures that contains clear values for each attachment, if the attachment 
+    //   uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil 
+    //   format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR.
+    //   The array is indexed by attachment number.
+    //   Only elements corresponding to cleared attachments are used.
+    //   Other elements of pClearValues are ignored.
     VkRenderPassBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     info.renderPass = renderPass.vkRenderPass();
     info.framebuffer = frameBuffer;
-    // Size of the render area which defines where shader
-    // loads and stores will take place. The pixels outside
-    // this region will have undefined values.
     info.renderArea.offset = {0, 0};
     info.renderArea.extent = imageExtent;
-
-    // Define the clear values to use for
-    // VK_ATTACHMENT_LOAD_OP_CLEAR, which we need as
-    // load operation for the color attachment.
     VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
     info.clearValueCount = 1;
     info.pClearValues = &clearColor;
@@ -137,14 +145,14 @@ CommandBuffer::bindIndexBuffer(const Buffer& buffer,
 void 
 CommandBuffer::copyBuffer(const Buffer& sourceBuffer,
                           const Buffer& destinationBuffer,
-                          const VkBufferCopy& bufferCopy) {
+                          const VkBufferCopy& regionToCopy) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
 
     vkCmdCopyBuffer(mCommandBuffer,
                     sourceBuffer.vkBuffer(),
                     destinationBuffer.vkBuffer(),
                     1,
-                    &bufferCopy);
+                    &regionToCopy);
 }
 
 void
@@ -179,32 +187,40 @@ void
 CommandBuffer::submit(const VkQueue queue, 
                       const Semaphore* waitSemaphore,
                       const Semaphore* signalSemaphore,
-                      const Fence& inFlightFence,
-                      const VkPipelineStageFlags waitStage) {
+                      const Fence& executionCompletedFence,
+                      const VkPipelineStageFlags waitStageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(queue != VK_NULL_HANDLE);
     
+    // VkSubmitInfo:
+    // - waitSemaphoreCount is the number of semaphores upon which to wait 
+    //   before executing the command buffers for the batch.
+    // - pWaitSemaphores is a pointer to an array of VkSemaphore handles upon 
+    //   which to wait before the command buffers for this batch begin execution.
+    //   If semaphores to wait on are provided, they define a semaphore wait operation.
+    // - pWaitDstStageMask is a pointer to an array of pipeline stages at which 
+    //   each corresponding semaphore wait will occur.
+    // - commandBufferCount is the number of command buffers to execute in the batch.
+    // - pCommandBuffers is a pointer to an array of VkCommandBuffer handles 
+    //   to execute in the batch.
+    // - signalSemaphoreCount is the number of semaphores to be signaled once the 
+    //   commands specified in pCommandBuffers have completed execution.
+    // - pSignalSemaphores is a pointer to an array of VkSemaphore handles which 
+    //   will be signaled when the command buffers for this batch have completed execution.
+    //   If semaphores to be signaled are provided, they define a semaphore signal operation.
     VkSubmitInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    
-    // Set semaphore to wait on before execution begins and in which
-    // stage of the pipeline to wait.
     info.waitSemaphoreCount = waitSemaphore != nullptr ? 1 : 0;
     info.pWaitSemaphores = waitSemaphore != nullptr ? &waitSemaphore->vkSemaphore() : nullptr;
-    info.pWaitDstStageMask = &waitStage;
-
-    // Set command buffer
+    info.pWaitDstStageMask = &waitStageFlags;
     info.commandBufferCount = 1;
     info.pCommandBuffers = &mCommandBuffer;
-
-    // Specify which semaphores to signal once the command 
-    // buffer has finished execution.
     info.signalSemaphoreCount = signalSemaphore != nullptr ? 1 : 0;
     info.pSignalSemaphores = signalSemaphore != nullptr ? &signalSemaphore->vkSemaphore() : nullptr;
 
     vkChecker(vkQueueSubmit(queue,
                             1,
                             &info,
-                            inFlightFence.vkFence()));
+                            executionCompletedFence.vkFence()));
 }
 }

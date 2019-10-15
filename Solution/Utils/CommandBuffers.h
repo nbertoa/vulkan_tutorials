@@ -14,11 +14,12 @@ class RenderPass;
 
 class CommandBuffers {
 public:
-    // Level:
+    // - commandPool is the command pool from which the command buffers are allocated.
+    // - level is a VkCommandBufferLevel value specifying the command buffers level.
+    // VkCommandBufferLevel:
     // - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
     // to a queue for execution, but cannot be called
     // from other command buffers.
-    //
     // - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
     // directly, but can be called from primary command
     // buffers.
@@ -30,9 +31,11 @@ public:
     CommandBuffers(const CommandBuffers&) = delete;
     const CommandBuffers& operator=(const CommandBuffers&) = delete;
 
-    size_t bufferCount() const;
+    size_t 
+    bufferCount() const;
 
-    CommandBuffer& commandBuffer(const size_t bufferIndex);
+    CommandBuffer& 
+    commandBuffer(const size_t bufferIndex);
 
 private:
     std::vector<CommandBuffer> mCommandBuffers;

@@ -4,10 +4,13 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "PhysicalDeviceData.h"
+
 namespace vk {
 #ifndef NDEBUG // Debug
 class DebugMessenger;
 #endif
+class Surface;
 
 //
 // VkInstance wrapper.
@@ -31,10 +34,11 @@ class DebugMessenger;
 //
 // You need the Instance to:
 // - Create the Surface.
-// - Get the PhysicalDevice
+// - Get the PhysicalDevices
 //
 // Assumptions:
 // - Instance layers and extensions are specified internally (check .cpp file)
+//
 class Instance {
 public:
     // Preconditions:
@@ -45,19 +49,26 @@ public:
     Instance(const Instance&) = delete;
     const Instance& operator=(const Instance&) = delete;
 
-    const VkInstance& vkInstance() const;
+    const VkInstance& 
+    vkInstance() const;
 
+    // Return a list of candidate physical devices
+    // based on surface support and device extension support.
+    std::vector<PhysicalDeviceData>
+    getCandidatePhysicalDevices(const Surface& surface,
+                                const std::vector<const char*>& deviceExtensionNames) const;
+
+private:
     std::vector<VkPhysicalDevice>
     physicalDevices() const;
 
-private:
     void 
     createInstance();
 
     // Validation layers are optional components that hook into Vulkan function calls
     // to apply additional operations. We use them for debugging functionality.
     static std::vector<const char*> 
-    getInstanceLayers();
+    getInstanceLayerNames();
 
     static bool 
     areInstanceLayersSupported(const std::vector<const char*>& instanceLayers);
@@ -65,7 +76,7 @@ private:
     // Vulkan is a platform agnostic API, which means that we need an extension
     // to interface with different systems, like for example, the window system.
     static std::vector<const char*> 
-    getRequiredInstanceExtensions();
+    getInstanceExtensionNames();
     
     VkInstance mInstance = VK_NULL_HANDLE;
 

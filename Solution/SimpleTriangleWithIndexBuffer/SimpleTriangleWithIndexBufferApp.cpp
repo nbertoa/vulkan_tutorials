@@ -42,6 +42,7 @@ SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
     const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
     Buffer cpuVertexBuffer(mSystemManager.logicalDevice(),
+                           mSystemManager.physicalDevice(),
                            verticesSize,
                            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                            VK_SHARING_MODE_EXCLUSIVE,
@@ -53,6 +54,7 @@ SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
                                      0);
 
     mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                      mSystemManager.physicalDevice(),
                                       verticesSize,
                                       VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -76,6 +78,7 @@ SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
     const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
     Buffer cpuIndexBuffer(mSystemManager.logicalDevice(),
+                          mSystemManager.physicalDevice(),
                           indicesSize,
                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                           VK_SHARING_MODE_EXCLUSIVE,
@@ -87,6 +90,7 @@ SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
                                     0);
 
     mGpuIndexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                     mSystemManager.physicalDevice(),
                                      indicesSize,
                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                      VK_BUFFER_USAGE_INDEX_BUFFER_BIT,

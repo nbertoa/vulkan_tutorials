@@ -6,9 +6,17 @@
 namespace vk {
 class LogicalDevice;
 
+//
 // VkSemaphore wrapper.
+//
 // Semaphores are a synchronization primitive that can be used to insert a 
 // dependency between batches submitted to queues. 
+// A Semaphore is created without configuration parameters.
+// It can be used to control resource access across multiple queues.
+// It can be signaled or waited on as part of command buffer submission, 
+// with a call to vkQueueSubmit, and it can be signaled on one queue (e.g.compute) 
+// and waited on other (e.g.graphics).
+//
 // Semaphores have two states - signaled and unsignaled. 
 // The state of a semaphore can be signaled after 
 // execution of a batch of commands is completed. 
@@ -27,22 +35,23 @@ class LogicalDevice;
 // and subsequently import from that format as well.
 // 
 // The internal data of a semaphore may include a reference 
-// to any resourcesand pending work associated with signal or 
+// to any resources and pending work associated with signal or 
 // unsignal operations performed on that semaphore object.
-// Mechanisms to importand export that internal data toand from 
-// semaphores are provided below.These mechanisms indirectly enable 
-// applications to share semaphore state between two or more semaphores
-// and other synchronization primitives across processand API boundaries.
+//
+// You need the Semaphore to:
+// - Pass it to vkQueueSubmit
+//
 class Semaphore {
 public:
+    // A Semaphore is created without configuration parameters.
     Semaphore(const LogicalDevice& logicalDevice);    
     ~Semaphore();
     Semaphore(Semaphore&& other) noexcept;
-
     Semaphore(const Semaphore&) = delete;
     const Semaphore& operator=(const Semaphore&) = delete;
     
-    const VkSemaphore& vkSemaphore() const;
+    const VkSemaphore& 
+    vkSemaphore() const;
 
 private:
     const LogicalDevice& mLogicalDevice;

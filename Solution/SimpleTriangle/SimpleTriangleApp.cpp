@@ -35,6 +35,7 @@ SimpleTriangleApp::createBuffers() {
     const size_t verticesSize = sizeof(PosColorVertex) * vertices.size();
 
     Buffer cpuVertexBuffer(mSystemManager.logicalDevice(),
+                           mSystemManager.physicalDevice(),
                            verticesSize,
                            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                            VK_SHARING_MODE_EXCLUSIVE,
@@ -46,6 +47,7 @@ SimpleTriangleApp::createBuffers() {
                                      0);
 
     mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                      mSystemManager.physicalDevice(),
                                       verticesSize,
                                       VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,

@@ -7,6 +7,7 @@
 #include "CommandPool.h"
 #include "Instance.h"
 #include "LogicalDevice.h"
+#include "PhysicalDevice.h"
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
@@ -21,10 +22,11 @@ public:
     const SystemManager& operator=(const SystemManager&) = delete;
     SystemManager(SystemManager&&) = delete;
     SystemManager& operator=(SystemManager&&) = delete;
-
+    
     const Window& window() const;
     const Instance& instance() const;
     const Surface& surface() const;
+    const PhysicalDevice& physicalDevice() const;
     const LogicalDevice& logicalDevice() const;
     SwapChain& swapChain() const;
     const CommandPool& graphicsCommandPool() const;
@@ -37,6 +39,7 @@ private:
     std::unique_ptr<Window> mWindow;
     std::unique_ptr<Instance> mInstance;
     std::unique_ptr<Surface> mSurface;
+    std::unique_ptr<PhysicalDevice> mPhysicalDevice;
     std::unique_ptr<LogicalDevice> mLogicalDevice;
     std::unique_ptr<SwapChain> mSwapChain;
     std::unique_ptr<CommandPool> mGraphicsCommandPool;

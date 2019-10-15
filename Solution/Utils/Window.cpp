@@ -40,15 +40,17 @@ Window::Window(Window&& other) noexcept
     other.mWindow = nullptr;
 }
 
-void 
-Window::createSurfaceForWindow(const Instance& instance,
-                               VkSurfaceKHR& surface) const {
+VkSurfaceKHR
+Window::createSurfaceForWindow(const Instance& instance) const {
     assert(mWindow != nullptr);
 
+    VkSurfaceKHR surface;
     vkChecker(glfwCreateWindowSurface(instance.vkInstance(),
                                       mWindow,
                                       nullptr,
                                       &surface));
+
+    return surface;
 }
 
 bool 

@@ -9,7 +9,8 @@
 namespace vk {
 class Fences {
 public:
-    // Flags:
+    // - flags specifies the initial state and behavior of the fences.
+    // VkFenceCreateFlags:
     // VK_FENCE_CREATE_SIGNALED_BIT specifies that the fence object 
     // is created in the signaled state.
     // Otherwise, it is created in the unsignaled state.
@@ -18,8 +19,11 @@ public:
            const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
     Fences(Fences&& other) noexcept;
                
-    Fence& nextAvailableFence();
-    Fence& currentFence();
+    Fence& 
+    nextAvailableFence();
+
+    Fence& 
+    currentFence();
 
 private:
     std::vector<Fence> mFences;

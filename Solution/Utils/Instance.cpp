@@ -38,6 +38,27 @@ Instance::vkInstance() const {
     return mInstance;
 }
 
+std::vector<PhysicalDeviceData>
+Instance::getCandidatePhysicalDevices(const Surface& surface,
+                                      const std::vector<const char*>& deviceExtensionNames) const {
+    assert(mInstance != VK_NULL_HANDLE);
+
+    const std::vector<VkPhysicalDevice> devices = physicalDevices();
+    std::vector<PhysicalDeviceData> supportedPhysicalDevices;
+    for (const VkPhysicalDevice& device : devices) {
+        assert(device != VK_NULL_HANDLE);
+
+        PhysicalDeviceData deviceData(device,
+                                      surface,
+                                      deviceExtensionNames);
+        if (deviceData.isSupported()) {
+            supportedPhysicalDevices.push_back(deviceData);
+        }
+    }
+
+    return supportedPhysicalDevices;
+}
+
 std::vector<VkPhysicalDevice>
 Instance::physicalDevices() const {
     assert(mInstance != nullptr);
@@ -103,8 +124,8 @@ Instance::createInstance() {
     // - enabledExtensionCount is the number of global extensions to enable.
     // - ppEnabledExtensionNames is a pointer to an array of enabledExtensionCount null-terminated 
     //   UTF-8 strings containing the names of extensions to enable.
-    const std::vector<const char*> instanceExtensions = getRequiredInstanceExtensions();
-    const std::vector<const char*> instanceLayers = getInstanceLayers();
+    const std::vector<const char*> instanceExtensions = getInstanceExtensionNames();
+    const std::vector<const char*> instanceLayers = getInstanceLayerNames();
     VkInstanceCreateInfo instanceInfo = {};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pApplicationInfo = &appInfo;
@@ -127,7 +148,7 @@ Instance::createInstance() {
 }
 
 std::vector<const char*>
-Instance::getInstanceLayers() {
+Instance::getInstanceLayerNames() {
     std::vector<const char*> instanceLayers;
 #ifndef NDEBUG // Debug
     instanceLayers.emplace_back("VK_LAYER_KHRONOS_validation");
@@ -168,7 +189,7 @@ Instance::areInstanceLayersSupported(const std::vector<const char*>& requiredLay
 }
 
 std::vector<const char*>
-Instance::getRequiredInstanceExtensions() {
+Instance::getInstanceExtensionNames() {
     // Vulkan is a platform agnostic API, which means that you need an extension
     // to interface with the window system.
     // GLFW has a handy built-in function that returns the extension(s)

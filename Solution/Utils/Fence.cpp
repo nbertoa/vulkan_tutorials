@@ -9,6 +9,9 @@ namespace vk {
 Fence::Fence(const LogicalDevice& logicalDevice,
              const VkFenceCreateFlags flags)
     : mLogicalDevice(logicalDevice) {
+
+    // - flags is a bitmask of VkFenceCreateFlagBits specifying the 
+    //   initial state and behavior of the fence.
     VkFenceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     createInfo.flags = flags;

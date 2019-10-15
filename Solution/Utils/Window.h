@@ -28,9 +28,9 @@ public:
     Window(const Window&) = delete;
     const Window& operator=(const Window&) = delete;
 
-    void 
-    createSurfaceForWindow(const Instance& instance,
-                           VkSurfaceKHR& surface) const;
+    // - instance to create the surface in.
+    VkSurfaceKHR
+    createSurfaceForWindow(const Instance& instance) const;
 
     bool 
     shouldCloseWindow() const;

@@ -8,6 +8,7 @@
 
 namespace vk {
 class LogicalDevice;
+class PhysicalDevice;
 
 class Buffers {
 public:
@@ -107,6 +108,7 @@ public:
     // - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
     //   this type is not cached on the device.Uncached device memory is always device coherent.
     Buffers(const LogicalDevice& logicalDevice,
+            const PhysicalDevice& physicalDevice,
             const size_t bufferCount,
             const VkDeviceSize sizeInBytes,
             const VkBufferUsageFlags usageFlags,

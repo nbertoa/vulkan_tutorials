@@ -8,20 +8,23 @@
 #include "PhysicalDevice.h"
 #include "Semaphore.h"
 #include "Surface.h"
-#include "Window.h"
 
 namespace vk {
 SwapChain::SwapChain(const LogicalDevice& logicalDevice,
-                     const Window& window,
+                     const PhysicalDevice& physicalDevice,
+                     const uint32_t imageWidth,
+                     const uint32_t imageHeight,
                      const Surface& surface)
     : mLogicalDevice(logicalDevice) 
 {       
-    createSwapChain(window,
-                    surface);
+    initSwapChain(imageWidth,
+                  imageHeight,
+                  surface,
+                  physicalDevice);
 
-    setImagesAndViews();
+    initImagesAndViews();
 
-    setViewportAndScissorRect();
+    initViewportAndScissorRect();
 }
 
 SwapChain::~SwapChain() {
@@ -34,7 +37,9 @@ SwapChain::~SwapChain() {
                            nullptr);
     }
 
-    vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), mSwapChain, nullptr);
+    vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), 
+                          mSwapChain, 
+                          nullptr);
 }
 
 SwapChain::SwapChain(SwapChain&& other) noexcept
@@ -54,9 +59,18 @@ uint32_t
 SwapChain::acquireNextImage(const Semaphore& semaphore) {
     assert(mSwapChain != VK_NULL_HANDLE);
 
-    // The third parameter specifies a timeout in nanoseconds 
-    // for an image to become available. Using the maximum
-    // value of a 64 bit unsigned integer disables the timeout.
+    // 
+    //
+    // - Logical device associated with the swap chain
+    // - Swapchain from which an image is being acquired
+    // - The third parameter specifies a timeout in nanoseconds 
+    //   for an image to become available. Using the maximum
+    //   value of a 64 bit unsigned integer disables the timeout.
+    // - semaphore that will become signaled when the presentation engine
+    //   has released ownership of the image.
+    // - fence that will become signaled when the presentation engine
+    //   has released ownership of the image.
+    // - Image index of the next image to use.
     vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
                                     mSwapChain,
                                     std::numeric_limits<uint64_t>::max(),
@@ -78,23 +92,29 @@ SwapChain::present(const Semaphore& waitSemaphore,
                    const uint32_t imageIndex) {
     assert(mSwapChain != VK_NULL_HANDLE);
 
+    // VkPresentInfoKHR:
+    // - waitSemaphoreCount is the number of semaphores to wait for before issuing 
+    //   the present request.The number may be zero.
+    // - pWaitSemaphores, if not VK_NULL_HANDLE, is an array of VkSemaphore objects with 
+    //   waitSemaphoreCount entries, and specifies the semaphores to wait for before 
+    //   issuing the present request.
+    // - swapchainCount is the number of swapchains being presented to by this command.
+    // - pSwapchains is an array of VkSwapchainKHR objects with swapchainCount entries.
+    //   A given swapchain must not appear in this list more than once.
+    // - pImageIndices is an array of indices into the array of each swapchain’s presentable images, 
+    //   with swapchainCount entries.Each entry in this array identifies the image to present on 
+    //   the corresponding entry in the pSwapchains array.
+    // - pResults is an array of VkResult typed elements with swapchainCount entries.
+    //   Applications that do not need per-swapchain results can use NULL for pResults.
+    //   If non-NULL, each entry in pResults will be set to the VkResult for presenting the 
+    //   swapchain corresponding to the same index in pSwapchains.
     VkPresentInfoKHR info = {};
     info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    
-    // Semaphores to wait on before presentation can happen.
     info.waitSemaphoreCount = 1;
     info.pWaitSemaphores = &waitSemaphore.vkSemaphore();
-
-    // Set swap chain to present the image and the
-    // index of the image for it.
     info.swapchainCount = 1;
     info.pSwapchains = &mSwapChain;
     info.pImageIndices = &imageIndex;
-
-    // This allows you to specify an array of VkResult values to check
-    // for every individual swap chain if presentation was successful.
-    // It is not necessary if you are only using a single swap chain,
-    // because you can simply use the return value of the present method.
     info.pResults = nullptr;
 
     vkChecker(vkQueuePresentKHR(mLogicalDevice.presentationQueue(),
@@ -170,7 +190,7 @@ SwapChain::imageExtent() const {
 }
 
 VkSurfaceFormatKHR
-SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats) {
+SwapChain::bestFitSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats) {
     assert(surfaceFormats.empty() == false);
 
     for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats) {
@@ -187,7 +207,7 @@ SwapChain::swapChainSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surface
 }
 
 VkPresentModeKHR
-SwapChain::swapChainPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
+SwapChain::bestFitPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
     // Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
     // So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
     // is not available.
@@ -249,39 +269,8 @@ SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabiliti
     return imageCount;
 }
 
-void
-SwapChain::setQueueFamilies(const PhysicalDevice& physicalDevice, 
-                            VkSwapchainCreateInfoKHR& swapChainCreateInfo) {
-    // VK_SHARING_MODE_EXCLUSIVE:
-    // An image is owned by one queue family at a time and
-    // the ownership must be explicitly transfered before using it
-    // in another queue family. This options offers the best performances.
-    //
-    // VK_SHARING_MODE_CONCURRENT:
-    // Images can be used across multiple queue families
-    // without explicit ownership transfers.
-    
-    // If the graphics queue family and presentation queue family are the same, which will be
-    // the case on most hardware, then we should stick to exclusive mode (best performance).
-    const uint32_t queueFamilyIndices[] =
-    {
-        physicalDevice.graphicsSupportQueueFamilyIndex(),
-        physicalDevice.presentationSupportQueueFamilyIndex()
-    };
-
-    if (queueFamilyIndices[0] != queueFamilyIndices[1]) {
-        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-        swapChainCreateInfo.queueFamilyIndexCount = 2;
-        swapChainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
-    } else {
-        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-        swapChainCreateInfo.queueFamilyIndexCount = 0;
-        swapChainCreateInfo.pQueueFamilyIndices = nullptr;
-    }
-}
-
 void 
-SwapChain::setImagesAndViews() {
+SwapChain::initImagesAndViews() {
     assert(mSwapChainImages.empty());
     assert(mSwapChain != VK_NULL_HANDLE);
 
@@ -333,7 +322,7 @@ SwapChain::setImagesAndViews() {
 }
 
 void
-SwapChain::setViewportAndScissorRect() {
+SwapChain::initViewportAndScissorRect() {
     assert(mSwapChain != VK_NULL_HANDLE);
 
     // This will almost always be (0, 0) and width and height.
@@ -352,63 +341,191 @@ SwapChain::setViewportAndScissorRect() {
 }
 
 void
-SwapChain::createSwapChain(const Window& window,
-                           const Surface& surface) {
-    const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
-
-    uint32_t windowWidth;
-    uint32_t windowHeight;
-    window.widthAndHeight(windowWidth, windowHeight);
-
-    const VkSurfaceFormatKHR surfaceFormat = 
-        swapChainSurfaceFormat(surface.physicalDeviceSurfaceFormats(physicalDevice.vkPhysicalDevice()));
+SwapChain::initSwapChain(const uint32_t imageWidth,
+                         const uint32_t imageHeight,
+                         const Surface& surface,
+                         const PhysicalDevice& physicalDevice) {
     const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
         surface.physicalDeviceSurfaceCapabilities(physicalDevice.vkPhysicalDevice());
-    mExtent = swapChainExtent(surfaceCapabilities, windowWidth, windowHeight);
+    mExtent = swapChainExtent(surfaceCapabilities, 
+                              imageWidth, 
+                              imageHeight);
+
+    const VkSurfaceFormatKHR surfaceFormat =
+        bestFitSurfaceFormat(surface.physicalDeviceSurfaceFormats(physicalDevice.vkPhysicalDevice()));
     mImageFormat = surfaceFormat.format;
 
+    // VkSwapchainCreateInfoKHR:
+    // - flags is a bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation.
+    //    - VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR specifies that images created from the 
+    //      swapchain (i.e. with the swapchain member of VkImageSwapchainCreateInfoKHR set to this swapchain’s handle) 
+    //      must use VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT.
+    //    - VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR specifies that images created from the swapchain are protected images.
+    //    - VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR specifies that the images of the swapchain can be used to create 
+    //      a VkImageView with a different format than what the swapchain was created with.
+    //      The list of allowed image view formats are specified by chaining an instance of the VkImageFormatListCreateInfoKHR 
+    //      structure to the pNext chain of VkSwapchainCreateInfoKHR.
+    //      In addition, this flag also specifies that the swapchain can be created with usage flags that are not supported 
+    //      for the format the swapchain is created with but are supported for at least one of the allowed image view formats.
+    //
+    // - surface is the surface onto which the swapchain will present images.
+    //   If the creation succeeds, the swapchain becomes associated with surface.
+    //
+    // - minImageCount is the minimum number of presentable images that the application needs.
+    //   The implementation will either create the swapchain with at least that many images, 
+    //   or it will fail to create the swapchain.
+    //
+    // - imageFormat is a VkFormat value specifying the format the swapchain image(s) will be created with.
+    //
+    // - imageColorSpace is a VkColorSpaceKHR value specifying the way the swapchain interprets image data.
+    //
+    // - imageExtent is the size(in pixels) of the swapchain image(s).
+    //   The behavior is platform-dependent if the image extent does not match the surface’s currentExtent as 
+    //   returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR.
+    //
+    // - imageArrayLayers is the number of views in a multiview/stereo surface.
+    //   For non-stereoscopic-3D applications, this value is 1.
+    //
+    // - imageUsage is a bitmask of VkImageUsageFlagBits describing the intended usage of the(acquired) swapchain images.
+    //    - VK_IMAGE_USAGE_TRANSFER_SRC_BIT specifies that the image can be used as the source of a transfer command.
+    //    - VK_IMAGE_USAGE_TRANSFER_DST_BIT specifies that the image can be used as the destination of a transfer command.
+    //    - VK_IMAGE_USAGE_SAMPLED_BIT specifies that the image can be used to create a VkImageView suitable for occupying a 
+    //      VkDescriptorSet slot either of type VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE or VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+    //      and be sampled by a shader.
+    //    - VK_IMAGE_USAGE_STORAGE_BIT specifies that the image can be used to create a VkImageView suitable for occupying a 
+    //      VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_STORAGE_IMAGE.
+    //    - VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable for use 
+    //      as a color or resolve attachment in a VkFramebuffer.
+    //    - VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable 
+    //      for use as a depth / stencil or depth / stencil resolve attachment in a VkFramebuffer.
+    //    - VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT specifies that the memory bound to this image will have been allocated with 
+    //      the VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT. 
+    //      This bit can be set for any image that can be used to create a VkImageView suitable for use as a color, 
+    //      resolve, depth/stencil, or input attachment.
+    //    - VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable for 
+    //      occupying VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT; 
+    //      be read from a shader as an input attachment; and be used as an input attachment in a framebuffer.
+    //    - VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV specifies that the image can be used to create a VkImageView suitable 
+    //      for use as a shading rate image.
+    //    - VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT specifies that the image can be used to create a VkImageView 
+    //      suitable for use as a fragment density map image.
+    //
+    // - imageSharingMode is the sharing mode used for the image(s) of the swapchain.
+    //
+    // - queueFamilyIndexCount is the number of queue families having access to the image(s) of the swapchain when 
+    //   imageSharingMode is VK_SHARING_MODE_CONCURRENT.
+    //
+    // - pQueueFamilyIndices is a pointer to an array of queue family indices having access to the images(s) 
+    //   of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
+    //
+    // - preTransform is a VkSurfaceTransformFlagBitsKHR value describing the transform, 
+    //   relative to the presentation engine’s natural orientation, applied to the image content prior to presentation.
+    //   If it does not match the currentTransform value returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR, 
+    //   the presentation engine will transform the image content as part of the presentation operation.
+    //   -  VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR specifies that image content is presented without being transformed.
+    //   -  VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR specifies that image content is rotated 90 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR specifies that image content is rotated 180 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR specifies that image content is rotated 270 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR specifies that image content is mirrored horizontally.
+    //   -  VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR specifies that image content is mirrored horizontally, 
+    //      then rotated 90 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR specifies that image content is mirrored horizontally, 
+    //      then rotated 180 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR specifies that image content is mirrored horizontally, 
+    //      then rotated 270 degrees clockwise.
+    //   -  VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR specifies that the presentation transform is not specified, 
+    //      and is instead determined by platform-specific considerations and mechanisms outside Vulkan.
+    //
+    // - compositeAlpha is a VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this 
+    //   surface is composited together with other surfaces on certain window systems.
+    //   - VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR: The alpha channel, if it exists, of the images is ignored in the 
+    //     compositing process.Instead, the image is treated as if it has a constant alpha of 1.0.
+    //   - VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR: The alpha channel, if it exists, of the images is respected in 
+    //     the compositing process. The non-alpha channels of the image are expected to already be multiplied 
+    //     by the alpha channel by the application.
+    //   - VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR: The alpha channel, if it exists, of the images is respected in 
+    //     the compositing process. The non-alpha channels of the image are not expected to already be multiplied by 
+    //     the alpha channel by the application; instead, the compositor will multiply the non-alpha channels of the 
+    //     image by the alpha channel during compositing.
+    //   -  VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR: The way in which the presentation engine treats the alpha channel in 
+    //      the images is unknown to the Vulkan API. Instead, the application is responsible for setting the composite 
+    //      alpha blending mode using native window system commands. If the application does not set the blending mode 
+    //      using native window system commands, then a platform-specific default will be used.
+    //
+    // - presentMode is the presentation mode the swapchain will use.
+    //   A swapchain’s present mode determines how incoming present requests will be processedand queued internally.
+    //
+    // - clipped specifies whether the Vulkan implementation is allowed to discard rendering operations that 
+    //   affect regions of the surface that are not visible.
+    //   - If set to VK_TRUE, the presentable images associated with the swapchain may not own all of their pixels.
+    //     Pixels in the presentable images that correspond to regions of the target surface obscured by another window 
+    //     on the desktop, or subject to some other clipping mechanism will have undefined content when read back.
+    //     Pixel shaders may not execute for these pixels, and thus any side effects they would have had will not occur.
+    //     VK_TRUE value does not guarantee any clipping will occur, but allows more optimal presentation 
+    //     methods to be used on some platforms.
+    //   - If set to VK_FALSE, presentable images associated with the swapchain will own all of the pixels they contain.
+    //
+    // - oldSwapchain is VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface.
+    //   Providing a valid oldSwapchain may aid in the resource reuse, and also allows the application to still present 
+    //   any images that are already acquired from it.
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    // Which surface the swap chain should be tied to.
     createInfo.surface = surface.vkSurface();
     createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
     createInfo.imageFormat = mImageFormat;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = mExtent;
-    // Specifies the amount of layers each image consists of.
-    // More than this is needed only for stereoscopic 3D applications
     createInfo.imageArrayLayers = 1;
-    // Specifies waht kind of operations we will
-    //use the images in the swap chain for.
-    // In our case, we will render to them directly,
-    // which means that they are used as color attachment.
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    // Specify if a certain transform should be applied to images
-    // in the swap chain (for example, a 90 degree clockwise rotation
-    // or horizontal flip).
-    // We do not want any transformation, so we specify the current
-    // transformation.
     createInfo.preTransform = surfaceCapabilities.currentTransform;
-    // Specify if the alpha channel should be used for
-    // blending with other windows in the window system.
-    // We want to ignore the alpha channel.
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    // Refer to swapChainPresentMode() method
     createInfo.presentMode =
-        swapChainPresentMode(surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice()));
-    // Specify if you want to ignore the color of pixels that are 
-    // obscured, for example because another window is in 
-    // front of them.
+        bestFitPresentMode(surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice()));
     createInfo.clipped = VK_TRUE;
-    // With Vulkan it is possible that your swap chain becomes
-    // invalid or unoptimized while your application is running,
-    // for example because the window was resized. In that case,
-    // the swap chain actually needs to be recreated from
-    // scratch and a refeence to the old one must be specified 
-    // in this field. 
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    setQueueFamilies(physicalDevice, createInfo);
+    const uint32_t graphicsQueueFamilyIndex = physicalDevice.graphicsSupportQueueFamilyIndex();
+    const uint32_t presentationQueueFamilyIndex = physicalDevice.presentationSupportQueueFamilyIndex();
+    const uint32_t transferQueueFamilyIndex = physicalDevice.transferSupportQueueFamilyIndex();
+
+    std::vector<uint32_t> queueFamilyIndices;
+    if (graphicsQueueFamilyIndex == presentationQueueFamilyIndex) {
+        if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
+            // Single queue family
+            createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            createInfo.queueFamilyIndexCount = 0;
+            createInfo.pQueueFamilyIndices = nullptr;
+        } else {
+            // Graphics and presentation queue family + transfer queue family
+            queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
+            queueFamilyIndices.push_back(transferQueueFamilyIndex);
+            createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            createInfo.queueFamilyIndexCount = 2;
+            createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        }
+    } else if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
+        // Presentation and transfer queue family + graphics queue family
+        queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
+        queueFamilyIndices.push_back(transferQueueFamilyIndex);
+        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        createInfo.queueFamilyIndexCount = 2;
+        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+    } else if (graphicsQueueFamilyIndex == transferQueueFamilyIndex) {
+        // Graphics and transfer queue family + presentation queue family
+        queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
+        queueFamilyIndices.push_back(presentationQueueFamilyIndex);
+        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        createInfo.queueFamilyIndexCount = 2;
+        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+    } else {
+        // One queue family for each.
+        queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
+        queueFamilyIndices.push_back(presentationQueueFamilyIndex);
+        queueFamilyIndices.push_back(transferQueueFamilyIndex);
+        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        createInfo.queueFamilyIndexCount = 3;
+        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+    }
 
     vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(),
                                    &createInfo,

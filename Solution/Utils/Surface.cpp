@@ -12,8 +12,7 @@ Surface::Surface(const Instance& instance,
                  const Window& window)
     : mInstance(instance)
 {
-    window.createSurfaceForWindow(mInstance,
-                                  mSurface);
+    mSurface =  window.createSurfaceForWindow(mInstance);
 }
 
 Surface::~Surface() {

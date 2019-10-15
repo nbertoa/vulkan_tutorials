@@ -4,29 +4,23 @@
 
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
+#include "PhysicalDevice.h"
 
 namespace vk {
 CommandPool::CommandPool(const LogicalDevice& logicalDevice,
-                         const Type type,
+                         const uint32_t queueFamilyIndex,
                          const VkCommandPoolCreateFlags flags)
     : mLogicalDevice(logicalDevice)
 {
+    // VkCommandPoolCreateInfo:
+    // - flags is a bitmask of VkCommandPoolCreateFlagBits indicating usage 
+    //   behavior for the pool and command buffers allocated from it.
+    // - queueFamilyIndex designates a queue family. All command buffers allocated 
+    //   from this command pool must be submitted on queues from the same queue family.
     VkCommandPoolCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    // Command buffers are executed by submitting them on one of the device queues,
-    // like the graphics and presentation queues. Each command pool can only allocate
-    // command buffers that are submitted on a single type of queue.
-    const PhysicalDevice& physicalDevice = mLogicalDevice.physicalDevice();
-    if (type == Type::GRAPHICS) {
-        createInfo.queueFamilyIndex = physicalDevice.graphicsSupportQueueFamilyIndex();
-    } else if (type == Type::TRANSFER) {
-        createInfo.queueFamilyIndex = physicalDevice.transferSupportQueueFamilyIndex();
-    } else {
-        assert(type == Type::PRESENTATION);
-        createInfo.queueFamilyIndex = physicalDevice.presentationSupportQueueFamilyIndex();
-    }
-
     createInfo.flags = flags;
+    createInfo.queueFamilyIndex = queueFamilyIndex;
     
     vkChecker(vkCreateCommandPool(mLogicalDevice.vkDevice(),
                                   &createInfo,

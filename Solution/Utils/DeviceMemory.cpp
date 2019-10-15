@@ -4,23 +4,25 @@
 
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
+#include "PhysicalDevice.h"
 
 namespace vk {
 DeviceMemory::DeviceMemory(const LogicalDevice& logicalDevice,
+                           const PhysicalDevice& physicalDevice,
                            const VkMemoryRequirements& memoryRequirements,
                            const VkMemoryPropertyFlags memoryPropertyFlags)
     : mLogicalDevice(logicalDevice)
 {
+    // VkMemoryAllocateInfo:
+    // - allocationSize is the size of the allocation in bytes
+    // - memoryTypeIndex is an index identifying a memory type from the memoryTypes 
+    //   array of the VkPhysicalDeviceMemoryProperties structure
     VkMemoryAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    // Specify the memory size and type, both of which are derived
-    // from the memory requirements of the buffer and the desired
-    // property.
     info.allocationSize = memoryRequirements.size;
-    info.memoryTypeIndex = 
-        mLogicalDevice.physicalDevice().memoryTypeIndex(memoryRequirements.memoryTypeBits,
-                                                        memoryPropertyFlags);
-    assert(mLogicalDevice.physicalDevice().isValidMemoryTypeIndex(info.memoryTypeIndex));
+    info.memoryTypeIndex = physicalDevice.memoryTypeIndex(memoryRequirements.memoryTypeBits,
+                                                          memoryPropertyFlags);
+    assert(physicalDevice.isValidMemoryTypeIndex(info.memoryTypeIndex));
     vkChecker(vkAllocateMemory(mLogicalDevice.vkDevice(),
                                &info,
                                nullptr,

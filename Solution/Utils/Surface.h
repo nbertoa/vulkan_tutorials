@@ -32,6 +32,7 @@ class Window;
 //
 class Surface {
 public:
+    // - window is used to create the VkSurfaceKHR object.
     Surface(const Instance& instance,
             const Window& window);
     ~Surface();
@@ -65,7 +66,6 @@ public:
     //   not wait for a vertical blanking period to update the current image, meaning 
     //   this mode may result in visible tearing.No internal queuing of presentation 
     //   requests is needed, as the requests are applied immediately.
-    //
     // - VK_PRESENT_MODE_MAILBOX_KHR specifies that the presentation engine waits for 
     //   the next vertical blanking period to update the current image.Tearing cannot be observed.
     //   An internal single - entry queue is used to hold pending presentation requests.
@@ -74,14 +74,12 @@ public:
     //   available for re - use by the application.
     //   One request is removed from the queueand processed during each vertical blanking 
     //   period in which the queue is non - empty.
-    //
     // - VK_PRESENT_MODE_FIFO_KHR specifies that the presentation engine waits for the 
     //   next vertical blanking period to update the current image.Tearing cannot be observed.
     //   An internal queue is used to hold pending presentation requests.
     //   New requests are appended to the end of the queue, and one request is removed from the 
     //   beginning of the queueand processed during each vertical blanking period in which the 
     //   queue is non - empty.This is the only value of presentMode that is required to be supported.
-    //
     // - VK_PRESENT_MODE_FIFO_RELAXED_KHR specifies that the presentation engine generally 
     //   waits for the next vertical blanking period to update the current image.
     //   If a vertical blanking period has already passed since the last update of the current 
@@ -94,7 +92,6 @@ public:
     //   New requests are appended to the end of the queue, and one request is removed from the 
     //   beginning of the queueand processed during or after each vertical blanking period in which 
     //   the queue is non - empty.
-    //
     // - VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR specifies that the presentation engine and 
     //   application have concurrent access to a single image, which is referred to as a shared 
     //   presentable image. The presentation engine is only required to update the current 
@@ -102,7 +99,6 @@ public:
     //   Therefore the application must make a presentation request whenever an update is required.
     //   However, the presentation engine may update the current image at any point, meaning 
     //   this mode may result in visible tearing.
-    //
     // - VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR specifies that the presentation engine
     //   and application have concurrent access to a single image, which is referred to as a 
     //   shared presentable image. The presentation engine periodically updates the current image 
@@ -116,6 +112,8 @@ public:
     std::vector<VkPresentModeKHR> 
     physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice) const;
 
+    // This is used to determine whether a queue family of a physical device 
+    // supports presentation to a given surface.
     bool 
     isPhysicalDeviceSupported(const VkPhysicalDevice physicalDevice,
                               const uint32_t queueFamilyIndex) const;

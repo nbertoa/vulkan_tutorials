@@ -13,8 +13,11 @@ public:
                const size_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
-    Semaphore& nextAvailableSemaphore();
-    Semaphore& currentSemaphore();
+    Semaphore& 
+    nextAvailableSemaphore();
+
+    Semaphore& 
+    currentSemaphore();
 private:
     std::vector<Semaphore> mSemaphores;
     size_t mCurrentSemaphore = std::numeric_limits<size_t>::max();

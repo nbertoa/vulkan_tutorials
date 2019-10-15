@@ -11,8 +11,8 @@ PhysicalDevice::PhysicalDevice(const Instance& instance,
                                const Surface& surface)
     : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} 
 {
-    setPhysicalDevice(getCandidateDevices(instance,
-                                          surface));
+    initPhysicalDevice(instance.getCandidatePhysicalDevices(surface,
+                                                            mDeviceExtensions));
 }
 PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
     : mPhysicalDevice(other.mPhysicalDevice)
@@ -48,7 +48,7 @@ PhysicalDevice::presentationSupportQueueFamilyIndex() const {
 }
 
 const std::vector<const char*>& 
-PhysicalDevice::deviceExtensions() const {
+PhysicalDevice::deviceExtensionNames() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mDeviceExtensions;
 }
@@ -59,17 +59,29 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
 
     uint32_t typeIndex = std::numeric_limits<uint32_t>::max();
 
+    // VkPhysicalDeviceMemoryProperties:
+    // - memoryTypeCount is the number of valid elements in the memoryTypes array.
+    // - memoryTypes is an array of VK_MAX_MEMORY_TYPES VkMemoryType structures 
+    //   describing the memory types that can be used to access memory allocated 
+    //   from the heaps specified by memoryHeaps.
+    //   VkMemoryType:
+    //   - heapIndex describes which memory heap this memory type corresponds to, 
+    //     and must be less than memoryHeapCount from the VkPhysicalDeviceMemoryProperties structure.
+    //   - propertyFlags is a bitmask of VkMemoryPropertyFlagBits of properties for this memory type.
+    // - memoryHeapCount is the number of valid elements in the memoryHeaps array.
+    // - memoryHeaps is an array of VK_MAX_MEMORY_HEAPS VkMemoryHeap structures 
+    //   describing the memory heaps from which memory can be allocated.
+    //   VkMemoryHeap:
+    //   - VK_MEMORY_HEAP_DEVICE_LOCAL_BIT specifies that the heap corresponds to device local memory.
+    //     Device local memory may have different performance characteristics than host local memory, 
+    //     and may support different memory property flags.
+    //   - VK_MEMORY_HEAP_MULTI_INSTANCE_BIT specifies that in a logical device representing more 
+    //     than one physical device, there is a per-physical device instance of the heap memory.
+    //     By default, an allocation from such a heap will be replicated to each physical device’s instance of the heap.
     VkPhysicalDeviceMemoryProperties memoryProperties;
     vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
                                         &memoryProperties);
-
-    // We have two arrays memoryTypes and memoryHeaps in the 
-    // memory properties structure.
-    // Memory heaps are distinct memory resources like dedicated VRAM
-    // and swap space in RAM for when VRAM runs out.
-    // The different types of memory exist within these heaps.
-    //
-    // memoryTypeFilter will be used to specify the bit field of memory types
+    // memoryTypeFilter is used to specify the bit field of memory types
     // that are suitable.
     // That means that we can find the index of a suitable memory type
     // by simply iterating over them and checking if the corresponding
@@ -79,10 +91,6 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
         // by simply iterating over them and checking if the corresponding
         // bit is set to 1.
         if (memoryTypeFilter & (1 << i)) {
-            // The memoryTypes array consists of VkMemoryType structs that specify
-            // the heap and properties of each type of memory.
-            // The properties of the memory, like being able to map it so we can 
-            // write it to it from the CPU.
             const VkMemoryPropertyFlags currentMemoryPropertyFlags = memoryProperties.memoryTypes[i].propertyFlags;
 
             // We may have more than one desiderable property, so we should
@@ -106,35 +114,15 @@ PhysicalDevice::isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const {
     return memoryTypeIndex != std::numeric_limits<uint32_t>::max();
 }
 
-std::vector<PhysicalDeviceData>
-PhysicalDevice::getCandidateDevices(const Instance& instance,
-                                    const Surface& surface) const {
-    const std::vector<VkPhysicalDevice> physicalDevices = instance.physicalDevices();
-    std::vector<PhysicalDeviceData> candidatePhysicalDevices;
-    for (const VkPhysicalDevice& device : physicalDevices) {
-        assert(device != VK_NULL_HANDLE);
-
-        PhysicalDeviceData deviceData(device,
-                                      surface,
-                                      mDeviceExtensions);
-        if (deviceData.isSupported()) {
-            candidatePhysicalDevices.push_back(deviceData);
-        }
-    }
-
-    return candidatePhysicalDevices;
-}
-
 void
-PhysicalDevice::setPhysicalDevice(const std::vector<PhysicalDeviceData>& candidateDevices) {
-    assert(candidateDevices.empty() == false && "There is no suitable physical device.");
+PhysicalDevice::initPhysicalDevice(const std::vector<PhysicalDeviceData>& supportedPhysicalDevices) {
     assert(mPhysicalDevice == VK_NULL_HANDLE);
-
-    const PhysicalDeviceData* chosenDeviceData = &candidateDevices.front();
+    
+    const PhysicalDeviceData* chosenDeviceData = &supportedPhysicalDevices.front();
 
     // From all the suitable physical devices, we get the first that is a discrete GPU.
     // Otherwise, we get the first device in the list.
-    for (const PhysicalDeviceData& deviceData : candidateDevices) {
+    for (const PhysicalDeviceData& deviceData : supportedPhysicalDevices) {
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(deviceData.vkPhysicalDevice(), 
                                       &deviceProperties);
