@@ -29,6 +29,10 @@ class RenderPass;
 // You need the FrameBuffers to:
 // - CommandBuffer execution of the command vkCmdBeginRenderPass
 //
+// To create/use the FrameBuffers you need:
+// - RenderPass
+// - ImageViews
+//
 class FrameBuffers {
 public:
     // * renderPass is a render pass defining what render passes 

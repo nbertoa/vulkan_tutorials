@@ -32,6 +32,12 @@ class Semaphore;
 // You need the CommandBuffer to:
 // - Submit it to the Queue using vkQueueSubmit
 //
+// To create/use the CommandBuffer you need:
+// - CommandPool
+// - PipelineLayout and DescriptorSet for vkCmdBindDescriptorSets
+// - FrameBuffer and RenderPass for vkCmdBeginRenderPass
+// - GraphicsPipeline for vkCmdBindPipeline
+//
 class CommandBuffer {
 public:
     // * commandPool is the command pool from which the command buffer is allocated.

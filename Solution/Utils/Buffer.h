@@ -41,6 +41,9 @@ class PhysicalDevice;
 // You need the Buffer to:
 // - Create the BufferView.
 //
+// To create/use the Buffer you need:
+// - DeviceMemory for vkBindBufferMemory
+//
 class Buffer {
 public:
     // This constructor must be used if you want that this buffer also creates

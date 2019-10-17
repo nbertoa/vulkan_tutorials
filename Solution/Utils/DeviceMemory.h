@@ -47,6 +47,9 @@ class PhysicalDevice;
 // - Bind DeviceMemory to a Buffer object (vkBindBufferMemory).
 // - Bind DeviceMemory to a Image object (vkBindImageMemory).
 //
+// To create/use the DeviceMemory you need:
+// - MemoryType from MemoryHeap from PhysicalDevice
+//
 class DeviceMemory {
 public:
     // * physicalDevice is used to get the memory that index that is an index

@@ -33,6 +33,9 @@ class PhysicalDevice;
 // You need the LogicalDevice to:
 // - Get the queue that you want to use.
 //
+// To create/use the LogicalDevice you need:
+// - PhysicalDevice
+//
 class LogicalDevice {
 public:
     // * physicalDevice will be used to get the queue families (indices uint32_t) 

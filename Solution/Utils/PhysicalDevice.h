@@ -45,6 +45,9 @@ class Surface;
 // - Get queue family (indices uint32_t) which are needed for Queues creation 
 //   in LogicalDevice. (read below)
 //
+// To create/use the PhysicalDevice you need:
+// - Instance
+//
 // To understand queue families, you first have to understand queues.
 // A queue is something you submit command buffers to, and command buffers submitted 
 // to a queue are executed in order[*1] relative to each other.

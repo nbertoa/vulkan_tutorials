@@ -27,6 +27,9 @@ class LogicalDevice;
 // You need the PipelineLayout to:
 // - Bind DescriptorSets to a CommandBuffer through vkCmdBindDescriptorSets
 //
+// To create/use the PipelineLayout you need:
+// - DescriptorSetLayout
+//
 class PipelineLayout {
 public:
     // * descriptorSetLayout: Read DescriptorSetLayout comments for more information about this.

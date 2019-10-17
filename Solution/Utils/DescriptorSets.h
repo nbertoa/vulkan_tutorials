@@ -31,6 +31,11 @@ class LogicalDevice;
 // You need the DescriptorSets to:
 // - Bind them to a CommandBuffer through vkCmdBindDescriptorSets
 //
+// To create/use the DescriptorSets you need:
+// - DescriptorSetLayout
+// - DescriptorPool
+// - BufferView, ImageView, Sampler, Buffer for vkUpdateDescriptorSets
+//
 class DescriptorSets {
 public:
     // * descriptorPool: is the pool which the descriptor sets

@@ -39,6 +39,9 @@ class Surface;
 // You need the SwapChain to:
 // - Get the Images and its views
 //
+// To create/use the SwapChain you need:
+// - Surface
+//
 class SwapChain {
 public:
     // * physicalDevice and surface are used to get properties

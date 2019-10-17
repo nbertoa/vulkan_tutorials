@@ -19,7 +19,8 @@ public:
     // that will be passed to the vertex shader:
     //
     // Used when you hardcode vertex data directly in the vertex shader.
-    static void emptyVertexInputState(VkPipelineVertexInputStateCreateInfo& createInfo);
+    static void 
+    emptyVertexInputState(VkPipelineVertexInputStateCreateInfo& createInfo);
 
     // VkVertexInputBindingDescription: 
     // - binding is the binding number that this structure describes.
@@ -145,11 +146,16 @@ public:
     // - colorWriteMask is a bitmask of VkColorComponentFlagBits specifying which of the R, G, B, and /or A components 
     //   are enabled for writing.
 
-    static void disableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state);
-    static void enableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state);
+    static void 
+    disableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state);
+
+    static void 
+    enableColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& state);
+
     static void
     colorBlendState(const VkPipelineColorBlendAttachmentState& colorBlendAttachmentState,
                     VkPipelineColorBlendStateCreateInfo& colorBlendStateCreateInfo);
+
     static void
     colorBlendState(const std::vector<VkPipelineColorBlendAttachmentState>& colorBlendAttachmentStates,
                     VkPipelineColorBlendStateCreateInfo& colorBlendStateCreateInfo);
