@@ -13,8 +13,8 @@ ShaderModule::ShaderModule(const LogicalDevice& logicalDevice,
     : mLogicalDevice(logicalDevice)
     , mShaderStageFlag(shaderStageFlag)
     , mShaderByteCodePath(shaderByteCodePath)
+    , mShaderModule(createShaderModule())
 {
-    createShaderModule();
 }
 
 ShaderModule::~ShaderModule() {
@@ -70,9 +70,9 @@ ShaderModule::readFile(const std::string& filename) {
     return buffer;
 }
 
-void
+VkShaderModule
 ShaderModule::createShaderModule() {
-    assert(mShaderModule == VK_NULL_HANDLE);
+    VkShaderModule shaderModule;
 
     const std::vector<char> shaderByteCode = readFile(mShaderByteCodePath);
 
@@ -84,7 +84,9 @@ ShaderModule::createShaderModule() {
     vkChecker(vkCreateShaderModule(mLogicalDevice.vkDevice(), 
                                    &createInfo, 
                                    nullptr, 
-                                   &mShaderModule));
-    assert(mShaderModule != VK_NULL_HANDLE);
+                                   &shaderModule));
+    assert(shaderModule != VK_NULL_HANDLE);
+
+    return shaderModule;
 }
 }

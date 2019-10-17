@@ -14,15 +14,7 @@ class RenderPass;
 
 class CommandBuffers {
 public:
-    // - commandPool is the command pool from which the command buffers are allocated.
-    // - level is a VkCommandBufferLevel value specifying the command buffers level.
-    // VkCommandBufferLevel:
-    // - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
-    // to a queue for execution, but cannot be called
-    // from other command buffers.
-    // - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
-    // directly, but can be called from primary command
-    // buffers.
+    // Read CommandBuffer to understand this
     CommandBuffers(const LogicalDevice& logicalDevice,
                    const CommandPool& commandPool,
                    const size_t bufferCount,

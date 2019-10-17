@@ -20,9 +20,10 @@ class Surface;
 //
 class PhysicalDeviceData {
 public:
-    // - surface is used to check if the candidate physical device
+    // * surface is used to check if the candidate physical device
     //   supports presentation and also if our swap chain is supported.
-    // - deviceExtensions contains the extensions that the device must support.
+    //
+    // * deviceExtensions contains the extensions that the device must support.
     //   Extensions may define new Vulkan commands, structures, and enumerants.
     //   Extensions may extend or change the behavior of the Vulkan API.
     PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
@@ -77,41 +78,43 @@ private:
     // doesn't have a compute-only queue family, you might create multiple graphics+compute queues instead, 
     // or serialize your async compute jobs onto your single graphics+compute queue yourself.
     //
-    // VkQueueFamilyProperties:
-    // - queueFlags is a bitmask of VkQueueFlagBits indicating 
-    //   capabilities of the queues in this queue family.
-    //   - VK_QUEUE_GRAPHICS_BIT specifies that queues in this queue 
-    //     family support graphics operations.
-    //   - VK_QUEUE_COMPUTE_BIT specifies that queues in this queue family 
-    //     support compute operations.
-    //   - VK_QUEUE_TRANSFER_BIT specifies that queues in this queue family 
-    //     support transfer operations.
-    //   - VK_QUEUE_SPARSE_BINDING_BIT specifies that queues in this queue family 
-    //     support sparse memory management operations.
-    //     If any of the sparse resource features are enabled, 
-    //     then at least one queue family must support this bit.
-    //   - if VK_QUEUE_PROTECTED_BIT is set, then the queues in this queue family 
-    //     support the VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT bit.
-    //     If the protected memory physical device feature is supported, 
-    //     then at least one queue family of at least one physical device exposed 
-    //     by the implementation must support this bit.
-    // - queueCount is the unsigned integer count of queues in this queue family.
-    //   Each queue family must support at least one queue.
-    // - timestampValidBits is the unsigned integer count of meaningful bits 
-    //   in the timestamps written via vkCmdWriteTimestamp.
-    //   The valid range for the count is 36..64 bits, or a value of 0, 
-    //   indicating no support for timestamps.
-    //   Bits outside the valid range are guaranteed to be zeros.
-    // - minImageTransferGranularity is the minimum granularity supported 
-    //   for image transfer operations on the queues in this queue family.
+    // * queueFamilyProperties:
+    //
+    //   - queueFlags is a bitmask of VkQueueFlagBits indicating 
+    //     capabilities of the queues in this queue family.
+    //     - VK_QUEUE_GRAPHICS_BIT specifies that queues in this queue 
+    //       family support graphics operations.
+    //     - VK_QUEUE_COMPUTE_BIT specifies that queues in this queue family 
+    //       support compute operations.
+    //     - VK_QUEUE_TRANSFER_BIT specifies that queues in this queue family 
+    //       support transfer operations.
+    //     - VK_QUEUE_SPARSE_BINDING_BIT specifies that queues in this queue family 
+    //       support sparse memory management operations.
+    //       If any of the sparse resource features are enabled, 
+    //       then at least one queue family must support this bit.
+    //     - if VK_QUEUE_PROTECTED_BIT is set, then the queues in this queue family 
+    //       support the VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT bit.
+    //       If the protected memory physical device feature is supported, 
+    //       then at least one queue family of at least one physical device exposed 
+    //       by the implementation must support this bit.
+    //   - queueCount is the unsigned integer count of queues in this queue family.
+    //     Each queue family must support at least one queue.
+    //   - timestampValidBits is the unsigned integer count of meaningful bits 
+    //     in the timestamps written via vkCmdWriteTimestamp.
+    //     The valid range for the count is 36..64 bits, or a value of 0, 
+    //     indicating no support for timestamps.
+    //     Bits outside the valid range are guaranteed to be zeros.
+    //   - minImageTransferGranularity is the minimum granularity supported 
+    //     for image transfer operations on the queues in this queue family.
     void
     queueFamilyProperties(std::vector<VkQueueFamilyProperties>& queueFamilyProperties);
 
-    // VkExtensionProperties:
-    // - extensionName is an array of VK_MAX_EXTENSION_NAME_SIZE char containing 
-    //   a null-terminated UTF-8 string which is the name of the extension.
-    // - specVersion is the version of this extension.
-    //   It is an integer, incremented with backward compatible changes.
+    // * extensionProperties:
+    //
+    //   - extensionName is an array of VK_MAX_EXTENSION_NAME_SIZE char containing 
+    //     a null-terminated UTF-8 string which is the name of the extension.
+    //   - specVersion is the version of this extension.
+    //     It is an integer, incremented with backward compatible changes.
     void
     extensionProperties(std::vector<VkExtensionProperties>& extensionProperties);
 

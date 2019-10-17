@@ -197,7 +197,6 @@
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Semaphores.h" />
-    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="ShaderModule.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />

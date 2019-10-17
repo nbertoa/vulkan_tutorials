@@ -35,7 +35,7 @@ class PhysicalDevice;
 //
 class LogicalDevice {
 public:
-    // - physicalDevice will be used to get the queue families (indices uint32_t) 
+    // * physicalDevice will be used to get the queue families (indices uint32_t) 
     //   which are needed for VKQueues creation.
     LogicalDevice(const PhysicalDevice& physicalDevice);
     ~LogicalDevice();

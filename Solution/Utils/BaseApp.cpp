@@ -19,8 +19,10 @@ BaseApp::BaseApp(const uint32_t windowWidth,
                                                 mSystemManager.swapChain(),
                                                 *mRenderPass))
     , mFrameBuffers(new FrameBuffers(mSystemManager.logicalDevice(),
-                                     mSystemManager.swapChain(),
-                                     *mRenderPass))
+                                     *mRenderPass,
+                                     mSystemManager.swapChain().imageViews(),
+                                     mSystemManager.swapChain().imageWidth(),
+                                     mSystemManager.swapChain().imageHeight()))
     , mCommandBuffers(new CommandBuffers(mSystemManager.logicalDevice(),
                                          mSystemManager.graphicsCommandPool(),
                                          mFrameBuffers->bufferCount(),

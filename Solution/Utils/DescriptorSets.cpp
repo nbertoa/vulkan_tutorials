@@ -3,12 +3,11 @@
 #include <cassert>
 
 #include "DebugUtils.h"
-#include "DescriptorSetLayout.h"
 #include "DescriptorPool.h"
+#include "DescriptorSetLayout.h"
 #include "LogicalDevice.h"
 
 namespace vk {
-
 DescriptorSets::DescriptorSets(const LogicalDevice& logicalDevice,
                                const DescriptorPool& descriptorPool,
                                const DescriptorSetLayout& descriptorSetLayout)
@@ -42,6 +41,11 @@ DescriptorSets::createDescriptorSets(const DescriptorPool& descriptorPool,
     assert(mDescriptorSets.empty());
     assert(descriptorSetLayouts.empty() == false);
 
+    // VkDescriptorSetAllocateInfo:
+    // - descriptorPool is the pool which the sets will be allocated from.
+    // - descriptorSetCount determines the number of descriptor sets to be allocated from the pool.
+    // - pSetLayouts is a pointer to an array of descriptor set layouts, 
+    //   with each member specifying how the corresponding descriptor set is allocated.
     VkDescriptorSetAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool.vkDescriptorPool();

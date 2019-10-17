@@ -46,11 +46,14 @@ public:
     // This constructor must be used if you want that this buffer also creates
     // its own DeviceMemory.
     //
-    // - logicalDevice owns the buffer and the device memory
-    // - physicalDevice is used to create the DeviceMemory
-    // - size is the size in bytes of the buffer to be created.
+    // * logicalDevice owns the buffer and the device memory
     //
-    // - usage is a bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer.
+    // * physicalDevice is used to create the DeviceMemory
+    //
+    // * size is the size in bytes of the buffer to be created.
+    //
+    // * usage is a bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer:
+    //
     //   - VK_BUFFER_USAGE_TRANSFER_SRC_BIT specifies that the buffer can be used 
     //     as the source of a transfer command(see the definition of VK_PIPELINE_STAGE_TRANSFER_BIT).
     //   - VK_BUFFER_USAGE_TRANSFER_DST_BIT specifies that the buffer can be used as 
@@ -88,8 +91,9 @@ public:
     //     used to retrieve a buffer device address via vkGetBufferDeviceAddressEXTand use 
     //     that address to access the buffer’s memory from a shader.
     //
-    // - sharingMode is a VkSharingMode value specifying the sharing mode of the buffer
-    //   when it will be accessed by multiple queue families
+    // * sharingMode is a VkSharingMode value specifying the sharing mode of the buffer
+    //   when it will be accessed by multiple queue families:
+    //
     //   - VK_SHARING_MODE_EXCLUSIVE specifies that access 
     //     to any range or image subresource of the object 
     //     will be exclusive to a single queue family at a time.
@@ -97,7 +101,8 @@ public:
     //     access to any range or image subresource of the object 
     //     from multiple queue families is supported.
     //
-    // - memoryPropertyFlags is used to create the DeviceMemory:
+    // * memoryPropertyFlags is used to create the DeviceMemory:
+    //
     //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
     //     this type is the most efficient for device access.
     //     This property will be set ifand only if the memory type belongs to a heap 
@@ -198,7 +203,8 @@ public:
     // the sourceBuffer size.
     // The methods without the fence parameter, will create
     // an internal fence and wait for completion.
-    // - executionCompletedFence is a fence to be signaled once 
+    //
+    // * executionCompletedFence is a fence to be signaled once 
     //   the copy operation is complete. 
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,

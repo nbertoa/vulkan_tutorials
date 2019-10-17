@@ -9,7 +9,7 @@ namespace vk {
 Buffers::Buffers(const LogicalDevice& logicalDevice,
                  const PhysicalDevice& physicalDevice,
                  const size_t bufferCount,
-                 const VkDeviceSize sizeInBytes,
+                 const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
                  const VkSharingMode sharingMode,
                  const VkMemoryPropertyFlags memoryPropertyFlags) {
@@ -19,10 +19,28 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     for (size_t i = 0; i < bufferCount; ++i) {
         mBuffers.emplace_back(Buffer(logicalDevice,
                                      physicalDevice,
-                                     sizeInBytes,
+                                     size,
                                      usageFlags,
                                      sharingMode,
                                      memoryPropertyFlags));
+    }
+}
+
+Buffers::Buffers(const LogicalDevice& logicalDevice,
+                 const size_t bufferCount,
+                 const VkDeviceSize size,
+                 const VkBufferUsageFlags usageFlags,
+                 const VkSharingMode sharingMode,
+                 const DeviceMemory& deviceMemory) {
+    assert(bufferCount > 0);
+    mBuffers.reserve(bufferCount);
+    std::vector<VkCommandBuffer> commandBuffers(bufferCount);
+    for (size_t i = 0; i < bufferCount; ++i) {
+        mBuffers.emplace_back(Buffer(logicalDevice,
+                                     size,
+                                     usageFlags,
+                                     sharingMode,
+                                     deviceMemory));
     }
 }
 

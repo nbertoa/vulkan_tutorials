@@ -34,16 +34,16 @@ class Semaphore;
 //
 class CommandBuffer {
 public:
-    // - commandPool is the command pool from which the command buffer is allocated.
-    // - level is a VkCommandBufferLevel value specifying the command buffer level.
+    // * commandPool is the command pool from which the command buffer is allocated.
     //
-    // VkCommandBufferLevel:
-    // - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
-    // to a queue for execution, but cannot be called
-    // from other command buffers.
-    // - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
-    // directly, but can be called from primary command
-    // buffers.
+    // * level is a VkCommandBufferLevel value specifying the command buffer level:
+    // 
+    //   - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
+    //   to a queue for execution, but cannot be called
+    //   from other command buffers.
+    //   - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
+    //   directly, but can be called from primary command
+    //   buffers.
     CommandBuffer(const LogicalDevice& logicalDevice,
                   const CommandPool& commandPool,
                   const VkCommandBufferLevel level);
@@ -52,30 +52,29 @@ public:
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-    // - usageFlags is a bitmask of VkCommandBufferUsageFlagBits specifying 
+    // * usageFlags is a bitmask of VkCommandBufferUsageFlagBits specifying 
     // usage behavior for the command buffer.
     //
-    // VkCommandBufferUsageFlags:
-    // Specify how we are going to use the command buffer. The 
-    // following values are available:
-    // - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
-    // will be rerecorded right after executing it once.
-    // - VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
-    // secondary command buffer that will be entirely within a single
-    // render pass.
-    // - VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
-    // buffer can be resubmitted while it is also already pending 
-    // execution.
+    //   - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
+    //   will be rerecorded right after executing it once.
+    //   - VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
+    //   secondary command buffer that will be entirely within a single
+    //   render pass.
+    //   - VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
+    //   buffer can be resubmitted while it is also already pending 
+    //   execution.
     void 
     beginRecording(const VkCommandBufferUsageFlags usageFlags);
     
     void 
     endRecording();
 
-    // - renderPass is the render pass to begin an instance of.
-    // - framebuffer is the framebuffer containing the attachments 
+    // * renderPass is the render pass to begin an instance of.
+    //
+    // * framebuffer is the framebuffer containing the attachments 
     //   that are used with the render pass.
-    // - imageExtent is the extent of the render area 
+    //
+    // * imageExtent is the extent of the render area 
     //   that is affected by the render pass instance.
     void 
     beginPass(const RenderPass& renderPass,
@@ -95,10 +94,11 @@ public:
     bindIndexBuffer(const Buffer& buffer,
                     const VkIndexType indexType);
 
-    // VkBufferCopy:
-    // - srcOffset is the starting offset in bytes from the start of srcBuffer.
-    // - dstOffset is the starting offset in bytes from the start of dstBuffer.
-    // - size is the number of bytes to copy.
+    // *regionToCopy:
+    //
+    //   - srcOffset is the starting offset in bytes from the start of srcBuffer.
+    //   - dstOffset is the starting offset in bytes from the start of dstBuffer.
+    //   - size is the number of bytes to copy.
     void 
     copyBuffer(const Buffer& sourceBuffer,
                const Buffer& destinationBuffer,
@@ -117,14 +117,18 @@ public:
                 const uint32_t vertexOffset = 0,
                 const uint32_t firstInstance = 0);
 
-    // - waitSemaphore is a semaphore to wait before the command buffers for this batch begin execution.
+    // * waitSemaphore is a semaphore to wait before the command buffers for this batch begin execution.
     //   If it is provided, then it defines a semaphore wait operation.
-    // - signalSemaphore is a sempahore that will be signaled when the command buffers 
+    //
+    // * signalSemaphore is a sempahore that will be signaled when the command buffers 
     //   for this batch have completed execution.
     //   If it is provided, then it defines a semaphore signal operation.
-    // - executionCompletedFence is a fence to be signaled once all submitted command buffers have completed execution. 
-    // - waitStageFlags is a pipeline stage at which 
-    //   the waitSemaphore semaphore wait will occur.
+    //
+    // * executionCompletedFence is a fence to be signaled once all submitted command buffers have completed execution. 
+    //
+    // * waitStageFlags is a pipeline stage at which 
+    //   the waitSemaphore semaphore wait will occur:
+    //
     //   - VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT specifies the stage of the pipeline 
     //     where any commands are initially received by the queue.
     //   - VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT specifies the stage of the pipeline where 

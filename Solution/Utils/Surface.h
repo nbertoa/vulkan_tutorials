@@ -32,7 +32,7 @@ class Window;
 //
 class Surface {
 public:
-    // - window is used to create the VkSurfaceKHR object.
+    // * window is used to create the VkSurfaceKHR object.
     Surface(const Instance& instance,
             const Window& window);
     ~Surface();

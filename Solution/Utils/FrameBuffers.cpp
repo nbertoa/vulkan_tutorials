@@ -5,26 +5,37 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
-#include "SwapChain.h"
 
 namespace vk {
-FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
-                           const SwapChain& swapChain,
-                           const RenderPass& renderPass) 
+FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,                           
+                           const RenderPass& renderPass,
+                           const std::vector<VkImageView> imageViews,
+                           const uint32_t imageWidth,
+                           const uint32_t imageHeight)
     : mLogicalDevice(logicalDevice)
 {
-    const std::vector<VkImageView> imageViews = swapChain.imageViews();
+    assert(imageViews.empty() == false);
     mFrameBuffers.resize(imageViews.size());
     
+    // VkFramebufferCreateInfo:
+    // - flags is a bitmask of VkFramebufferCreateFlagBits
+    //   - VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR specifies that image views are not specified, 
+    //     and only attachment compatibility information will be provided via an instance of VkFramebufferAttachmentImageInfoKHR.
+    //   - VK_FRAMEBUFFER_CREATE_FLAG_BITS_MAX_ENUM 
+    // - renderPass is a render pass defining what render passes the framebuffer will be compatible with.
+    // - attachmentCount is the number of attachments.
+    // - pAttachments is a pointer to an array of VkImageView handles, 
+    //   each of which will be used as the corresponding attachment in a render pass instance.
+    //   If flags includes VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR, this parameter is ignored.
+    // - width, height and layers define the dimensions of the framebuffer.
+    //   If the render pass uses multiview, then layers must be one and each attachment requires a 
+    //   number of layers that is greater than the maximum bit index set in the view mask 
+    //   in the subpasses in which it is used.
     VkFramebufferCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    // Specify witch which render pass the framebuffer needs 
-    // to be compatible.
     createInfo.renderPass = renderPass.vkRenderPass();    
-    createInfo.width = swapChain.imageWidth();
-    createInfo.height = swapChain.imageHeight();
-    // The number of layers in image arrays (our swap chain
-    // images are single images)
+    createInfo.width = imageWidth;
+    createInfo.height = imageHeight;
     createInfo.layers = 1;
     
     // Specify the VkImageView objects that should be bound to
