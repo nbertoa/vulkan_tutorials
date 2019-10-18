@@ -72,6 +72,7 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
                                        &multisampleStateCreateInfo,
                                        nullptr,
                                        &colorBlendStateCreateInfo,
+                                       nullptr,
                                        nullptr);
     };
 }

@@ -19,12 +19,16 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
                                    const VkPipelineMultisampleStateCreateInfo* multisampleState,
                                    const VkPipelineDepthStencilStateCreateInfo* depthStencilState,
                                    const VkPipelineColorBlendStateCreateInfo* colorBlendState,
-                                   const VkPipelineDynamicStateCreateInfo* dynamicState)
+                                   const VkPipelineDynamicStateCreateInfo* dynamicState,
+                                   const VkPipelineTessellationStateCreateInfo* tessellationState)
     : mLogicalDevice(logicalDevice)
     , mPipelineLayout(std::move(pipelineLayout))
 {
     assert(mPipelineLayout.get() != nullptr);
 
+    // VkGraphicsPipelineCreatInfo:
+    // - basePipelineHandle is a pipeline to derive from.
+    // - basePipelineIndex is an index into the pCreateInfos parameter to use as a pipeline to derive from.
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 
@@ -41,6 +45,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
     createInfo.pDepthStencilState = depthStencilState;
     createInfo.pColorBlendState = colorBlendState;
     createInfo.pDynamicState = dynamicState;
+    createInfo.pTessellationState = tessellationState;
 
     // Layout
     createInfo.layout = mPipelineLayout->pipelineLayout();
