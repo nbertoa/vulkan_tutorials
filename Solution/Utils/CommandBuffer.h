@@ -1,6 +1,7 @@
 #ifndef UTILS_COMMAND_BUFFER
 #define UTILS_COMMAND_BUFFER
 
+#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
@@ -40,9 +41,9 @@ class Semaphore;
 //
 class CommandBuffer {
 public:
-    // * commandPool is the command pool from which the command buffer is allocated.
+    // * commandPool from which the command buffer is allocated.
     //
-    // * level is a VkCommandBufferLevel value specifying the command buffer level:
+    // * level for command buffer:
     // 
     //   - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
     //   to a queue for execution, but cannot be called
@@ -58,8 +59,7 @@ public:
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-    // * usageFlags is a bitmask of VkCommandBufferUsageFlagBits specifying 
-    // usage behavior for the command buffer.
+    // * usageFlags bitmask specifying usage behavior for the command buffer.
     //
     //   - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
     //   will be rerecorded right after executing it once.
@@ -75,17 +75,25 @@ public:
     void 
     endRecording();
 
-    // * renderPass is the render pass to begin an instance of.
+    // * renderPass to begin an instance of.
     //
-    // * framebuffer is the framebuffer containing the attachments 
+    // * framebuffer that contains the attachments 
     //   that are used with the render pass.
     //
-    // * imageExtent is the extent of the render area 
-    //   that is affected by the render pass instance.
+    // * imageExtent of the render area 
+    //   that is affected by the render pass.
+    //
+    // * clearValues contains clear values for each attachment, if the attachment 
+    //   uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil 
+    //   format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR.
+    //   The array is indexed by attachment number.
+    //   Only elements corresponding to cleared attachments are used.
+    //   Other elements of clearValues are ignored.
     void 
     beginPass(const RenderPass& renderPass,
               const VkFramebuffer frameBuffer,
-              const VkExtent2D& imageExtent);
+              const VkExtent2D& imageExtent,
+              const std::vector<VkClearValue>& clearValues = std::vector<VkClearValue>{VkClearValue{0.0f, 0.0f, 0.0f, 1.0f}});
     
     void 
     endPass();
@@ -100,11 +108,11 @@ public:
     bindIndexBuffer(const Buffer& buffer,
                     const VkIndexType indexType);
 
-    // *regionToCopy:
+    // * regionToCopy:
     //
-    //   - srcOffset is the starting offset in bytes from the start of srcBuffer.
-    //   - dstOffset is the starting offset in bytes from the start of dstBuffer.
-    //   - size is the number of bytes to copy.
+    //   - srcOffset is the starting offset in bytes from the start of sourceBuffer.
+    //   - dstOffset is the starting offset in bytes from the start of destinationBuffer.
+    //   - size in bytes to copy.
     void 
     copyBuffer(const Buffer& sourceBuffer,
                const Buffer& destinationBuffer,
@@ -123,34 +131,33 @@ public:
                 const uint32_t vertexOffset = 0,
                 const uint32_t firstInstance = 0);
 
-    // * waitSemaphore is a semaphore to wait before the command buffers for this batch begin execution.
+    // * waitSemaphore to wait before the command buffers for this batch begin execution.
     //   If it is provided, then it defines a semaphore wait operation.
     //
-    // * signalSemaphore is a sempahore that will be signaled when the command buffers 
+    // * signalSemaphore that will be signaled when the command buffers 
     //   for this batch have completed execution.
     //   If it is provided, then it defines a semaphore signal operation.
     //
-    // * executionCompletedFence is a fence to be signaled once all submitted command buffers have completed execution. 
+    // * executionCompletedFence to be signaled once all submitted 
+    //   command buffers have completed execution. 
     //
     // * waitStageFlags is a pipeline stage at which 
-    //   the waitSemaphore semaphore wait will occur:
+    //   the waitSemaphore wait will occur:
     //
     //   - VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT specifies the stage of the pipeline 
     //     where any commands are initially received by the queue.
     //   - VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT specifies the stage of the pipeline where 
-    //     Draw/DispatchIndirect data structures are consumed.This stage also includes 
+    //     Draw/DispatchIndirect data structures are consumed. This stage also includes 
     //     reading commands written by vkCmdProcessCommandsNVX.
-    //   - VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV specifies the task shader stage.
-    //   - VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV specifies the mesh shader stage.
+    //   - VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV stage
+    //   - VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV stage.
     //   - VK_PIPELINE_STAGE_VERTEX_INPUT_BIT specifies the stage of the pipeline where 
     //     vertex and index buffers are consumed.
-    //   - VK_PIPELINE_STAGE_VERTEX_SHADER_BIT specifies the vertex shader stage.
-    //   - VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT specifies the tessellation 
-    //     control shader stage.
-    //   - VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT specifies the tessellation 
-    //     evaluation shader stage.
-    //   - VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT specifies the geometry shader stage.
-    //   - VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT specifies the fragment shader stage.
+    //   - VK_PIPELINE_STAGE_VERTEX_SHADER_BIT stage.
+    //   - VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT stage
+    //   - VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT stage
+    //   - VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT stage.
+    //   - VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT stage.
     //   - VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT specifies the stage of the pipeline where 
     //     early fragment tests(depth and stencil tests before fragment shading) are performed.
     //     This stage also includes subpass load operations for framebuffer attachments with a depth/stencil format.
@@ -161,10 +168,10 @@ public:
     //     blending where the final color values are output from the pipeline.This stage also includes 
     //     subpass load and store operationsand multisample resolve operations for framebuffer 
     //     attachments with a color or depth / stencil format.
-    //   - VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT specifies the execution of a compute shader.
+    //   - VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT stage.
     //   - VK_PIPELINE_STAGE_TRANSFER_BIT specifies the execution of copy commands.
-    //     This includes the operations resulting from all copy commands, clear commands(with the exception of vkCmdClearAttachments), 
-    //     and vkCmdCopyQueryPoolResults.
+    //     This includes the operations resulting from all copy commands, 
+    //     clear commands(with the exception of vkCmdClearAttachments), and vkCmdCopyQueryPoolResults.
     //   - VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT specifies the final stage in the pipeline where operations 
     //     generated by all commands complete execution.
     //   - VK_PIPELINE_STAGE_HOST_BIT specifies a pseudo-stage indicating execution on the host of reads/writes 
@@ -172,7 +179,7 @@ public:
     //   - VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV specifies the execution of the ray tracing shader stages.
     //   - VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV specifies the execution of vkCmdBuildAccelerationStructureNV, 
     //     vkCmdCopyAccelerationStructureNV, and vkCmdWriteAccelerationStructuresPropertiesNV.
-    //   - VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT specifies the execution of all graphics pipeline stages
+    //   - VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT specifies the execution of all graphics pipeline stages.
     //   - VK_PIPELINE_STAGE_ALL_COMMANDS_BIT is equivalent to the logical OR of every other pipeline stage flag that 
     //     is supported on the queue it is used with.
     //   - VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT specifies the stage of the pipeline where the predicate of 

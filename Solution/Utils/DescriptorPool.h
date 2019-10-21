@@ -31,26 +31,26 @@ public:
     // * descriptorPoolSize contains a descriptor type and number of descriptors of 
     //   that type to be allocated in the pool:
     //
-    //   - type is the type of descriptor.
-    //     - VK_DESCRIPTOR_TYPE_SAMPLER specifies a sampler descriptor.
-    //     - VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER specifies a combined image sampler descriptor.
-    //     - VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE specifies a sampled image descriptor.
-    //     - VK_DESCRIPTOR_TYPE_STORAGE_IMAGE specifies a storage image descriptor.
-    //     - VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER specifies a uniform texel buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER specifies a storage texel buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER specifies a uniform buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER specifies a storage buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC specifies a dynamic uniform buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC specifies a dynamic storage buffer descriptor.
-    //     - VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT specifies an input attachment descriptor.
-    //     - VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT specifies an inline uniform block.
-    //   - descriptorCount is the number of descriptors of that type to allocate.
+    //   - type of descriptor.
+    //     . VK_DESCRIPTOR_TYPE_SAMPLER
+    //     . VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+    //     . VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+    //     . VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+    //     . VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER
+    //     . VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
+    //     . VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+    //     . VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+    //     . VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+    //     . VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+    //     . VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
+    //     . VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT
+    //   - descriptorCount of that type to allocate.
     //     If type is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount 
     //     is the number of bytes to allocate for descriptors of this type.
     //
-    // * maxSets is the maximum number of descriptor sets that can be allocated from the pool.
+    // * maxDescriptorSetCount that can be allocated from the pool.
     //
-    // * flags is a bitmask of VkDescriptorPoolCreateFlagBits specifying certain supported operations on the pool:
+    // * flags bitmask specifying certain supported operations on the pool:
     //
     //   - VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT specifies that descriptor sets 
     //     can return their individual allocations to the pool, i.e. all of vkAllocateDescriptorSets, 
@@ -64,11 +64,11 @@ public:
     //     VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT set.
     DescriptorPool(const LogicalDevice& logicalDevice,
                    const VkDescriptorPoolSize& descriptorPoolSize,
-                   const uint32_t maxSets,
+                   const uint32_t maxDescriptorSetCount,
                    const VkDescriptorPoolCreateFlags flags = 0);
     DescriptorPool(const LogicalDevice& logicalDevice,
                    const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
-                   const uint32_t maxSets,
+                   const uint32_t maxDescriptorSetCount,
                    const VkDescriptorPoolCreateFlags flags = 0);
     ~DescriptorPool();
     DescriptorPool(DescriptorPool&& other) noexcept;
@@ -81,7 +81,7 @@ public:
 private:
     void 
     createPool(const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
-               const uint32_t maxSets,
+               const uint32_t maxDescriptorSetCount,
                const VkDescriptorPoolCreateFlags flags);
 
     const LogicalDevice& mLogicalDevice;

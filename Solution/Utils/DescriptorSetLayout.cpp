@@ -12,10 +12,6 @@ DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice& logicalDevice,
 {
     assert(descriptorSetLayoutBindings.empty() == false);
 
-    // VkDescriptorSetLayoutCreateInfo:
-    // - flags is a bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation.
-    // - bindingCount is the number of elements in pBindings.
-    // - pBindings is a pointer to an array of VkDescriptorSetLayoutBinding structures.
     VkDescriptorSetLayoutCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     createInfo.bindingCount = static_cast<uint32_t>(descriptorSetLayoutBindings.size());

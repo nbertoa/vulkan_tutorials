@@ -32,15 +32,15 @@ class LogicalDevice;
 //
 class PipelineLayout {
 public:
-    // * descriptorSetLayout: Read DescriptorSetLayout comments for more information about this.
+    // * descriptorSetLayout: Read DescriptorSetLayout class comments for more information about this.
     //
     // * pushConstantRange:
     //
-    //   - stageFlags is a set of stage flags describing the shader stages that will access a range 
+    //   - stageFlags describing the shader stages that will access a range 
     //     of push constants. If a particular stage is not included in the range, then accessing members 
     //     of that range of push constants from the corresponding shader stage will return undefined values.
     //   - offset and size are the start offset and size, respectively, consumed by the range.
-    //     Both offset and size are in units of bytesand must be a multiple of 4. 
+    //     Both offset and size are in units of bytes and must be a multiple of 4. 
     //     The layout of the push constant variables is specified in the shader.
     PipelineLayout(const LogicalDevice& logicalDevice,
                    const DescriptorSetLayout* const descriptorSetLayout,

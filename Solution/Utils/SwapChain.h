@@ -69,8 +69,7 @@ public:
     uint32_t 
     currentImageIndex() const;
 
-    // * waitSemaphore is the semaphore to wait for before
-    //   issuing the present request.
+    // * waitSemaphore to wait for before issuing the present request.
     void present(const Semaphore& waitSemaphore,
                  const uint32_t imageIndex);
 
@@ -80,7 +79,7 @@ public:
     //
     // VkViewport:
     // - x and y are the viewport’s upper left corner(x, y).
-    // - width and height are the viewport’s widthand height, respectively.
+    // - width and height
     // - minDepth and maxDepth are the depth range for the viewport.
     //   It is valid for minDepth to be greater than or equal to maxDepth.
     const VkViewport& 
@@ -94,19 +93,18 @@ public:
     // Rectangles are used to describe a specified rectangular region of pixels within 
     // an image or framebuffer. Rectangles include both an offset and an extent of the 
     // same dimensionality.
-    // - offset is a VkOffset2D specifying the rectangle offset.
-    // - extent is a VkExtent2D specifying the rectangle extent.
+    // - offset of the rectangle.
+    // - extent of the rectangle.
     const VkRect2D& 
     scissorRect() const;
 
     // VkPipelineViewportStateCreateInfo:
-    // - flags is reserved for future use.
-    // - viewportCount is the number of viewports used by the pipeline.
-    // - pViewports is a pointer to an array of VkViewport structures, defining the viewport transforms.
+    // - viewportCount used by the pipeline.
+    // - pViewports defining the viewport transforms.
     //   If the viewport state is dynamic, this member is ignored.
-    // - scissorCount is the number of scissorsand must match the number of viewports.
-    // - pScissors is a pointer to an array of VkRect2D structures defining the rectangular bounds 
-    //   of the scissor for the corresponding viewport. If the scissor state is dynamic, this member is ignored.
+    // - scissorCount that must match the number of viewports.
+    // - pScissors defining the rectangular bounds of the scissor for the corresponding viewport. 
+    //   If the scissor state is dynamic, this member is ignored.
     VkPipelineViewportStateCreateInfo 
     pipelineViewportCreateInfo() const;
 
@@ -140,22 +138,22 @@ public:
     // the window we are drawing to.
     //
     // VkExtent2D:
-    // - width is the width of the extent.
-    // - height is the height of the extent.
+    // - width
+    // - height
     const VkExtent2D& 
     imageExtent() const;
 
 private:
     // VkSurfaceFormatKHR:
-    // - format of the surface (VkFormat)
-    // - colorSpace of the surface (VkColorSpaceKHR)
+    // - format of the surface
+    // - colorSpace of the surface
     static VkSurfaceFormatKHR 
     bestFitSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
 
     // The swap chain presentation mode is the most important setting for the swap chain because 
     // it represents the actual conditions for showing images to the screen.
     //
-    // *presentModes:
+    // * presentModes:
     //
     //   - VK_PRESENT_MODE_IMMEDIATE_KHR specifies that the presentation engine does 
     //     not wait for a vertical blanking period to update the current image, meaning 
@@ -211,16 +209,16 @@ private:
     // the resolution of the window that we are drawing to.
     //
     // * surfaceCapabilities:
-    //   - minImageCount is the minimum number of images the specified device supports for 
+    //   - minImageCount the specified device supports for 
     //     a swapchain created for the surface, and will be at least one.
-    //   - maxImageCount is the maximum number of images the specified device supports for a swapchain 
+    //   - maxImageCount the specified device supports for a swapchain 
     //     created for the surface, and will be either 0, or greater than or equal to minImageCount. 
     //     A value of 0 means that there is no limit on the number of images, though there may be limits related 
     //     to the total amount of memory used by presentable images.
-    //   - currentExtent is the current width and height of the surface, or the special value 
+    //   - currentExtent  of the surface, or the special value 
     //     [eq]#(0xFFFFFFFF, 0xFFFFFFFF)# indicating that the surface size will be determined by 
     //     the extent of a swapchain targeting the surface.
-    //   - minImageExtent is the current width and height of the surface, or the special value 
+    //   - minImageExtent of the surface, or the special value 
     //     [eq]#(0xFFFFFFFF, 0xFFFFFFFF)# indicating that the surface size will be determined by 
     //     the extent of a swapchain targeting the surface.
     //   - maxImageExtent contains the largest valid swapchain extent for the surface on the specified device. 
@@ -229,15 +227,14 @@ private:
     //     corresponding width and height of currentExtent, unless currentExtent has the special value described above.
     //   - maxImageArrayLayers is the maximum number of layers presentable images can have for a swapchain created 
     //     for this device and surface, and will be at least one.
-    //   - supportedTransforms is a bitmask of VkSurfaceTransformFlagBitsKHR indicating the presentation transforms 
+    //   - supportedTransforms bitmask indicating the presentation transforms 
     //     supported for the surface on the specified device. At least one bit will be set.
-    //   - currentTransform is VkSurfaceTransformFlagBitsKHR value indicating the surface's current transform 
-    //     relative to the presentation engine's natural orientation.
-    //   - supportedCompositeAlpha is a bitmask of VkCompositeAlphaFlagBitsKHR, representing the alpha compositing modes 
+    //   - currentTransform of the surface relative to the presentation engine's natural orientation.
+    //   - supportedCompositeAlpha bitmask representing the alpha compositing modes 
     //     supported by the presentation engine for the surface on the specified device, and at least one bit will be set. 
     //     Opaque composition can be achieved in any alpha compositing mode by either using an image format that has 
     //     no alpha component, or by ensuring that all pixels in the presentable images have an alpha value of 1.0.
-    //   - is a bitmask of VkImageUsageFlagBits representing the ways the application can use the presentable images of 
+    //   - supportedUsageFlags bitmask representing the ways the application can use the presentable images of 
     //     a swapchain created with VkPresentModeKHR set to VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, 
     //     VK_PRESENT_MODE_FIFO_KHR or VK_PRESENT_MODE_FIFO_RELAXED_KHR
     static VkExtent2D 

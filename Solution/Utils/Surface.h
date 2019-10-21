@@ -45,18 +45,17 @@ public:
 
     // This is needed to create the SwapChain
     // VkSurfaceCapabilitiesKHR:
-    // - physicalDevice is the physical device that will be associated with the 
-    //   swapchain to be created, as described for vkCreateSwapchainKHR.
-    // - surface is the surface that will be associated with the swapchain.
-    // - pSurfaceCapabilities is a pointer to an instance of the VkSurfaceCapabilitiesKHR 
-    //   structure in which the capabilities are returned.
+    // - physicalDevice that will be associated with the swapchain to be created, 
+    //   as described for vkCreateSwapchainKHR.
+    // - surface that will be associated with the swapchain.
+    // - pSurfaceCapabilities array in which the capabilities are returned.
     VkSurfaceCapabilitiesKHR 
     physicalDeviceSurfaceCapabilities(const VkPhysicalDevice physicalDevice) const;
 
     // This is needed to create the SwapChain
     // VkSurfaceFormatKHR:
-    // - format is a VkFormat that is compatible with the specified surface.
-    // - colorSpace is a presentation VkColorSpaceKHR that is compatible with the surface.
+    // - format that is compatible with the specified surface.
+    // - colorSpace that is compatible with the surface.
     std::vector<VkSurfaceFormatKHR> 
     physicalDeviceSurfaceFormats(const VkPhysicalDevice physicalDevice) const;
 

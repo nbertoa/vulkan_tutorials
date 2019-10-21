@@ -11,8 +11,9 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
                  const size_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
+                 const VkMemoryPropertyFlags memoryPropertyFlags,
                  const VkSharingMode sharingMode,
-                 const VkMemoryPropertyFlags memoryPropertyFlags) {
+                 const std::vector<uint32_t>& queueFamilyIndices) {
     assert(bufferCount > 0);
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
@@ -21,8 +22,9 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
                                      physicalDevice,
                                      size,
                                      usageFlags,
+                                     memoryPropertyFlags,
                                      sharingMode,
-                                     memoryPropertyFlags));
+                                     queueFamilyIndices));
     }
 }
 
@@ -30,8 +32,9 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
                  const size_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
+                 const DeviceMemory& deviceMemory,
                  const VkSharingMode sharingMode,
-                 const DeviceMemory& deviceMemory) {
+                 const std::vector<uint32_t>& queueFamilyIndices) {
     assert(bufferCount > 0);
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
@@ -39,8 +42,9 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
         mBuffers.emplace_back(Buffer(logicalDevice,
                                      size,
                                      usageFlags,
+                                     deviceMemory,
                                      sharingMode,
-                                     deviceMemory));
+                                     queueFamilyIndices));
     }
 }
 

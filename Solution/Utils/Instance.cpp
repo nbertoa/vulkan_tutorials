@@ -93,13 +93,10 @@ Instance::createInstance() {
     // engine with certain special behavior.
     //
     // VkApplicationInfo:
-    // - pApplicationName is NULL or is a pointer to a null-terminated UTF-8 string 
-    //   containing the name of the application.
-    // - applicationVersion is an unsigned integer variable containing the developer-supplied 
-    //   version number of the application.
-    // - pEngineName is NULL or is a pointer to a null-terminated UTF-8 string containing 
-    //   the name of the engine (if any) used to create the application.
-    // - engineVersion is an unsigned integer variable containing the developer-supplied 
+    // - pApplicationName
+    // - applicationVersion contains the developer-supplied version number of the application.
+    // - pEngineName (if any) used to create the application.
+    // - engineVersion contains the developer-supplied 
     //   version number of the engine used to create the application.
     // - apiVersion must be the highest version of Vulkan that the application is designed 
     //   to use. The patch version number specified in apiVersion is ignored when creating 
@@ -113,17 +110,13 @@ Instance::createInstance() {
     appInfo.apiVersion = 0;
 
     // VkInstanceCreateInfo:
-    // - pNext is NULL or a pointer to an extension-specific structure.
-    // - flags is reserved for future use.
-    // - pApplicationInfo is NULL or a pointer to a VkApplicationInfo structure.
-    //   If not NULL, this information helps implementations recognize behavior inherent 
+    // - pApplicationInfo is optional.
+    //   If not nullptr, this information helps implementations recognize behavior inherent 
     //   to classes of applications. 
-    // - enabledLayerCount is the number of global layers to enable.
-    // - ppEnabledLayerNames is a pointer to an array of enabledLayerCount null-terminated 
-    //   UTF-8 strings containing the names of layers to enable for the created instance.
-    // - enabledExtensionCount is the number of global extensions to enable.
-    // - ppEnabledExtensionNames is a pointer to an array of enabledExtensionCount null-terminated 
-    //   UTF-8 strings containing the names of extensions to enable.
+    // - enabledLayerCount
+    // - ppEnabledLayerNames to enable for the created instance.
+    // - enabledExtensionCount
+    // - ppEnabledExtensionNames to enable.
     const std::vector<const char*> instanceExtensions = getInstanceExtensionNames();
     const std::vector<const char*> instanceLayers = getInstanceLayerNames();
     VkInstanceCreateInfo instanceInfo = {};

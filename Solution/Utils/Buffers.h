@@ -17,17 +17,19 @@ public:
             const PhysicalDevice& physicalDevice,
             const size_t bufferCount,
             const VkDeviceSize size,
-            const VkBufferUsageFlags usageFlags,
+            const VkBufferUsageFlags usageFlags,            
+            const VkMemoryPropertyFlags memoryPropertyFlags,
             const VkSharingMode sharingMode,
-            const VkMemoryPropertyFlags memoryPropertyFlags);
+            const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
 
     // Read Buffer constructor to understand this.
     Buffers(const LogicalDevice& logicalDevice,
             const size_t bufferCount,
             const VkDeviceSize size,
             const VkBufferUsageFlags usageFlags,
+            const DeviceMemory& deviceMemory,
             const VkSharingMode sharingMode,
-            const DeviceMemory& deviceMemory);
+            const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
 
     Buffers(Buffers&& other) noexcept;
     Buffers(const Buffers&) = delete;

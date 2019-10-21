@@ -35,12 +35,11 @@ class RenderPass;
 //
 class FrameBuffers {
 public:
-    // * renderPass is a render pass defining what render passes 
-    //   the framebuffer will be compatible with.
+    // * renderPass defining what render passes the framebuffer will be compatible with.
     //
     // * imageViews to be used as the corresponding attachment in a render pass instance.
     //
-    // * width, height define the dimensions of the framebuffer.
+    // * imageWidth and imageHeight define the dimensions of the framebuffer.
     FrameBuffers(const LogicalDevice& logicalDevice,
                  const RenderPass& renderPass,
                  const std::vector<VkImageView> imageViews,

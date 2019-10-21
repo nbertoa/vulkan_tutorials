@@ -34,29 +34,29 @@ class LogicalDevice;
 //
 class ShaderModule {
 public:
-    // * shaderByteCodePath is a path to the bytecode file that represents the piece of shader code, 
+    // * shaderByteCodePath to the file that represents the piece of shader code, 
     //   in SPIR-V format.
     //
-    // * shaderStageFlag specifies the pipeline stage
-    //   - VK_SHADER_STAGE_VERTEX_BIT specifies the vertex stage.
-    //   - VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT specifies the tessellation control stage.
-    //   - VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT specifies the tessellation evaluation stage.
-    //   - VK_SHADER_STAGE_GEOMETRY_BIT specifies the geometry stage.
-    //   - VK_SHADER_STAGE_FRAGMENT_BIT specifies the fragment stage.
-    //   - VK_SHADER_STAGE_COMPUTE_BIT specifies the compute stage.
-    //   - VK_SHADER_STAGE_TASK_BIT_NV specifies the task stage.
-    //   - VK_SHADER_STAGE_MESH_BIT_NV specifies the mesh stage.
+    // * shaderStageFlag specifies the pipeline stage:
+    //   - VK_SHADER_STAGE_VERTEX_BIT
+    //   - VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+    //   - VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+    //   - VK_SHADER_STAGE_GEOMETRY_BIT 
+    //   - VK_SHADER_STAGE_FRAGMENT_BIT
+    //   - VK_SHADER_STAGE_COMPUTE_BIT
+    //   - VK_SHADER_STAGE_TASK_BIT_NV
+    //   - VK_SHADER_STAGE_MESH_BIT_NV
     //   - VK_SHADER_STAGE_ALL_GRAPHICS is a combination of bits used as shorthand 
     //     to specify all graphics stages defined above(excluding the compute stage).
     //   - VK_SHADER_STAGE_ALL is a combination of bits used as shorthand to specify 
     //     all shader stages supported by the device, including all additional stages 
     //     which are introduced by extensions.
     //   - VK_SHADER_STAGE_RAYGEN_BIT_NV specifies the ray generation stage.
-    //   - VK_SHADER_STAGE_ANY_HIT_BIT_NV specifies the any - hit stage.
-    //   - VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV specifies the closest hit stage.
-    //   - VK_SHADER_STAGE_MISS_BIT_NV specifies the miss stage.
-    //   - VK_SHADER_STAGE_INTERSECTION_BIT_NV specifies the intersection stage.
-    //   - VK_SHADER_STAGE_CALLABLE_BIT_NV specifies the callable stage.
+    //   - VK_SHADER_STAGE_ANY_HIT_BIT_NV
+    //   - VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV
+    //   - VK_SHADER_STAGE_MISS_BIT_NV
+    //   - VK_SHADER_STAGE_INTERSECTION_BIT_NV
+    //   - VK_SHADER_STAGE_CALLABLE_BIT_NV
     ShaderModule(const LogicalDevice& logicalDevice,
                  const std::string& shaderByteCodePath,
                  const VkShaderStageFlagBits shaderStageFlag);

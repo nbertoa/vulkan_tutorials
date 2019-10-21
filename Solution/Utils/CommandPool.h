@@ -34,12 +34,11 @@ public:
     // * queueFamilyIndex designates a queue family. All command buffers allocated 
     //   from this command pool must be submitted on queues from the same queue family.
     //
-    // * flags is a bitmask of VkCommandPoolCreateFlagBits indicating usage 
-    //   behavior for the pool and command buffers allocated from it:
+    // * flags bitmask indicates usage behavior for the pool and command buffers allocated from it:
     // 
     //   - VK_COMMAND_POOL_CREATE_TRANSIENT_BIT specifies that command buffers allocated 
-    //     from the pool will be short - lived, meaning that they will be reset or freed 
-    //     in a relatively short timeframe.This flag may be used by the implementation to 
+    //     from the pool will be short-lived, meaning that they will be reset or freed 
+    //     in a relatively short timeframe. This flag may be used by the implementation to 
     //     control memory allocation behavior within the pool.
     //   - VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT allows any command buffer 
     //     allocated from a pool to be individually reset to the initial state; either by 
@@ -47,7 +46,7 @@ public:
     //     If this flag is not set on a pool, then vkResetCommandBuffer must not be called for 
     //     any command buffer allocated from that pool.
     //   - VK_COMMAND_POOL_CREATE_PROTECTED_BIT specifies that command buffers allocated 
-    //     from the pool are protected command buffers.If the protected memory feature is not enabled, 
+    //     from the pool are protected command buffers. If the protected memory feature is not enabled, 
     //     the VK_COMMAND_POOL_CREATE_PROTECTED_BIT bit of flags must not be set.
     CommandPool(const LogicalDevice& logicalDevice,
                 const uint32_t queueFamilyIndex,

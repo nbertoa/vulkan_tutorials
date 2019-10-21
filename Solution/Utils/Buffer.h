@@ -2,6 +2,7 @@
 #define UTILS_BUFFER
 
 #include <memory>
+#include <vector>
 #include <vulkan/vulkan.h>
 
 #include "DeviceMemory.h"
@@ -53,12 +54,12 @@ public:
     //
     // * physicalDevice is used to create the DeviceMemory
     //
-    // * size is the size in bytes of the buffer to be created.
+    // * size in bytes of the buffer to be created.
     //
-    // * usage is a bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer:
+    // * usage is a bitmask of specifying allowed usages of the buffer:
     //
     //   - VK_BUFFER_USAGE_TRANSFER_SRC_BIT specifies that the buffer can be used 
-    //     as the source of a transfer command(see the definition of VK_PIPELINE_STAGE_TRANSFER_BIT).
+    //     as the source of a transfer command (see the definition of VK_PIPELINE_STAGE_TRANSFER_BIT).
     //   - VK_BUFFER_USAGE_TRANSFER_DST_BIT specifies that the buffer can be used as 
     //     the destination of a transfer command.
     //   - VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT specifies that the buffer can be used 
@@ -94,16 +95,6 @@ public:
     //     used to retrieve a buffer device address via vkGetBufferDeviceAddressEXTand use 
     //     that address to access the buffer’s memory from a shader.
     //
-    // * sharingMode is a VkSharingMode value specifying the sharing mode of the buffer
-    //   when it will be accessed by multiple queue families:
-    //
-    //   - VK_SHARING_MODE_EXCLUSIVE specifies that access 
-    //     to any range or image subresource of the object 
-    //     will be exclusive to a single queue family at a time.
-    //   - VK_SHARING_MODE_CONCURRENT specifies that concurrent 
-    //     access to any range or image subresource of the object 
-    //     from multiple queue families is supported.
-    //
     // * memoryPropertyFlags is used to create the DeviceMemory:
     //
     //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
@@ -121,33 +112,46 @@ public:
     //     to cached memory, however uncached memory is always host coherent.
     //   - VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT bit specifies that the memory type only 
     //     allows device access to the memory.Memory types must not have both 
-    //     K_MEMORY_PROPERTY_LAZILY_ALLOCATED_BITand VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
-    //     Additionally, the object’s backing memory may be provided by the implementation lazily 
-    //     as specified in Lazily Allocated Memory.
+    //     VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT and VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
+    //     Additionally, the object’s backing memory may be provided by the implementation lazily.
     //   - VK_MEMORY_PROPERTY_PROTECTED_BIT bit specifies that the memory type only allows device 
     //     access to the memory, and allows protected queue operations to access the memory.
     //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT setand any of 
     //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set, or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, 
     //     or VK_MEMORY_PROPERTY_HOST_CACHED_BIT set.
     //   - VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD bit specifies that device accesses to 
-    //     allocations of this memory type are automatically made availableand visible.
+    //     allocations of this memory type are automatically made available and visible.
     //   - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
     //     this type is not cached on the device.Uncached device memory is always device coherent.
+    //
+    // * sharingMode of the buffer when it will be accessed by multiple queue families:
+    //
+    //   - VK_SHARING_MODE_EXCLUSIVE specifies that access 
+    //     to any range or image subresource of the object 
+    //     will be exclusive to a single queue family at a time.
+    //   - VK_SHARING_MODE_CONCURRENT specifies that concurrent 
+    //     access to any range or image subresource of the object 
+    //     from multiple queue families is supported.
+    //
+    // * queueFamilyIndices that will access this buffer
+    //   (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
     Buffer(const LogicalDevice& logicalDevice,
            const PhysicalDevice& physicalDevice,
            const VkDeviceSize size, 
-           const VkBufferUsageFlags usageFlags,
+           const VkBufferUsageFlags usageFlags,           
+           const VkMemoryPropertyFlags memoryPropertyFlags,
            const VkSharingMode sharingMode,
-           const VkMemoryPropertyFlags memoryPropertyFlags);
+           const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
 
     // This constructor must be used if you want to provide
     // the DeviceMemory that the buffer should use.
     // Check the first constructor for an explanation of each parameter.
     Buffer(const LogicalDevice& logicalDevice,
            const VkDeviceSize size,
-           const VkBufferUsageFlags usageFlags,
+           const VkBufferUsageFlags usageFlags,           
+           const DeviceMemory& deviceMemory,
            const VkSharingMode sharingMode,
-           const DeviceMemory& deviceMemory);
+           const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
     ~Buffer();
     Buffer(Buffer&& other) noexcept;
     Buffer(const Buffer&) = delete;
@@ -202,12 +206,17 @@ public:
 
     // These methods assumes the buffer was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
+    //
     // The methods without size parameter are going to use
     // the sourceBuffer size.
+    //
     // The methods without the fence parameter, will create
     // an internal fence and wait for completion.
     //
-    // * executionCompletedFence is a fence to be signaled once 
+    // * transferCommandPool that will be used to create 
+    //  the CommandBuffer which will do the transfer operation.
+    //
+    // * executionCompletedFence to be signaled once 
     //   the copy operation is complete. 
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
@@ -230,12 +239,13 @@ public:
 private:
     // Return the buffer memory requirements. This is used to create
     // the DeviceMemory (if needed).
+    //
     // Memory requirements:
-    // - size is the size, in bytes, of the memory allocation required for the resource.
-    // - alignment is the alignment, in bytes, of the offset within the 
+    // - size in bytes, of the memory allocation required for the resource.
+    // - alignment in bytes, of the offset within the 
     //   allocation required for the resource.
-    // - memoryTypeBits is a bitmaskand contains one bit set for every supported 
-    //   memory type for the resource.Bit i is set ifand only if the memory type i in 
+    // - memoryTypeBits is a bitmask and contains one bit set for every supported 
+    //   memory type for the resource. Bit i is set if and only if the memory type i in 
     //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
     //   is supported for the resource.
     VkMemoryRequirements 
@@ -246,7 +256,8 @@ private:
     createBuffer(const LogicalDevice& logicalDevice,
                  const VkDeviceSize sizeInBytes,
                  const VkBufferUsageFlags usageFlags,
-                 const VkSharingMode sharingMode);
+                 const VkSharingMode sharingMode,
+                 const std::vector<uint32_t>& queueFamilyIndices);
 
     const LogicalDevice& mLogicalDevice;    
     VkBuffer mBuffer = VK_NULL_HANDLE;

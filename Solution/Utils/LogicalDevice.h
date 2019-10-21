@@ -50,9 +50,11 @@ public:
     vkDevice() const;
 
     // Creating a logical device also creates the queues associated with that device.
+    //
     // Queue is an object representing a queue of commands to be executed on the device.
     // All the actual work to be done by the GPU is requested by filling CommandBuffers
     // and submitting them to Queues, using the function vkQueueSubmit.
+    //
     // If you have multiple queues like the main graphics queue and a compute queue, 
     // you can submit different CommandBuffers to each of them.
     // This way you can enable asynchronous compute, which can lead to a 
@@ -74,13 +76,11 @@ private:
     // Get the necessary structures to create the queues.
     // 
     // VkDeviceQueueCreateInfo:
-    // - flags is a bitmask indicating behavior of the queue.
-    // - queueFamilyIndex is an unsigned integer indicating the index of the queue family 
-    //   to create on this device.This index corresponds to the index of an element of the 
+    // - flags bitmask indicating behavior of the queue.
+    // - queueFamilyIndex to create on this device. This index corresponds to the index of an element of the 
     //   pQueueFamilyProperties array that was returned by vkGetPhysicalDeviceQueueFamilyProperties.
-    // - queueCount is an unsigned integer specifying the number of queues to create in 
-    //   the queue family indicated by queueFamilyIndex.
-    // - pQueuePriorities is a pointer to an array of queueCount normalized floating point values, 
+    // - queueCount to create in the queue family indicated by queueFamilyIndex.
+    // - pQueuePriorities array that contains normalized floating point values, 
     //   specifying priorities of work that will be submitted to each created queue.
     static std::vector<VkDeviceQueueCreateInfo> 
     physicalDeviceQueuesCreateInfo(const PhysicalDevice& physicalDevice);

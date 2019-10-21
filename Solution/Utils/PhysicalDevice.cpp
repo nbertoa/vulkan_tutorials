@@ -60,27 +60,24 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
     uint32_t typeIndex = std::numeric_limits<uint32_t>::max();
 
     // VkPhysicalDeviceMemoryProperties:
-    // - memoryTypeCount is the number of valid elements in the memoryTypes array.
-    // - memoryTypes is an array of VK_MAX_MEMORY_TYPES VkMemoryType structures 
-    //   describing the memory types that can be used to access memory allocated 
-    //   from the heaps specified by memoryHeaps.
-    //   VkMemoryType:
-    //   - heapIndex describes which memory heap this memory type corresponds to, 
+    // - memoryTypeCount in the memoryTypes array.
+    // - memoryTypes array describes the memory types that can be used to access memory allocated 
+    //   from the heaps specified by memoryHeaps:
+    //   . heapIndex  this memory type corresponds to, 
     //     and must be less than memoryHeapCount from the VkPhysicalDeviceMemoryProperties structure.
-    //   - propertyFlags is a bitmask of VkMemoryPropertyFlagBits of properties for this memory type.
-    // - memoryHeapCount is the number of valid elements in the memoryHeaps array.
-    // - memoryHeaps is an array of VK_MAX_MEMORY_HEAPS VkMemoryHeap structures 
-    //   describing the memory heaps from which memory can be allocated.
-    //   VkMemoryHeap:
-    //   - VK_MEMORY_HEAP_DEVICE_LOCAL_BIT specifies that the heap corresponds to device local memory.
+    //   . propertyFlags bitmask for this memory type.
+    // - memoryHeapCount in the memoryHeaps array.
+    // - memoryHeaps array describing the memory heaps from which memory can be allocated.
+    //   . VK_MEMORY_HEAP_DEVICE_LOCAL_BIT specifies that the heap corresponds to device local memory.
     //     Device local memory may have different performance characteristics than host local memory, 
     //     and may support different memory property flags.
-    //   - VK_MEMORY_HEAP_MULTI_INSTANCE_BIT specifies that in a logical device representing more 
+    //   . VK_MEMORY_HEAP_MULTI_INSTANCE_BIT specifies that in a logical device representing more 
     //     than one physical device, there is a per-physical device instance of the heap memory.
     //     By default, an allocation from such a heap will be replicated to each physical device’s instance of the heap.
     VkPhysicalDeviceMemoryProperties memoryProperties;
     vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
                                         &memoryProperties);
+
     // memoryTypeFilter is used to specify the bit field of memory types
     // that are suitable.
     // That means that we can find the index of a suitable memory type

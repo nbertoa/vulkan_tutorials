@@ -26,17 +26,10 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
 {
     assert(mPipelineLayout.get() != nullptr);
 
-    // VkGraphicsPipelineCreatInfo:
-    // - basePipelineHandle is a pipeline to derive from.
-    // - basePipelineIndex is an index into the pCreateInfos parameter to use as a pipeline to derive from.
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-
-    // Shader stages
     createInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
     createInfo.pStages = shaderStages.empty() ? nullptr : shaderStages.data();
-
-    // Fixed-function state
     createInfo.pVertexInputState = vertexInputState;
     createInfo.pInputAssemblyState = inputAssemblyState;
     createInfo.pViewportState = viewportState;
@@ -46,12 +39,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
     createInfo.pColorBlendState = colorBlendState;
     createInfo.pDynamicState = dynamicState;
     createInfo.pTessellationState = tessellationState;
-
-    // Layout
     createInfo.layout = mPipelineLayout->pipelineLayout();
-
-    // Specify the render pass and the index of the sub pass
-    // where this graphics pipeline will be used.
     createInfo.renderPass = renderPass.vkRenderPass();
     createInfo.subpass = subPassIndex;
 

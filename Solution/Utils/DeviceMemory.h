@@ -52,30 +52,28 @@ class PhysicalDevice;
 //
 class DeviceMemory {
 public:
-    // * physicalDevice is used to get the memory that index that is an index
+    // * physicalDevice is used to get the memory index that is an index
     //   that identifies a memory type from the memoryTypes array of the 
-    //   VkPhysicalDeviceMemoryProperties structure. memoryRequirements
-    //   and memoryPropertyFlags are used to get this too.
+    //   VkPhysicalDeviceMemoryProperties structure. 
     //
-    // * memoryRequirements is used to get the memory that index that is an index
+    // * memoryRequirements is used to get the memory index that is an index
     //   that identifies a memory type from the memoryTypes array of the 
-    //   VkPhysicalDeviceMemoryProperties structure.
+    //   VkPhysicalDeviceMemoryProperties structure:
     //
-    //   - size is the size, in bytes, of the memory allocation required for the resource.
-    //   - alignment is the alignment, in bytes, of the offset within the 
-    //     allocation required for the resource.
-    //   - memoryTypeBits is a bitmaskand contains one bit set for every supported 
+    //   - size in bytes of the memory allocation required for the resource.
+    //   - alignment in bytes of the offset within the allocation required for the resource.
+    //   - memoryTypeBits bitmask that contains one bit set for every supported 
     //     memory type for the resource. Bit i is set if and only if the memory type i in 
     //     the VkPhysicalDeviceMemoryProperties structure for the physical device 
     //     is supported for the resource.
     //
-    // * memoryPropertyFlags is used to get the memory that index that is an index
+    // * memoryPropertyFlags is used to get the memory index that is an index
     //   that identifies a memory type from the memoryTypes array of the 
     //   VkPhysicalDeviceMemoryProperties structure:
     //
     //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
     //     this type is the most efficient for device access.
-    //     This property will be set ifand only if the memory type belongs to a heap 
+    //     This property will be set if and only if the memory type belongs to a heap 
     //     with the VK_MEMORY_HEAP_DEVICE_LOCAL_BIT set.
     //   - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit specifies that memory allocated with 
     //     this type can be mapped for host access using vkMapMemory.
@@ -84,22 +82,22 @@ public:
     //     are not needed to flush host writes to the device or make device writes visible 
     //     to the host, respectively.
     //   - VK_MEMORY_PROPERTY_HOST_CACHED_BIT bit specifies that memory allocated with this 
-    //     type is cached on the host.Host memory accesses to uncached memory are slower than 
+    //     type is cached on the host. Host memory accesses to uncached memory are slower than 
     //     to cached memory, however uncached memory is always host coherent.
     //   - VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT bit specifies that the memory type only 
-    //     allows device access to the memory.Memory types must not have both 
+    //     allows device access to the memory. Memory types must not have both 
     //     VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BITand VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
-    //     Additionally, the object’s backing memory may be provided by the implementation lazily 
+    //     Additionally, the object is backing memory may be provided by the implementation lazily 
     //     as specified in Lazily Allocated Memory.
     //   - VK_MEMORY_PROPERTY_PROTECTED_BIT bit specifies that the memory type only allows device 
     //     access to the memory, and allows protected queue operations to access the memory.
-    //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT setand any of 
+    //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT set and any of 
     //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set, or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, 
     //     or VK_MEMORY_PROPERTY_HOST_CACHED_BIT set.
     //   - VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD bit specifies that device accesses to 
-    //     allocations of this memory type are automatically made availableand visible.
+    //     allocations of this memory type are automatically made available and visible.
     //   - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
-    //     this type is not cached on the device.Uncached device memory is always device coherent.
+    //     this type is not cached on the device. Uncached device memory is always device coherent.
     DeviceMemory(const LogicalDevice& logicalDevice,
                  const PhysicalDevice& physicalDevice,
                  const VkMemoryRequirements& memoryRequirements,

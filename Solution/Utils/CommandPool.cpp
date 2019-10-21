@@ -12,11 +12,6 @@ CommandPool::CommandPool(const LogicalDevice& logicalDevice,
                          const VkCommandPoolCreateFlags flags)
     : mLogicalDevice(logicalDevice)
 {
-    // VkCommandPoolCreateInfo:
-    // - flags is a bitmask of VkCommandPoolCreateFlagBits indicating usage 
-    //   behavior for the pool and command buffers allocated from it.
-    // - queueFamilyIndex designates a queue family. All command buffers allocated 
-    //   from this command pool must be submitted on queues from the same queue family.
     VkCommandPoolCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.flags = flags;

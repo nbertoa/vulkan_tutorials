@@ -13,10 +13,6 @@ DeviceMemory::DeviceMemory(const LogicalDevice& logicalDevice,
                            const VkMemoryPropertyFlags memoryPropertyFlags)
     : mLogicalDevice(logicalDevice)
 {
-    // VkMemoryAllocateInfo:
-    // - allocationSize is the size of the allocation in bytes
-    // - memoryTypeIndex is an index identifying a memory type from the memoryTypes 
-    //   array of the VkPhysicalDeviceMemoryProperties structure
     VkMemoryAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     info.allocationSize = memoryRequirements.size;

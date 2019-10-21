@@ -59,24 +59,18 @@ LogicalDevice::createLogicalDevice(const PhysicalDevice& physicalDevice) {
     const std::vector<const char*>& deviceExtensions = physicalDevice.deviceExtensionNames();
     
     // VkDeviceCreateInfo:
-    // - flags is reserved for future use.
-    // - queueCreateInfoCount is the unsigned integer size of the pQueueCreateInfos array.
-    // - pQueueCreateInfos is a pointer to an array of VkDeviceQueueCreateInfo structures 
-    //   describing the queues that are requested to be created along with the logical device.
-    // - enabledLayerCount is deprecated and ignored.
-    // - ppEnabledLayerNames is deprecated and ignored.
+    // - queueCreateInfoCount
+    // - pQueueCreateInfos describes the queues that are requested to be created along with the logical device.
     // - enabledExtensionCount is the number of device extensions to enable.
-    // - ppEnabledExtensionNames is a pointer to an array of enabledExtensionCount 
-    //   null-terminated UTF-8 strings containing the names of extensions to enable 
-    //   for the created device.
-    // - pEnabledFeatures is NULL or a pointer to a VkPhysicalDeviceFeatures structure containing 
+    // - ppEnabledExtensionNames to enable for the created device.
+    // - pEnabledFeatures is an optional VkPhysicalDeviceFeatures structure containing 
     //   boolean indicators of all the features to be enabled.
     VkDeviceCreateInfo physicalDeviceCreateInfo = {};
     physicalDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;    
     physicalDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(createInfoVector.size());
     physicalDeviceCreateInfo.pQueueCreateInfos = createInfoVector.data();
-    physicalDeviceCreateInfo.enabledLayerCount = 0;
-    physicalDeviceCreateInfo.ppEnabledLayerNames = nullptr;
+    physicalDeviceCreateInfo.enabledLayerCount = 0; // deprecated and ignored
+    physicalDeviceCreateInfo.ppEnabledLayerNames = nullptr; // deprecated and ignored
     physicalDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     physicalDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
     physicalDeviceCreateInfo.pEnabledFeatures = nullptr;

@@ -60,85 +60,82 @@ public:
     // * renderPass describes the environment in which the pipeline will be used; 
     //   the pipeline must only be used with an instance of any render pass compatible with the one provided.
     //
-    // * subPassIndex is the index of the subpass in the render pass where this pipeline will be used.
+    // * subPassIndex in the render pass where this pipeline will be used.
     //
     // * layout is the description of binding locations used by both 
     //   the pipeline and descriptor sets used with the pipeline.
     //
-    // * shaderStages describes the set of the shader stages to be included in the graphics pipeline:
+    // * shaderStages to be included in the graphics pipeline:
     //
-    //   - flags is a bitmask of VkPipelineShaderStageCreateFlagBits specifying how the 
-    //     pipeline shader stage will be generated:
-    //     - VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT specifies 
+    //   - flags bitmask that specifies how the pipeline shader stage will be generated:
+    //     . VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT specifies 
     //       that the SubgroupSize may vary in the shader stage.
-    //     - VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT specifies that the subgroup 
+    //     . VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT specifies that the subgroup 
     //       sizes must be launched with all invocations active in the compute stage.
-    //   - stage is a VkShaderStageFlagBits value specifying a single pipeline stage:
-    //     - VK_SHADER_STAGE_VERTEX_BIT specifies the vertex stage.
-    //     - VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT specifies the tessellation control stage.
-    //     - VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT specifies the tessellation evaluation stage.
-    //     - VK_SHADER_STAGE_GEOMETRY_BIT specifies the geometry stage.
-    //     - VK_SHADER_STAGE_FRAGMENT_BIT specifies the fragment stage.
-    //     - VK_SHADER_STAGE_COMPUTE_BIT specifies the compute stage.
-    //     - VK_SHADER_STAGE_TASK_BIT_NV specifies the task stage.
-    //     - VK_SHADER_STAGE_MESH_BIT_NV specifies the mesh stage.
-    //     - VK_SHADER_STAGE_ALL_GRAPHICS is a combination of bits used as shorthand to specify all 
+    //   - stage specifies a single pipeline stage:
+    //     . VK_SHADER_STAGE_VERTEX_BIT
+    //     . VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+    //     . VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+    //     . VK_SHADER_STAGE_GEOMETRY_BIT
+    //     . VK_SHADER_STAGE_FRAGMENT_BIT
+    //     . VK_SHADER_STAGE_COMPUTE_BIT
+    //     . VK_SHADER_STAGE_TASK_BIT_NV.
+    //     . VK_SHADER_STAGE_MESH_BIT_NV
+    //     . VK_SHADER_STAGE_ALL_GRAPHICS is a combination of bits used as shorthand to specify all 
     //       graphics stages defined above(excluding the compute stage).
-    //     - VK_SHADER_STAGE_ALL is a combination of bits used as shorthand to specify all shader stages 
+    //     . VK_SHADER_STAGE_ALL is a combination of bits used as shorthand to specify all shader stages 
     //       supported by the device, including all additional stages which are introduced by extensions.
-    //     - VK_SHADER_STAGE_RAYGEN_BIT_NV specifies the ray generation stage.
-    //     - VK_SHADER_STAGE_ANY_HIT_BIT_NV specifies the any - hit stage.
-    //     - VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV specifies the closest hit stage.
-    //     - VK_SHADER_STAGE_MISS_BIT_NV specifies the miss stage.
-    //     - VK_SHADER_STAGE_INTERSECTION_BIT_NV specifies the intersection stage.
-    //     - VK_SHADER_STAGE_CALLABLE_BIT_NV specifies the callable stage.
-    //   - module is a VkShaderModule object containing the shader for this stage.
-    //   - pName is a pointer to a null-terminated UTF-8 string specifying the 
-    //     entry point name of the shader for this stage.
-    //   - pSpecializationInfo is a pointer to a VkSpecializationInfo structure or NULL:
-    //     - mapEntryCount is the number of entries in the pMapEntries array.
-    //     - pMapEntries is a pointer to an array of VkSpecializationMapEntry structures 
-    //       which map constant IDs to offsets in pData.
-    //     - dataSize is the byte size of the pData buffer.
-    //     - pData contains the actual constant values to specialize with.
+    //     . VK_SHADER_STAGE_RAYGEN_BIT_NV specifies the ray generation stage.
+    //     . VK_SHADER_STAGE_ANY_HIT_BIT_NV
+    //     . VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV
+    //     . VK_SHADER_STAGE_MISS_BIT_NV
+    //     . VK_SHADER_STAGE_INTERSECTION_BIT_NV
+    //     . VK_SHADER_STAGE_CALLABLE_BIT_NV
+    //   - module containing the shader for this stage.
+    //   - pName specifies the entry point name of the shader for this stage.
+    //   - pSpecializationInfo is an optiona VkSpecializationInfo :
+    //     . mapEntryCount
+    //     . pMapEntries which map constant IDs to offsets in pData.
+    //     . dataSize
+    //     . pData contains the actual constant values to specialize with.
     //
     // * vertexInputState is an optional VkPipelineVertexInputStateCreateInfo.
     //   It is ignored if the pipeline includes a mesh shader stage:
     //
-    //   - vertexBindingDescriptionCount is the number of vertex binding descriptions provided in pVertexBindingDescriptions.
-    //   - pVertexBindingDescriptions is a pointer to an array of VkVertexInputBindingDescription structures:
-    //     - binding is the binding number that this structure describes.
-    //     - stride is the distance in bytes between two consecutive elements within the buffer.
-    //     - inputRate is a VkVertexInputRate value specifying whether vertex attribute addressing is a 
+    //   - vertexBindingDescriptionCount provided in pVertexBindingDescriptions.
+    //   - pVertexBindingDescriptions array:
+    //     . binding number that this structure describes.
+    //     . stride is the distance in bytes between two consecutive elements within the buffer.
+    //     . inputRate specifies whether vertex attribute addressing is a 
     //       function of the vertex index or of the instance index.
-    //   - vertexAttributeDescriptionCount is the number of vertex attribute descriptions provided in pVertexAttributeDescriptions.
-    //   - pVertexAttributeDescriptions is a pointer to an array of VkVertexInputAttributeDescription structures:
-    //     - location is the shader binding location number for this attribute.
-    //     - binding is the binding number which this attribute takes its data from.
-    //     - format is the sizeand type of the vertex attribute data.
-    //     - offset is a byte offset of this attribute relative to the start of an element in the vertex input binding. 
+    //   - vertexAttributeDescriptionCount provided in pVertexAttributeDescriptions.
+    //   - pVertexAttributeDescriptions array:
+    //     . location is the shader binding location number for this attribute.
+    //     . binding number which this attribute takes its data from.
+    //     . format is the size and type of the vertex attribute data.
+    //     . offset in bytes of this attribute relative to the start of an element in the vertex input binding. 
     //
     // * inputAssemblyState is an optional VkPipelineInputAssemblyStateCreateInfo which 
     //   determines input assembly behavior. It is ignored if the pipeline includes a mesh shader stage:
-    //   - topology is a VkPrimitiveTopology defining the primitive topology:
-    //     - VK_PRIMITIVE_TOPOLOGY_POINT_LIST specifies a series of separate point primitives.
-    //     - VK_PRIMITIVE_TOPOLOGY_LINE_LIST specifies a series of separate line primitives.
-    //     - VK_PRIMITIVE_TOPOLOGY_LINE_STRIP specifies a series of connected line primitives 
+    //   - topology defining the primitive topology:
+    //     . VK_PRIMITIVE_TOPOLOGY_POINT_LIST specifies a series of separate point primitives.
+    //     . VK_PRIMITIVE_TOPOLOGY_LINE_LIST specifies a series of separate line primitives.
+    //     . VK_PRIMITIVE_TOPOLOGY_LINE_STRIP specifies a series of connected line primitives 
     //       with consecutive lines sharing a vertex.
-    //     - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST specifies a series of separate triangle primitives.
-    //     - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP specifies a series of connected triangle 
+    //     . VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST specifies a series of separate triangle primitives.
+    //     . VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP specifies a series of connected triangle 
     //       primitives with consecutive triangles sharing an edge.
-    //     - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN specifies a series of connected triangle 
+    //     . VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN specifies a series of connected triangle 
     //       primitives with all triangles sharing a common vertex.
-    //     - VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY specifies a series 
+    //     . VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY specifies a series 
     //       separate line primitives with adjacency.
-    //     - VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY specifies a series connected line primitives 
+    //     . VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY specifies a series connected line primitives 
     //       with adjacency, with consecutive primitives sharing three vertices.
-    //     - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY specifies a series separate 
+    //     . VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY specifies a series separate 
     //       triangle primitives with adjacency.
-    //     - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY specifies connected triangle primitives 
+    //     . VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY specifies connected triangle primitives 
     //       with adjacency, with consecutive triangles sharing an edge.
-    //     - VK_PRIMITIVE_TOPOLOGY_PATCH_LIST specifies separate patch primitives.
+    //     . VK_PRIMITIVE_TOPOLOGY_PATCH_LIST specifies separate patch primitives.
     //   - primitiveRestartEnable controls whether a special vertex index value is treated as restarting the 
     //     assembly of primitives. This enable only applies to indexed draws (vkCmdDrawIndexed and vkCmdDrawIndexedIndirect), 
     //     and the special index value is either 0xFFFFFFFF when the indexType parameter of vkCmdBindIndexBuffer 
@@ -148,11 +145,11 @@ public:
     // * viewportState is an optional VkPipelineViewportStateCreateInfo, 
     //   and is ignored if the pipeline has rasterization disabled:
     //
-    //   - viewportCount is the number of viewports used by the pipeline.
-    //   - pViewports is a pointer to an array of VkViewport structures, defining the viewport transforms.
+    //   - viewportCount used by the pipeline.
+    //   - pViewports defining the viewport transforms.
     //     If the viewport state is dynamic, this member is ignored.
-    //   - scissorCount is the number of scissorsand must match the number of viewports.
-    //   - pScissors is a pointer to an array of VkRect2D structures defining the rectangular bounds of the 
+    //   - scissorCount must match the number of viewports.
+    //   - pScissors defining the rectangular bounds of the 
     //     scissor for the corresponding viewport. If the scissor state is dynamic, this member is ignored.
     //
     // * rasterizationState is an optional VkPipelineRasterizationStateCreateInfo:
@@ -163,10 +160,10 @@ public:
     //     Otherwise depth clipping is controlled by the state set in VkPipelineRasterizationDepthClipStateCreateInfoEXT.
     //   - rasterizerDiscardEnable controls whether primitives are discarded immediately before the rasterization stage.
     //   - polygonMode is the triangle rendering mode:
-    //     - VK_POLYGON_MODE_POINT specifies that polygon vertices are drawn as points.
-    //     - VK_POLYGON_MODE_LINE specifies that polygon edges are drawn as line segments.
-    //     - VK_POLYGON_MODE_FILL specifies that polygons are rendered using the polygon rasterization rules.
-    //     - VK_POLYGON_MODE_FILL_RECTANGLE_NV specifies that polygons are rendered using polygon rasterization rules, 
+    //     . VK_POLYGON_MODE_POINT specifies that polygon vertices are drawn as points.
+    //     . VK_POLYGON_MODE_LINE specifies that polygon edges are drawn as line segments.
+    //     . VK_POLYGON_MODE_FILL specifies that polygons are rendered using the polygon rasterization rules.
+    //     . VK_POLYGON_MODE_FILL_RECTANGLE_NV specifies that polygons are rendered using polygon rasterization rules, 
     //       modified to consider a sample within the primitive if the sample location is inside the axis-aligned bounding box 
     //       of the triangle after projection. Note that the barycentric weights used in attribute interpolation can extend 
     //       outside the range[0, 1] when these primitives are shaded.Special treatment is given to a sample position on the 
@@ -176,33 +173,33 @@ public:
     //       Polygons rendered in VK_POLYGON_MODE_FILL_RECTANGLE_NV mode may be clipped by the frustum or by user clip planes.
     //       If clipping is applied, the triangle is culled rather than clipped.
     //   - cullMode is the triangle facing direction used for primitive culling:
-    //     - VK_CULL_MODE_NONE specifies that no triangles are discarded
-    //     - VK_CULL_MODE_FRONT_BIT specifies that front-facing triangles are discarded
-    //     - VK_CULL_MODE_BACK_BIT specifies that back-facing triangles are discarded
-    //     - VK_CULL_MODE_FRONT_AND_BACK specifies that all triangles are discarded.
-    //   - frontFace is a VkFrontFace value specifying the front-facing triangle orientation to be used for culling:
-    //     - VK_FRONT_FACE_COUNTER_CLOCKWISE specifies that a triangle with positive area is considered front-facing.
-    //     - VK_FRONT_FACE_CLOCKWISE specifies that a triangle with negative area is considered front-facing.
+    //     . VK_CULL_MODE_NONE specifies that no triangles are discarded
+    //     . VK_CULL_MODE_FRONT_BIT specifies that front-facing triangles are discarded
+    //     . VK_CULL_MODE_BACK_BIT specifies that back-facing triangles are discarded
+    //     . VK_CULL_MODE_FRONT_AND_BACK specifies that all triangles are discarded.
+    //   - frontFace that specifies the front-facing triangle orientation to be used for culling:
+    //     . VK_FRONT_FACE_COUNTER_CLOCKWISE specifies that a triangle with positive area is considered front-facing.
+    //     . VK_FRONT_FACE_CLOCKWISE specifies that a triangle with negative area is considered front-facing.
     //   - depthBiasEnable controls whether to bias fragment depth values.
-    //   - depthBiasConstantFactor is a scalar factor controlling the constant depth value added to each fragment.
+    //   - depthBiasConstantFactor controlling the constant depth value added to each fragment.
     //   - depthBiasClamp is the maximum(or minimum) depth bias of a fragment.
-    //   - depthBiasSlopeFactor is a scalar factor applied to a fragment’s slope in depth bias calculations.
-    //   - lineWidth is the width of rasterized line segments.
+    //   - depthBiasSlopeFactor applied to a fragment’s slope in depth bias calculations.
+    //   - lineWidth of rasterized line segments.
     //   
     // * multisampleState is an optional VkPipelineMultisampleStateCreateInfo, 
     //   and is ignored if the pipeline has rasterization disabled:
     //
-    //   - rasterizationSamples is a VkSampleCountFlagBits specifying the number of samples used in rasterization:
-    //     - VK_SAMPLE_COUNT_1_BIT specifies an image with one sample per pixel.
-    //     - VK_SAMPLE_COUNT_2_BIT specifies an image with 2 samples per pixel.
-    //     - VK_SAMPLE_COUNT_4_BIT specifies an image with 4 samples per pixel.
-    //     - VK_SAMPLE_COUNT_8_BIT specifies an image with 8 samples per pixel.
-    //     - VK_SAMPLE_COUNT_16_BIT specifies an image with 16 samples per pixel.
-    //     - VK_SAMPLE_COUNT_32_BIT specifies an image with 32 samples per pixel.
-    //     - VK_SAMPLE_COUNT_64_BIT specifies an image with 64 samples per pixel.
-    //   - sampleShadingEnable can be used to enable Sample Shading.
-    //   - minSampleShading specifies a minimum fraction of sample shading if sampleShadingEnable is set to VK_TRUE.
-    //   - pSampleMask is a bitmask of static coverage information that is ANDed with the coverage information 
+    //   - rasterizationSamples specifies the number of samples per pixelused in rasterization:
+    //     . VK_SAMPLE_COUNT_1_BIT
+    //     . VK_SAMPLE_COUNT_2_BIT
+    //     . VK_SAMPLE_COUNT_4_BIT
+    //     . VK_SAMPLE_COUNT_8_BIT
+    //     . VK_SAMPLE_COUNT_16_BIT
+    //     . VK_SAMPLE_COUNT_32_BIT
+    //     . VK_SAMPLE_COUNT_64_BIT
+    //   - sampleShadingEnable
+    //   - minSampleShading fraction if sampleShadingEnable is set to VK_TRUE.
+    //   - pSampleMask of static coverage information that is ANDed with the coverage information 
     //     generated during rasterizationk.
     //   - alphaToCoverageEnable controls whether a temporary coverage value is generated based on the alpha component 
     //     of the fragment’s first color output.
@@ -219,8 +216,8 @@ public:
     //   - depthCompareOp is the comparison operator used in the depth test.
     //   - depthBoundsTestEnable controls whether depth bounds testing is enabled.
     //   - stencilTestEnable controls whether stencil testing is enabled.
-    //   - frontand back control the parameters of the stencil test.
-    //   - minDepthBoundsand maxDepthBounds define the range of values used in the depth bounds test.
+    //   - front and back control the parameters of the stencil test.
+    //   - minDepthBounds and maxDepthBounds define the range of values used in the depth bounds test.
     //
     // * colorBlendState is an optional VkPipelineColorBlendStateCreateInfo, 
     //   and is ignored if the pipeline has rasterization disabled or if the subpass of the render pass of the pipeline 
@@ -228,92 +225,91 @@ public:
     //
     //   - logicOpEnable controls whether to apply Logical Operations.
     //   - logicOp selects which logical operation to apply.
-    //   - attachmentCount is the number of VkPipelineColorBlendAttachmentState elements in pAttachments.
+    //   - attachmentCount in pAttachments.
     //     This value must equal the colorAttachmentCount for the subpass in which this pipeline is used.
-    //   - pAttachments: is a pointer to an array of per target attachment states:
-    //     - blendEnable controls whether blending is enabled for the corresponding color attachment. 
+    //   - pAttachments array of per target attachment states:
+    //     . blendEnable controls whether blending is enabled for the corresponding color attachment. 
     //       If blending is not enabled, the source fragment’s color for that attachment is passed through unmodified.
-    //     - srcColorBlendFactor selects which blend factor is used to determine the source factors(Sr, Sg, Sb).
-    //     - dstColorBlendFactor selects which blend factor is used to determine the destination factors(Dr, Dg, Db).
-    //     - colorBlendOp selects which blend operation is used to calculate the RGB values to write to the color attachment.
-    //     - srcAlphaBlendFactor selects which blend factor is used to determine the source factor Sa.
-    //     - dstAlphaBlendFactor selects which blend factor is used to determine the destination factor Da.
-    //     - alphaBlendOp selects which blend operation is use to calculate the alpha values to write to the color attachment.
-    //     - colorWriteMask is a bitmask of VkColorComponentFlagBits specifying which of the R, G, B, and /or A 
-    //       components are enabled for writing:
-    //       - VK_COLOR_COMPONENT_R_BIT specifies that the R value is written to the color attachment for the appropriate sample. 
+    //     . srcColorBlendFactor selects which blend factor is used to determine the source factors(Sr, Sg, Sb).
+    //     . dstColorBlendFactor selects which blend factor is used to determine the destination factors(Dr, Dg, Db).
+    //     . colorBlendOp selects which blend operation is used to calculate the RGB values to write to the color attachment.
+    //     . srcAlphaBlendFactor selects which blend factor is used to determine the source factor Sa.
+    //     . dstAlphaBlendFactor selects which blend factor is used to determine the destination factor Da.
+    //     . alphaBlendOp selects which blend operation is use to calculate the alpha values to write to the color attachment.
+    //     . colorWriteMask specifies which of the R, G, B, and /or A components are enabled for writing:
+    //       x VK_COLOR_COMPONENT_R_BIT specifies that the R value is written to the color attachment for the appropriate sample. 
     //         Otherwise, the value in memory is unmodified.
-    //       - VK_COLOR_COMPONENT_G_BIT specifies that the G value is written to the color attachment for the appropriate sample.
+    //       x VK_COLOR_COMPONENT_G_BIT specifies that the G value is written to the color attachment for the appropriate sample.
     //         Otherwise, the value in memory is unmodified.
-    //       - VK_COLOR_COMPONENT_B_BIT specifies that the B value is written to the color attachment for the appropriate sample.
+    //       x VK_COLOR_COMPONENT_B_BIT specifies that the B value is written to the color attachment for the appropriate sample.
     //         Otherwise, the value in memory is unmodified.
-    //       - VK_COLOR_COMPONENT_A_BIT specifies that the A value is written to the color attachment for the appropriate sample.
+    //       x VK_COLOR_COMPONENT_A_BIT specifies that the A value is written to the color attachment for the appropriate sample.
     //         Otherwise, the value in memory is unmodified.
-    //   - blendConstants is a pointer to an array of four values used as the R, G, B, and A components 
+    //   - blendConstants used as the R, G, B, and A components 
     //     of the blend constant that are used in blending, depending on the blend factor.
     //
     // * dynamicState is an optional VkPipelineDynamicStateCreateInfo, and is used to indicate which 
-    //   properties of the pipeline state object are dynamicand can be changed independently of the pipeline state.
+    //   properties of the pipeline state object are dynamic and can be changed independently of the pipeline state.
     //   This can be nullptr, which means no state in the pipeline is considered dynamic:
     //
-    //   - dynamicStateCount is the number of elements in the pDynamicStates array.
-    //   - pDynamicStates is a pointer to an array of VkDynamicState values specifying which pieces of 
+    //   - dynamicStateCount in the pDynamicStates array.
+    //   - pDynamicStates array specifies which pieces of 
     //     pipeline state will use the values from dynamic state commands rather than from pipeline state creation info:
-    //     - VK_DYNAMIC_STATE_VIEWPORT specifies that the pViewports state in VkPipelineViewportStateCreateInfo will be 
+    //     . VK_DYNAMIC_STATE_VIEWPORT specifies that the pViewports state in VkPipelineViewportStateCreateInfo will be 
     //       ignored and must be set dynamically with vkCmdSetViewport before any draw commands. 
     //       The number of viewports used by a pipeline is still specified by the viewportCount 
     //       member of VkPipelineViewportStateCreateInfo.
-    //     - VK_DYNAMIC_STATE_SCISSOR specifies that the pScissors state in VkPipelineViewportStateCreateInfo will be ignored 
+    //     . VK_DYNAMIC_STATE_SCISSOR specifies that the pScissors state in VkPipelineViewportStateCreateInfo will be ignored 
     //       and must be set dynamically with vkCmdSetScissor before any draw commands.The number of scissor rectangles used 
     //       by a pipeline is still specified by the scissorCount member of VkPipelineViewportStateCreateInfo.
-    //     - VK_DYNAMIC_STATE_LINE_WIDTH specifies that the lineWidth state in VkPipelineRasterizationStateCreateInfo will be ignored
+    //     . VK_DYNAMIC_STATE_LINE_WIDTH specifies that the lineWidth state in VkPipelineRasterizationStateCreateInfo will be ignored
     //       and must be set dynamically with vkCmdSetLineWidth before any draw commands that generate line primitives for the rasterizer.
-    //     - VK_DYNAMIC_STATE_DEPTH_BIAS specifies that the depthBiasConstantFactor, depthBiasClampand depthBiasSlopeFactor states 
+    //     . VK_DYNAMIC_STATE_DEPTH_BIAS specifies that the depthBiasConstantFactor, depthBiasClampand depthBiasSlopeFactor states 
     //       in VkPipelineRasterizationStateCreateInfo will be ignoredand must be set dynamically with vkCmdSetDepthBias before 
     //       any draws are performed with depthBiasEnable in VkPipelineRasterizationStateCreateInfo set to VK_TRUE.
-    //     - VK_DYNAMIC_STATE_BLEND_CONSTANTS specifies that the blendConstants state in VkPipelineColorBlendStateCreateInfo 
+    //     . VK_DYNAMIC_STATE_BLEND_CONSTANTS specifies that the blendConstants state in VkPipelineColorBlendStateCreateInfo 
     //       will be ignored and must be set dynamically with vkCmdSetBlendConstants before any draws are performed with 
     //       a pipeline state with VkPipelineColorBlendAttachmentState member blendEnable set to VK_TRUEand any of the blend 
     //       functions using a constant blend color.
-    //     - VK_DYNAMIC_STATE_DEPTH_BOUNDS specifies that the minDepthBoundsand maxDepthBounds states of 
+    //     . VK_DYNAMIC_STATE_DEPTH_BOUNDS specifies that the minDepthBoundsand maxDepthBounds states of 
     //       VkPipelineDepthStencilStateCreateInfo will be ignoredand must be set dynamically with vkCmdSetDepthBounds before 
     //       any draws are performed with a pipeline state with VkPipelineDepthStencilStateCreateInfo member 
     //       depthBoundsTestEnable set to VK_TRUE.
-    //     - VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK specifies that the compareMask state in VkPipelineDepthStencilStateCreateInfo 
+    //     . VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK specifies that the compareMask state in VkPipelineDepthStencilStateCreateInfo 
     //       for both front and back will be ignored and must be set dynamically with vkCmdSetStencilCompareMask before 
     //       any draws are performed with a pipeline state with VkPipelineDepthStencilStateCreateInfo 
     //       member stencilTestEnable set to VK_TRUE
-    //     - VK_DYNAMIC_STATE_STENCIL_WRITE_MASK specifies that the writeMask state in VkPipelineDepthStencilStateCreateInfo 
+    //     . VK_DYNAMIC_STATE_STENCIL_WRITE_MASK specifies that the writeMask state in VkPipelineDepthStencilStateCreateInfo 
     //       for both front and back will be ignored and must be set dynamically with vkCmdSetStencilWriteMask before 
     //       any draws are performed with a pipeline state with VkPipelineDepthStencilStateCreateInfo 
     //       member stencilTestEnable set to VK_TRUE
-    //     - VK_DYNAMIC_STATE_STENCIL_REFERENCE specifies that the reference state in VkPipelineDepthStencilStateCreateInfo 
+    //     . VK_DYNAMIC_STATE_STENCIL_REFERENCE specifies that the reference state in VkPipelineDepthStencilStateCreateInfo 
     //       for both front and back will be ignored and must be set dynamically with vkCmdSetStencilReference before 
     //       any draws are performed with a pipeline state with VkPipelineDepthStencilStateCreateInfo 
     //       member stencilTestEnable set to VK_TRUE
-    //     - VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV specifies that the pViewportScalings state in 
+    //     . VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV specifies that the pViewportScalings state in 
     //       VkPipelineViewportWScalingStateCreateInfoNV will be ignored and must be set dynamically with vkCmdSetViewportWScalingNV 
     //       before any draws are performed with a pipeline state with VkPipelineViewportWScalingStateCreateInfoNV 
     //       member viewportScalingEnable set to VK_TRUE
-    //     - VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT specifies that the pDiscardRectangles state in 
+    //     . VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT specifies that the pDiscardRectangles state in 
     //       VkPipelineDiscardRectangleStateCreateInfoEXT will be ignored and must be set dynamically with vkCmdSetDiscardRectangleEXT 
     //       before any draw or clear commands. The VkDiscardRectangleModeEXTand the number of active discard rectangles is still 
     //       specified by the discardRectangleModeand discardRectangleCount members of VkPipelineDiscardRectangleStateCreateInfoEXT.
-    //     - VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT specifies that the sampleLocationsInfo state in 
+    //     . VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT specifies that the sampleLocationsInfo state in 
     //       VkPipelineSampleLocationsStateCreateInfoEXT will be ignored and must be set dynamically with 
     //       vkCmdSetSampleLocationsEXT before any draw or clear commands.Enabling custom sample locations is 
     //       still indicated by the sampleLocationsEnable member of VkPipelineSampleLocationsStateCreateInfoEXT.
-    //     - VK_DYNAMIC_STATE_EXCLUSIVE_SCISSOR_NV specifies that the pExclusiveScissors state in 
+    //     . VK_DYNAMIC_STATE_EXCLUSIVE_SCISSOR_NV specifies that the pExclusiveScissors state in 
     //       VkPipelineViewportExclusiveScissorStateCreateInfoNV will be ignored and must be set dynamically with 
     //       vkCmdSetExclusiveScissorNV before any draw commands.The number of exclusive scissor rectangles used by 
     //       a pipeline is still specified by the exclusiveScissorCount member of VkPipelineViewportExclusiveScissorStateCreateInfoNV.
-    //     - VK_DYNAMIC_STATE_VIEWPORT_SHADING_RATE_PALETTE_NV specifies that the pShadingRatePalettes state in 
+    //     . VK_DYNAMIC_STATE_VIEWPORT_SHADING_RATE_PALETTE_NV specifies that the pShadingRatePalettes state in 
     //       VkPipelineViewportShadingRateImageStateCreateInfoNV will be ignored and must be set dynamically with 
     //       vkCmdSetViewportShadingRatePaletteNV before any draw commands.
-    //     - VK_DYNAMIC_STATE_VIEWPORT_COARSE_SAMPLE_ORDER_NV specifies that the coarse sample order state in 
+    //     . VK_DYNAMIC_STATE_VIEWPORT_COARSE_SAMPLE_ORDER_NV specifies that the coarse sample order state in 
     //       VkPipelineViewportCoarseSampleOrderStateCreateInfoNV will be ignored and must be set dynamically with 
     //       vkCmdSetCoarseSampleOrderNV before any draw commands.
-    //     - VK_DYNAMIC_STATE_LINE_STIPPLE_EXT specifies that the lineStippleFactorand lineStipplePattern state 
+    //     . VK_DYNAMIC_STATE_LINE_STIPPLE_EXT specifies that the lineStippleFactorand lineStipplePattern state 
     //       in VkPipelineRasterizationLineStateCreateInfoEXT will be ignored and must be set dynamically with 
     //       vkCmdSetLineStippleEXT before any draws are performed with a pipeline state with 
     //       VkPipelineRasterizationLineStateCreateInfoEXT member stippledLineEnable set to VK_TRUE. 
@@ -321,7 +317,7 @@ public:
     // * tessellationState is an optional VkPipelineTessellationStateCreateInfo structure, 
     //   and is ignored if the pipeline does not include a tessellation control shader stage
     //   and tessellation evaluation shader stage:
-    //   - patchControlPoints number of control points per patch. 
+    //   - patchControlPoints
     GraphicsPipeline(const LogicalDevice& logicalDevice,
                      const RenderPass& renderPass,
                      const uint32_t subPassIndex,
