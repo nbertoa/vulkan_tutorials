@@ -33,27 +33,6 @@ public:
     // Disable stencil test
     static void 
     defaultDepthStencilState(VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo);
-
-    // Color blending:
-    // VkPipelineColorBlendAttachmentState:
-    // - blendEnable controls whether blending is enabled for the corresponding color attachment.
-    //   If blending is not enabled, the source fragment’s color for that attachment is passed through unmodified.
-    // - srcColorBlendFactor selects which blend factor is used to determine the source factors(Sr, Sg, Sb).
-    // - dstColorBlendFactor selects which blend factor is used to determine the destination factors(Dr, Dg, Db).
-    // - colorBlendOp selects which blend operation is used to calculate the RGB values to write to the color attachment.
-    // - srcAlphaBlendFactor selects which blend factor is used to determine the source factor Sa.
-    // - dstAlphaBlendFactor selects which blend factor is used to determine the destination factor Da.
-    // - alphaBlendOp selects which blend operation is use to calculate the alpha values to write to the color attachment.
-    // - colorWriteMask is a bitmask of VkColorComponentFlagBits specifying which of the R, G, B, and /or A components 
-    //   are enabled for writing.
-    
-    static void
-    colorBlendState(const VkPipelineColorBlendAttachmentState& colorBlendAttachmentState,
-                    VkPipelineColorBlendStateCreateInfo& colorBlendStateCreateInfo);
-
-    static void
-    colorBlendState(const std::vector<VkPipelineColorBlendAttachmentState>& colorBlendAttachmentStates,
-                    VkPipelineColorBlendStateCreateInfo& colorBlendStateCreateInfo);
 };
 }
 
