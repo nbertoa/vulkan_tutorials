@@ -106,7 +106,7 @@ public:
     // - pScissors defining the rectangular bounds of the scissor for the corresponding viewport. 
     //   If the scissor state is dynamic, this member is ignored.
     VkPipelineViewportStateCreateInfo 
-    pipelineViewportCreateInfo() const;
+    viewportState() const;
 
     VkFormat 
     imageFormat() const;

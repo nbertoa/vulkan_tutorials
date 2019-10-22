@@ -5,8 +5,9 @@
 #include "Utils/LogicalDevice.h"
 #include "Utils/PipelineStateFactory.h"
 #include "Utils/RenderPass.h"
-#include "Utils///ShaderModule.h"
+#include "Utils/ShaderModule.h"
 #include "Utils/SwapChain.h"
+#include "Utils/pipeline_stage/ColorBlendAttachmentState.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
@@ -38,32 +39,23 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
            std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
            PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
 
-           std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescription;
-           PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescription);
+           std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+           PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
 
-           VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo;
-           PipelineStateFactory::vertexInputState(vertexInputBindingDescriptions,
-                                                  vertexInputAttributeDescription,
-                                                  vertexInputStateCreateInfo);
+           const VertexInputState vertexInputState(vertexInputBindingDescriptions,
+                                                   vertexInputAttributeDescriptions);
 
-           VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo;
-           PipelineStateFactory::createInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                                                          VK_FALSE,
-                                                          inputAssemblyStateCreateInfo);
+           InputAssemblyState inputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+                                                 VK_FALSE);
 
-           VkPipelineViewportStateCreateInfo viewportCreateInfo = swapChain.pipelineViewportCreateInfo();
+           VkPipelineViewportStateCreateInfo viewportCreateInfo = swapChain.viewportState();
 
-           VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo;
-           PipelineStateFactory::defaultRasterizationState(rasterizationStateCreateInfo);
+           const RasterizationState rasterizationState;
 
-           VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo;
-           PipelineStateFactory::disableMultisampleState(multisampleStateCreateInfo);
+           const MultisampleState multisampleState;
 
-           VkPipelineColorBlendAttachmentState colorBlendAttachmentState;
-           PipelineStateFactory::enableColorBlendAttachmentState(colorBlendAttachmentState);
-
-           VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo;
-           PipelineStateFactory::colorBlendState(colorBlendAttachmentState, colorBlendStateCreateInfo);
+           const ColorBlendAttachmentState colorBlendAttachmentState;
+           const ColorBlendState colorBlendState(colorBlendAttachmentState);
 
            const ShaderModule vertexShaderModule(logicalDevice,
                                                  "../../QuadWithUniformBuffer/resources/shaders/vert.spv",
@@ -75,8 +67,8 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
 
            std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos =
            {
-               vertexShaderModule.pipelineShaderStageCreateInfo(),
-               fragmentShaderModule.pipelineShaderStageCreateInfo(),
+               vertexShaderModule.shaderStage(),
+               fragmentShaderModule.shaderStage(),
            };
 
            std::unique_ptr<PipelineLayout> pipelineLayout(createPipelineLayout(logicalDevice));
@@ -85,13 +77,13 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
                                        0,
                                        pipelineLayout,
                                        shaderStageCreateInfos,
-                                       &vertexInputStateCreateInfo,
-                                       &inputAssemblyStateCreateInfo,
+                                       &colorBlendState,
+                                       &inputAssemblyState,
+                                       &multisampleState,
+                                       &rasterizationState,
+                                       &vertexInputState,
                                        &viewportCreateInfo,
-                                       &rasterizationStateCreateInfo,
-                                       &multisampleStateCreateInfo,
                                        nullptr,
-                                       &colorBlendStateCreateInfo,
                                        nullptr,
                                        nullptr);
     };

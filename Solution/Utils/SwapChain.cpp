@@ -125,7 +125,7 @@ SwapChain::scissorRect() const {
 }
 
 VkPipelineViewportStateCreateInfo 
-SwapChain::pipelineViewportCreateInfo() const {
+SwapChain::viewportState() const {
     assert(mSwapChain != VK_NULL_HANDLE);
 
     VkPipelineViewportStateCreateInfo createInfo  = {};

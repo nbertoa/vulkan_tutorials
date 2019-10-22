@@ -32,7 +32,7 @@ ShaderModule::ShaderModule(ShaderModule&& other) noexcept
 }
 
 VkPipelineShaderStageCreateInfo 
-ShaderModule::pipelineShaderStageCreateInfo() const {
+ShaderModule::shaderStage() const {
     assert(mShaderModule != VK_NULL_HANDLE);
 
     VkPipelineShaderStageCreateInfo createInfo = {};

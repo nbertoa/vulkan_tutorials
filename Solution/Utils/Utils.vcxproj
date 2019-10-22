@@ -160,6 +160,12 @@
     <ClCompile Include="PhysicalDeviceData.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
     <ClCompile Include="PipelineStateFactory.cpp" />
+    <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp" />
+    <ClCompile Include="pipeline_stage\ColorBlendState.cpp" />
+    <ClCompile Include="pipeline_stage\InputAssemblyState.cpp" />
+    <ClCompile Include="pipeline_stage\MultisampleState.cpp" />
+    <ClCompile Include="pipeline_stage\VertexInputState.cpp" />
+    <ClCompile Include="pipeline_stage\RasterizationState.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Semaphores.cpp" />
@@ -194,6 +200,12 @@
     <ClInclude Include="PhysicalDeviceData.h" />
     <ClInclude Include="PipelineLayout.h" />
     <ClInclude Include="PipelineStateFactory.h" />
+    <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />
+    <ClInclude Include="pipeline_stage\ColorBlendState.h" />
+    <ClInclude Include="pipeline_stage\InputAssemblyState.h" />
+    <ClInclude Include="pipeline_stage\MultisampleState.h" />
+    <ClInclude Include="pipeline_stage\VertexInputState.h" />
+    <ClInclude Include="pipeline_stage\RasterizationState.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Semaphores.h" />

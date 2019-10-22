@@ -33,6 +33,24 @@
     <ClCompile Include="DescriptorSets.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="PhysicalDeviceData.cpp" />
+    <ClCompile Include="pipeline_stage\VertexInputState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\InputAssemblyState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\RasterizationState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\MultisampleState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\ColorBlendState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -69,10 +87,31 @@
     <ClInclude Include="DescriptorSets.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="PhysicalDeviceData.h" />
+    <ClInclude Include="pipeline_stage\VertexInputState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\InputAssemblyState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\RasterizationState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\MultisampleState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\ColorBlendState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
       <UniqueIdentifier>{607ff5e5-1de1-411c-830d-51e93f91f22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline_stage">
+      <UniqueIdentifier>{41d2809e-7e83-4cb5-bec5-3437e46d83de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
