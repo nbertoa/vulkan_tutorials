@@ -9,12 +9,16 @@
 namespace vk {
 ShaderModule::ShaderModule(const LogicalDevice& logicalDevice,
                            const std::string& shaderByteCodePath,
-                           const VkShaderStageFlagBits shaderStageFlag)
+                           const VkShaderStageFlagBits shaderStageFlag,
+                           const char* entryPointName)
     : mLogicalDevice(logicalDevice)
     , mShaderStageFlag(shaderStageFlag)
     , mShaderByteCodePath(shaderByteCodePath)
     , mShaderModule(createShaderModule())
+    , mEntryPointName(entryPointName)
 {
+    assert(shaderByteCodePath.empty() == false);
+    assert(entryPointName != nullptr);
 }
 
 ShaderModule::~ShaderModule() {
@@ -31,19 +35,6 @@ ShaderModule::ShaderModule(ShaderModule&& other) noexcept
     other.mShaderModule = VK_NULL_HANDLE;
 }
 
-VkPipelineShaderStageCreateInfo 
-ShaderModule::shaderStage() const {
-    assert(mShaderModule != VK_NULL_HANDLE);
-
-    VkPipelineShaderStageCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    createInfo.stage = mShaderStageFlag;
-    createInfo.module = mShaderModule;
-    createInfo.pName = "main";
-
-    return createInfo;
-}
-
 const std::string& 
 ShaderModule::shaderByteCodePath() const {
     assert(mShaderModule != VK_NULL_HANDLE);
@@ -54,6 +45,18 @@ VkShaderStageFlagBits
 ShaderModule::shaderStageFlag() const {
     assert(mShaderModule != VK_NULL_HANDLE);
     return mShaderStageFlag;
+}
+
+VkShaderModule
+ShaderModule::vkShaderModule() const {
+    assert(mShaderModule != VK_NULL_HANDLE);
+    return mShaderModule;
+}
+
+const char*
+ShaderModule::entryPointName() const {
+    assert(mShaderModule != VK_NULL_HANDLE);
+    return mEntryPointName;
 }
 
 std::vector<char>

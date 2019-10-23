@@ -1,7 +1,6 @@
 #ifndef UTILS_PIPELINE_STAGE_COLOR_BLEND_ATTACHMENT_STATE
 #define UTILS_PIPELINE_STAGE_COLOR_BLEND_ATTACHMENT_STATE
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {

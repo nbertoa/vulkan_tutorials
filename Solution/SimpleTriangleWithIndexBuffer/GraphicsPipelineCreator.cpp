@@ -2,11 +2,20 @@
 
 #include "Utils/GraphicsPipeline.h"
 #include "Utils/LogicalDevice.h"
-#include "Utils/PipelineStateFactory.h"
 #include "Utils/RenderPass.h"
-#include "Utils///ShaderModule.h"
+#include "Utils/ShaderModule.h"
 #include "Utils/SwapChain.h"
 #include "Utils/pipeline_stage/ColorBlendAttachmentState.h"
+#include "Utils/pipeline_stage/ColorBlendState.h"
+#include "Utils/pipeline_stage/DepthStencilState.h"
+#include "Utils/pipeline_stage/DynamicState.h"
+#include "Utils/pipeline_stage/InputAssemblyState.h"
+#include "Utils/pipeline_stage/MultisampleState.h"
+#include "Utils/pipeline_stage/RasterizationState.h"
+#include "Utils/pipeline_stage/ShaderStages.h"
+#include "Utils/pipeline_stage/TessellationState.h"
+#include "Utils/pipeline_stage/VertexInputState.h"
+#include "Utils/pipeline_stage/ViewportState.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
@@ -28,7 +37,8 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
            InputAssemblyState inputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                                  VK_FALSE);
 
-           VkPipelineViewportStateCreateInfo viewportCreateInfo = swapChain.viewportState();
+           const ViewportState viewportState(swapChain.viewport(),
+                                             swapChain.scissorRect());
 
            const RasterizationState rasterizationState;
 
@@ -45,26 +55,24 @@ GraphicsPipelineCreator graphicsPipelineCreator() {
                                                    "../../SimpleTriangleWithIndexBuffer/resources/shaders/frag.spv",
                                                    VK_SHADER_STAGE_FRAGMENT_BIT);
 
-           std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos =
-           {
-               vertexShaderModule.shaderStage(),
-               fragmentShaderModule.shaderStage(),
-           };
+           ShaderStages shaderStages;
+           shaderStages.addShaderModule(vertexShaderModule);
+           shaderStages.addShaderModule(fragmentShaderModule);
 
            std::unique_ptr<PipelineLayout> pipelineLayout(new PipelineLayout(logicalDevice));
            return new GraphicsPipeline(logicalDevice,
                                        renderPass,
                                        0,
                                        pipelineLayout,
-                                       shaderStageCreateInfos,
                                        &colorBlendState,
+                                       nullptr, // depth stencil state
+                                       nullptr, // dynamic state
                                        &inputAssemblyState,
                                        &multisampleState,
                                        &rasterizationState,
-                                       &vertexInputState,                                       
-                                       &viewportCreateInfo,                                                              
-                                       nullptr,                                       
-                                       nullptr,
-                                       nullptr);
+                                       shaderStages,
+                                       nullptr, // tessellation state   
+                                       &vertexInputState,
+                                       &viewportState);
     };
 }

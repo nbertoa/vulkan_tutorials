@@ -17,7 +17,6 @@
     <ClCompile Include="LogicalDevice.cpp" />
     <ClCompile Include="PhysicalDevice.cpp" />
     <ClCompile Include="PipelineLayout.cpp" />
-    <ClCompile Include="PipelineStateFactory.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Semaphores.cpp" />
@@ -51,6 +50,21 @@
     <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
+    <ClCompile Include="pipeline_stage\DepthStencilState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\TessellationState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\DynamicState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\ShaderStages.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_stage\ViewportState.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -71,7 +85,6 @@
     <ClInclude Include="LogicalDevice.h" />
     <ClInclude Include="PhysicalDevice.h" />
     <ClInclude Include="PipelineLayout.h" />
-    <ClInclude Include="PipelineStateFactory.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Semaphores.h" />
@@ -103,6 +116,21 @@
       <Filter>pipeline_stage</Filter>
     </ClInclude>
     <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\DepthStencilState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\TessellationState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\DynamicState.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\ShaderStages.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_stage\ViewportState.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
   </ItemGroup>

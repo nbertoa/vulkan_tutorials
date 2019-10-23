@@ -124,20 +124,6 @@ SwapChain::scissorRect() const {
     return mScissorRect;
 }
 
-VkPipelineViewportStateCreateInfo 
-SwapChain::viewportState() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
-
-    VkPipelineViewportStateCreateInfo createInfo  = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    createInfo.viewportCount = 1;
-    createInfo.pViewports = &mViewport;
-    createInfo.scissorCount = 1;
-    createInfo.pScissors = &mScissorRect;
-
-    return createInfo;
-}
-
 VkFormat
 SwapChain::imageFormat() const {
     assert(mSwapChain != VK_NULL_HANDLE);

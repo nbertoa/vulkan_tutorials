@@ -5,22 +5,32 @@
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
 #include "RenderPass.h"
+#include "pipeline_stage/ColorBlendState.h"
+#include "pipeline_stage/DepthStencilState.h"
+#include "pipeline_stage/DynamicState.h"
+#include "pipeline_stage/InputAssemblyState.h"
+#include "pipeline_stage/MultisampleState.h"
+#include "pipeline_stage/RasterizationState.h"
+#include "pipeline_stage/ShaderStages.h"
+#include "pipeline_stage/TessellationState.h"
+#include "pipeline_stage/VertexInputState.h"
+#include "pipeline_stage/ViewportState.h"
 
 namespace vk {
 GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
                                    const RenderPass& renderPass,
                                    const uint32_t subPassIndex,
                                    std::unique_ptr<PipelineLayout>& pipelineLayout,
-                                   const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages,
                                    const ColorBlendState* colorBlendState,
+                                   const DepthStencilState* depthStencilState,
+                                   const DynamicState* dynamicState,
                                    const InputAssemblyState* inputAssemblyState,
                                    const MultisampleState* multisampleState,
                                    const RasterizationState* rasterizationState,
+                                   const ShaderStages& shaderStages,
+                                   const TessellationState* tessellationState,
                                    const VertexInputState* vertexInputState,
-                                   const VkPipelineViewportStateCreateInfo* viewportState,
-                                   const VkPipelineDepthStencilStateCreateInfo* depthStencilState,
-                                   const VkPipelineDynamicStateCreateInfo* dynamicState,
-                                   const VkPipelineTessellationStateCreateInfo* tessellationState)
+                                   const ViewportState* viewportState)
     : mLogicalDevice(logicalDevice)
     , mPipelineLayout(std::move(pipelineLayout))
 {
@@ -28,17 +38,17 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
 
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    createInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
-    createInfo.pStages = shaderStages.empty() ? nullptr : shaderStages.data();
+    createInfo.stageCount = static_cast<uint32_t>(shaderStages.vkStages().size());
+    createInfo.pStages = shaderStages.vkStages().empty() ? nullptr : shaderStages.vkStages().data();
     createInfo.pVertexInputState = vertexInputState != nullptr ? &vertexInputState->vkState() : nullptr;
     createInfo.pInputAssemblyState = inputAssemblyState != nullptr ? &inputAssemblyState->vkState() : nullptr;
-    createInfo.pViewportState = viewportState;
+    createInfo.pViewportState = viewportState != nullptr ? &viewportState->vkState() : nullptr;
     createInfo.pRasterizationState = rasterizationState != nullptr ? &rasterizationState->vkState() : nullptr;
     createInfo.pMultisampleState = multisampleState != nullptr ? &multisampleState->vkState() : nullptr;
-    createInfo.pDepthStencilState = depthStencilState;
+    createInfo.pDepthStencilState = depthStencilState != nullptr ? &depthStencilState->vkState() : nullptr;
     createInfo.pColorBlendState = colorBlendState != nullptr ? &colorBlendState->vkState() : nullptr;
-    createInfo.pDynamicState = dynamicState;
-    createInfo.pTessellationState = tessellationState;
+    createInfo.pDynamicState = dynamicState != nullptr ? &dynamicState->vkState() : nullptr;
+    createInfo.pTessellationState = tessellationState != nullptr ? &tessellationState->vkState() : nullptr;
     createInfo.layout = mPipelineLayout->pipelineLayout();
     createInfo.renderPass = renderPass.vkRenderPass();
     createInfo.subpass = subPassIndex;

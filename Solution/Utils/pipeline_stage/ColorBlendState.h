@@ -1,7 +1,6 @@
 #ifndef UTILS_PIPELINE_STAGE_COLOR_BLEND_STATE
 #define UTILS_PIPELINE_STAGE_COLOR_BLEND_STATE
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
@@ -12,7 +11,7 @@ class ColorBlendAttachmentState;
 //
 // After a fragment shader has returned a color, it needs to be combined with 
 // the color that is already in the framebuffer.
-// This transformation is known as color blendingand there are two ways to do it:
+// This transformation is known as color blending and there are two ways to do it:
 // - Mix the old and new value to produce a final color
 // - Combine the oldand new value using a bitwise operation
 //

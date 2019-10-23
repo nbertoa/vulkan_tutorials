@@ -1,7 +1,6 @@
 #ifndef UTILS_PIPELINE_STAGE_MULTISAMPLE_STATE
 #define UTILS_PIPELINE_STAGE_MULTISAMPLE_STATE
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {

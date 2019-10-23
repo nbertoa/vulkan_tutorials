@@ -1,7 +1,6 @@
 #ifndef UTILS_PIPELINE_STAGE_INPUT_ASSEMBLY_STATE
 #define UTILS_PIPELINE_STAGE_INPUT_ASSEMBLY_STATE
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {

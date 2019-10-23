@@ -98,16 +98,6 @@ public:
     const VkRect2D& 
     scissorRect() const;
 
-    // VkPipelineViewportStateCreateInfo:
-    // - viewportCount used by the pipeline.
-    // - pViewports defining the viewport transforms.
-    //   If the viewport state is dynamic, this member is ignored.
-    // - scissorCount that must match the number of viewports.
-    // - pScissors defining the rectangular bounds of the scissor for the corresponding viewport. 
-    //   If the scissor state is dynamic, this member is ignored.
-    VkPipelineViewportStateCreateInfo 
-    viewportState() const;
-
     VkFormat 
     imageFormat() const;
 
