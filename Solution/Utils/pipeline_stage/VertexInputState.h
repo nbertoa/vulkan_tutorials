@@ -37,14 +37,19 @@ public:
     //   - binding number which this attribute takes its data from.
     //   - format is the size and type of the vertex attribute data.
     //   - offset in bytes of this attribute relative to the start of an element in the vertex input binding. 
-    VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = std::vector<VkVertexInputBindingDescription>(),
-                     const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = std::vector<VkVertexInputAttributeDescription>());
+    VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = {},
+                     const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = {});
+    VertexInputState(const VertexInputState& state);
+    const VertexInputState& operator=(const VertexInputState& state);
 
     const VkPipelineVertexInputStateCreateInfo& 
     vkState() const;
 
 private:
     VkPipelineVertexInputStateCreateInfo mCreateInfo = {};
+
+    std::vector<VkVertexInputBindingDescription> mBindingDescriptions;
+    std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 };
 }
 

@@ -27,6 +27,7 @@ SystemManager::SystemManager(const uint32_t windowWidth,
                                            VK_COMMAND_POOL_CREATE_TRANSIENT_BIT))
     , mPresentationCommandPool(new CommandPool(*mLogicalDevice, 
                                                mPhysicalDevice->presentationSupportQueueFamilyIndex()))
+    , mShaderModuleSystem(*mLogicalDevice)
 {
 }
 
@@ -82,6 +83,11 @@ const CommandPool&
 SystemManager::presentationCommandPool() const {
     assert(mPresentationCommandPool != nullptr);
     return *mPresentationCommandPool;
+}
+
+ShaderModuleSystem&
+SystemManager::shaderModuleSystem() {
+    return mShaderModuleSystem;
 }
 
 }

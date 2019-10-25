@@ -8,16 +8,12 @@ namespace vk {
 BaseApp::BaseApp(const uint32_t windowWidth,
                  const uint32_t windowHeight,
                  const char* windowTitle,
-                 const vk::RenderPassCreator& renderPassCreator,
-                 const vk::GraphicsPipelineCreator& graphicsPipelineCreator)
+                 const vk::RenderPassCreator& renderPassCreator)
     : mSystemManager(windowWidth,
                      windowHeight,
                      windowTitle)
     , mRenderPass(renderPassCreator(mSystemManager.logicalDevice(),
                                     mSystemManager.swapChain()))
-    , mGraphicsPipeline(graphicsPipelineCreator(mSystemManager.logicalDevice(),
-                                                mSystemManager.swapChain(),
-                                                *mRenderPass))
     , mFrameBuffers(new FrameBuffers(mSystemManager.logicalDevice(),
                                      *mRenderPass,
                                      mSystemManager.swapChain().imageViews(),

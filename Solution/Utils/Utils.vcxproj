@@ -165,6 +165,7 @@
     <ClCompile Include="pipeline_stage\DynamicState.cpp" />
     <ClCompile Include="pipeline_stage\InputAssemblyState.cpp" />
     <ClCompile Include="pipeline_stage\MultisampleState.cpp" />
+    <ClCompile Include="pipeline_stage\PipelineStates.cpp" />
     <ClCompile Include="pipeline_stage\ShaderStages.cpp" />
     <ClCompile Include="pipeline_stage\TessellationState.cpp" />
     <ClCompile Include="pipeline_stage\VertexInputState.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="SystemManager.cpp" />
+    <ClCompile Include="system\ShaderModuleSystem.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -209,6 +211,7 @@
     <ClInclude Include="pipeline_stage\DynamicState.h" />
     <ClInclude Include="pipeline_stage\InputAssemblyState.h" />
     <ClInclude Include="pipeline_stage\MultisampleState.h" />
+    <ClInclude Include="pipeline_stage\PipelineStates.h" />
     <ClInclude Include="pipeline_stage\ShaderStages.h" />
     <ClInclude Include="pipeline_stage\TessellationState.h" />
     <ClInclude Include="pipeline_stage\VertexInputState.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="system\ShaderModuleSystem.h" />
     <ClInclude Include="vertex\PosColorVertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

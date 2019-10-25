@@ -7,13 +7,14 @@
 
 namespace vk {
 DescriptorPool::DescriptorPool(const LogicalDevice& logicalDevice,
-                               const VkDescriptorPoolSize& descriptorPoolSize,
+                               const VkDescriptorType descriptorType,
+                               const uint32_t descriptorCount,
                                const uint32_t maxDescriptorSetCount,
                                const VkDescriptorPoolCreateFlags flags)
     : mLogicalDevice(logicalDevice)
 {
     std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
-    descriptorPoolSizes.push_back(descriptorPoolSize);
+    descriptorPoolSizes.emplace_back(VkDescriptorPoolSize{descriptorType, descriptorCount});
     createPool(descriptorPoolSizes,
                maxDescriptorSetCount,
                flags);

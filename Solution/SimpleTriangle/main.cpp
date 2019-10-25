@@ -1,13 +1,11 @@
-#include "SimpleTriangleApp.h"
-#include "GraphicsPipelineCreator.h"
+#include "App.h"
 #include "RenderPassCreator.h"
 
 int main() {
-    SimpleTriangleApp app(800,
-                          600,
-                          "Simple Triangle App",
-                          renderPassCreator(),
-                          graphicsPipelineCreator());
+    App app(800,
+            600,
+            "Simple Triangle App",
+            renderPassCreator());
 
     app.run();
 }

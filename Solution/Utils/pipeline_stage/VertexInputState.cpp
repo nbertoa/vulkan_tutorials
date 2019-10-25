@@ -2,16 +2,43 @@
 
 namespace vk {
 VertexInputState::VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions,
-                                   const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions) {
+                                   const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions) 
+    : mBindingDescriptions(bindingDescriptions)
+    , mAttributeDescriptions(attributeDescriptions)
+{
     mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    mCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
-    mCreateInfo.pVertexBindingDescriptions = bindingDescriptions.empty() ? nullptr : bindingDescriptions.data();
-    mCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-    mCreateInfo.pVertexAttributeDescriptions = attributeDescriptions.empty() ? nullptr : attributeDescriptions.data();
+    mCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(mBindingDescriptions.size());
+    mCreateInfo.pVertexBindingDescriptions = mBindingDescriptions.empty() ? nullptr : mBindingDescriptions.data();
+    mCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size());
+    mCreateInfo.pVertexAttributeDescriptions = mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
 }
 
 const VkPipelineVertexInputStateCreateInfo& 
 VertexInputState::vkState() const {
     return mCreateInfo;
+}
+
+VertexInputState::VertexInputState(const VertexInputState& state)
+    : mCreateInfo(state.mCreateInfo)
+    , mBindingDescriptions(state.mBindingDescriptions)
+    , mAttributeDescriptions (state.mAttributeDescriptions){
+    mCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(mBindingDescriptions.size());
+    mCreateInfo.pVertexBindingDescriptions = mBindingDescriptions.empty() ? nullptr : mBindingDescriptions.data();
+    mCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size());
+    mCreateInfo.pVertexAttributeDescriptions = mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
+}
+
+const VertexInputState& VertexInputState::operator=(const VertexInputState& state) {
+    if (this == &state) {
+        return *this;
+    }
+
+    mCreateInfo = state.mCreateInfo;
+    mBindingDescriptions = state.mBindingDescriptions;
+    mAttributeDescriptions = state.mAttributeDescriptions;
+    mCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(mBindingDescriptions.size());
+    mCreateInfo.pVertexBindingDescriptions = mBindingDescriptions.empty() ? nullptr : mBindingDescriptions.data();
+    mCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size());
+    mCreateInfo.pVertexAttributeDescriptions = mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
 }
 }

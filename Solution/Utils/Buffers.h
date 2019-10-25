@@ -20,7 +20,7 @@ public:
             const VkBufferUsageFlags usageFlags,            
             const VkMemoryPropertyFlags memoryPropertyFlags,
             const VkSharingMode sharingMode,
-            const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
+            const std::vector<uint32_t>& queueFamilyIndices = {});
 
     // Read Buffer constructor to understand this.
     Buffers(const LogicalDevice& logicalDevice,
@@ -29,7 +29,7 @@ public:
             const VkBufferUsageFlags usageFlags,
             const DeviceMemory& deviceMemory,
             const VkSharingMode sharingMode,
-            const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
+            const std::vector<uint32_t>& queueFamilyIndices = {});
 
     Buffers(Buffers&& other) noexcept;
     Buffers(const Buffers&) = delete;

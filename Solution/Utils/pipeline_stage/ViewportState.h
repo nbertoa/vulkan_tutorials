@@ -28,14 +28,19 @@ public:
     //   - offset of the rectangle.
     //   - extent of the rectangle.
     //    
-    ViewportState(const VkViewport& viewport,
-                  const VkRect2D& scissorRectangle);
+    ViewportState(const VkViewport& viewport = {},
+                  const VkRect2D& scissorRectangle = {});
+    ViewportState(const ViewportState& state);
+    const ViewportState& operator=(const ViewportState& state);
     
     const VkPipelineViewportStateCreateInfo&
     vkState() const;
     
 private:
     VkPipelineViewportStateCreateInfo mCreateInfo = {};
+
+    VkViewport mViewport;
+    VkRect2D mScissorRectangle;
 };
 }
 

@@ -23,20 +23,6 @@ PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
                          pushConstantRanges);
 }
 
-PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
-                               const std::vector<DescriptorSetLayout>& descriptorSetLayouts,
-                               const std::vector<VkPushConstantRange>& pushConstantRanges)
-    : mLogicalDevice(logicalDevice)
-{
-    std::vector<VkDescriptorSetLayout> descSetLayouts(descriptorSetLayouts.size());
-    for (const DescriptorSetLayout& descriptorSetLayout : descriptorSetLayouts) {
-        descSetLayouts.push_back(descriptorSetLayout.vkDescriptorSetLayout());
-    }
-
-    createPipelineLayout(descSetLayouts,
-                         pushConstantRanges);
-}
-
 PipelineLayout::~PipelineLayout() {
     vkDestroyPipelineLayout(mLogicalDevice.vkDevice(),
                             mPipelineLayout,

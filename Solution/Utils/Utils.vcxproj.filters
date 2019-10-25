@@ -65,6 +65,12 @@
     <ClCompile Include="pipeline_stage\ViewportState.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
+    <ClCompile Include="pipeline_stage\PipelineStates.cpp">
+      <Filter>pipeline_stage</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ShaderModuleSystem.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -133,6 +139,12 @@
     <ClInclude Include="pipeline_stage\ViewportState.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
+    <ClInclude Include="pipeline_stage\PipelineStates.h">
+      <Filter>pipeline_stage</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ShaderModuleSystem.h">
+      <Filter>system</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
@@ -140,6 +152,9 @@
     </Filter>
     <Filter Include="pipeline_stage">
       <UniqueIdentifier>{41d2809e-7e83-4cb5-bec5-3437e46d83de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{196156d4-2321-4548-a62b-65a34f1f4b04}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

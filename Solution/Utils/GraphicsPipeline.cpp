@@ -4,52 +4,43 @@
 
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
+#include "PipelineLayout.h"
 #include "RenderPass.h"
-#include "pipeline_stage/ColorBlendState.h"
-#include "pipeline_stage/DepthStencilState.h"
-#include "pipeline_stage/DynamicState.h"
-#include "pipeline_stage/InputAssemblyState.h"
-#include "pipeline_stage/MultisampleState.h"
-#include "pipeline_stage/RasterizationState.h"
+#include "pipeline_stage/PipelineStates.h"
 #include "pipeline_stage/ShaderStages.h"
-#include "pipeline_stage/TessellationState.h"
-#include "pipeline_stage/VertexInputState.h"
-#include "pipeline_stage/ViewportState.h"
 
 namespace vk {
 GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
                                    const RenderPass& renderPass,
                                    const uint32_t subPassIndex,
-                                   std::unique_ptr<PipelineLayout>& pipelineLayout,
-                                   const ColorBlendState* colorBlendState,
-                                   const DepthStencilState* depthStencilState,
-                                   const DynamicState* dynamicState,
-                                   const InputAssemblyState* inputAssemblyState,
-                                   const MultisampleState* multisampleState,
-                                   const RasterizationState* rasterizationState,
-                                   const ShaderStages& shaderStages,
-                                   const TessellationState* tessellationState,
-                                   const VertexInputState* vertexInputState,
-                                   const ViewportState* viewportState)
+                                   const PipelineLayout& pipelineLayout,
+                                   const PipelineStates& pipelineStates,
+                                   const ShaderStages& shaderStages)
     : mLogicalDevice(logicalDevice)
-    , mPipelineLayout(std::move(pipelineLayout))
 {
-    assert(mPipelineLayout.get() != nullptr);
-
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     createInfo.stageCount = static_cast<uint32_t>(shaderStages.vkStages().size());
     createInfo.pStages = shaderStages.vkStages().empty() ? nullptr : shaderStages.vkStages().data();
-    createInfo.pVertexInputState = vertexInputState != nullptr ? &vertexInputState->vkState() : nullptr;
-    createInfo.pInputAssemblyState = inputAssemblyState != nullptr ? &inputAssemblyState->vkState() : nullptr;
-    createInfo.pViewportState = viewportState != nullptr ? &viewportState->vkState() : nullptr;
-    createInfo.pRasterizationState = rasterizationState != nullptr ? &rasterizationState->vkState() : nullptr;
-    createInfo.pMultisampleState = multisampleState != nullptr ? &multisampleState->vkState() : nullptr;
-    createInfo.pDepthStencilState = depthStencilState != nullptr ? &depthStencilState->vkState() : nullptr;
-    createInfo.pColorBlendState = colorBlendState != nullptr ? &colorBlendState->vkState() : nullptr;
-    createInfo.pDynamicState = dynamicState != nullptr ? &dynamicState->vkState() : nullptr;
-    createInfo.pTessellationState = tessellationState != nullptr ? &tessellationState->vkState() : nullptr;
-    createInfo.layout = mPipelineLayout->pipelineLayout();
+    createInfo.pVertexInputState = 
+        pipelineStates.vertexInputState() != nullptr ? &pipelineStates.vertexInputState()->vkState() : nullptr;
+    createInfo.pInputAssemblyState = 
+        pipelineStates.inputAssemblyState() != nullptr ? &pipelineStates.inputAssemblyState()->vkState() : nullptr;
+    createInfo.pViewportState = 
+        pipelineStates.viewportState() != nullptr ? &pipelineStates.viewportState()->vkState() : nullptr;
+    createInfo.pRasterizationState = 
+        pipelineStates.rasterizationState() != nullptr ? &pipelineStates.rasterizationState()->vkState() : nullptr;
+    createInfo.pMultisampleState = 
+        pipelineStates.multisampleState() != nullptr ? &pipelineStates.multisampleState()->vkState() : nullptr;
+    createInfo.pDepthStencilState = 
+        pipelineStates.depthStencilState() != nullptr ? &pipelineStates.depthStencilState()->vkState() : nullptr;
+    createInfo.pColorBlendState = 
+        pipelineStates.colorBlendState() != nullptr ? &pipelineStates.colorBlendState()->vkState() : nullptr;
+    createInfo.pDynamicState = 
+        pipelineStates.dynamicState() != nullptr ? &pipelineStates.dynamicState()->vkState() : nullptr;
+    createInfo.pTessellationState = 
+        pipelineStates.tessellationState() != nullptr ? &pipelineStates.tessellationState()->vkState() : nullptr;
+    createInfo.layout = pipelineLayout.pipelineLayout();
     createInfo.renderPass = renderPass.vkRenderPass();
     createInfo.subpass = subPassIndex;
 
@@ -81,7 +72,6 @@ GraphicsPipeline::~GraphicsPipeline() {
 
 GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
     : mLogicalDevice(other.mLogicalDevice)
-    , mPipelineLayout(std::move(other.mPipelineLayout))
     , mPipeline(other.mPipeline)
 {
     other.mPipeline = VK_NULL_HANDLE;

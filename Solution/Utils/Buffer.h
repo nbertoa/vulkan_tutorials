@@ -141,7 +141,7 @@ public:
            const VkBufferUsageFlags usageFlags,           
            const VkMemoryPropertyFlags memoryPropertyFlags,
            const VkSharingMode sharingMode,
-           const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
+           const std::vector<uint32_t>& queueFamilyIndices = {});
 
     // This constructor must be used if you want to provide
     // the DeviceMemory that the buffer should use.
@@ -151,7 +151,7 @@ public:
            const VkBufferUsageFlags usageFlags,           
            const DeviceMemory& deviceMemory,
            const VkSharingMode sharingMode,
-           const std::vector<uint32_t>& queueFamilyIndices = std::vector<uint32_t>());
+           const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Buffer();
     Buffer(Buffer&& other) noexcept;
     Buffer(const Buffer&) = delete;

@@ -11,6 +11,7 @@
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
+#include "system/ShaderModuleSystem.h"
 
 namespace vk {
 class SystemManager {
@@ -33,6 +34,8 @@ public:
     const CommandPool& transferCommandPool() const;
     const CommandPool& presentationCommandPool() const;
 
+    ShaderModuleSystem& shaderModuleSystem();
+
 private:
     // The member variables declaration order is important because
     // the destruction order must be this.
@@ -45,6 +48,8 @@ private:
     std::unique_ptr<CommandPool> mGraphicsCommandPool;
     std::unique_ptr<CommandPool> mTransferCommandPool;
     std::unique_ptr<CommandPool> mPresentationCommandPool;
+
+    ShaderModuleSystem mShaderModuleSystem;
 };
 }
 

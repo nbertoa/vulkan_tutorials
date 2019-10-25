@@ -27,7 +27,7 @@ namespace vk {
 class TessellationState {
 public:
     // * patchControlPoints count per patch.
-    TessellationState(const uint32_t patchControlPoints);
+    TessellationState(const uint32_t patchControlPoints = 1);
     
     const VkPipelineTessellationStateCreateInfo&
     vkState() const;

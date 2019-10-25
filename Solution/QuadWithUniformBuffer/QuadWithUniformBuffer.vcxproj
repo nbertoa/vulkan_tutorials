@@ -130,14 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GraphicsPipelineCreator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixUBO.cpp" />
     <ClCompile Include="RenderPassCreator.cpp" />
     <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GraphicsPipelineCreator.h" />
     <ClInclude Include="RenderPassCreator.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="MatrixUBO.h" />

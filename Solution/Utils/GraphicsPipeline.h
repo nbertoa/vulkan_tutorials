@@ -5,21 +5,13 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "PipelineLayout.h"
-
 namespace vk {
-class ColorBlendState;
-class DepthStencilState;
 class DynamicState;
-class InputAssemblyState;
 class LogicalDevice;
-class MultisampleState;
-class RasterizationState;
+class PipelineLayout;
+class PipelineStates;
 class RenderPass;
 class ShaderStages;
-class TessellationState;
-class VertexInputState;
-class ViewportState;
 
 //
 // Graphics VkPipeline wrapper.
@@ -75,55 +67,13 @@ public:
     // * pipelineLayout is the description of binding locations used by both 
     //   the pipeline and descriptor sets used with the pipeline.
     //
-    // * shaderStages to be included in the graphics pipeline (Read ShaderStage to understand this structure)
-    //
-    // * colorBlendState defines how the fragment shader returned color needs to be combined with 
-    //   the color that is already in the framebuffer.
-    //   It is ignored if the pipeline has rasterization disabled or if the subpass of the render pass of the pipeline 
-    //   is created against does not use any color attachments.
-    //
-    // * depthStencilState is ignored if the pipeline has rasterization disabled or if 
-    //   the subpass of the render pass of the pipeline is created against does not use a depth/stencil attachment.
-    //
-    // * dynamicState can be changed by a command buffer command during the execution of a command buffer.
-    //   This can be nullptr, which means no state in the pipeline is considered dynamic. 
-    //
-    // * inputAssemblyState which specifies what kind of geometry will be 
-    //   drawn from the vertices and if primitive restart should be enabled.
-    //
-    // * inputAssemblyState which specifies what kind of geometry will be 
-    //   drawn from the vertices and if primitive restart should be enabled.
-    //   
-    // * multisampleState configures multisampling, which is one of the ways to perform anti-aliasing.
-    //
-    // * rasterizationState configures the rasterizer which takes the geometry that 
-    //   is shaped by the vertices from the vertex shader and turns it into fragments 
-    //   to be colored by the fragment shader. It also performs depth testing, 
-    //   face culling and the scissor test, and it can be configured to output fragments that fill entire 
-    //   polygons or just the edges(wireframe rendering).
-    //
-    // * tessellationState configures the tessellation pipeline and it is ignored if 
-    //   the pipeline does not include a tessellation control shader stage and tessellation evaluation shader stage
-    //
-    // * vertexInputState which specifies vertex input attribute and 
-    //   vertex input binding descriptions. 
-    //
-    // * viewportState which specifies the viewport that describes the region of the framebuffer
-    //   that the output will be rendered to.
+    // * pipelineStates (Read PipelineStates to understand)
     GraphicsPipeline(const LogicalDevice& logicalDevice,
                      const RenderPass& renderPass,
                      const uint32_t subPassIndex,
-                     std::unique_ptr<PipelineLayout>& pipelineLayout,
-                     const ColorBlendState* colorBlendState,   
-                     const DepthStencilState* depthStencilState,
-                     const DynamicState* dynamicState,
-                     const InputAssemblyState* inputAssemblyState,                     
-                     const MultisampleState* multisampleState,
-                     const RasterizationState* rasterizationState,
-                     const ShaderStages& shaderStages,
-                     const TessellationState* tessellationState,
-                     const VertexInputState* vertexInputState,
-                     const ViewportState* viewportState);
+                     const PipelineLayout& pipelineLayout,
+                     const PipelineStates& pipelineStates,
+                     const ShaderStages& shaderStages);
     ~GraphicsPipeline();
     GraphicsPipeline(GraphicsPipeline&& other) noexcept;
     GraphicsPipeline(const GraphicsPipeline&) = delete;
@@ -134,7 +84,6 @@ public:
 
 private:
     const LogicalDevice& mLogicalDevice;
-    std::unique_ptr<PipelineLayout> mPipelineLayout;
     VkPipeline mPipeline = VK_NULL_HANDLE;
 };
 }

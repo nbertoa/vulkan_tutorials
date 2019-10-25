@@ -28,25 +28,23 @@ class LogicalDevice;
 //
 class DescriptorPool {
 public:
-    // * descriptorPoolSize contains a descriptor type and number of descriptors of 
-    //   that type to be allocated in the pool:
+    // * descriptorType: 
+    //   - VK_DESCRIPTOR_TYPE_SAMPLER
+    //   - VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+    //   - VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+    //   - VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+    //   - VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER
+    //   - VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
+    //   - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+    //   - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+    //   - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+    //   - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+    //   - VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
+    //   - VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT
     //
-    //   - type of descriptor.
-    //     . VK_DESCRIPTOR_TYPE_SAMPLER
-    //     . VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-    //     . VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-    //     . VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-    //     . VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER
-    //     . VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
-    //     . VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-    //     . VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-    //     . VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-    //     . VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
-    //     . VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
-    //     . VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT
-    //   - descriptorCount of that type to allocate.
-    //     If type is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount 
-    //     is the number of bytes to allocate for descriptors of this type.
+    // * descriptorCount of that type to allocate.
+    //   If type is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount 
+    //   is the number of bytes to allocate for descriptors of this type.
     //
     // * maxDescriptorSetCount that can be allocated from the pool.
     //
@@ -63,7 +61,8 @@ public:
     //     VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT bit from a pool that has 
     //     VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT set.
     DescriptorPool(const LogicalDevice& logicalDevice,
-                   const VkDescriptorPoolSize& descriptorPoolSize,
+                   const VkDescriptorType descriptorType,
+                   const uint32_t descriptorCount,
                    const uint32_t maxDescriptorSetCount,
                    const VkDescriptorPoolCreateFlags flags = 0);
     DescriptorPool(const LogicalDevice& logicalDevice,

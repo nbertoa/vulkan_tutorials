@@ -82,13 +82,17 @@ public:
     //     VkPipelineRasterizationLineStateCreateInfoEXT will be ignoredand must be set dynamically with 
     //     vkCmdSetLineStippleEXT before any draws are performed with a pipeline state with 
     //     VkPipelineRasterizationLineStateCreateInfoEXT member stippledLineEnable set to VK_TRUE.
-    DynamicState(const std::vector<VkDynamicState>& dynamicStates);
+    DynamicState(const std::vector<VkDynamicState>& dynamicStates = {});
+    DynamicState(const DynamicState& state);
+    const DynamicState& operator=(const DynamicState& state);
 
     const VkPipelineDynamicStateCreateInfo&
     vkState() const;
 
 private:
     VkPipelineDynamicStateCreateInfo  mCreateInfo = {};
+
+    std::vector<VkDynamicState> mDynamicStates;
 };
 }
 

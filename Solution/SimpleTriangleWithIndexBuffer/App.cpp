@@ -1,34 +1,37 @@
-#include "SimpleTriangleWithIndexBufferApp.h"
+#include "App.h"
 
 #include <cassert>
 
+#include "Utils/PipelineLayout.h"
+#include "Utils/ShaderModule.h"
+#include "Utils/pipeline_stage/PipelineStates.h"
+#include "Utils/pipeline_stage/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
 
-SimpleTriangleWithIndexBufferApp::SimpleTriangleWithIndexBufferApp(const uint32_t windowWidth,
-                                                                   const uint32_t windowHeight,
-                                                                   const char* windowTitle,
-                                                                   const vk::RenderPassCreator& renderPassCreator,
-                                                                   const vk::GraphicsPipelineCreator& graphicsPipelineCreator)
+App::App(const uint32_t windowWidth,
+         const uint32_t windowHeight,
+         const char* windowTitle,
+         const vk::RenderPassCreator& renderPassCreator)
     : BaseApp(windowWidth,
               windowHeight,
               windowTitle,
-              renderPassCreator,
-              graphicsPipelineCreator)
+              renderPassCreator)
 {
+    createGraphicsPipeline();
     createBuffers();
     recordCommandBuffers();
 }
 
 void 
-SimpleTriangleWithIndexBufferApp::createBuffers() {
+App::createBuffers() {
     createVertexBuffer();
     createIndexBuffer();
 }
 
 void 
-SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
+App::createVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
     std::vector<PosColorVertex> screenSpaceVertices
@@ -66,7 +69,7 @@ SimpleTriangleWithIndexBufferApp::createVertexBuffer() {
 }
 
 void 
-SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
+App::createIndexBuffer() {
     assert(mGpuIndexBuffer == nullptr);
 
     std::vector<uint32_t> indices
@@ -102,7 +105,7 @@ SimpleTriangleWithIndexBufferApp::createIndexBuffer() {
 }
 
 void
-SimpleTriangleWithIndexBufferApp::recordCommandBuffers() {
+App::recordCommandBuffers() {
     assert(mCommandBuffers != nullptr);
     assert(mFrameBuffers != nullptr);
     for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
@@ -127,4 +130,58 @@ SimpleTriangleWithIndexBufferApp::recordCommandBuffers() {
 
         commandBuffer.endRecording();
     }
+}
+
+void 
+App::createGraphicsPipeline()  {
+    mGraphicsPipeline.reset();
+    
+    PipelineStates pipelineStates;
+    initPipelineStates(pipelineStates);
+
+    ShaderStages shaderStages;
+    initShaderStages(shaderStages);
+
+    PipelineLayout pipelineLayout(mSystemManager.logicalDevice());
+
+    mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
+                                                 *mRenderPass,
+                                                 0,
+                                                 pipelineLayout,
+                                                 pipelineStates,
+                                                 shaderStages));
+}
+
+void 
+App::initPipelineStates(PipelineStates& pipelineStates) const {
+    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
+    PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
+
+    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+    PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
+
+    pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
+                                        vertexInputAttributeDescriptions});
+
+    pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+                                         VK_FALSE});
+
+    pipelineStates.setViewportState({mSystemManager.swapChain().viewport(),
+                                     mSystemManager.swapChain().scissorRect()});
+
+    pipelineStates.setRasterizationState({});
+
+    pipelineStates.setMultisampleState({});
+
+    const ColorBlendAttachmentState colorBlendAttachmentState;
+    pipelineStates.setColorBlendState({colorBlendAttachmentState});
+}
+
+void
+App::initShaderStages(ShaderStages& shaderStages) {
+    ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../SimpleTriangleWithIndexBuffer/resources/shaders/vert.spv",
+                                                                          VK_SHADER_STAGE_VERTEX_BIT));
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../SimpleTriangleWithIndexBuffer/resources/shaders/frag.spv",
+                                                                          VK_SHADER_STAGE_FRAGMENT_BIT));
 }

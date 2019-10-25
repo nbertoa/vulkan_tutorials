@@ -3,9 +3,9 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
-class ColorBlendAttachmentState;
+#include "ColorBlendAttachmentState.h"
 
+namespace vk {
 //
 // VkPipelineColorBlendStateCreateInfo wrapper
 //
@@ -46,15 +46,19 @@ public:
     //   - VK_LOGIC_OP_NAND
     //   - VK_LOGIC_OP_SET
     //   - VK_LOGIC_OP_MAX_ENUM
-    ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState,
+    ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState = {},
                     const VkBool32 logicOpEnable = VK_FALSE,
                     const VkLogicOp logicalOperation = VK_LOGIC_OP_CLEAR);
+    ColorBlendState(const ColorBlendState& state);
+    const ColorBlendState& operator=(const ColorBlendState& state);
 
     const VkPipelineColorBlendStateCreateInfo&
     vkState() const;
 
 private:
     VkPipelineColorBlendStateCreateInfo mCreateInfo = {};
+
+    ColorBlendAttachmentState mColorBlendAttachmentState;
 };
 }
 

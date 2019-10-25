@@ -1,10 +1,8 @@
 #ifndef APP
 #define APP
 
-#include "MatrixUBO.h"
 #include "Utils/BaseApp.h"
-#include "Utils/Buffers.h"
-#include "Utils/DescriptorPool.h"
+#include "Utils/Buffer.h"
 
 class App : public vk::BaseApp {
 public:
@@ -14,13 +12,7 @@ public:
         const vk::RenderPassCreator& renderPassCreator);
 
 protected:
-    void processCurrentFrame() override;
-
     void createBuffers();
-    void createVertexBuffer();
-    void createIndexBuffer();
-    void createUniformBuffer();
-
     void recordCommandBuffers();
 
     virtual void
@@ -33,13 +25,6 @@ protected:
     initShaderStages(vk::ShaderStages& shaderStages);
 
     std::unique_ptr<vk::Buffer> mGpuVertexBuffer;
-    std::unique_ptr<vk::Buffer> mGpuIndexBuffer;
-
-    std::unique_ptr<vk::Buffers> mUniformBuffers;
-    vk::DescriptorPool mDescriptorPool;
-
-
-    MatrixUBO mMatrixUBO;
 };
 
 #endif 

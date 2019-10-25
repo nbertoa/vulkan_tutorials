@@ -93,7 +93,7 @@ public:
     beginPass(const RenderPass& renderPass,
               const VkFramebuffer frameBuffer,
               const VkExtent2D& imageExtent,
-              const std::vector<VkClearValue>& clearValues = std::vector<VkClearValue>{VkClearValue{0.0f, 0.0f, 0.0f, 1.0f}});
+              const std::vector<VkClearValue>& clearValues = {VkClearValue{0.0f, 0.0f, 0.0f, 1.0f}});
     
     void 
     endPass();
