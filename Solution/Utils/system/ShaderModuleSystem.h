@@ -20,6 +20,12 @@ public:
                           const VkShaderStageFlagBits shaderStageFlag,
                           const char* entryPointName = "main");
 
+    void 
+    eraseShaderModule(const std::string& shaderByteCodePath);
+
+    void 
+    clear();
+
 private:
     const LogicalDevice& mLogicalDevice;
     using ShaderModuleByPath = std::unordered_map<std::string, const ShaderModule*>;

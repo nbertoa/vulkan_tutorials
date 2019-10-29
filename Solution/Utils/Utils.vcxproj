@@ -139,6 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AttachmentDescriptions.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="BaseApp.cpp" />
     <ClCompile Include="Buffer.cpp" />
@@ -175,6 +176,8 @@
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Semaphores.cpp" />
     <ClCompile Include="ShaderModule.cpp" />
+    <ClCompile Include="SubpassDependencies.cpp" />
+    <ClCompile Include="SubpassDescriptions.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="SystemManager.cpp" />
@@ -183,6 +186,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttachmentDescriptions.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Buffer.h" />
@@ -221,6 +225,8 @@
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Semaphores.h" />
     <ClInclude Include="ShaderModule.h" />
+    <ClInclude Include="SubpassDependencies.h" />
+    <ClInclude Include="SubpassDescriptions.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemManager.h" />

@@ -71,6 +71,9 @@
     <ClCompile Include="system\ShaderModuleSystem.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="AttachmentDescriptions.cpp" />
+    <ClCompile Include="SubpassDescriptions.cpp" />
+    <ClCompile Include="SubpassDependencies.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -145,6 +148,9 @@
     <ClInclude Include="system\ShaderModuleSystem.h">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="AttachmentDescriptions.h" />
+    <ClInclude Include="SubpassDescriptions.h" />
+    <ClInclude Include="SubpassDependencies.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">

@@ -74,6 +74,32 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
     //   . VK_MEMORY_HEAP_MULTI_INSTANCE_BIT specifies that in a logical device representing more 
     //     than one physical device, there is a per-physical device instance of the heap memory.
     //     By default, an allocation from such a heap will be replicated to each physical device’s instance of the heap.
+    //
+    // Notes:
+    // The VkPhysicalDeviceMemoryProperties structure describes a number of memory heaps as well as a number of memory types 
+    // that can be used to access memory allocated in those heaps.Each heap describes a memory resource of a particular size, 
+    // and each memory type describes a set of memory properties(e.g.host cached vs uncached) that can be used with a given memory heap.
+    // Allocations using a particular memory type will consume resources from the heap indicated by that memory type’s heap index.
+    // More than one memory type may share each heap, and the heaps and memory types provide a mechanism to advertise an accurate size 
+    // of the physical memory resources while allowing the memory to be used with a variety of different properties.
+    //
+    // The number of memory heaps is given by memoryHeapCount and is less than or equal to VK_MAX_MEMORY_HEAPS.
+    // Each heap is described by an element of the memoryHeaps array as a VkMemoryHeap structure.
+    // The number of memory types available across all memory heaps is given by memoryTypeCount and is less than or equal to VK_MAX_MEMORY_TYPES.
+    // Each memory type is described by an element of the memoryTypes array as a VkMemoryType structure.
+    //
+    // At least one heap must include VK_MEMORY_HEAP_DEVICE_LOCAL_BIT in VkMemoryHeap::flags.
+    // If there are multiple heaps that all have similar performance characteristics, they may all include VK_MEMORY_HEAP_DEVICE_LOCAL_BIT.
+    // In a unified memory architecture(UMA) system there is often only a single memory heap which is considered to be equally “local” 
+    // to the hostand to the device, and such an implementation must advertise the heap as device-local.
+    //
+    // For each pair of elements X and Y returned in memoryTypes, X must be placed at a lower index position than Y if:
+    // - either the set of bit flags returned in the propertyFlags member of X is a strict subset of the set of bit flags 
+    //   returned in the propertyFlags member of Y; or
+    // - the propertyFlags members of X and Y are equal, and X belongs to a memory heap with greater performance
+    //   (as determined in an implementation-specific manner); or
+    // - the propertyFlags members of X includes VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD or 
+    //   VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD and Y does not
     VkPhysicalDeviceMemoryProperties memoryProperties;
     vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
                                         &memoryProperties);

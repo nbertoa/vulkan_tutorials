@@ -55,10 +55,6 @@ class ShaderStages;
 //
 class GraphicsPipeline {
 public:
-    // Notes:
-    // - Ownership of pipelineLayout will be transferred.
-    // - The parameter of pointer types are optional (nullptr).
-    //
     // * renderPass describes the environment in which the pipeline will be used; 
     //   the pipeline must only be used with an instance of any render pass compatible with the one provided.
     //
@@ -68,6 +64,10 @@ public:
     //   the pipeline and descriptor sets used with the pipeline.
     //
     // * pipelineStates (Read PipelineStates to understand)
+    //
+    // Notes:
+    // If any shader stage fails to compile, the compile log will be reported back to the application, 
+    // and VK_ERROR_INVALID_SHADER_NV will be generated.
     GraphicsPipeline(const LogicalDevice& logicalDevice,
                      const RenderPass& renderPass,
                      const uint32_t subPassIndex,

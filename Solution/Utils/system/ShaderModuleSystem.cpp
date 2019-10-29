@@ -9,9 +9,7 @@ ShaderModuleSystem::ShaderModuleSystem(const LogicalDevice& logicalDevice)
 {}
 
 ShaderModuleSystem::~ShaderModuleSystem() {
-    for (const auto& pathAndShaderModule : mShaderModuleByPath) {
-        delete pathAndShaderModule.second;
-    }
+    clear();
 }
 
 const ShaderModule&
@@ -39,5 +37,23 @@ ShaderModuleSystem::getOrLoadShaderModule(const std::string& shaderByteCodePath,
     assert(shaderModule != nullptr);
 
     return *shaderModule;
+}
+
+void
+ShaderModuleSystem::eraseShaderModule(const std::string& shaderByteCodePath) {
+    ShaderModuleByPath::const_iterator findIt = mShaderModuleByPath.find(shaderByteCodePath);
+    if (findIt != mShaderModuleByPath.end()) {
+        const ShaderModule* shaderModule = findIt->second;
+        assert(shaderModule != nullptr);
+        delete shaderModule;
+        mShaderModuleByPath.erase(findIt);
+    }
+}
+
+void 
+ShaderModuleSystem::clear() {
+    for (const auto& pathAndShaderModule : mShaderModuleByPath) {
+        delete pathAndShaderModule.second;
+    }
 }
 }

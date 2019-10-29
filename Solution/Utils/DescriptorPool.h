@@ -60,6 +60,31 @@ public:
     //     It is valid to allocate descriptor sets that have bindings that do not set the 
     //     VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT bit from a pool that has 
     //     VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT set.
+    //
+    // Notes:
+    // If multiple VkDescriptorPoolSize structures appear in the poolSizes array then the pool will be created 
+    // with enough storage for the total number of descriptors of each type.
+    //
+    // Fragmentation of a descriptor pool is possible and may lead to descriptor set allocation failures.
+    // A failure due to fragmentation is defined as failing a descriptor set allocation despite the sum of 
+    // all outstanding descriptor set allocations from the pool plus the requested allocation requiring 
+    // no more than the total number of descriptors requested at pool creation.
+    // Implementations provide certain guarantees of when fragmentation must not cause allocation failure.
+    //
+    // If a descriptor pool has not had any descriptor sets freed since it was created or most recently reset 
+    // then fragmentation must not cause an allocation failure 
+    // (note that this is always the case for a pool created without the VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT bit set).
+    // Additionally, if all sets allocated from the pool since it was created or most recently reset use 
+    // the same number of descriptors (of each type) and the requested allocation also uses that same number of descriptors(of each type), 
+    // then fragmentation must not cause an allocation failure.
+    //
+    // If an allocation failure occurs due to fragmentation, an application can create an additional descriptor pool 
+    // to perform further descriptor set allocations.
+    //
+    // If flags has the VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT bit set, 
+    // descriptor pool creation may fail with the error VK_ERROR_FRAGMENTATION_EXT if the total number of descriptors across 
+    // all pools(including this one) created with this bit set exceeds maxUpdateAfterBindDescriptorsInAllPools, 
+    // or if fragmentation of the underlying hardware resources occurs.
     DescriptorPool(const LogicalDevice& logicalDevice,
                    const VkDescriptorType descriptorType,
                    const uint32_t descriptorCount,

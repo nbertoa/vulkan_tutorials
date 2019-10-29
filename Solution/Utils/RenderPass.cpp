@@ -2,24 +2,27 @@
 
 #include <cassert>
 
+#include "AttachmentDescriptions.h"
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
+#include "SubpassDependencies.h"
+#include "SubpassDescriptions.h"
 
 namespace vk {
 RenderPass::RenderPass(const LogicalDevice& logicalDevice,
-                       const std::vector<VkAttachmentDescription>& attachmentDescriptions,
-                       const std::vector<VkSubpassDescription>& subpassDescriptions,
-                       const std::vector<VkSubpassDependency>& subpassDependencies)
+                       const AttachmentDescriptions& attachmentDescriptions,
+                       const SubpassDescriptions& subpassDescriptions,
+                       const SubpassDependencies& subpassDependencies)
     : mLogicalDevice(logicalDevice)
 {
     VkRenderPassCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    createInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
-    createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data();
-    createInfo.subpassCount = static_cast<uint32_t>(subpassDescriptions.size());
-    createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : subpassDescriptions.data();
-    createInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
-    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : subpassDependencies.data();
+    createInfo.attachmentCount = attachmentDescriptions.size();
+    createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : &attachmentDescriptions[0];
+    createInfo.subpassCount = subpassDescriptions.size();
+    createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : &subpassDescriptions[0];
+    createInfo.dependencyCount = subpassDependencies.size();
+    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : &subpassDependencies[0];
 
     vkChecker(vkCreateRenderPass(mLogicalDevice.vkDevice(),
                                  &createInfo,
