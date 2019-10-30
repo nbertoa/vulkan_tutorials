@@ -2,11 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RenderPassCreator.cpp" />
     <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderPassCreator.h" />
     <ClInclude Include="App.h" />
   </ItemGroup>
 </Project>

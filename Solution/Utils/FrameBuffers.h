@@ -73,11 +73,11 @@ public:
     FrameBuffers(const FrameBuffers&) = delete;
     const FrameBuffers& operator=(const FrameBuffers&) = delete;
 
-    size_t 
+    uint32_t 
     bufferCount() const;
 
     VkFramebuffer 
-    buffer(const size_t bufferIndex) const;
+    buffer(const uint32_t bufferIndex) const;
 
 private:
     const LogicalDevice& mLogicalDevice;

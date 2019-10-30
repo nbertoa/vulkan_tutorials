@@ -70,14 +70,14 @@ FrameBuffers::FrameBuffers(FrameBuffers&& other) noexcept
 
 }
 
-size_t 
+uint32_t 
 FrameBuffers::bufferCount() const {
     assert(mFrameBuffers.empty() == false);
-    return mFrameBuffers.size();
+    return static_cast<uint32_t>(mFrameBuffers.size());
 }
 
 VkFramebuffer 
-FrameBuffers::buffer(const size_t bufferIndex) const {
+FrameBuffers::buffer(const uint32_t bufferIndex) const {
     assert(bufferIndex < mFrameBuffers.size());
     assert(mFrameBuffers[bufferIndex] != VK_NULL_HANDLE);
     return mFrameBuffers[bufferIndex];

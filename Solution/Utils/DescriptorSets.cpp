@@ -148,7 +148,7 @@ DescriptorSets::updateDescriptorSet(const std::vector<VkWriteDescriptorSet>& wri
 }
 
 VkDescriptorSet
-DescriptorSets::vkDescriptorSet(const size_t descriptorSetIndex) const {
+DescriptorSets::vkDescriptorSet(const uint32_t descriptorSetIndex) const {
     assert(descriptorSetIndex < mDescriptorSets.size());
     return mDescriptorSets[descriptorSetIndex];
 }

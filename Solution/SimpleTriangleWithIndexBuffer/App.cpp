@@ -2,8 +2,14 @@
 
 #include <cassert>
 
+#include "Utils/AttachmentDescriptions.h"
+#include "Utils/DebugUtils.h"
+#include "Utils/LogicalDevice.h"
+#include "Utils/RenderPass.h"
 #include "Utils/PipelineLayout.h"
 #include "Utils/ShaderModule.h"
+#include "Utils/SubpassDependencies.h"
+#include "Utils/SubpassDescriptions.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/pipeline_stage/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
@@ -12,26 +18,44 @@ using namespace vk;
 
 App::App(const uint32_t windowWidth,
          const uint32_t windowHeight,
-         const char* windowTitle,
-         const vk::RenderPassCreator& renderPassCreator)
-    : BaseApp(windowWidth,
-              windowHeight,
-              windowTitle,
-              renderPassCreator)
+         const char* windowTitle)
+    : mSystemManager(windowWidth,
+                     windowHeight,
+                     windowTitle)
 {
-    createGraphicsPipeline();
-    createBuffers();
+    initRenderPass();
+    initFrameBuffers();
+    initCommandBuffers();
+    initSemaphoresAndFences();
+    initGraphicsPipeline();
+    initBuffers();
     recordCommandBuffers();
 }
 
-void 
-App::createBuffers() {
-    createVertexBuffer();
-    createIndexBuffer();
+void
+App::run() {
+    while (mSystemManager.window().shouldCloseWindow() == false) {
+        glfwPollEvents();
+        
+        submitCommandBufferAndPresent();
+    }
+
+    // We need to wait on the hsot for the completion of outstanding
+    // operations for a given queue.
+    // vkDeviceWaitIdle is equivalent to submitting fences to all
+    // the queues owned yb the device a and waiting with an infinite 
+    // timeout for these fences to signal.
+    vkChecker(vkDeviceWaitIdle(mSystemManager.logicalDevice().vkDevice()));
 }
 
 void 
-App::createVertexBuffer() {
+App::initBuffers() {
+    initVertexBuffer();
+    initIndexBuffer();
+}
+
+void 
+App::initVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
     std::vector<PosColorVertex> screenSpaceVertices
@@ -42,7 +66,7 @@ App::createVertexBuffer() {
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}
     };
 
-    const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
+    const uint32_t verticesSize = static_cast<uint32_t>(sizeof(PosColorVertex) * screenSpaceVertices.size());
 
     Buffer cpuVertexBuffer(mSystemManager.logicalDevice(),
                            mSystemManager.physicalDevice(),
@@ -69,7 +93,7 @@ App::createVertexBuffer() {
 }
 
 void 
-App::createIndexBuffer() {
+App::initIndexBuffer() {
     assert(mGpuIndexBuffer == nullptr);
 
     std::vector<uint32_t> indices
@@ -78,7 +102,7 @@ App::createIndexBuffer() {
         2, 3, 0, // bottom-left triangle
     };
 
-    const size_t indicesSize = sizeof(uint32_t) * indices.size();
+    const uint32_t indicesSize = static_cast<uint32_t>(sizeof(uint32_t) * indices.size());
 
     Buffer cpuIndexBuffer(mSystemManager.logicalDevice(),
                           mSystemManager.physicalDevice(),
@@ -108,7 +132,7 @@ void
 App::recordCommandBuffers() {
     assert(mCommandBuffers != nullptr);
     assert(mFrameBuffers != nullptr);
-    for (size_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
+    for (uint32_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
         CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(i);
 
         commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
@@ -133,8 +157,8 @@ App::recordCommandBuffers() {
 }
 
 void 
-App::createGraphicsPipeline()  {
-    mGraphicsPipeline.reset();
+App::initGraphicsPipeline()  {
+    assert(mGraphicsPipeline == nullptr);
     
     PipelineStates pipelineStates;
     initPipelineStates(pipelineStates);
@@ -150,6 +174,122 @@ App::createGraphicsPipeline()  {
                                                  pipelineLayout,
                                                  pipelineStates,
                                                  shaderStages));
+}
+
+void 
+App::initRenderPass() {
+    assert(mRenderPass == nullptr);
+
+    AttachmentDescriptions attachmentDescriptions;
+
+    // The format of the color attachment should match the format 
+    // of the swap chain images.
+    //
+    // No multisampling
+    //
+    // Using VK_IMAGE_LAYOUT_UNDEFINED for initial layout means
+    // that we do not care what previous layout the image was in.
+    // We want the image to be ready for presentation using the swap chain 
+    // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    // for the final layout.
+    attachmentDescriptions.add(mSystemManager.swapChain().imageFormat(),
+                               VK_ATTACHMENT_LOAD_OP_CLEAR,
+                               VK_ATTACHMENT_STORE_OP_STORE,
+                               VK_IMAGE_LAYOUT_UNDEFINED,
+                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+    std::vector<VkAttachmentReference> colorAttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+    SubpassDescriptions subpassDescriptions;
+    subpassDescriptions.add(VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            colorAttachmentReferences);
+
+    // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
+    // depending on whether it is specified in srcSubpass or dstSubpass.
+    //
+    // Specify the operations to wait on and the stages in which these operations occur.
+    // We need to wait for the swap chain to finish reading from the image
+    // before we can access it.
+    // This can be accomplished by waiting on the color attachment output stage itself.
+    //
+    // The operations that should wait on this are in the color attachment stage
+    // adn involve the reading and writing of the color attachment.
+    // These settings will prevent the transition from happening until it is
+    // actually necessary (and allowed): when we want to start writing colors
+    // to it.
+    SubpassDependencies subpassDependencies;
+    subpassDependencies.add(VK_SUBPASS_EXTERNAL,
+                            0,
+                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                            0,
+                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+
+    mRenderPass.reset(new RenderPass(mSystemManager.logicalDevice(),
+                                     attachmentDescriptions,
+                                     subpassDescriptions,
+                                     subpassDependencies));
+}
+
+void
+App::submitCommandBufferAndPresent() {
+    assert(mCommandBuffers != nullptr);
+
+    const Fence& fence = mFences->nextAvailableFence();
+    fence.waitAndReset();
+
+    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore(); 
+    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+
+    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
+    assert(swapChainImageIndex < mCommandBuffers->bufferCount());
+
+    CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
+    commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
+                         &imageAvailableSemaphore,
+                         &renderFinishedSemaphore,
+                         fence,
+                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+
+    mSystemManager.swapChain().present(renderFinishedSemaphore,
+                                       swapChainImageIndex);
+}
+
+void
+App::initFrameBuffers() {
+    assert(mFrameBuffers == nullptr);
+    assert(mRenderPass != nullptr);
+
+    mFrameBuffers.reset(new FrameBuffers(mSystemManager.logicalDevice(),
+                                         *mRenderPass,
+                                         mSystemManager.swapChain().imageViews(),
+                                         mSystemManager.swapChain().imageWidth(),
+                                         mSystemManager.swapChain().imageHeight()));
+}
+
+void
+App::initCommandBuffers() {
+    assert(mCommandBuffers == nullptr);
+    assert(mFrameBuffers != nullptr);
+
+    mCommandBuffers.reset(new CommandBuffers(mSystemManager.logicalDevice(),
+                                             mSystemManager.graphicsCommandPool(),
+                                             mFrameBuffers->bufferCount(),
+                                             VK_COMMAND_BUFFER_LEVEL_PRIMARY));
+}
+
+void
+App::initSemaphoresAndFences() {
+    assert(mImageAvailableSemaphores == nullptr);
+    assert(mRenderFinishedSemaphores == nullptr);
+    assert(mFences == nullptr);
+
+    mImageAvailableSemaphores.reset(new Semaphores(mSystemManager.logicalDevice(),
+                                                   mFrameBuffers->bufferCount()));
+    mRenderFinishedSemaphores.reset(new Semaphores(mSystemManager.logicalDevice(),
+                                                   mFrameBuffers->bufferCount()));
+    mFences.reset(new Fences(mSystemManager.logicalDevice(),
+                             mFrameBuffers->bufferCount()));
 }
 
 void 

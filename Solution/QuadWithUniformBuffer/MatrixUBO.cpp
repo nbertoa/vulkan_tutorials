@@ -7,7 +7,7 @@ using namespace glm;
 using namespace std::chrono;
 
 void 
-MatrixUBO::update(const size_t swapChainImageIndex,
+MatrixUBO::update(const uint32_t swapChainImageIndex,
                   const float swapChainImageAspectRatio) {
     // Calculate time in seconds since rendering has started with floating point accuracy.
     static time_point<high_resolution_clock> startTime = high_resolution_clock::now();

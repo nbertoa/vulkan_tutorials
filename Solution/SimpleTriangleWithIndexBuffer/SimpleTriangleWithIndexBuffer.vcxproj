@@ -131,11 +131,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RenderPassCreator.cpp" />
     <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderPassCreator.h" />
     <ClInclude Include="App.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

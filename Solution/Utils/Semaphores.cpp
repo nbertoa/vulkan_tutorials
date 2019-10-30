@@ -6,11 +6,11 @@
 
 namespace vk {
 Semaphores::Semaphores(const LogicalDevice& logicalDevice,
-                       const size_t semaphoreCount) {
+                       const uint32_t semaphoreCount) {
     assert(semaphoreCount > 0);
 
     mSemaphores.reserve(semaphoreCount);
-    for (size_t i = 0; i < semaphoreCount; ++i) {
+    for (uint32_t i = 0; i < semaphoreCount; ++i) {
         Semaphore semaphore(logicalDevice);
         mSemaphores.emplace_back(std::move(semaphore));
     }

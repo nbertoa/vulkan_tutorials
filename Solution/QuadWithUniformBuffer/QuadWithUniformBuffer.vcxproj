@@ -132,11 +132,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixUBO.cpp" />
-    <ClCompile Include="RenderPassCreator.cpp" />
     <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderPassCreator.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="MatrixUBO.h" />
   </ItemGroup>

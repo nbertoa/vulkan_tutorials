@@ -130,10 +130,10 @@ SwapChain::imageFormat() const {
     return mImageFormat;
 }
 
-size_t 
+uint32_t 
 SwapChain::imageViewCount() const {
     assert(mSwapChain != VK_NULL_HANDLE);
-    return mSwapChainImageViews.size();
+    return static_cast<uint32_t>(mSwapChainImageViews.size());
 }
 
 const std::vector<VkImageView>&

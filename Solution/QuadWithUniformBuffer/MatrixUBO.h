@@ -8,7 +8,7 @@ struct MatrixUBO {
     glm::mat4 mViewMatrix;
     glm::mat4 mProjectionMatrix;
 
-    void update(const size_t swapChainImageIndex,
+    void update(const uint32_t swapChainImageIndex,
                 const float swapChainImageAspectRatio);
 };
 

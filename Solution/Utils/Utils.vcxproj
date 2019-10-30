@@ -141,7 +141,6 @@
   <ItemGroup>
     <ClCompile Include="AttachmentDescriptions.cpp" />
     <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="BaseApp.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Buffers.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
@@ -188,7 +187,6 @@
   <ItemGroup>
     <ClInclude Include="AttachmentDescriptions.h" />
     <ClInclude Include="Instance.h" />
-    <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Buffers.h" />
     <ClInclude Include="CommandBuffer.h" />

@@ -70,8 +70,9 @@ public:
     currentImageIndex() const;
 
     // * waitSemaphore to wait for before issuing the present request.
-    void present(const Semaphore& waitSemaphore,
-                 const uint32_t imageIndex);
+    void 
+    present(const Semaphore& waitSemaphore,
+            const uint32_t imageIndex);
 
     // The viewport describes the region of the framebuffer that the output
     // will be rendered too.
@@ -101,7 +102,7 @@ public:
     VkFormat 
     imageFormat() const;
 
-    size_t 
+    uint32_t
     imageViewCount() const;
 
     // Image objects are not directly accessed by pipeline shaders for reading or writing image data. 

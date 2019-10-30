@@ -10,7 +10,7 @@ namespace vk {
 class Semaphores {
 public:
     Semaphores(const LogicalDevice& logicalDevice,
-               const size_t semaphoreCount);
+               const uint32_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
     Semaphore& 
@@ -20,7 +20,7 @@ public:
     currentSemaphore();
 private:
     std::vector<Semaphore> mSemaphores;
-    size_t mCurrentSemaphore = std::numeric_limits<size_t>::max();
+    uint32_t mCurrentSemaphore = std::numeric_limits<uint32_t>::max();
 };
 }
 

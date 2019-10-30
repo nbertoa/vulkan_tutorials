@@ -11,7 +11,7 @@ class Fences {
 public:
     // Read Fence to understand this
     Fences(const LogicalDevice& logicalDevice,
-           const size_t fenceCount,
+           const uint32_t fenceCount,
            const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
     Fences(Fences&& other) noexcept;
                
@@ -23,7 +23,7 @@ public:
 
 private:
     std::vector<Fence> mFences;
-    size_t mCurrentFence = std::numeric_limits<size_t>::max();
+    uint32_t mCurrentFence = std::numeric_limits<uint32_t>::max();
 };
 }
 

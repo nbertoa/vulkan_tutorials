@@ -8,7 +8,7 @@
 namespace vk {
 Buffers::Buffers(const LogicalDevice& logicalDevice,
                  const PhysicalDevice& physicalDevice,
-                 const size_t bufferCount,
+                 const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
                  const VkMemoryPropertyFlags memoryPropertyFlags,
@@ -17,7 +17,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     assert(bufferCount > 0);
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
-    for (size_t i = 0; i < bufferCount; ++i) {
+    for (uint32_t i = 0; i < bufferCount; ++i) {
         mBuffers.emplace_back(Buffer(logicalDevice,
                                      physicalDevice,
                                      size,
@@ -29,7 +29,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
 }
 
 Buffers::Buffers(const LogicalDevice& logicalDevice,
-                 const size_t bufferCount,
+                 const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
                  const DeviceMemory& deviceMemory,
@@ -38,7 +38,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     assert(bufferCount > 0);
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
-    for (size_t i = 0; i < bufferCount; ++i) {
+    for (uint32_t i = 0; i < bufferCount; ++i) {
         mBuffers.emplace_back(Buffer(logicalDevice,
                                      size,
                                      usageFlags,
@@ -53,14 +53,14 @@ Buffers::Buffers(Buffers&& other) noexcept
 
 }
 
-size_t
+uint32_t
 Buffers::bufferCount() const {
     assert(mBuffers.empty() == false);
-    return mBuffers.size();
+    return static_cast<uint32_t>(mBuffers.size());
 }
 
 Buffer&
-Buffers::buffer(const size_t bufferIndex) {
+Buffers::buffer(const uint32_t bufferIndex) {
     assert(bufferIndex < mBuffers.size());
     return mBuffers[bufferIndex];
 }

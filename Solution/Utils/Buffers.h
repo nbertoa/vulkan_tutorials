@@ -15,7 +15,7 @@ public:
     // Read Buffer constructor to understand this.
     Buffers(const LogicalDevice& logicalDevice,
             const PhysicalDevice& physicalDevice,
-            const size_t bufferCount,
+            const uint32_t bufferCount,
             const VkDeviceSize size,
             const VkBufferUsageFlags usageFlags,            
             const VkMemoryPropertyFlags memoryPropertyFlags,
@@ -24,7 +24,7 @@ public:
 
     // Read Buffer constructor to understand this.
     Buffers(const LogicalDevice& logicalDevice,
-            const size_t bufferCount,
+            const uint32_t bufferCount,
             const VkDeviceSize size,
             const VkBufferUsageFlags usageFlags,
             const DeviceMemory& deviceMemory,
@@ -35,11 +35,11 @@ public:
     Buffers(const Buffers&) = delete;
     const Buffers& operator=(const Buffers&) = delete;
 
-    size_t 
+    uint32_t 
     bufferCount() const;
 
     Buffer& 
-    buffer(const size_t bufferIndex);
+    buffer(const uint32_t bufferIndex);
 
 private:
     std::vector<Buffer> mBuffers;

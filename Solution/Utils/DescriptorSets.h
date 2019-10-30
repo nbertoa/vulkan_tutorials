@@ -52,7 +52,7 @@ public:
     const DescriptorSets& operator=(const DescriptorSets&) = delete;
 
     VkDescriptorSet 
-    vkDescriptorSet(const size_t descriptorSetIndex) const;
+    vkDescriptorSet(const uint32_t descriptorSetIndex) const;
 
     // Once allocated, descriptor sets can be updated with a combination of write and copy operations.
     //
