@@ -2,14 +2,15 @@
 
 #include <cassert>
 
-#include "Utils/AttachmentDescriptions.h"
+#include "Utils/AttachmentDescription.h"
 #include "Utils/DebugUtils.h"
 #include "Utils/LogicalDevice.h"
 #include "Utils/RenderPass.h"
 #include "Utils/PipelineLayout.h"
 #include "Utils/ShaderModule.h"
-#include "Utils/SubpassDependencies.h"
-#include "Utils/SubpassDescriptions.h"
+#include "Utils/SubpassDependency.h"
+#include "Utils/SubpassDescription.h"
+#include "Utils/WriteDescriptorSet.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/pipeline_stage/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
@@ -27,12 +28,13 @@ App::App(const uint32_t windowWidth,
                       mSystemManager.swapChain().imageViewCount(),
                       mSystemManager.swapChain().imageViewCount())
 {
+    initBuffers();
+    initDescriptorSets();
     initRenderPass();
     initFrameBuffers();
     initCommandBuffers();
     initSemaphoresAndFences();
-    initGraphicsPipeline();
-    initBuffers();
+    initGraphicsPipeline();    
     recordCommandBuffers();
 }
 
@@ -67,11 +69,49 @@ App::processCurrentFrame() {
     uniformBuffer.copyToHostMemory(&mMatrixUBO);
 }
 
+void
+App::initDescriptorSets() {
+    assert(mMatrixUBODescriptorSetLayout == nullptr);
+
+    VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
+    descriptorSetLayoutBinding.binding = 0;
+    descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorSetLayoutBinding.descriptorCount = 1;
+    descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindings;
+    descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
+    mMatrixUBODescriptorSetLayout.reset(new DescriptorSetLayout(mSystemManager.logicalDevice(),
+                                                                descriptorSetLayoutBindings));
+
+    // Create a descriptor set for each swap chain image, all with the same layout.
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts(mSystemManager.swapChain().imageViewCount(),
+                                                            mMatrixUBODescriptorSetLayout->vkDescriptorSetLayout());
+    mMatrixUBODescriptorSets.reset(new DescriptorSets(mSystemManager.logicalDevice(),
+                                                      mDescriptorPool,
+                                                      descriptorSetLayouts));
+
+    // The descriptor sets have been allocated now, but the descriptors within still
+    // need to be configured.
+    std::vector<VkDescriptorBufferInfo> bufferInfos;
+    bufferInfos.emplace_back(VkDescriptorBufferInfo{VK_NULL_HANDLE,
+                                                    0,
+                                                    sizeof(MatrixUBO)});
+    for (uint32_t i = 0; i < mSystemManager.swapChain().imageViewCount(); ++i) {   
+        bufferInfos.back().buffer = mUniformBuffers->buffer(i).vkBuffer();
+        WriteDescriptorSet writeDescriptorSet(bufferInfos,
+                                              VK_NULL_HANDLE,
+                                              VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                              0);
+        mMatrixUBODescriptorSets->updateDescriptorSet(i,
+                                                      writeDescriptorSet);
+    }
+}
+
 void 
 App::initBuffers() {
-    initVertexBuffer();
-    initIndexBuffer();
     initUniformBuffers();
+    initVertexBuffer();
+    initIndexBuffer();    
 }
 
 void 
@@ -193,6 +233,7 @@ App::recordCommandBuffers() {
 void
 App::initGraphicsPipeline() {
     assert(mGraphicsPipeline == nullptr);
+    assert(mMatrixUBODescriptorSetLayout != nullptr);
 
     PipelineStates pipelineStates;
     initPipelineStates(pipelineStates);
@@ -200,7 +241,8 @@ App::initGraphicsPipeline() {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    PipelineLayout pipelineLayout(mSystemManager.logicalDevice());
+    PipelineLayout pipelineLayout(mSystemManager.logicalDevice(),
+                                  mMatrixUBODescriptorSetLayout.get());
 
     mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
                                                  *mRenderPass,
@@ -211,10 +253,44 @@ App::initGraphicsPipeline() {
 }
 
 void
+App::initPipelineStates(PipelineStates& pipelineStates) const {
+    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
+    PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
+
+    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+    PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
+
+    pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
+                                       vertexInputAttributeDescriptions});
+
+    pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+                                         VK_FALSE});
+
+    pipelineStates.setViewportState({mSystemManager.swapChain().viewport(),
+                                    mSystemManager.swapChain().scissorRect()});
+
+    pipelineStates.setRasterizationState({});
+
+    pipelineStates.setMultisampleState({});
+
+    const ColorBlendAttachmentState colorBlendAttachmentState;
+    pipelineStates.setColorBlendState({colorBlendAttachmentState});
+}
+
+void
+App::initShaderStages(ShaderStages& shaderStages) {
+    ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/vert.spv",
+                                                                          VK_SHADER_STAGE_VERTEX_BIT));
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/frag.spv",
+                                                                          VK_SHADER_STAGE_FRAGMENT_BIT));
+}
+
+void
 App::initRenderPass() {
     assert(mRenderPass == nullptr);
 
-    AttachmentDescriptions attachmentDescriptions;
+    std::vector<AttachmentDescription> attachmentDescriptions;
 
     // The format of the color attachment should match the format 
     // of the swap chain images.
@@ -226,16 +302,16 @@ App::initRenderPass() {
     // We want the image to be ready for presentation using the swap chain 
     // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
     // for the final layout.
-    attachmentDescriptions.add(mSystemManager.swapChain().imageFormat(),
-                               VK_ATTACHMENT_LOAD_OP_CLEAR,
-                               VK_ATTACHMENT_STORE_OP_STORE,
-                               VK_IMAGE_LAYOUT_UNDEFINED,
-                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    attachmentDescriptions.emplace_back(mSystemManager.swapChain().imageFormat(),
+                                        VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                        VK_ATTACHMENT_STORE_OP_STORE,
+                                        VK_IMAGE_LAYOUT_UNDEFINED,
+                                        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
     std::vector<VkAttachmentReference> colorAttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
-    SubpassDescriptions subpassDescriptions;
-    subpassDescriptions.add(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            colorAttachmentReferences);
+    std::vector<SubpassDescription> subpassDescriptions;
+    subpassDescriptions.emplace_back(VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                     colorAttachmentReferences);
 
     // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
     // depending on whether it is specified in srcSubpass or dstSubpass.
@@ -250,14 +326,14 @@ App::initRenderPass() {
     // These settings will prevent the transition from happening until it is
     // actually necessary (and allowed): when we want to start writing colors
     // to it.
-    SubpassDependencies subpassDependencies;
-    subpassDependencies.add(VK_SUBPASS_EXTERNAL,
-                            0,
-                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                            0,
-                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+    std::vector<SubpassDependency> subpassDependencies;
+    subpassDependencies.emplace_back(VK_SUBPASS_EXTERNAL,
+                                     0,
+                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                     0,
+                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                     VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                     VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 
     mRenderPass.reset(new RenderPass(mSystemManager.logicalDevice(),
                                      attachmentDescriptions,
@@ -327,38 +403,4 @@ App::initSemaphoresAndFences() {
                                                    mFrameBuffers->bufferCount()));
     mFences.reset(new Fences(mSystemManager.logicalDevice(),
                              mFrameBuffers->bufferCount()));
-}
-
-void
-App::initPipelineStates(PipelineStates& pipelineStates) const {
-    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
-    PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
-
-    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
-    PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
-
-    pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
-                                       vertexInputAttributeDescriptions});
-
-    pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                                         VK_FALSE});
-
-    pipelineStates.setViewportState({mSystemManager.swapChain().viewport(),
-                                    mSystemManager.swapChain().scissorRect()});
-
-    pipelineStates.setRasterizationState({});
-
-    pipelineStates.setMultisampleState({});
-
-    const ColorBlendAttachmentState colorBlendAttachmentState;
-    pipelineStates.setColorBlendState({colorBlendAttachmentState});
-}
-
-void
-App::initShaderStages(ShaderStages& shaderStages) {
-    ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/vert.spv",
-                                                                          VK_SHADER_STAGE_VERTEX_BIT));
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/frag.spv",
-                                                                          VK_SHADER_STAGE_FRAGMENT_BIT));
 }

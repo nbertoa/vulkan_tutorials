@@ -1,7 +1,5 @@
 #include "SubpassDescription.h"
 
-#include <cassert>
-
 namespace vk {
 SubpassDescription::SubpassDescription(const VkPipelineBindPoint pipelineBindPoint,
                                        const std::vector<VkAttachmentReference>& colorAttachmentReferences,

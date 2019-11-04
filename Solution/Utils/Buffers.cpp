@@ -18,13 +18,15 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
     for (uint32_t i = 0; i < bufferCount; ++i) {
-        mBuffers.emplace_back(Buffer(logicalDevice,
-                                     physicalDevice,
-                                     size,
-                                     usageFlags,
-                                     memoryPropertyFlags,
-                                     sharingMode,
-                                     queueFamilyIndices));
+        Buffer buffer(logicalDevice,
+                      physicalDevice,
+                      size,
+                      usageFlags,
+                      memoryPropertyFlags,
+                      sharingMode,
+                      queueFamilyIndices);
+
+        mBuffers.emplace_back(std::move(buffer));
     }
 }
 
@@ -39,12 +41,12 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
     for (uint32_t i = 0; i < bufferCount; ++i) {
-        mBuffers.emplace_back(Buffer(logicalDevice,
-                                     size,
-                                     usageFlags,
-                                     deviceMemory,
-                                     sharingMode,
-                                     queueFamilyIndices));
+        mBuffers.emplace_back(std::move(Buffer(logicalDevice,
+                                               size,
+                                               usageFlags,
+                                               deviceMemory,
+                                               sharingMode,
+                                               queueFamilyIndices)));
     }
 }
 

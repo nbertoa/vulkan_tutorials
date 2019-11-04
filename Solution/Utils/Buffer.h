@@ -5,10 +5,9 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "DeviceMemory.h"
-
 namespace vk {
 class CommandPool;
+class DeviceMemory;
 class Fence;
 class LogicalDevice;
 class PhysicalDevice;

@@ -8,6 +8,7 @@ namespace vk {
 class DescriptorPool;
 class DescriptorSetLayout;
 class LogicalDevice;
+class WriteDescriptorSet;
 
 //
 // VkDescriptorSet list wrapper
@@ -52,46 +53,17 @@ public:
     const DescriptorSets& operator=(const DescriptorSets&) = delete;
 
     VkDescriptorSet 
-    vkDescriptorSet(const uint32_t descriptorSetIndex) const;
+    operator[](const uint32_t index) const;
+
+    uint32_t
+    size() const;
 
     // Once allocated, descriptor sets can be updated with a combination of write and copy operations.
     //
     // * writeDescriptorSets to write to. The operations described by writeDescriptorSets are performed first, 
     //   followed by the operations described by copyDescriptorSets. Within each array, the operations are performed in 
     //   the order they appear in the array. Each element in the writeDescriptorSets array describes an operation 
-    //   updating the descriptor set using descriptors for resources specified in the structure:    
-    //
-    //   - dstSet to update. This descriptor set must belong to this instance of the DescriptorSets class.
-    //   - dstBinding within that set.
-    //   - dstArrayElement is the starting element in that array.
-    //     If the descriptor binding identified by dstSet and dstBinding has a descriptor type of 
-    //     VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then dstArrayElement specifies the starting 
-    //     byte offset within the binding.
-    //   - descriptorCount to update (the number of elements in pImageInfo, 
-    //     pBufferInfo, or pTexelBufferView).
-    //     If the descriptor binding identified by dstSet and dstBinding has a descriptor type of 
-    //     VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount specifies the number of bytes to update.
-    //   - descriptorType of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView.
-    //     It must be the same type as that specified in VkDescriptorSetLayoutBinding for dstSet at dstBinding.
-    //     The type of the descriptor also controls which array the descriptors are taken from.
-    //   - pImageInfo is an optional array of VkDescriptorImageInfo structures or is ignored:
-    //     . sampler used in descriptor updates for types 
-    //       VK_DESCRIPTOR_TYPE_SAMPLERand VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER if 
-    //       the binding being updated does not use immutable samplers.
-    //     . imageView used in descriptor updates for types 
-    //       VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 
-    //       VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, and VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT.
-    //     . imageLayout that the image subresources accessible from imageView 
-    //       will be in at the time this descriptor is accessed. imageLayout is used in descriptor 
-    //       updates for types VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 
-    //       VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, and VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT.
-    //   - pBufferInfo is an optional array of VkDescriptorBufferInfo structures or is ignored:
-    //     . buffer resource.
-    //     . offset in bytes from the start of buffer.
-    //       Access to buffer memory via this descriptor uses addressing that is relative to this starting offset.
-    //     . range in bytes that is used for this descriptor update, 
-    //       or VK_WHOLE_SIZE to use the range from offset to the end of the buffer.
-    //   - pTexelBufferView is an optional array of VkBufferView.
+    //   updating the descriptor set using descriptors for resources specified in the structure
     //
     // * copyDescriptorSets describes an operation copying descriptors between sets. 
     //   If the dstSet member of any element of writeDescriptorSets or copyDescriptorSets is bound, accessed, 
@@ -99,11 +71,19 @@ public:
     //   or executable state, and any of the descriptor bindings that are updated were not created with the 
     //   VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT or VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT bits set, 
     //   that command buffer becomes invalid.
+    //
+    // Preconditions:
+    // The methods that do not take a descriptorSetIndex must refer to a
+    // descriptor set that belongs to this instance of DescriptorSets.
     void 
-    updateDescriptorSet(const VkWriteDescriptorSet& writeDescriptorSet);
+    updateDescriptorSet(const WriteDescriptorSet& writeDescriptorSet);
+
+    void
+    updateDescriptorSet(const uint32_t descriptorSetIndex,
+                        WriteDescriptorSet& writeDescriptorSet);
     
     void 
-    updateDescriptorSet(const std::vector<VkWriteDescriptorSet>& writeDescriptorSets);
+    updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets);
 
     void 
     updateDescriptorSet(const VkCopyDescriptorSet& copyDescriptorSet);
@@ -112,7 +92,7 @@ public:
     updateDescriptorSet(const std::vector<VkCopyDescriptorSet>& copyDescriptorSets);
 
     void 
-    updateDescriptorSet(const std::vector<VkWriteDescriptorSet>& writeDescriptorSets,
+    updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets,
                         const std::vector<VkCopyDescriptorSet>& copyDescriptorSets);
 
 private:

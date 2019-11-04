@@ -1,19 +1,18 @@
-#ifndef UTILS_SUBPASS_DEPENDENCIES
-#define UTILS_SUBPASS_DEPENDENCIES
+#ifndef UTILS_SUBPASS_DEPENDENCY
+#define UTILS_SUBPASS_DEPENDENCY
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
 //
-// VkSubpassDependency vector wrapper
+// VkSubpassDependency wrapper
 //
 // We need to tell to the render pass the dependencies between pairs of subpasses.
 //
-// You need the AttachmentDescriptions to:
+// You need the SubpassDependency to:
 // - Create the RenderPass.
 //
-class SubpassDependencies {
+class SubpassDependency {
 public:
     // * sourceSubpassIndex of the first subpass in the dependency, or VK_SUBPASS_EXTERNAL.
     //
@@ -167,26 +166,16 @@ public:
     //
     // The destAccessMask scope is limited to access in the pipeline stages determined by the destination stage mask specified by destStageMask.
     // It is also limited to access types in the destination access mask specified by dstAccessMask.
-    void
-    add(const uint32_t sourceSubpassIndex,
-        const uint32_t destSubpassIndex,
-        const VkPipelineStageFlags sourceStageMask,
-        const VkAccessFlags sourceAccessMask,
-        const VkPipelineStageFlags destStageMask,        
-        const VkAccessFlags destAccessMask,
-        const VkDependencyFlags dependencyFlags = {});
-
-    uint32_t
-    size() const;
-
-    bool
-    empty() const;
-
-    const VkSubpassDependency&
-    operator[](const uint32_t index) const;
+    SubpassDependency(const uint32_t sourceSubpassIndex,
+                      const uint32_t destSubpassIndex,
+                      const VkPipelineStageFlags sourceStageMask,
+                      const VkAccessFlags sourceAccessMask,
+                      const VkPipelineStageFlags destStageMask,
+                      const VkAccessFlags destAccessMask,
+                      const VkDependencyFlags dependencyFlags = {});
 
 private:
-    std::vector<VkSubpassDependency> mVkSubpassDependencies = {};
+    VkSubpassDependency mSubpassDependency = {};
 };
 }
 

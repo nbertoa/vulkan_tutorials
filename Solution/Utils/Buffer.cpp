@@ -4,6 +4,7 @@
 
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "DeviceMemory.h"
 #include "DebugUtils.h"
 #include "Fence.h"
 #include "LogicalDevice.h"
@@ -103,9 +104,10 @@ Buffer::Buffer(Buffer&& other) noexcept
     : mLogicalDevice(other.mLogicalDevice)
     , mBuffer(other.mBuffer)
     , mSizeInBytes(other.mSizeInBytes)
-    , mDeviceMemory(std::move(other.mDeviceMemory))
+    , mDeviceMemory(other.mDeviceMemory)
 {
     other.mBuffer = VK_NULL_HANDLE;
+    other.mDeviceMemory = nullptr;
 }
 
 void 

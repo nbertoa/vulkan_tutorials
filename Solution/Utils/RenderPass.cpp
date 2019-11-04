@@ -2,27 +2,24 @@
 
 #include <cassert>
 
-#include "AttachmentDescriptions.h"
 #include "DebugUtils.h"
 #include "LogicalDevice.h"
-#include "SubpassDependencies.h"
-#include "SubpassDescriptions.h"
 
 namespace vk {
 RenderPass::RenderPass(const LogicalDevice& logicalDevice,
-                       const AttachmentDescriptions& attachmentDescriptions,
-                       const SubpassDescriptions& subpassDescriptions,
-                       const SubpassDependencies& subpassDependencies)
+                       const std::vector<AttachmentDescription>& attachmentDescriptions,
+                       const std::vector<SubpassDescription>& subpassDescriptions,
+                       const std::vector<SubpassDependency>& subpassDependencies)
     : mLogicalDevice(logicalDevice)
 {
     VkRenderPassCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    createInfo.attachmentCount = attachmentDescriptions.size();
-    createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : &attachmentDescriptions[0];
-    createInfo.subpassCount = subpassDescriptions.size();
-    createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : &subpassDescriptions[0];
-    createInfo.dependencyCount = subpassDependencies.size();
-    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : &subpassDependencies[0];
+    createInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
+    createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : reinterpret_cast<const VkAttachmentDescription*>(attachmentDescriptions.data());
+    createInfo.subpassCount = static_cast<uint32_t>(subpassDescriptions.size());
+    createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : reinterpret_cast<const VkSubpassDescription*>(subpassDescriptions.data());
+    createInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
+    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : reinterpret_cast<const VkSubpassDependency*>(subpassDependencies.data());
 
     vkChecker(vkCreateRenderPass(mLogicalDevice.vkDevice(),
                                  &createInfo,

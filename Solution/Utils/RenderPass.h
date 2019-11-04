@@ -4,11 +4,12 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "AttachmentDescription.h"
+#include "SubpassDependency.h"
+#include "SubpassDescription.h"
+
 namespace vk {
-class AttachmentDescriptions;
 class LogicalDevice;
-class SubpassDependencies;
-class SubpassDescriptions;
 
 //
 // VkRenderPass wrapper.
@@ -43,9 +44,9 @@ public:
     //
     // * subpassDependencies between pairs of subpasses.
     RenderPass(const LogicalDevice& logicalDevice,
-               const AttachmentDescriptions& attachmentDescriptions,
-               const SubpassDescriptions& subpassDescriptions,
-               const SubpassDependencies& subpassDependencies);
+               const std::vector<AttachmentDescription>& attachmentDescriptions,
+               const std::vector<SubpassDescription>& subpassDescriptions,
+               const std::vector<SubpassDependency>& subpassDependencies);
     ~RenderPass();
     RenderPass(RenderPass&& other) noexcept;
     RenderPass(const RenderPass&) = delete;

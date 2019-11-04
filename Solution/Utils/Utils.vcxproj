@@ -139,7 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttachmentDescriptions.cpp" />
+    <ClCompile Include="AttachmentDescription.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Buffers.cpp" />
@@ -175,17 +175,18 @@
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Semaphores.cpp" />
     <ClCompile Include="ShaderModule.cpp" />
-    <ClCompile Include="SubpassDependencies.cpp" />
-    <ClCompile Include="SubpassDescriptions.cpp" />
+    <ClCompile Include="SubpassDependency.cpp" />
+    <ClCompile Include="SubpassDescription.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="system\ShaderModuleSystem.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WriteDescriptorSet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttachmentDescriptions.h" />
+    <ClInclude Include="AttachmentDescription.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Buffers.h" />
@@ -223,14 +224,15 @@
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Semaphores.h" />
     <ClInclude Include="ShaderModule.h" />
-    <ClInclude Include="SubpassDependencies.h" />
-    <ClInclude Include="SubpassDescriptions.h" />
+    <ClInclude Include="SubpassDependency.h" />
+    <ClInclude Include="SubpassDescription.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="system\ShaderModuleSystem.h" />
     <ClInclude Include="vertex\PosColorVertex.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="WriteDescriptorSet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

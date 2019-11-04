@@ -1,20 +1,19 @@
-#ifndef UTILS_ATTACHMENT_DESCRIPTIONS
-#define UTILS_ATTACHMENT_DESCRIPTIONS
+#ifndef UTILS_ATTACHMENT_DESCRIPTION
+#define UTILS_ATTACHMENT_DESCRIPTION
 
-#include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
 //
-// VkAttachmentDescription vector wrapper
+// VkAttachmentDescription wrapper
 //
 // We need to tell to the render pass the description of the attachments
 // (frame buffers) that we are going to use.
 //
-// You need the AttachmentDescriptions to:
+// You need the AttachmentDescription to:
 // - Create the RenderPass.
 //
-class AttachmentDescriptions {
+class AttachmentDescription {
 public:
     // * format of the image view that will be used for the attachment.
     //
@@ -157,27 +156,17 @@ public:
     // with another attachment in the same render pass. This information limits the ability of the implementation to reorder 
     // certain operations(like layout transitions and the colorAndDepthStoreOperation) such that it is not improperly 
     // reordered against other uses of the same physical memory via a different attachment.
-    void 
-    add(const VkFormat format,        
-        const VkAttachmentLoadOp colorAndDepthLoadOperation,        
-        const VkAttachmentStoreOp colorAndDepthStoreOperation,
-        const VkImageLayout initialLayout,
-        const VkImageLayout finalLayout,
-        const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, // No multisampling
-        const VkAttachmentLoadOp stencilLoadOperation = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        const VkAttachmentStoreOp stencilStoreOperation = VK_ATTACHMENT_STORE_OP_DONT_CARE);
-
-    uint32_t 
-    size() const;
-
-    bool
-    empty() const;
-
-    const VkAttachmentDescription&  
-    operator[](const uint32_t index) const;
+    AttachmentDescription(const VkFormat format,
+                          const VkAttachmentLoadOp colorAndDepthLoadOperation,
+                          const VkAttachmentStoreOp colorAndDepthStoreOperation,
+                          const VkImageLayout initialLayout,
+                          const VkImageLayout finalLayout,
+                          const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, // No multisampling
+                          const VkAttachmentLoadOp stencilLoadOperation = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                          const VkAttachmentStoreOp stencilStoreOperation = VK_ATTACHMENT_STORE_OP_DONT_CARE);
        
 private:
-    std::vector<VkAttachmentDescription> mAttachmentDescriptions = {};
+    VkAttachmentDescription mAttachmentDescription = {};
 };
 }
 

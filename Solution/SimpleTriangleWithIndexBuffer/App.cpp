@@ -2,14 +2,14 @@
 
 #include <cassert>
 
-#include "Utils/AttachmentDescriptions.h"
+#include "Utils/AttachmentDescription.h"
 #include "Utils/DebugUtils.h"
 #include "Utils/LogicalDevice.h"
 #include "Utils/RenderPass.h"
 #include "Utils/PipelineLayout.h"
 #include "Utils/ShaderModule.h"
-#include "Utils/SubpassDependencies.h"
-#include "Utils/SubpassDescriptions.h"
+#include "Utils/SubpassDependency.h"
+#include "Utils/SubpassDescription.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/pipeline_stage/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
@@ -180,7 +180,7 @@ void
 App::initRenderPass() {
     assert(mRenderPass == nullptr);
 
-    AttachmentDescriptions attachmentDescriptions;
+    std::vector<AttachmentDescription> attachmentDescriptions;
 
     // The format of the color attachment should match the format 
     // of the swap chain images.
@@ -192,16 +192,16 @@ App::initRenderPass() {
     // We want the image to be ready for presentation using the swap chain 
     // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
     // for the final layout.
-    attachmentDescriptions.add(mSystemManager.swapChain().imageFormat(),
-                               VK_ATTACHMENT_LOAD_OP_CLEAR,
-                               VK_ATTACHMENT_STORE_OP_STORE,
-                               VK_IMAGE_LAYOUT_UNDEFINED,
-                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    attachmentDescriptions.emplace_back(mSystemManager.swapChain().imageFormat(),
+                                        VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                        VK_ATTACHMENT_STORE_OP_STORE,
+                                        VK_IMAGE_LAYOUT_UNDEFINED,
+                                        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
     std::vector<VkAttachmentReference> colorAttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
-    SubpassDescriptions subpassDescriptions;
-    subpassDescriptions.add(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            colorAttachmentReferences);
+    std::vector<SubpassDescription> subpassDescriptions;
+    subpassDescriptions.emplace_back(VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                     colorAttachmentReferences);
 
     // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
     // depending on whether it is specified in srcSubpass or dstSubpass.
@@ -216,14 +216,14 @@ App::initRenderPass() {
     // These settings will prevent the transition from happening until it is
     // actually necessary (and allowed): when we want to start writing colors
     // to it.
-    SubpassDependencies subpassDependencies;
-    subpassDependencies.add(VK_SUBPASS_EXTERNAL,
-                            0,
-                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                            0,
-                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+    std::vector<SubpassDependency> subpassDependencies;
+    subpassDependencies.emplace_back(VK_SUBPASS_EXTERNAL,
+                                     0,
+                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                     0,
+                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                     VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                     VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 
     mRenderPass.reset(new RenderPass(mSystemManager.logicalDevice(),
                                      attachmentDescriptions,

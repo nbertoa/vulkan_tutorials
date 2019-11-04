@@ -1,19 +1,19 @@
-#ifndef UTILS_SUBPASS_DESCRIPTIONS
-#define UTILS_SUBPASS_DESCRIPTIONS
+#ifndef UTILS_SUBPASS_DESCRIPTION
+#define UTILS_SUBPASS_DESCRIPTION
 
 #include <vector>
 #include <vulkan/vulkan.h>
 
 namespace vk {
 //
-// VkSubpassDescription vector wrapper
+// VkSubpassDescription wrapper
 //
 // We need to tell to the render pass the description of its subpasses
 //
-// You need the AttachmentDescriptions to:
+// You need the SubpassDescription to:
 // - Create the RenderPass.
 //
-class SubpassDescriptions {
+class SubpassDescription {
 public:
     // * pipelineBindPoint specifying the pipeline type supported for this subpass:
     //   . VK_PIPELINE_BIND_POINT_COMPUTE.
@@ -90,25 +90,15 @@ public:
     // they remain undefined for subpasses in subpass dependency chains starting with subpass S until they are written again.
     // However, they remain valid for subpasses in other subpass dependency chains starting with subpass S1 
     // if those subpasses use or preserve the attachment.
-    void
-    add(const VkPipelineBindPoint pipelineBindPoint,
-        const std::vector<VkAttachmentReference>& colorAttachmentReferences,
-        const std::vector<VkAttachmentReference>& inputAttachmentReferences = {},
-        const std::vector<VkAttachmentReference>& resolveAttachmentReferences = {},        
-        const std::vector<VkAttachmentReference>& depthStencilAttachmentReferences = {},
-        const std::vector<uint32_t>& preserveAttachments = {});
-
-    uint32_t
-    size() const;
-
-    bool
-    empty() const;
-
-    const VkSubpassDescription&
-    operator[](const uint32_t index) const;
+    SubpassDescription(const VkPipelineBindPoint pipelineBindPoint,
+                       const std::vector<VkAttachmentReference>& colorAttachmentReferences,
+                       const std::vector<VkAttachmentReference>& inputAttachmentReferences = {},
+                       const std::vector<VkAttachmentReference>& resolveAttachmentReferences = {},
+                       const std::vector<VkAttachmentReference>& depthStencilAttachmentReferences = {},
+                       const std::vector<uint32_t>& preserveAttachments = {});
 
 private:
-    std::vector<VkSubpassDescription> mSubpassDescriptions = {};
+    VkSubpassDescription mSubpassDescription = {};
 };
 }
 

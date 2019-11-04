@@ -6,6 +6,8 @@
 #include "Utils/Buffers.h"
 #include "Utils/CommandBuffers.h"
 #include "Utils/DescriptorPool.h"
+#include "Utils/DescriptorSetLayout.h"
+#include "Utils/DescriptorSets.h"
 #include "Utils/Fences.h"
 #include "Utils/FrameBuffers.h"
 #include "Utils/GraphicsPipeline.h"
@@ -31,6 +33,9 @@ protected:
     void 
     processCurrentFrame();
 
+    void
+    initDescriptorSets();
+
     void 
     initBuffers();
 
@@ -49,6 +54,12 @@ protected:
     void
     initGraphicsPipeline();
 
+    void
+    initPipelineStates(vk::PipelineStates& pipelineStates) const;
+
+    void
+    initShaderStages(vk::ShaderStages& shaderStages);
+
     void 
     initRenderPass();
 
@@ -63,12 +74,6 @@ protected:
 
     void
     initSemaphoresAndFences();
-
-    void
-    initPipelineStates(vk::PipelineStates& pipelineStates) const;
-
-    void
-    initShaderStages(vk::ShaderStages& shaderStages);
 
     // The member variables declaration order is important because
     // the destruction order must be this.
@@ -91,6 +96,9 @@ protected:
     vk::DescriptorPool mDescriptorPool;
 
     MatrixUBO mMatrixUBO;
+    std::unique_ptr<vk::DescriptorSetLayout> mMatrixUBODescriptorSetLayout;
+    std::unique_ptr<vk::DescriptorSets> mMatrixUBODescriptorSets;
+    
 };
 
 #endif 
