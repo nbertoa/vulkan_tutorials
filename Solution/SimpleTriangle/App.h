@@ -1,15 +1,15 @@
 #ifndef APP
 #define APP
 
-#include "Utils/Buffer.h"
-#include "Utils/CommandBuffers.h"
-#include "Utils/Fences.h"
 #include "Utils/FrameBuffers.h"
-#include "Utils/GraphicsPipeline.h"
-#include "Utils/RenderPass.h"
-#include "Utils/Semaphores.h"
 #include "Utils/SystemManager.h"
+#include "Utils/command/CommandBuffers.h"
+#include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h" 
+#include "Utils/render_pass/RenderPass.h"
+#include "Utils/resource/Buffer.h"
+#include "Utils/sync/Fences.h"
+#include "Utils/sync/Semaphores.h"
 
 namespace vk {
 class ShaderStages;

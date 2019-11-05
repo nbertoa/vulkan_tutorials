@@ -25,7 +25,8 @@ ViewportState::ViewportState(const ViewportState& state)
 {
 }
 
-const ViewportState& ViewportState::operator=(const ViewportState& state) {
+const ViewportState& 
+ViewportState::operator=(const ViewportState& state) {
     if (this == &state) {
         return *this;
     }
@@ -35,5 +36,7 @@ const ViewportState& ViewportState::operator=(const ViewportState& state) {
     mScissorRectangle = state.mScissorRectangle;
     mCreateInfo.pViewports = &mViewport;
     mCreateInfo.pScissors = &mScissorRectangle;
+
+    return *this;
 }
 }

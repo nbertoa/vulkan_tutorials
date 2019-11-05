@@ -4,7 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "PhysicalDeviceData.h"
+#include "device/PhysicalDeviceData.h"
 
 namespace vk {
 #ifndef NDEBUG // Debug

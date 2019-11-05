@@ -4,10 +4,10 @@
 #include <cassert>
 
 #include "DebugUtils.h"
-#include "LogicalDevice.h"
-#include "PhysicalDevice.h"
-#include "Semaphore.h"
 #include "Surface.h"
+#include "device/LogicalDevice.h"
+#include "device/PhysicalDevice.h"
+#include "sync/Semaphore.h"
 
 namespace vk {
 SwapChain::SwapChain(const LogicalDevice& logicalDevice,

@@ -28,7 +28,8 @@ VertexInputState::VertexInputState(const VertexInputState& state)
     mCreateInfo.pVertexAttributeDescriptions = mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
 }
 
-const VertexInputState& VertexInputState::operator=(const VertexInputState& state) {
+const VertexInputState& 
+VertexInputState::operator=(const VertexInputState& state) {
     if (this == &state) {
         return *this;
     }
@@ -40,5 +41,7 @@ const VertexInputState& VertexInputState::operator=(const VertexInputState& stat
     mCreateInfo.pVertexBindingDescriptions = mBindingDescriptions.empty() ? nullptr : mBindingDescriptions.data();
     mCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size());
     mCreateInfo.pVertexAttributeDescriptions = mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
+
+    return *this;
 }
 }

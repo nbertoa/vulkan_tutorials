@@ -25,7 +25,8 @@ ColorBlendState::ColorBlendState(const ColorBlendState& state)
     mCreateInfo.pAttachments = &mColorBlendAttachmentState.vkState();
 }
 
-const ColorBlendState& ColorBlendState::operator=(const ColorBlendState& state) {
+const ColorBlendState& 
+ColorBlendState::operator=(const ColorBlendState& state) {
     if (this == &state) {
         return *this;
     }
@@ -33,5 +34,7 @@ const ColorBlendState& ColorBlendState::operator=(const ColorBlendState& state) 
     mCreateInfo = state.mCreateInfo;
     mColorBlendAttachmentState = state.mColorBlendAttachmentState;
     mCreateInfo.pAttachments = &mColorBlendAttachmentState.vkState();
+
+    return *this;
 }
 }

@@ -23,7 +23,8 @@ DynamicState::DynamicState(const DynamicState& state)
     mCreateInfo.dynamicStateCount = static_cast<uint32_t>(mDynamicStates.size());
     mCreateInfo.pDynamicStates = mDynamicStates.empty() ? nullptr : mDynamicStates.data();
 }
-const DynamicState& DynamicState::operator=(const DynamicState& state) {
+const DynamicState& 
+DynamicState::operator=(const DynamicState& state) {
     if (this == &state) {
         return *this;
     }
@@ -32,5 +33,7 @@ const DynamicState& DynamicState::operator=(const DynamicState& state) {
     mDynamicStates = state.mDynamicStates;
     mCreateInfo.dynamicStateCount = static_cast<uint32_t>(mDynamicStates.size());
     mCreateInfo.pDynamicStates = mDynamicStates.empty() ? nullptr : mDynamicStates.data();
+
+    return *this;
 }
 }

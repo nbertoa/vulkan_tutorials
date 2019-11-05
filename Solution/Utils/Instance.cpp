@@ -52,7 +52,7 @@ Instance::getCandidatePhysicalDevices(const Surface& surface,
                                       surface,
                                       deviceExtensionNames);
         if (deviceData.isSupported()) {
-            supportedPhysicalDevices.push_back(deviceData);
+            supportedPhysicalDevices.emplace_back(deviceData);
         }
     }
 

@@ -2,16 +2,13 @@
 
 #include <cassert>
 
-#include "Utils/AttachmentDescription.h"
 #include "Utils/DebugUtils.h"
-#include "Utils/LogicalDevice.h"
-#include "Utils/RenderPass.h"
-#include "Utils/PipelineLayout.h"
-#include "Utils/ShaderModule.h"
-#include "Utils/SubpassDependency.h"
-#include "Utils/SubpassDescription.h"
+#include "Utils/device/LogicalDevice.h"
+#include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
-#include "Utils/pipeline_stage/ShaderStages.h"
+#include "Utils/render_pass/RenderPass.h"
+#include "Utils/shader/ShaderModule.h"
+#include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;

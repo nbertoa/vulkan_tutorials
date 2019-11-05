@@ -66,7 +66,7 @@ public:
                        const VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL,
                        const float lineWidth = 1.0f,
                        const VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
-                       const VkFrontFace frontFace = VK_FRONT_FACE_CLOCKWISE,
+                       const VkFrontFace frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
                        const VkBool32 depthBiasEnable = VK_FALSE,
                        const float depthBiasConstantFactor = 0.0f,
                        const float depthBiasClamp = 0.0f,

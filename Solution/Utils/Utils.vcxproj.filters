@@ -1,36 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="Buffers.cpp" />
-    <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="CommandBuffers.cpp" />
-    <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="DebugMessenger.cpp" />
-    <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="DeviceMemory.cpp" />
-    <ClCompile Include="Fence.cpp" />
-    <ClCompile Include="Fences.cpp" />
     <ClCompile Include="FrameBuffers.cpp" />
-    <ClCompile Include="GraphicsPipeline.cpp" />
-    <ClCompile Include="LogicalDevice.cpp" />
-    <ClCompile Include="PhysicalDevice.cpp" />
-    <ClCompile Include="PipelineLayout.cpp" />
-    <ClCompile Include="RenderPass.cpp" />
-    <ClCompile Include="Semaphore.cpp" />
-    <ClCompile Include="Semaphores.cpp" />
-    <ClCompile Include="ShaderModule.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp">
       <Filter>vertex</Filter>
     </ClCompile>
-    <ClCompile Include="DescriptorPool.cpp" />
-    <ClCompile Include="DescriptorSets.cpp" />
     <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="PhysicalDeviceData.cpp" />
     <ClCompile Include="pipeline_stage\VertexInputState.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
@@ -58,56 +37,106 @@
     <ClCompile Include="pipeline_stage\DynamicState.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
-    <ClCompile Include="pipeline_stage\ShaderStages.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
     <ClCompile Include="pipeline_stage\ViewportState.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
     <ClCompile Include="pipeline_stage\PipelineStates.cpp">
       <Filter>pipeline_stage</Filter>
     </ClCompile>
-    <ClCompile Include="system\ShaderModuleSystem.cpp">
-      <Filter>system</Filter>
+    <ClCompile Include="device\LogicalDevice.cpp">
+      <Filter>device</Filter>
     </ClCompile>
-    <ClCompile Include="WriteDescriptorSet.cpp" />
-    <ClCompile Include="AttachmentDescription.cpp" />
-    <ClCompile Include="SubpassDescription.cpp" />
-    <ClCompile Include="SubpassDependency.cpp" />
+    <ClCompile Include="device\PhysicalDevice.cpp">
+      <Filter>device</Filter>
+    </ClCompile>
+    <ClCompile Include="device\PhysicalDeviceData.cpp">
+      <Filter>device</Filter>
+    </ClCompile>
+    <ClCompile Include="render_pass\RenderPass.cpp">
+      <Filter>render_pass</Filter>
+    </ClCompile>
+    <ClCompile Include="render_pass\AttachmentDescription.cpp">
+      <Filter>render_pass</Filter>
+    </ClCompile>
+    <ClCompile Include="render_pass\SubpassDependency.cpp">
+      <Filter>render_pass</Filter>
+    </ClCompile>
+    <ClCompile Include="render_pass\SubpassDescription.cpp">
+      <Filter>render_pass</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\Buffer.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\Buffers.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\DeviceMemory.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Fence.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Fences.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Semaphore.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Semaphores.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CommandBuffer.cpp">
+      <Filter>command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CommandBuffers.cpp">
+      <Filter>command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CommandPool.cpp">
+      <Filter>command</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\PipelineLayout.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemManager.cpp" />
+    <ClCompile Include="shader\ShaderModule.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="shader\ShaderModuleSystem.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="shader\ShaderStages.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="descriptor\DescriptorPool.cpp">
+      <Filter>descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="descriptor\DescriptorSetLayout.cpp">
+      <Filter>descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="descriptor\DescriptorSetLayoutBinding.cpp">
+      <Filter>descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="descriptor\DescriptorSets.cpp">
+      <Filter>descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="descriptor\WriteDescriptorSet.cpp">
+      <Filter>descriptor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="Buffers.h" />
-    <ClInclude Include="CommandBuffer.h" />
-    <ClInclude Include="CommandBuffers.h" />
-    <ClInclude Include="CommandPool.h" />
-    <ClInclude Include="CreatorDefinitions.h" />
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="DescriptorSetLayout.h" />
-    <ClInclude Include="DeviceMemory.h" />
-    <ClInclude Include="Fence.h" />
-    <ClInclude Include="Fences.h" />
     <ClInclude Include="FrameBuffers.h" />
-    <ClInclude Include="GraphicsPipeline.h" />
-    <ClInclude Include="LogicalDevice.h" />
-    <ClInclude Include="PhysicalDevice.h" />
-    <ClInclude Include="PipelineLayout.h" />
-    <ClInclude Include="RenderPass.h" />
-    <ClInclude Include="Semaphore.h" />
-    <ClInclude Include="Semaphores.h" />
-    <ClInclude Include="ShaderModule.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="SystemManager.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="vertex\PosColorVertex.h">
       <Filter>vertex</Filter>
     </ClInclude>
-    <ClInclude Include="DescriptorPool.h" />
-    <ClInclude Include="DescriptorSets.h" />
     <ClInclude Include="Instance.h" />
-    <ClInclude Include="PhysicalDeviceData.h" />
     <ClInclude Include="pipeline_stage\VertexInputState.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
@@ -135,22 +164,94 @@
     <ClInclude Include="pipeline_stage\DynamicState.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
-    <ClInclude Include="pipeline_stage\ShaderStages.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
     <ClInclude Include="pipeline_stage\ViewportState.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
     <ClInclude Include="pipeline_stage\PipelineStates.h">
       <Filter>pipeline_stage</Filter>
     </ClInclude>
-    <ClInclude Include="system\ShaderModuleSystem.h">
-      <Filter>system</Filter>
+    <ClInclude Include="device\LogicalDevice.h">
+      <Filter>device</Filter>
     </ClInclude>
-    <ClInclude Include="WriteDescriptorSet.h" />
-    <ClInclude Include="AttachmentDescription.h" />
-    <ClInclude Include="SubpassDescription.h" />
-    <ClInclude Include="SubpassDependency.h" />
+    <ClInclude Include="device\PhysicalDevice.h">
+      <Filter>device</Filter>
+    </ClInclude>
+    <ClInclude Include="device\PhysicalDeviceData.h">
+      <Filter>device</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pass\RenderPass.h">
+      <Filter>render_pass</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pass\AttachmentDescription.h">
+      <Filter>render_pass</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pass\SubpassDependency.h">
+      <Filter>render_pass</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pass\SubpassDescription.h">
+      <Filter>render_pass</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\Buffer.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\Buffers.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\DeviceMemory.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Fence.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Fences.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Semaphore.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Semaphores.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CommandBuffer.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CommandBuffers.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CommandPool.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\GraphicsPipeline.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\PipelineLayout.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="shader\ShaderModule.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\ShaderModuleSystem.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\ShaderStages.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="descriptor\DescriptorPool.h">
+      <Filter>descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="descriptor\DescriptorSetLayout.h">
+      <Filter>descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="descriptor\DescriptorSetLayoutBinding.h">
+      <Filter>descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="descriptor\DescriptorSets.h">
+      <Filter>descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="descriptor\WriteDescriptorSet.h">
+      <Filter>descriptor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
@@ -159,8 +260,29 @@
     <Filter Include="pipeline_stage">
       <UniqueIdentifier>{41d2809e-7e83-4cb5-bec5-3437e46d83de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="system">
-      <UniqueIdentifier>{196156d4-2321-4548-a62b-65a34f1f4b04}</UniqueIdentifier>
+    <Filter Include="device">
+      <UniqueIdentifier>{db5a2c64-da4a-4e7f-b71b-da28b37a3bdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render_pass">
+      <UniqueIdentifier>{b9d99425-7c1b-49a3-8f1c-d86fb22a0256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{5f27a43c-0c6a-4ae9-9ad7-4cdf9b2d9d93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sync">
+      <UniqueIdentifier>{0877aaff-82c1-4d43-9600-09c1b6c032bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{8c89773a-a00c-474d-8a96-0a3bd99189e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="command">
+      <UniqueIdentifier>{5c4d4d16-fadd-4c97-b80a-fcc715d3d3c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{ad34e20b-2438-4b7b-9d30-adfedbaef52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="descriptor">
+      <UniqueIdentifier>{bec30087-1a97-4937-b5a4-bbdb16eaf623}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -4,8 +4,8 @@
 
 #include "DebugUtils.h"
 #include "Instance.h"
-#include "PhysicalDevice.h"
 #include "Window.h"
+#include "device/PhysicalDevice.h"
 
 namespace vk {
 Surface::Surface(const Instance& instance,

@@ -4,14 +4,14 @@
 #include <memory>
 #include <vulkan/vulkan.h>
 
-#include "CommandPool.h"
 #include "Instance.h"
-#include "LogicalDevice.h"
-#include "PhysicalDevice.h"
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
-#include "system/ShaderModuleSystem.h"
+#include "command/CommandPool.h"
+#include "device/LogicalDevice.h"
+#include "device/PhysicalDevice.h"
+#include "shader/ShaderModuleSystem.h"
 
 namespace vk {
 class SystemManager {

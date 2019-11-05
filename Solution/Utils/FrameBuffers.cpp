@@ -3,8 +3,8 @@
 #include <cassert>
 
 #include "DebugUtils.h"
-#include "LogicalDevice.h"
-#include "RenderPass.h"
+#include "device/LogicalDevice.h"
+#include "render_pass/RenderPass.h"
 
 namespace vk {
 FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,                           

@@ -2,17 +2,14 @@
 
 #include <cassert>
 
-#include "Utils/AttachmentDescription.h"
 #include "Utils/DebugUtils.h"
-#include "Utils/LogicalDevice.h"
-#include "Utils/RenderPass.h"
-#include "Utils/PipelineLayout.h"
-#include "Utils/ShaderModule.h"
-#include "Utils/SubpassDependency.h"
-#include "Utils/SubpassDescription.h"
-#include "Utils/WriteDescriptorSet.h"
+#include "Utils/descriptor/WriteDescriptorSet.h"
+#include "Utils/device/LogicalDevice.h"
+#include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
-#include "Utils/pipeline_stage/ShaderStages.h"
+#include "Utils/render_pass/RenderPass.h"
+#include "Utils/shader/ShaderModule.h"
+#include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
@@ -73,15 +70,12 @@ void
 App::initDescriptorSets() {
     assert(mMatrixUBODescriptorSetLayout == nullptr);
 
-    VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
-    descriptorSetLayoutBinding.binding = 0;
-    descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorSetLayoutBinding.descriptorCount = 1;
-    descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindings;
-    descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
+    DescriptorSetLayoutBinding descriptorSetLayoutBinding(0,
+                                                          VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                          1,
+                                                          VK_SHADER_STAGE_VERTEX_BIT);
     mMatrixUBODescriptorSetLayout.reset(new DescriptorSetLayout(mSystemManager.logicalDevice(),
-                                                                descriptorSetLayoutBindings));
+                                                                {descriptorSetLayoutBinding}));
 
     // Create a descriptor set for each swap chain image, all with the same layout.
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts(mSystemManager.swapChain().imageViewCount(),
@@ -222,6 +216,9 @@ App::recordCommandBuffers() {
         commandBuffer.bindIndexBuffer(*mGpuIndexBuffer,
                                       VK_INDEX_TYPE_UINT32);
 
+        commandBuffer.bindDescriptorSet(mGraphicsPipeline->pipelineLayout(),
+                                        (*mMatrixUBODescriptorSets)[i]);
+
         commandBuffer.drawIndexed(static_cast<uint32_t>(mGpuIndexBuffer->size() / sizeof(uint32_t)));
 
         commandBuffer.endPass();
@@ -269,7 +266,7 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
     pipelineStates.setViewportState({mSystemManager.swapChain().viewport(),
                                     mSystemManager.swapChain().scissorRect()});
 
-    pipelineStates.setRasterizationState({});
+    pipelineStates.setRasterizationState(RasterizationState());
 
     pipelineStates.setMultisampleState({});
 

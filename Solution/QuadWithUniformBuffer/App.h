@@ -3,18 +3,18 @@
 
 #include "MatrixUBO.h"
 
-#include "Utils/Buffers.h"
-#include "Utils/CommandBuffers.h"
-#include "Utils/DescriptorPool.h"
-#include "Utils/DescriptorSetLayout.h"
-#include "Utils/DescriptorSets.h"
-#include "Utils/Fences.h"
 #include "Utils/FrameBuffers.h"
-#include "Utils/GraphicsPipeline.h"
-#include "Utils/RenderPass.h"
-#include "Utils/Semaphores.h"
 #include "Utils/SystemManager.h"
+#include "Utils/command/CommandBuffers.h"
+#include "Utils/descriptor/DescriptorPool.h"
+#include "Utils/descriptor/DescriptorSetLayout.h"
+#include "Utils/descriptor/DescriptorSets.h"
+#include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
+#include "Utils/render_pass/RenderPass.h"
+#include "Utils/resource/Buffers.h"
+#include "Utils/sync/Fences.h"
+#include "Utils/sync/Semaphores.h"
 
 namespace vk {
 class ShaderStages;
