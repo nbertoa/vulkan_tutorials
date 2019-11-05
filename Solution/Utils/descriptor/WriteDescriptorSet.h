@@ -16,9 +16,7 @@
 namespace vk {
 class WriteDescriptorSet {
 public:
-    // * destDescriptorSet to update. You can use VK_NULL_HANDLE, if you want to 
-    //   use DescriptorSets methods that pass the descriptor set index. In that case,
-    //   this field will be filled by the method.
+    // * destDescriptorSet to update.
     //
     // * descriptorType of each descriptor in imageInfos, bufferInfos, or texelBufferViews.
     //   It must be the same type as that specified in VkDescriptorSetLayoutBinding 

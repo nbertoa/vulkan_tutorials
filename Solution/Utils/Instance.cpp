@@ -143,10 +143,26 @@ Instance::createInstance() {
 std::vector<const char*>
 Instance::getInstanceLayerNames() {
     std::vector<const char*> instanceLayers;
-#ifndef NDEBUG // Debug
+#ifndef NDEBUG // Debug    
+    // Validation: the main, comprehensive Khronos validation layer.
+    // This layer encompasses the entire functionality of the deprecated layers, and supercedes them. 
+    // As the other layers are deprecated this layer should be used for all validation going forward.
     instanceLayers.emplace_back("VK_LAYER_KHRONOS_validation");
+
+    // Utility: print API calls and their parameters and values
+    //instanceLayers.emplace_back("VK_LAYER_LUNARG_api_dump");
+
+    // Utility: allows modification of an actual device's reported features, limits, and capabilities
+    //instanceLayers.emplace_back("VK_LAYER_LUNARG_device_simulation");
+    
+    // Utility: outputs specified frames to an image file as they are presented
+    //instanceLayers.emplace_back("VK_LAYER_LUNARG_screenshot");
+
     assert(areInstanceLayersSupported(instanceLayers));
 #endif
+
+    // Utility: outputs the frames-per-second of the target application in the applications title bar
+    instanceLayers.emplace_back("VK_LAYER_LUNARG_monitor");
 
     return instanceLayers;
 }

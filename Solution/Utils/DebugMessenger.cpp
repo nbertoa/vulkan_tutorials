@@ -15,7 +15,7 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
               const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
               void* /*userData*/) {
     assert(callbackData != nullptr);
-    std::cerr << "Validation layer: " << callbackData->pMessage << std::endl;
+    std::cerr << callbackData->pMessage << std::endl;
     return VK_FALSE;
 }
 }

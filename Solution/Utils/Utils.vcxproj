@@ -78,18 +78,19 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\tbb\include;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)../external\tbb\lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;tbb_debug.lib;tbb_preview_debug.lib;tbbmalloc_debug.lib;tbbproxy_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -120,13 +121,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\tbb\include;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,14 +136,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)../external\tbb\lib;$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;tbb.lib;tbb_preview.lib;tbbmalloc.lib;tbbproxy.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)../external\glfw-3.3.bin.WIN64\lib-vc2019;C:\VulkanSDK\1.1.108.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="command\CommandBuffer.cpp" />
     <ClCompile Include="command\CommandBuffers.cpp" />
     <ClCompile Include="command\CommandPool.cpp" />
+    <ClCompile Include="descriptor\CopyDescriptorSet.cpp" />
     <ClCompile Include="descriptor\DescriptorPool.cpp" />
     <ClCompile Include="descriptor\DescriptorSetLayout.cpp" />
     <ClCompile Include="descriptor\DescriptorSetLayoutBinding.cpp" />
@@ -190,6 +193,7 @@
     <ClInclude Include="command\CommandBuffer.h" />
     <ClInclude Include="command\CommandBuffers.h" />
     <ClInclude Include="command\CommandPool.h" />
+    <ClInclude Include="descriptor\CopyDescriptorSet.h" />
     <ClInclude Include="descriptor\DescriptorPool.h" />
     <ClInclude Include="descriptor\DescriptorSetLayout.h" />
     <ClInclude Include="descriptor\DescriptorSetLayoutBinding.h" />

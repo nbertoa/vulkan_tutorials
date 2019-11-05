@@ -5,6 +5,7 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
+class CopyDescriptorSet;
 class DescriptorPool;
 class DescriptorSetLayout;
 class LogicalDevice;
@@ -86,14 +87,14 @@ public:
     updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets);
 
     void 
-    updateDescriptorSet(const VkCopyDescriptorSet& copyDescriptorSet);
+    updateDescriptorSet(const CopyDescriptorSet& copyDescriptorSet);
     
     void 
-    updateDescriptorSet(const std::vector<VkCopyDescriptorSet>& copyDescriptorSets);
+    updateDescriptorSet(const std::vector<CopyDescriptorSet>& copyDescriptorSets);
 
     void 
     updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets,
-                        const std::vector<VkCopyDescriptorSet>& copyDescriptorSets);
+                        const std::vector<CopyDescriptorSet>& copyDescriptorSets);
 
 private:
     void 

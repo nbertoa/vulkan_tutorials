@@ -47,6 +47,7 @@ WriteDescriptorSet::WriteDescriptorSet(const std::vector<VkBufferView>& texelBuf
     mDescriptorSet.dstSet = destDescriptorSet;
     mDescriptorSet.dstBinding = destBinding;
     mDescriptorSet.dstArrayElement = destArrayStartIndex;
+    mDescriptorSet.descriptorType = descriptorType;
     mDescriptorSet.pTexelBufferView = texelBufferViews.data();
     mDescriptorSet.descriptorCount = static_cast<uint32_t>(texelBufferViews.size());
 }

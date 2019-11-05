@@ -1,9 +1,0 @@
-# Read "How To Check Everything Works" first.
-
-# Add a new filter in the project called "utils"
-
-# Add all the files under utils folder in the root folder.
-
-# Create new filters based on the folders and subfolders that you find in "utils" folder.
-
-# Inherit from "utils/BaseApp.h"
