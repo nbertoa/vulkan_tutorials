@@ -49,11 +49,13 @@ void
 App::initBuffers() {
     assert(mGpuVertexBuffer == nullptr);
 
+    // The vertex position is in screen space.
     std::vector<vk::PosColorVertex> vertices
     {
         {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
         {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
+        
     };
 
     const uint32_t verticesSize = static_cast<uint32_t>(sizeof(PosColorVertex) * vertices.size());

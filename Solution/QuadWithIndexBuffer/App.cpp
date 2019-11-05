@@ -55,12 +55,13 @@ void
 App::initVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
+    // The vertex position is in screen space.
     std::vector<PosColorVertex> screenSpaceVertices
     {
         {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}},
         {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},          
     };
 
     const uint32_t verticesSize = static_cast<uint32_t>(sizeof(PosColorVertex) * screenSpaceVertices.size());
@@ -96,7 +97,7 @@ App::initIndexBuffer() {
     std::vector<uint32_t> indices
     {
         0, 1, 2, // upper-right triangle
-        2, 3, 0, // bottom-left triangle
+        2, 1, 3, // bottom-left triangle
     };
 
     const uint32_t indicesSize = static_cast<uint32_t>(sizeof(uint32_t) * indices.size());
@@ -317,8 +318,8 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
 void
 App::initShaderStages(ShaderStages& shaderStages) {
     ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../SimpleTriangleWithIndexBuffer/resources/shaders/vert.spv",
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/vert.spv",
                                                                           VK_SHADER_STAGE_VERTEX_BIT));
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../SimpleTriangleWithIndexBuffer/resources/shaders/frag.spv",
+    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/frag.spv",
                                                                           VK_SHADER_STAGE_FRAGMENT_BIT));
 }

@@ -23,6 +23,7 @@
     <ProjectGuid>{CA1645F4-AE2F-42C6-A056-5AF6EE1E803D}</ProjectGuid>
     <RootNamespace>SimpleTriangleWithIndexBuffer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>QuadWithIndexBuffer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
