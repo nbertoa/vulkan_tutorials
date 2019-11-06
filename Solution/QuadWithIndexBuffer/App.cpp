@@ -64,19 +64,7 @@ App::initVertexBuffer() {
         {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},          
     };
 
-    const uint32_t verticesSize = static_cast<uint32_t>(sizeof(PosColorVertex) * screenSpaceVertices.size());
-
-    Buffer cpuVertexBuffer(mSystemManager.logicalDevice(),
-                           mSystemManager.physicalDevice(),
-                           verticesSize,
-                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                           VK_SHARING_MODE_EXCLUSIVE);
-
-    cpuVertexBuffer.copyToHostMemory(screenSpaceVertices.data(),
-                                     verticesSize,
-                                     0);
+    const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
     mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
                                       mSystemManager.physicalDevice(),
@@ -86,8 +74,10 @@ App::initVertexBuffer() {
                                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                                       VK_SHARING_MODE_EXCLUSIVE));
 
-    mGpuVertexBuffer->copyFromBufferToDeviceMemory(cpuVertexBuffer,
-                                                   mSystemManager.transferCommandPool());
+    mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
+                                                 verticesSize,
+                                                 mSystemManager.physicalDevice(),
+                                                 mSystemManager.transferCommandPool());
 }
 
 void 
@@ -100,30 +90,12 @@ App::initIndexBuffer() {
         2, 1, 3, // bottom-left triangle
     };
 
-    const uint32_t indicesSize = static_cast<uint32_t>(sizeof(uint32_t) * indices.size());
+    const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
-    Buffer cpuIndexBuffer(mSystemManager.logicalDevice(),
-                          mSystemManager.physicalDevice(),
-                          indicesSize,
-                          VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                          VK_SHARING_MODE_EXCLUSIVE);
-
-    cpuIndexBuffer.copyToHostMemory(indices.data(),
-                                    indicesSize,
-                                    0);
-
-    mGpuIndexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
-                                     mSystemManager.physicalDevice(),
-                                     indicesSize,
-                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                     VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                     VK_SHARING_MODE_EXCLUSIVE));
-
-    mGpuIndexBuffer->copyFromBufferToDeviceMemory(cpuIndexBuffer,
-                                                  mSystemManager.transferCommandPool());
+    mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
+                                                indicesSize,
+                                                mSystemManager.physicalDevice(),
+                                                mSystemManager.transferCommandPool());
 }
 
 void

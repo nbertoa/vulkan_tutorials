@@ -206,11 +206,17 @@ public:
     // These methods assumes the buffer was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
     //
-    // The methods without size parameter are going to use
+    // The copyFromBufferToDeviceMemory methods without 
+    // size parameter are going to use
     // the sourceBuffer size.
+    //
+    // The copyFromDataToDeviceMemory methods create 
+    // internal staging buffers to be able to do the copy.
     //
     // The methods without the fence parameter, will create
     // an internal fence and wait for completion.
+    //
+    // * physicalDevice to be used to create the staging buffer
     //
     // * transferCommandPool that will be used to create 
     //  the CommandBuffer which will do the transfer operation.
@@ -230,10 +236,14 @@ public:
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                  const CommandPool& transferCommandPool,
                                  const Fence& executionCompletedFence);
-
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                  const CommandPool& transferCommandPool);
+    void
+    copyFromDataToDeviceMemory(void* sourceData,
+                               const VkDeviceSize size,
+                               const PhysicalDevice& physicalDevice,
+                               const CommandPool& transferCommandPool);
 
 private:
     // Return the buffer memory requirements. This is used to create

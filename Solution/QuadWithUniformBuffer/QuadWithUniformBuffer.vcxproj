@@ -87,7 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir);C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir);C:\VulkanSDK\1.1.108.0\Include;$(SolutionDir)../external\glm;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
