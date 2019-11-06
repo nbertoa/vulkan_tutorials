@@ -92,6 +92,14 @@ App::initIndexBuffer() {
 
     const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
+    mGpuIndexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
+                                     mSystemManager.physicalDevice(),
+                                     indicesSize,
+                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+                                     VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                     VK_SHARING_MODE_EXCLUSIVE));
+
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
                                                 indicesSize,
                                                 mSystemManager.physicalDevice(),
