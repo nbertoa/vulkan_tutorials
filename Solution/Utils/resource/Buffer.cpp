@@ -151,21 +151,20 @@ Buffer::copyToHostMemory(void* sourceData,
                      offset);
 }
 
-void 
+void
 Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const VkDeviceSize size,
-                                     const CommandPool& transferCommandPool,
-                                     const Fence& executionCompletedFence) {
-    assert(size > 0);
+                                     const CommandPool& transferCommandPool) {
 
-    CommandBuffer commandBuffer(mLogicalDevice,
-                                transferCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    // Fence to be signaled once
+    // the copy operation is complete. 
+    Fence executionCompletedFence(mLogicalDevice);
+    executionCompletedFence.waitAndReset();
 
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+    CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
+                                                                                          transferCommandPool);
 
     VkBufferCopy bufferCopy = {};
-    bufferCopy.size = size;
+    bufferCopy.size = sourceBuffer.size();
     commandBuffer.copyBuffer(sourceBuffer,
                              *this,
                              bufferCopy);
@@ -177,39 +176,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                          nullptr,
                          executionCompletedFence,
                          VK_PIPELINE_STAGE_TRANSFER_BIT);
-}
 
-void
-Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const VkDeviceSize size,
-                                     const CommandPool& transferCommandPool) {
-    Fence executionCompletedFence(mLogicalDevice);
-    executionCompletedFence.waitAndReset();
-    copyFromBufferToDeviceMemory(sourceBuffer,
-                                 size,
-                                 transferCommandPool,
-                                 executionCompletedFence);
-    executionCompletedFence.wait();
-}
-
-void
-Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const CommandPool& transferCommandPool,
-                                     const Fence& executionCompletedFence) {
-    copyFromBufferToDeviceMemory(sourceBuffer,
-                                 sourceBuffer.size(),
-                                 transferCommandPool,
-                                 executionCompletedFence);
-}
-
-void
-Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const CommandPool& transferCommandPool) {
-    Fence executionCompletedFence(mLogicalDevice);
-    executionCompletedFence.waitAndReset();
-    copyFromBufferToDeviceMemory(sourceBuffer,
-                                 transferCommandPool,
-                                 executionCompletedFence);
     executionCompletedFence.wait();
 }
 
@@ -221,26 +188,36 @@ Buffer::copyFromDataToDeviceMemory(void* sourceData,
     assert(sourceData != nullptr);
     assert(size > 0);
 
-    Fence executionCompletedFence(mLogicalDevice);
-    executionCompletedFence.waitAndReset();
+    Buffer buffer = createAndFillStagingBuffer(sourceData,
+                                               size,
+                                               physicalDevice,
+                                               mLogicalDevice);
 
-    Buffer sourceCpuBuffer(mLogicalDevice,
-                           physicalDevice,
-                           size,
-                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                           VK_SHARING_MODE_EXCLUSIVE);
+    copyFromBufferToDeviceMemory(buffer,
+                                 transferCommandPool);
+}
 
-    sourceCpuBuffer.copyToHostMemory(sourceData,
-                                     size,
-                                     0);
+Buffer
+Buffer::createAndFillStagingBuffer(void* sourceData,
+                                   const VkDeviceSize size, 
+                                   const PhysicalDevice& physicalDevice,
+                                   const LogicalDevice& logicalDevice) {
+    assert(sourceData != nullptr);
+    assert(size > 0);
 
-    copyFromBufferToDeviceMemory(sourceCpuBuffer,
-                                 transferCommandPool,
-                                 executionCompletedFence);
+    Buffer buffer(logicalDevice,
+                  physicalDevice,
+                  size,
+                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                  VK_SHARING_MODE_EXCLUSIVE);
 
-    executionCompletedFence.wait();
+    buffer.copyToHostMemory(sourceData,
+                            size,
+                            0);
+
+    return buffer;
 }
 
 VkMemoryRequirements 

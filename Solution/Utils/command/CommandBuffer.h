@@ -9,6 +9,8 @@ class Buffer;
 class CommandPool;
 class Fence;
 class GraphicsPipeline;
+class Image;
+class ImageMemoryBarrier;
 class LogicalDevice;
 class PipelineLayout;
 class RenderPass;
@@ -59,6 +61,15 @@ public:
     CommandBuffer(CommandBuffer&& other) noexcept;
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;
+
+    // Returns a constructor that begun the recording
+    // with flag VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT.
+    //
+    // * commandPool from which the command buffer is allocated.
+    static CommandBuffer
+    createAndBeginOneTimeSubmitCommandBuffer(const LogicalDevice& logicalDevice,
+                                             const CommandPool& commandPool);
+
 
     // * usageFlags bitmask specifying usage behavior for the command buffer.
     //
@@ -129,6 +140,28 @@ public:
     copyBuffer(const Buffer& sourceBuffer,
                const Buffer& destinationBuffer,
                const VkBufferCopy& regionToCopy);
+
+    void
+    copyBufferToImage(const Buffer& sourceBuffer,
+                      const Image& destinationImage,
+                      const VkBufferImageCopy& regionToCopy,
+                      const VkImageLayout destImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    // * sourceStageMask specifying a set of source pipeline stages:
+    // * destStageMask specifying a set of destination pipeline stages:
+    //
+    //   - The pipeline barrier specifies an execution dependency such that all work performed 
+    //     by the set of pipeline stages included in sourceStageMask of the first set of 
+    //     commands completes before any work performed by the set of pipeline stages 
+    //     included in destStageMask of the second set of commands begins.
+    //     Read submit() comments to check the possible values of these parameters.
+    //
+    // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, then the dependency is by-region
+    void
+    imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
+                         const VkPipelineStageFlags sourceStageMask,
+                         const VkPipelineStageFlags destStageMask,
+                         const VkDependencyFlags dependencyFlags = 0);
 
     void 
     draw(const uint32_t vertexCount,

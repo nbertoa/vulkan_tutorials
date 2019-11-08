@@ -176,6 +176,8 @@
     <ClCompile Include="resource\Buffer.cpp" />
     <ClCompile Include="resource\Buffers.cpp" />
     <ClCompile Include="resource\DeviceMemory.cpp" />
+    <ClCompile Include="resource\Image.cpp" />
+    <ClCompile Include="resource\ImageMemoryBarrier.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp" />
     <ClCompile Include="shader\ShaderModuleSystem.cpp" />
     <ClCompile Include="shader\ShaderStages.cpp" />
@@ -226,6 +228,8 @@
     <ClInclude Include="resource\Buffer.h" />
     <ClInclude Include="resource\Buffers.h" />
     <ClInclude Include="resource\DeviceMemory.h" />
+    <ClInclude Include="resource\Image.h" />
+    <ClInclude Include="resource\ImageMemoryBarrier.h" />
     <ClInclude Include="shader\ShaderModule.h" />
     <ClInclude Include="shader\ShaderModuleSystem.h" />
     <ClInclude Include="shader\ShaderStages.h" />

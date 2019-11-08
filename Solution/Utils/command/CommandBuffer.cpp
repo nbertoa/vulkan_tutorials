@@ -8,6 +8,8 @@
 #include "../pipeline/GraphicsPipeline.h"
 #include "../render_pass/RenderPass.h"
 #include "../resource/Buffer.h"
+#include "../resource/Image.h"
+#include "../resource/ImageMemoryBarrier.h"
 #include "../sync/Fence.h"
 #include "../sync/Semaphore.h"
 
@@ -31,10 +33,23 @@ CommandBuffer::CommandBuffer(const VkCommandBuffer commandBuffer)
 {
     assert(mCommandBuffer != VK_NULL_HANDLE);
 }
+
 CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept 
     : mCommandBuffer(other.mCommandBuffer)
 {
     other.mCommandBuffer = VK_NULL_HANDLE;
+}
+
+CommandBuffer
+CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(const LogicalDevice& logicalDevice,
+                                                        const CommandPool& commandPool) {
+    CommandBuffer commandBuffer(logicalDevice,
+                                commandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+    return commandBuffer;
 }
 
 void
@@ -143,6 +158,39 @@ CommandBuffer::copyBuffer(const Buffer& sourceBuffer,
                     destinationBuffer.vkBuffer(),
                     1,
                     &regionToCopy);
+}
+
+void
+CommandBuffer::copyBufferToImage(const Buffer& sourceBuffer,
+                                 const Image& destinationImage,
+                                 const VkBufferImageCopy& regionToCopy,
+                                 const VkImageLayout destImageLayout) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+
+    vkCmdCopyBufferToImage(mCommandBuffer,
+                           sourceBuffer.vkBuffer(),
+                           destinationImage.vkImage(),
+                           destImageLayout,
+                           1, // number of regions to copy
+                           &regionToCopy);
+}
+
+void
+CommandBuffer::imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
+                                    const VkPipelineStageFlags sourceStageMask,
+                                    const VkPipelineStageFlags destStageMask,
+                                    const VkDependencyFlags dependencyFlags) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
+    vkCmdPipelineBarrier(mCommandBuffer,
+                         sourceStageMask,
+                         destStageMask,
+                         dependencyFlags,
+                         0,
+                         nullptr,
+                         0,
+                         nullptr,
+                         1,
+                         &imageMemoryBarrier.vkMemoryBarrier());
 }
 
 void

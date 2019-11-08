@@ -128,6 +128,12 @@
     <ClCompile Include="descriptor\CopyDescriptorSet.cpp">
       <Filter>descriptor</Filter>
     </ClCompile>
+    <ClCompile Include="resource\Image.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\ImageMemoryBarrier.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
@@ -257,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="descriptor\CopyDescriptorSet.h">
       <Filter>descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\Image.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ImageMemoryBarrier.h">
+      <Filter>resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

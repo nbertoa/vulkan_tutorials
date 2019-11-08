@@ -30,7 +30,7 @@ class PhysicalDevice;
 // which takes care of the allocation for you
 // - 1. Allocate DeviceMemory,
 // - 2. Create Buffer,
-// - 3. Bind them together using function vkBindBufferMemory or vkBindImageMemory.
+// - 3. Bind them together using function vkBindBufferMemory.
 //
 // That is why you must also create a DeviceMemory object. 
 // You should not allocate separate DeviceMemory for each Buffer. 
@@ -206,36 +206,13 @@ public:
     // These methods assumes the buffer was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
     //
-    // The copyFromBufferToDeviceMemory methods without 
-    // size parameter are going to use
-    // the sourceBuffer size.
-    //
-    // The copyFromDataToDeviceMemory methods create 
-    // internal staging buffers to be able to do the copy.
-    //
-    // The methods without the fence parameter, will create
-    // an internal fence and wait for completion.
+    // These methods create internal staging buffers to be able to do the copy,
+    // and use fences to be signaled once the copy operation finishes.
     //
     // * physicalDevice to be used to create the staging buffer
     //
     // * transferCommandPool that will be used to create 
     //  the CommandBuffer which will do the transfer operation.
-    //
-    // * executionCompletedFence to be signaled once 
-    //   the copy operation is complete. 
-    void 
-    copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const VkDeviceSize size,
-                                 const CommandPool& transferCommandPool,
-                                 const Fence& executionCompletedFence);
-    void 
-    copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const VkDeviceSize size,
-                                 const CommandPool& transferCommandPool);
-    void 
-    copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const CommandPool& transferCommandPool,
-                                 const Fence& executionCompletedFence);
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                  const CommandPool& transferCommandPool);
@@ -244,6 +221,17 @@ public:
                                const VkDeviceSize size,
                                const PhysicalDevice& physicalDevice,
                                const CommandPool& transferCommandPool);
+
+    // Creates a staging buffer with flags:
+    // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+    // - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    // - VK_SHARING_MODE_EXCLUSIVE
+    // and copies "size" bytes from the sourceData to it
+    static Buffer
+    createAndFillStagingBuffer(void* sourceData,
+                               const VkDeviceSize size,
+                               const PhysicalDevice& physicalDevice,
+                               const LogicalDevice& logicalDevice);
 
 private:
     // Return the buffer memory requirements. This is used to create
