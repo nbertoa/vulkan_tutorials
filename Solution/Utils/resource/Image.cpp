@@ -1,10 +1,8 @@
 #include "Image.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include "Buffer.h"
 #include "DeviceMemory.h"
+#include "ImageMemoryBarrier.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
@@ -14,49 +12,40 @@
 namespace vk {
 Image::Image(const LogicalDevice& logicalDevice,
              const PhysicalDevice& physicalDevice,
-             const VkImageType imageType,
-             const VkExtent3D& imageExtent,
+             const uint32_t imageWidth,
+             const uint32_t imageHeight,
              const VkFormat format,
              const VkImageUsageFlags imageUsageFlags,
              const VkMemoryPropertyFlags memoryPropertyFlags,
              const uint32_t mipLevelCount,
              const VkImageLayout initialImageLayout,
+             const VkImageType imageType,
              const VkSampleCountFlagBits sampleCount,
+             const uint32_t imageDepth,
              const VkImageTiling imageTiling,
              const uint32_t arrayLayerCount,
              const VkSharingMode sharingMode,
              const VkImageCreateFlags flags,
              const std::vector<uint32_t> & queueFamilyIndices)
     : mLogicalDevice(logicalDevice)
+    , mExtent {imageWidth, imageHeight, imageDepth}
+    , mLastLayout(initialImageLayout)
+    , mImage(createImage(format,
+                         imageUsageFlags,
+                         mipLevelCount,
+                         imageType,
+                         sampleCount,
+                         imageTiling,
+                         arrayLayerCount,
+                         sharingMode,
+                         flags,
+                         queueFamilyIndices))
     , mHasDeviceMemoryOwnership(true)
     , mDeviceMemory(new DeviceMemory(mLogicalDevice,
                                      physicalDevice,
                                      imageMemoryRequirements(),
                                      memoryPropertyFlags))
-    , mExtent(imageExtent)
-    , mLastLayout(initialImageLayout)
 {
-    VkImageCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    createInfo.imageType = imageType;
-    createInfo.extent = imageExtent;
-    createInfo.format = format;
-    createInfo.usage = imageUsageFlags;
-    createInfo.mipLevels = mipLevelCount;
-    createInfo.initialLayout = initialImageLayout;
-    createInfo.samples = sampleCount;
-    createInfo.tiling = imageTiling;
-    createInfo.arrayLayers = arrayLayerCount;
-    createInfo.sharingMode = sharingMode;
-    createInfo.flags = flags;
-    createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? nullptr : queueFamilyIndices.data();
-
-    vkChecker(vkCreateImage(logicalDevice.vkDevice(),
-                            &createInfo,
-                            nullptr,
-                            &mImage));
-
     // - device is the logical device that owns the buffer and memory.
     // - buffer to be attached to memory.
     // - memory is the device memory to attach.
@@ -114,19 +103,15 @@ Image::lastImageLayout() const {
 }
 
 void
-Image::setImageLayout(const VkImageLayout newLayout) {
-    assert(mImage != nullptr);
-    assert(mLastLayout != newLayout);
-    mLastLayout = newLayout;
-}
-
-void
 Image::copyFromDataToDeviceMemory(void* sourceData,
                                   const VkDeviceSize size,
                                   const PhysicalDevice& physicalDevice,
                                   const CommandPool& transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
+
+    transitionImageLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                          transferCommandPool);
 
     Buffer stagingBuffer = Buffer::createAndFillStagingBuffer(sourceData,
                                                               size,
@@ -167,26 +152,39 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
 }
 
 void
-Image::copyFromFileToDeviceMemory(const std::string& imageFilePath,
-                                  const PhysicalDevice& physicalDevice,
-                                  const CommandPool& transferCommandPool) {
-    int textureWidth = 0;
-    int textureHeight = 0;
-    int textureChannels = 0;
-    stbi_uc* imageData = stbi_load(imageFilePath.c_str(),
-                                   &textureWidth,
-                                   &textureHeight,
-                                   &textureChannels,
-                                   STBI_rgb_alpha);
+Image::transitionImageLayout(const VkImageLayout newImageLayout,
+                             const CommandPool& transitionCommandPool) {
+    assert(mImage != VK_NULL_HANDLE);
+    assert(mLastLayout != newImageLayout);
 
-    assert(imageData != nullptr);
+    // Fence to be signaled once
+    // the transition operation is complete. 
+    Fence executionCompletedFence(mLogicalDevice);
+    executionCompletedFence.waitAndReset();
 
-    const VkDeviceSize imageSize = static_cast<uint32_t>(textureWidth) * textureHeight * 4;
+    CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
+                                                                                          transitionCommandPool);
 
-    copyFromDataToDeviceMemory(imageData,
-                               imageSize,
-                               physicalDevice,
-                               transferCommandPool);
+    ImageMemoryBarrier barrier(*this,
+                               newImageLayout,
+                               0,
+                               0);
+
+    commandBuffer.imagePipelineBarrier(barrier,
+                                       0,
+                                       0);
+
+    commandBuffer.endRecording();
+
+    commandBuffer.submit(mLogicalDevice.transferQueue(),
+                         nullptr,
+                         nullptr,
+                         executionCompletedFence,
+                         VK_PIPELINE_STAGE_TRANSFER_BIT);
+
+    executionCompletedFence.wait();
+
+    mLastLayout = newImageLayout;
 }
 
 VkMemoryRequirements
@@ -200,4 +198,41 @@ Image::imageMemoryRequirements() const {
 
     return memoryRequirements;
 }
+
+VkImage
+Image::createImage(const VkFormat format,
+                   const VkImageUsageFlags imageUsageFlags,
+                   const uint32_t mipLevelCount,
+                   const VkImageType imageType,
+                   const VkSampleCountFlagBits sampleCount,
+                   const VkImageTiling imageTiling,
+                   const uint32_t arrayLayerCount,
+                   const VkSharingMode sharingMode,
+                   const VkImageCreateFlags flags,
+                   const std::vector<uint32_t>& queueFamilyIndices) {
+    VkImageCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    createInfo.imageType = imageType;
+    createInfo.extent = mExtent;
+    createInfo.format = format;
+    createInfo.usage = imageUsageFlags;
+    createInfo.mipLevels = mipLevelCount;
+    createInfo.initialLayout = mLastLayout;
+    createInfo.samples = sampleCount;
+    createInfo.tiling = imageTiling;
+    createInfo.arrayLayers = arrayLayerCount;
+    createInfo.sharingMode = sharingMode;
+    createInfo.flags = flags;
+    createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
+    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? nullptr : queueFamilyIndices.data();
+
+    VkImage image;
+    vkChecker(vkCreateImage(mLogicalDevice.vkDevice(),
+                            &createInfo,
+                            nullptr,
+                            &image));
+
+    return image;
+}
+
 }

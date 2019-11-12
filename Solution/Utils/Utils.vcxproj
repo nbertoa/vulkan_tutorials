@@ -84,6 +84,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,6 +180,7 @@
     <ClCompile Include="resource\DeviceMemory.cpp" />
     <ClCompile Include="resource\Image.cpp" />
     <ClCompile Include="resource\ImageMemoryBarrier.cpp" />
+    <ClCompile Include="resource\ImageSystem.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp" />
     <ClCompile Include="shader\ShaderModuleSystem.cpp" />
     <ClCompile Include="shader\ShaderStages.cpp" />
@@ -230,6 +233,7 @@
     <ClInclude Include="resource\DeviceMemory.h" />
     <ClInclude Include="resource\Image.h" />
     <ClInclude Include="resource\ImageMemoryBarrier.h" />
+    <ClInclude Include="resource\ImageSystem.h" />
     <ClInclude Include="shader\ShaderModule.h" />
     <ClInclude Include="shader\ShaderModuleSystem.h" />
     <ClInclude Include="shader\ShaderStages.h" />

@@ -59,8 +59,6 @@ tbbmalloc.lib
 tbbproxy.lib
 Utils.lib
 
-- Go to project properties -> C/C++ -> Preprocessor -> add NDEBUG in Preprocessor Definitions
-
 - Add main.cpp file with the following code
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

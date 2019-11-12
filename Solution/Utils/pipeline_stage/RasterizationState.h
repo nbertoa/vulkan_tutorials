@@ -75,9 +75,6 @@ public:
     const VkPipelineRasterizationStateCreateInfo&
     vkState() const;
 
-    VkPipelineRasterizationStateCreateInfo&
-    refVkState();
-
 private:
     VkPipelineRasterizationStateCreateInfo mCreateInfo = {};
 };

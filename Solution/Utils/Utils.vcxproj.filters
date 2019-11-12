@@ -134,6 +134,9 @@
     <ClCompile Include="resource\ImageMemoryBarrier.cpp">
       <Filter>resource</Filter>
     </ClCompile>
+    <ClCompile Include="resource\ImageSystem.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
@@ -268,6 +271,9 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="resource\ImageMemoryBarrier.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ImageSystem.h">
       <Filter>resource</Filter>
     </ClInclude>
   </ItemGroup>

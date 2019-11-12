@@ -31,7 +31,6 @@ private:
     const LogicalDevice& mLogicalDevice;
     using ShaderModuleByPath = std::unordered_map<std::string, const ShaderModule*>;
     ShaderModuleByPath mShaderModuleByPath;
-
 };
 }
 

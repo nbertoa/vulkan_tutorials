@@ -2,11 +2,12 @@
 #define UTILS_DEBUG_UTILS
 
 #include <cassert>
+
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
 
 namespace vk {
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
 inline void glfwChecker(const int returnCode) {
     assert(returnCode == GLFW_TRUE);
 } 
@@ -14,7 +15,7 @@ inline void glfwChecker(const int returnCode) {
 inline void glfwChecker(const int) {}
 #endif
 
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
 inline void vkChecker(const VkResult result) {
     assert(result == VK_SUCCESS);
 }

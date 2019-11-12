@@ -25,6 +25,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadWithIndexBuffer", "Quad
 		{CC976F5E-7334-41AE-BAD7-3DFD623784B1} = {CC976F5E-7334-41AE-BAD7-3DFD623784B1}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadWithTexture", "QuadWithTexture\QuadWithTexture.vcxproj", "{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC976F5E-7334-41AE-BAD7-3DFD623784B1} = {CC976F5E-7334-41AE-BAD7-3DFD623784B1}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -73,6 +78,14 @@ Global
 		{CA1645F4-AE2F-42C6-A056-5AF6EE1E803D}.Release|x64.Build.0 = Release|x64
 		{CA1645F4-AE2F-42C6-A056-5AF6EE1E803D}.Release|x86.ActiveCfg = Release|Win32
 		{CA1645F4-AE2F-42C6-A056-5AF6EE1E803D}.Release|x86.Build.0 = Release|Win32
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Debug|x64.ActiveCfg = Debug|x64
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Debug|x64.Build.0 = Debug|x64
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Debug|x86.ActiveCfg = Debug|Win32
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Debug|x86.Build.0 = Debug|Win32
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Release|x64.ActiveCfg = Release|x64
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Release|x64.Build.0 = Release|x64
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Release|x86.ActiveCfg = Release|Win32
+		{EFA67CF6-8E5C-4CE8-862C-DE45196BE4DE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

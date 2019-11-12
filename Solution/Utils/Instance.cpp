@@ -11,7 +11,7 @@ Instance::Instance() {
 }
 
 Instance::~Instance() {
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     delete mMessenger;
 #endif
 
@@ -21,13 +21,13 @@ Instance::~Instance() {
 
 Instance::Instance(Instance&& other) noexcept
     : mInstance(other.mInstance)
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     , mMessenger(other.mMessenger)
 #endif
 {
     other.mInstance = VK_NULL_HANDLE;
 
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     other.mMessenger = nullptr;
 #endif    
 }
@@ -80,10 +80,12 @@ Instance::physicalDevices() const {
 void
 Instance::createInstance() {
     assert(mInstance == VK_NULL_HANDLE);
+#ifdef _DEBUG
     assert(mMessenger == VK_NULL_HANDLE);
+#endif
 
     const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = DebugMessenger::messengerCreateInfo();
     debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
 #endif
@@ -135,7 +137,7 @@ Instance::createInstance() {
     assert(mInstance != VK_NULL_HANDLE);
 
     // In debug mode, we need to create the debug messenger.
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     mMessenger = new DebugMessenger(*this);
 #endif
 }
@@ -143,7 +145,7 @@ Instance::createInstance() {
 std::vector<const char*>
 Instance::getInstanceLayerNames() {
     std::vector<const char*> instanceLayers;
-#ifndef NDEBUG // Debug    
+#ifdef _DEBUG
     // Validation: the main, comprehensive Khronos validation layer.
     // This layer encompasses the entire functionality of the deprecated layers, and supercedes them. 
     // As the other layers are deprecated this layer should be used for all validation going forward.
@@ -209,7 +211,7 @@ Instance::getInstanceExtensionNames() {
 
     std::vector<const char*> instanceExtensions(glfwExtensions, 
                                                 glfwExtensions + glfwExtensionCount);
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     instanceExtensions.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 

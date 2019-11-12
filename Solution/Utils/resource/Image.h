@@ -60,10 +60,9 @@ class PhysicalDevice;
 //
 class Image {
 public:
-    // * imageType specifying the basic dimensionality of the image.
-    //   Layers in array textures do not count as a dimension for the purposes of the image type.
+    // * imageWidth
     //
-    // * imageExtent describing the number of data elements in each dimension of the base level.
+    // * imageHeight
     //
     // * format and type of the texel blocks that will be contained in the image.
     //
@@ -153,14 +152,19 @@ public:
     //     and must be transitioned away from this layout after calling vkAcquireNextImageKHR.
     //   - VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR is valid only for shared presentable images, 
     //     and must be used for any usage the image supports.
-    //   - VK_IMAGE_LAYOUT_SHADING_RATE_OPTIMAL_NV must only be used as a read - only shading - rate - image.
+    //   - VK_IMAGE_LAYOUT_SHADING_RATE_OPTIMAL_NV must only be used as a read-only shading-rate-image.
     //     This layout is valid only for image subresources of images created with the 
     //     VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV usage bit enabled.
     //   - VK_IMAGE_LAYOUT_FRAGMENT_DENSITY_MAP_OPTIMAL_EXT must only be used as a fragment density map attachment in a VkRenderPass.
     //     This layout is valid only for image subresources of images created with the 
     //     VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT usage bit enabled.
     //
+    // * imageType specifying the basic dimensionality of the image.
+    //   Layers in array textures do not count as a dimension for the purposes of the image type.
+    //
     // * sampleCount specifying the number of samples per texel.
+    //
+    // * imageDepth
     // 
     // * imageTiling specifying the tiling arrangement of the texel blocks in memory.
     //
@@ -173,15 +177,17 @@ public:
     // * queueFamilyIndices is a list of queue families that will access this 
     //   image (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
     Image(const LogicalDevice& logicalDevice,
-          const PhysicalDevice& physicalDevice, 
-          const VkImageType imageType,
-          const VkExtent3D& imageExtent,
+          const PhysicalDevice& physicalDevice,   
+          const uint32_t imageWidth,
+          const uint32_t imageHeight,
           const VkFormat format,
           const VkImageUsageFlags imageUsageFlags,
           const VkMemoryPropertyFlags memoryPropertyFlags,
           const uint32_t mipLevelCount = 1,
           const VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+          const VkImageType imageType = VK_IMAGE_TYPE_2D,
           const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
+          const uint32_t imageDepth = 1,
           const VkImageTiling imageTiling = VK_IMAGE_TILING_OPTIMAL,
           const uint32_t arrayLayerCount = 1,
           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
@@ -204,14 +210,10 @@ public:
     VkImageLayout
     lastImageLayout() const;
 
-    // Precondition: Last and new image layouts must be different.
-    void
-    setImageLayout(const VkImageLayout newLayout);
-
-    // These methods assumes the image was created with
+    // this method assumes the image was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
     //
-    // These methods create internal staging buffers to be able to do the copy,
+    // This method creates an internal staging buffer to be able to do the copy,
     // and use fences to be signaled once the copy operation finishes.
     //
     // * physicalDevice to be used to create the staging buffer
@@ -224,10 +226,11 @@ public:
                                const PhysicalDevice& physicalDevice,
                                const CommandPool& transferCommandPool);
 
+    // * transitionCommandPool that will be used to create 
+    //  the CommandBuffer which will do the transition operation.
     void
-    copyFromFileToDeviceMemory(const std::string& filePath,
-                               const PhysicalDevice& physicalDevice,
-                               const CommandPool& transferCommandPool);
+    transitionImageLayout(const VkImageLayout newImageLayout,
+                          const CommandPool& transitionCommandPool);
 
 private:
     // Return the image memory requirements. This is used to create
@@ -244,7 +247,23 @@ private:
     VkMemoryRequirements
     imageMemoryRequirements() const;
 
+    // Read Buffer() constructor to understand the parameters.
+    VkImage
+    createImage(const VkFormat format,
+                const VkImageUsageFlags imageUsageFlags,
+                const uint32_t mipLevelCount,
+                const VkImageType imageType,
+                const VkSampleCountFlagBits sampleCount,
+                const VkImageTiling imageTiling,
+                const uint32_t arrayLayerCount,
+                const VkSharingMode sharingMode,
+                const VkImageCreateFlags flags,
+                const std::vector<uint32_t>& queueFamilyIndices);
+
     const LogicalDevice& mLogicalDevice;
+
+    VkExtent3D mExtent = {};
+    VkImageLayout mLastLayout;
 
     VkImage mImage = VK_NULL_HANDLE;
 
@@ -255,9 +274,6 @@ private:
     // by the second constructor.
     const bool mHasDeviceMemoryOwnership = true;
     const DeviceMemory* mDeviceMemory = nullptr;
-
-    VkExtent3D mExtent = {};
-    VkImageLayout mLastLayout;
 };
 }
 

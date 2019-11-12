@@ -80,7 +80,7 @@ void
 DescriptorSets::updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets) {
     assert(mDescriptorSets.empty() == false);
     assert(writeDescriptorSets.empty() == false);
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     for (const WriteDescriptorSet& writeDescriptorSet : writeDescriptorSets) {
         assert(std::find(mDescriptorSets.begin(),
                          mDescriptorSets.end(),
@@ -113,7 +113,7 @@ void
 DescriptorSets::updateDescriptorSet(const std::vector<CopyDescriptorSet>& copyDescriptorSets) {
     assert(mDescriptorSets.empty() == false);
     assert(copyDescriptorSets.empty() == false);
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     for (const CopyDescriptorSet& copyDescriptorSet : copyDescriptorSets) {
         assert(std::find(mDescriptorSets.begin(),
                          mDescriptorSets.end(),
@@ -135,7 +135,7 @@ DescriptorSets::updateDescriptorSet(const std::vector<WriteDescriptorSet>& write
     assert(writeDescriptorSets.empty() == false);
     assert(copyDescriptorSets.empty() == false);
 
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     for (const WriteDescriptorSet& writeDescriptorSet : writeDescriptorSets) {
         assert(std::find(mDescriptorSets.begin(),
                          mDescriptorSets.end(),

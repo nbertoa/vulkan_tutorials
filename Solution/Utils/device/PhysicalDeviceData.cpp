@@ -153,7 +153,7 @@ PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>&
         requiredExtensions.erase(extensionProperty.extensionName);
     }
 
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     for (const std::string& extensionProperty : requiredExtensions) {
         std::cerr << "Unsupported extension property: " << extensionProperty << std::endl;
     }

@@ -11,6 +11,7 @@
 #include "command/CommandPool.h"
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
+#include "resource/ImageSystem.h"
 #include "shader/ShaderModuleSystem.h"
 
 namespace vk {
@@ -34,6 +35,7 @@ public:
     const CommandPool& transferCommandPool() const;
     const CommandPool& presentationCommandPool() const;
 
+    ImageSystem& imageSystem();
     ShaderModuleSystem& shaderModuleSystem();
 
 private:
@@ -49,6 +51,7 @@ private:
     std::unique_ptr<CommandPool> mTransferCommandPool;
     std::unique_ptr<CommandPool> mPresentationCommandPool;
 
+    ImageSystem mImageSystem;
     ShaderModuleSystem mShaderModuleSystem;
 };
 }

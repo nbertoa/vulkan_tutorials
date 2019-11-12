@@ -7,7 +7,7 @@
 #include "device/PhysicalDeviceData.h"
 
 namespace vk {
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
 class DebugMessenger;
 #endif
 class Surface;
@@ -80,7 +80,7 @@ private:
     
     VkInstance mInstance = VK_NULL_HANDLE;
 
-#ifndef NDEBUG // Debug
+#ifdef _DEBUG
     DebugMessenger* mMessenger = nullptr;
 #endif    
 };
