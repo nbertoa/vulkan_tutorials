@@ -5,8 +5,8 @@
 namespace vk {
 ImageMemoryBarrier::ImageMemoryBarrier(const Image& image,
                                        const VkImageLayout newImageLayout,
-                                       const VkAccessFlags sourceAccessMask,
-                                       const VkAccessFlags destAccessMask,
+                                       const VkAccessFlags sourceAccessType,
+                                       const VkAccessFlags destAccessType,
                                        const VkImageSubresourceRange imageSubresourceRange,
                                        const uint32_t sourceQueueFamilyIndex,
                                        const uint32_t destQueueFamilyIndex) {
@@ -15,8 +15,8 @@ ImageMemoryBarrier::ImageMemoryBarrier(const Image& image,
     mMemoryBarrier.image = image.vkImage();
     mMemoryBarrier.oldLayout = image.lastImageLayout();
     mMemoryBarrier.newLayout = newImageLayout;
-    mMemoryBarrier.srcAccessMask = sourceAccessMask;
-    mMemoryBarrier.dstAccessMask = destAccessMask;
+    mMemoryBarrier.srcAccessMask = sourceAccessType;
+    mMemoryBarrier.dstAccessMask = destAccessType;
     mMemoryBarrier.subresourceRange = imageSubresourceRange;
     mMemoryBarrier.srcQueueFamilyIndex = sourceQueueFamilyIndex;
     mMemoryBarrier.dstQueueFamilyIndex = destQueueFamilyIndex;

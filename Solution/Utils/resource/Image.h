@@ -14,22 +14,15 @@ class PhysicalDevice;
 //
 // VkImage wrapper
 //
-// Images represent multidimensional - up to 3 - arrays of data which can be used 
+// Images (also known as textures) represent multidimensional(up to 3) arrays of data which can be used 
 // for various purposes (e.g. attachments, textures), by binding them to a graphics or 
 // compute pipeline via descriptor sets, or by directly specifying 
 // them as parameters to certain commands.
 //
-// Buffer and Image are two types of resources that occupy device memory. 
-// Buffer is the simpler one. It is a container for any binary data that just has its 
-// length, expressed in bytes. 
-//
-// Image, on the other hand, represents a set of pixels. 
-// This is the object known in other graphics APIs as a texture. 
-// There are many more parameters needed to specify creation of an Image. 
+// Buffer and Image are two types of resources that occupy device memory.  
 // It can be 1D, 2D or 3D, have various pixel formats (like R8G8B8A8_UNORM or R32_SFLOAT) 
 // and can also consist of many discrete images, because it can have multiple array layers 
 // or MIP levels (or both). 
-//
 // Image is a separate object type because it doesn’t necessarily consist of just a linear 
 // set of pixels that can be accessed directly. 
 // Images can have a different implementation-specific internal format (tiling and layout) 
@@ -68,96 +61,30 @@ public:
     //
     // * imageUsageFlags describing the intended usage of the image.
     //
-    // * memoryPropertyFlags is used to create the DeviceMemory:
+    // * memoryPropertyFlags is used to create the DeviceMemory (VK_MEMORY_PROPERTY_):
     //
-    //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
-    //     this type is the most efficient for device access.
-    //     This property will be set ifand only if the memory type belongs to a heap 
-    //     with the VK_MEMORY_HEAP_DEVICE_LOCAL_BIT set.
-    //   - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit specifies that memory allocated with 
-    //     this type can be mapped for host access using vkMapMemory.
-    //   - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT bit specifies that the host cache 
-    //     management commands vkFlushMappedMemoryRanges and vkInvalidateMappedMemoryRanges 
-    //     are not needed to flush host writes to the device or make device writes visible 
-    //     to the host, respectively.
-    //   - VK_MEMORY_PROPERTY_HOST_CACHED_BIT bit specifies that memory allocated with this 
-    //     type is cached on the host.Host memory accesses to uncached memory are slower than 
-    //     to cached memory, however uncached memory is always host coherent.
-    //   - VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT bit specifies that the memory type only 
-    //     allows device access to the memory.Memory types must not have both 
-    //     VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT and VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
-    //     Additionally, the object’s backing memory may be provided by the implementation lazily.
-    //   - VK_MEMORY_PROPERTY_PROTECTED_BIT bit specifies that the memory type only allows device 
-    //     access to the memory, and allows protected queue operations to access the memory.
-    //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT setand any of 
-    //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set, or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, 
-    //     or VK_MEMORY_PROPERTY_HOST_CACHED_BIT set.
-    //   - VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD bit specifies that device accesses to 
-    //     allocations of this memory type are automatically made available and visible.
-    //   - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
-    //     this type is not cached on the device.Uncached device memory is always device coherent.
+    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
+    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
+    //     DEVICE_UNCACHED_BIT_AMD
     //
     // * mipLevelCount of detail available for minified sampling of the image.
     //
-    // * initialImageLayout of all image subresources of the image:
+    // * initialImageLayout of all image subresources of the image (VK_IMAGE_LAYOUT_)
+    //   Images are stored in implementation-dependent opaque layouts in memory.
+    //   Each layout has limitations on what kinds of operations are supported for 
+    //   image subresources using the layout.
+    //   At any given time, the data representing an image subresource in memory exists 
+    //   in a particular layout which is determined by the most recent layout transition 
+    //   that was performed on that image subresource.Applications have control over which 
+    //   layout each image subresource uses, and can transition an image subresource from 
+    //   one layout to another. Transitions can happen with an image memory barrier
     //
-    //   - VK_IMAGE_LAYOUT_UNDEFINED does not support device access.
-    //     This layout must only be used as the initialLayout member of VkImageCreateInfo or VkAttachmentDescription, 
-    //     or as the oldLayout in an image transition.When transitioning out of this layout, 
-    //     the contents of the memory are not guaranteed to be preserved.
-    //   - VK_IMAGE_LAYOUT_PREINITIALIZED does not support device access.
-    //     This layout must only be used as the initialLayout member of VkImageCreateInfo or VkAttachmentDescription, 
-    //     or as the oldLayout in an image transition.When transitioning out of this layout, 
-    //     the contents of the memory are preserved.This layout is intended to be used as the initial layout for an image 
-    //     whose contents are written by the host, and hence the data can be written to memory immediately, 
-    //     without first executing a layout transition. Currently, VK_IMAGE_LAYOUT_PREINITIALIZED is only useful with 
-    //     linear images because there is not a standard layout defined for VK_IMAGE_TILING_OPTIMAL images.
-    //   - VK_IMAGE_LAYOUT_GENERAL supports all types of device access.
-    //   - VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL must only be used as a color or resolve attachment in a VkFramebuffer.
-    //     This layout is valid only for image subresources of images created with the VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT usage bit enabled.
-    //   - VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL specifies a layout for both the depthand stencil aspects of 
-    //     a depth / stencil format image allowing readand write access as a depth / stencil attachment.
-    //     It is equivalent to VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL_KHRand VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL_KHR.
-    //   - VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL specifies a layout for both the depthand stencil aspects of a 
-    //     depth / stencil format image allowing read only access as a depth / stencil attachment or in shaders.
-    //     It is equivalent to VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL_KHRand VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL_KHR.
-    //   - VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL specifies a layout for depth / stencil format images 
-    //     allowing read and write access to the stencil aspect as a stencil attachment, 
-    //     and read only access to the depth aspect as a depth attachment or in shaders.
-    //     It is equivalent to VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL_KHRand VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL_KHR.
-    //   - VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL specifies a layout for depth / stencil format images 
-    //     allowing read and write access to the depth aspect as a depth attachment, and read only access to the stencil aspect 
-    //     as a stencil attachment or in shaders. It is equivalent to VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL_KHR 
-    //     and VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL_KHR.
-    //   - VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL_KHR specifies a layout for the depth aspect of a depth / stencil format image 
-    //     allowing reada nd write access as a depth attachment.
-    //   - VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL_KHR specifies a layout for the depth aspect of a depth / stencil format image 
-    //     allowing read - only access as a depth attachment or in shaders.
-    //   - VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL_KHR specifies a layout for the stencil aspect of a depth / stencil format image 
-    //     allowing read and write access as a stencil attachment.
-    //   - VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL_KHR specifies a layout for the stencil aspect of a depth / stencil format image 
-    //     allowing read - only access as a stencil attachment or in shaders.
-    //   - VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL must only be used as a read - only image in a shader
-    //     (which can be read as a sampled image, combined image / sampler and /or input attachment).
-    //     This layout is valid only for image subresources of images created with the VK_IMAGE_USAGE_SAMPLED_BIT or 
-    //     K_IMAGE_USAGE_INPUT_ATTACHMENT_BIT usage bit enabled.
-    //   - VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL must only be used as a source image of a transfer command
-    //     (see the definition of VK_PIPELINE_STAGE_TRANSFER_BIT).
-    //     This layout is valid only for image subresources of images created with 
-    //     the VK_IMAGE_USAGE_TRANSFER_SRC_BIT usage bit enabled.
-    //   - VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL must only be used as a destination image of a transfer command.
-    //     This layout is valid only for image subresources of images created with the VK_IMAGE_USAGE_TRANSFER_DST_BIT usage bit enabled.
-    //   - VK_IMAGE_LAYOUT_PRESENT_SRC_KHR must only be used for presenting a presentable image for display.
-    //     A swapchain’s image must be transitioned to this layout before calling vkQueuePresentKHR, 
-    //     and must be transitioned away from this layout after calling vkAcquireNextImageKHR.
-    //   - VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR is valid only for shared presentable images, 
-    //     and must be used for any usage the image supports.
-    //   - VK_IMAGE_LAYOUT_SHADING_RATE_OPTIMAL_NV must only be used as a read-only shading-rate-image.
-    //     This layout is valid only for image subresources of images created with the 
-    //     VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV usage bit enabled.
-    //   - VK_IMAGE_LAYOUT_FRAGMENT_DENSITY_MAP_OPTIMAL_EXT must only be used as a fragment density map attachment in a VkRenderPass.
-    //     This layout is valid only for image subresources of images created with the 
-    //     VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT usage bit enabled.
+    //   - UNDEFINED, PREINITIALIZED, GENERAL, COLOR_ATTACHMENT_OPTIMAL, DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    //     DEPTH_STENCIL_READ_ONLY_OPTIMAL, DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL, 
+    //     DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL, DEPTH_ATTACHMENT_OPTIMAL_KHR, DEPTH_READ_ONLY_OPTIMAL_KHR,
+    //     STENCIL_ATTACHMENT_OPTIMAL_KHR, STENCIL_READ_ONLY_OPTIMAL_KHR, SHADER_READ_ONLY_OPTIMAL, 
+    //     TRANSFER_SRC_OPTIMAL, TRANSFER_DST_OPTIMAL, PRESENT_SRC_KHR, SHARED_PRESENT_KHR, SHADING_RATE_OPTIMAL_NV,
+    //     SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_OPTIMAL_EXT
     //
     // * imageType specifying the basic dimensionality of the image.
     //   Layers in array textures do not count as a dimension for the purposes of the image type.
@@ -264,8 +191,10 @@ private:
 
     VkExtent3D mExtent = {};
     VkImageLayout mLastLayout;
+    VkAccessFlags mLastAccessType = 0;
+    VkPipelineStageFlags mLastPipelineStages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
-    VkImage mImage = VK_NULL_HANDLE;
+    VkImage mImage = VK_NULL_HANDLE;    
 
     // This is only used if the Image is created
     // with the constructor that includes the data needed

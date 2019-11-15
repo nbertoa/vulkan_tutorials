@@ -147,8 +147,34 @@ public:
                       const VkBufferImageCopy& regionToCopy,
                       const VkImageLayout destImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-    // * sourceStageMask specifying a set of source pipeline stages:
-    // * destStageMask specifying a set of destination pipeline stages:
+    // When vkCmdPipelineBarrier (by calling this method) is submitted to a queue, it defines 
+    // a memory dependency between commands that were submitted before it, and those submitted after it.
+    //
+    // If vkCmdPipelineBarrier was recorded outside a render pass instance, the first synchronization scope 
+    // includes all commands that occur earlier in submission order.
+    //
+    // If vkCmdPipelineBarrier was recorded inside a render pass instance, the first synchronization scope 
+    // includes only commands that occur earlier in submission order within the same subpass.
+    //
+    // In either case, the first synchronization scope is limited to operations on the pipeline stages 
+    // determined by the sourceStageMask.
+    //
+    // If vkCmdPipelineBarrier was recorded outside a render pass instance, the second synchronization scope 
+    // includes all commands that occur later in submission order.
+    //
+    // If vkCmdPipelineBarrier was recorded inside a render pass instance, the second synchronization scope 
+    // includes only commands that occur later in submission order within the same subpass.
+    //
+    // In either case, the second synchronization scope is limited to operations on the pipeline stages 
+    // determined by the destStageMask.
+    //
+    // * sourceStageMask specifying a set of source pipeline stages.
+    //   The first access scope is limited to access in the pipeline stages determined by
+    //   the sourceStageMask:
+    //   Within that, the first access scope only includes the first access scopes defined by imageMemoryBarrier.
+    // * destStageMask specifying a set of destination pipeline stages.
+    //   The second access scope is limited to access in the pipeline stages determined by the destStageMask.
+    //   Within that, the second access scope only includes the second access scopes defined by elements of the pMemoryBarriers, pBufferMemoryBarriersand pImageMemoryBarriers arrays, which each define a set of memory barriers.If no memory barriers are specified, then the second access scope includes no accesses.
     //
     //   - The pipeline barrier specifies an execution dependency such that all work performed 
     //     by the set of pipeline stages included in sourceStageMask of the first set of 

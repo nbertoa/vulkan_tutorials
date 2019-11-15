@@ -165,14 +165,47 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
                                                                                           transitionCommandPool);
 
+    VkAccessFlags destAccessType = 0;
+    VkPipelineStageFlags destPipelineStages = 0;
+
+    // Transfer writes must occur in the pipeline transfer stage. 
+    // Since the writes do not have to wait on anything,
+    // you may specify an empty access mask and the earliest possible
+    // pipeline stage VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT for the
+    // pre-barrier operations.
+    // It should be noted that VK_PIPELINE_STAGE_TRANSFER_BIT is not 
+    // a real stage within the graphics and compute pipelines.
+    // It is more of a pseudo-stage where transfers happen.
+    if (mLastLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+        newImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+        assert(mLastAccessType == 0);
+        destAccessType = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+        assert(mLastPipelineStages == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+        destPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+    } else if (mLastLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+               newImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+        // The image will be written in the same pipeline stage and
+        // subsequently read by a shader, which is why 
+        // we specify shader reading access in the shader
+        // pipeline stage.
+        assert(mLastAccessType == VK_ACCESS_TRANSFER_WRITE_BIT);
+        destAccessType = VK_ACCESS_SHADER_READ_BIT;
+
+        assert(mLastPipelineStages == VK_PIPELINE_STAGE_TRANSFER_BIT);
+        destPipelineStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else {
+        assert(false && "Unsupported image layout transition");
+    }
+
     ImageMemoryBarrier barrier(*this,
                                newImageLayout,
-                               0,
-                               0);
+                               mLastAccessType,
+                               destAccessType);
 
     commandBuffer.imagePipelineBarrier(barrier,
-                                       0,
-                                       0);
+                                       mLastPipelineStages,
+                                       destPipelineStages);
 
     commandBuffer.endRecording();
 
@@ -185,6 +218,8 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     executionCompletedFence.wait();
 
     mLastLayout = newImageLayout;
+    mLastAccessType = destAccessType;
+    mLastPipelineStages = destPipelineStages;
 }
 
 VkMemoryRequirements
