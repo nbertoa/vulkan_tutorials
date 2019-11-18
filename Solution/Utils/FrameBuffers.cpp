@@ -18,10 +18,8 @@ FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
     mFrameBuffers.resize(imageViews.size());
     
     // VkFramebufferCreateInfo:
-    // - flags is a bitmask of VkFramebufferCreateFlagBits
-    //   - VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR specifies that image views are not specified, 
-    //     and only attachment compatibility information will be provided via an instance of VkFramebufferAttachmentImageInfoKHR.
-    //   - VK_FRAMEBUFFER_CREATE_FLAG_BITS_MAX_ENUM 
+    // - flags (VK_FRAMEBUFFER_CREATE_):
+    //   - IMAGELESS_BIT_KHR, FLAG_BITS_MAX_ENUM 
     // - renderPass is a render pass defining what render passes the framebuffer will be compatible with.
     // - attachmentCount is the number of attachments.
     // - pAttachments is a pointer to an array of VkImageView handles, 

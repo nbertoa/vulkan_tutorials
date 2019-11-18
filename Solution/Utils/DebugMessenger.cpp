@@ -28,8 +28,9 @@ DebugMessenger::DebugMessenger(const Instance& instance)
     // so it is not automatically loaded. We need to look up its address
     // ourselves.
     PFN_vkCreateDebugUtilsMessengerEXT function =
-        reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(mInstance.vkInstance(),
-                                                                                   "vkCreateDebugUtilsMessengerEXT"));
+        reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
+            vkGetInstanceProcAddr(mInstance.vkInstance(),
+                                  "vkCreateDebugUtilsMessengerEXT"));
     assert(function);
     const VkDebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
     vkChecker(function(mInstance.vkInstance(),
@@ -47,8 +48,9 @@ DebugMessenger::~DebugMessenger() {
     // so it is not automatically loaded. We need to look up its address
     // ourselves.
     PFN_vkDestroyDebugUtilsMessengerEXT function =
-        reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(mInstance.vkInstance(),
-                                                                                    "vkDestroyDebugUtilsMessengerEXT"));
+        reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
+            vkGetInstanceProcAddr(mInstance.vkInstance(),
+                                  "vkDestroyDebugUtilsMessengerEXT"));
     assert(function);
     function(mInstance.vkInstance(),
              mMessenger, 

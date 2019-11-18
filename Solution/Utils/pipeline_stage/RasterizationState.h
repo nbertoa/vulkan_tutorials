@@ -8,8 +8,9 @@ namespace vk {
 // VkPipelineRasterizationStateCreateInfo wrapper
 //
 // The rasterizer takes the geometry that is shaped by the vertices from the vertex shader 
-// and turns it into fragments to be colored by the fragment shader. It also performs depth testing, 
-// face culling and the scissor test, and it can be configured to output fragments that fill entire 
+// and turns it into fragments to be colored by the fragment shader. 
+// It also performs depth testing, face culling and the scissor test, 
+// and it can be configured to output fragments that fill entire 
 // polygons or just the edges(wireframe rendering).
 // All this is configured using the VkPipelineRasterizationStateCreateInfo structure.
 //
@@ -19,40 +20,29 @@ namespace vk {
 class RasterizationState {
 public:
     // * depthClampEnable controls whether to clamp the fragment’s depth values. 
-    //   If the pipeline is not created with VkPipelineRasterizationDepthClipStateCreateInfoEXT present 
-    //   then enabling depth clamp will also disable clipping primitives to the z planes of the frustrum. 
-    //   Otherwise depth clipping is controlled by the state set in VkPipelineRasterizationDepthClipStateCreateInfoEXT.
+    //   If the pipeline is not created with VkPipelineRasterizationDepthClipStateCreateInfoEXT 
+    //   present then enabling depth clamp will also disable clipping primitives to the 
+    //   z planes of the frustrum. 
+    //   Otherwise depth clipping is controlled by the state set in 
+    //   VkPipelineRasterizationDepthClipStateCreateInfoEXT.
     //
-    // * rasterizerDiscardEnable controls whether primitives are discarded immediately before the rasterization stage.
+    // * rasterizerDiscardEnable controls whether primitives are discarded immediately 
+    //   before the rasterization stage.
     //
-    // * polygonMode is the triangle rendering mode:
+    // * polygonMode is the triangle rendering mode (VK_POLYGON_MODE_):
     //
-    //   - VK_POLYGON_MODE_POINT specifies that polygon vertices are drawn as points.
-    //   - VK_POLYGON_MODE_LINE specifies that polygon edges are drawn as line segments.
-    //   - VK_POLYGON_MODE_FILL specifies that polygons are rendered using the polygon rasterization rules.
-    //   - VK_POLYGON_MODE_FILL_RECTANGLE_NV specifies that polygons are rendered using polygon rasterization rules, 
-    //     modified to consider a sample within the primitive if the sample location is inside the axis-aligned bounding box 
-    //     of the triangle after projection. Note that the barycentric weights used in attribute interpolation can extend 
-    //     outside the range[0, 1] when these primitives are shaded.Special treatment is given to a sample position on the 
-    //     boundary edge of the bounding box. In such a case, if two rectangles lie on either side of a common edge 
-    //     (with identical endpoints) on which a sample position lies, then exactly one of the triangles must produce a 
-    //     fragment that covers that sample during rasterization.
-    //     Polygons rendered in VK_POLYGON_MODE_FILL_RECTANGLE_NV mode may be clipped by the frustum or by user clip planes.
-    //     If clipping is applied, the triangle is culled rather than clipped.
+    //   - POINT, LINE, FILL, FILL_RECTANGLE_NV
     //
     // * lineWidth of rasterized line segments.
     //
-    // * cullMode is the triangle facing direction used for primitive culling:
+    // * cullMode is the triangle facing direction used for primitive culling (VK_CULL_MODE_):
     //
-    //   - VK_CULL_MODE_NONE specifies that no triangles are discarded
-    //   - VK_CULL_MODE_FRONT_BIT specifies that front-facing triangles are discarded
-    //   - VK_CULL_MODE_BACK_BIT specifies that back-facing triangles are discarded
-    //   - VK_CULL_MODE_FRONT_AND_BACK specifies that all triangles are discarded.
+    //   - NONE, FRONT_BIT, BACK_BIT, FRONT_AND_BACK
     //
-    // * frontFace that specifies the front-facing triangle orientation to be used for culling:
+    // * frontFace that specifies the front-facing triangle 
+    //   orientation to be used for culling (VK_FRONT_FACE_):
     //
-    //   - VK_FRONT_FACE_COUNTER_CLOCKWISE specifies that a triangle with positive area is considered front-facing.
-    //   - VK_FRONT_FACE_CLOCKWISE specifies that a triangle with negative area is considered front-facing.
+    //   - COUNTER_CLOCKWISE, CLOCKWISE
     //
     // * depthBiasEnable controls whether to bias fragment depth values.
     //

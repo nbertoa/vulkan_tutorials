@@ -233,7 +233,8 @@ CommandBuffer::submit(const VkQueue queue,
     // VkSubmitInfo:
     // - waitSemaphoreCount upon which to wait 
     //   before executing the command buffers for the batch.
-    // - pWaitSemaphores upon which to wait before the command buffers for this batch begin execution.
+    // - pWaitSemaphores upon which to wait before the command buffers for 
+    //   this batch begin execution.
     //   If semaphores to wait on are provided, they define a semaphore wait operation.
     // - pWaitDstStageMask array at which each corresponding semaphore wait will occur.
     // - commandBufferCount to execute in the batch.

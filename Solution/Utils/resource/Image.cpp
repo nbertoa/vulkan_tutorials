@@ -49,7 +49,8 @@ Image::Image(const LogicalDevice& logicalDevice,
     // - device is the logical device that owns the buffer and memory.
     // - buffer to be attached to memory.
     // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to be bound to the buffer.
+    // - memoryOffset is the start offset of the region of memory which is to 
+    //   be bound to the buffer.
     //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
@@ -123,8 +124,9 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     Fence executionCompletedFence(mLogicalDevice);
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                                          transferCommandPool);
+    CommandBuffer commandBuffer = 
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
+                                                                transferCommandPool);
 
     VkBufferImageCopy bufferImageCopy = {};
     bufferImageCopy.bufferOffset = 0;
@@ -162,8 +164,9 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     Fence executionCompletedFence(mLogicalDevice);
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                                          transitionCommandPool);
+    CommandBuffer commandBuffer = 
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
+                                                                transitionCommandPool);
 
     VkAccessFlags destAccessType = 0;
     VkPipelineStageFlags destPipelineStages = 0;
@@ -259,7 +262,9 @@ Image::createImage(const VkFormat format,
     createInfo.sharingMode = sharingMode;
     createInfo.flags = flags;
     createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? nullptr : queueFamilyIndices.data();
+    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? 
+        nullptr : 
+        queueFamilyIndices.data();
 
     VkImage image;
     vkChecker(vkCreateImage(mLogicalDevice.vkDevice(),

@@ -12,8 +12,9 @@ namespace vk {
 // It works by combining the fragment shader results of multiple polygons that 
 // rasterize to the same pixel.
 // This mainly occurs along edges, which is also where the most noticeable aliasing artifacts occur.
-// Because it does not need to run the fragment shader multiple times if only one polygon maps to a pixel,
-// it is significantly less expensive than simply rendering to a higher resolution and then downscaling. 
+// Because it does not need to run the fragment shader multiple times if only 
+// one polygon maps to a pixel, it is significantly less expensive than simply rendering to a 
+// higher resolution and then downscaling. 
 // Enabling it requires enabling a GPU feature.
 //
 // You need this class to:
@@ -21,15 +22,10 @@ namespace vk {
 //
 class MultisampleState {
 public:
-    // * rasterizationSamples specifies the number of samples per pixelused in rasterization:
+    // * rasterizationSamples specifies the number of samples per 
+    //   pixel used in rasterization (VK_SAMPLE_COUNT_):
     //
-    //   . VK_SAMPLE_COUNT_1_BIT
-    //   . VK_SAMPLE_COUNT_2_BIT
-    //   . VK_SAMPLE_COUNT_4_BIT
-    //   . VK_SAMPLE_COUNT_8_BIT
-    //   . VK_SAMPLE_COUNT_16_BIT
-    //   . VK_SAMPLE_COUNT_32_BIT
-    //   . VK_SAMPLE_COUNT_64_BIT
+    //   . 1_BIT, 2_BIT, 4_BIT, 8_BIT, 16_BIT, 32_BIT, 64_BIT
     //
     // * sampleShadingEnable
     //
@@ -38,11 +34,11 @@ public:
     // * sampleMask of static coverage information that is ANDed with the coverage information 
     //   generated during rasterization.
     //
-    // * alphaToCoverageEnable controls whether a temporary coverage value is generated based on the alpha component 
-    //   of the fragment’s first color output.
+    // * alphaToCoverageEnable controls whether a temporary coverage value is 
+    //   generated based on the alpha component of the fragment’s first color output.
     //
     // * alphaToOneEnable controls whether the alpha component of the fragment’s first color 
-    //     output is replaced with one.
+    //   output is replaced with one.
     //
     // The default constructor values disable multisampling.
     MultisampleState(const VkSampleCountFlagBits rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,

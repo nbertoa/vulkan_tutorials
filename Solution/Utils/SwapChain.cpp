@@ -333,17 +333,8 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     mImageFormat = surfaceFormat.format;
 
     // VkSwapchainCreateInfoKHR:
-    // - flags bitmask indicating parameters of the swapchain creation:
-    //    . VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR specifies that images created from the 
-    //      swapchain (i.e. with the swapchain member of VkImageSwapchainCreateInfoKHR set to this swapchain’s handle) 
-    //      must use VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT.
-    //    . VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR specifies that images created from the swapchain are protected images.
-    //    . VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR specifies that the images of the swapchain can be used to create 
-    //      a VkImageView with a different format than what the swapchain was created with.
-    //      The list of allowed image view formats are specified by chaining an instance of the VkImageFormatListCreateInfoKHR 
-    //      structure to the pNext chain of VkSwapchainCreateInfoKHR.
-    //      In addition, this flag also specifies that the swapchain can be created with usage flags that are not supported 
-    //      for the format the swapchain is created with but are supported for at least one of the allowed image view formats.
+    // - flags bitmask indicating parameters of the swapchain creation (VK_SWAPCHAIN_CREATE_):
+    //    . SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR, PROTECTED_BIT_KHR, MUTABLE_FORMAT_BIT_KHR
     //
     // - surface onto which the swapchain will present images.
     //   If the creation succeeds, the swapchain becomes associated with surface.
@@ -363,29 +354,11 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     // - imageArrayLayers in a multiview/stereo surface.
     //   For non-stereoscopic-3D applications, this value is 1.
     //
-    // - imageUsage bitmask describing the intended usage of the(acquired) swapchain images:
-    //    . VK_IMAGE_USAGE_TRANSFER_SRC_BIT specifies that the image can be used as the source of a transfer command.
-    //    . VK_IMAGE_USAGE_TRANSFER_DST_BIT specifies that the image can be used as the destination of a transfer command.
-    //    . VK_IMAGE_USAGE_SAMPLED_BIT specifies that the image can be used to create a VkImageView suitable for occupying a 
-    //      VkDescriptorSet slot either of type VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE or VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-    //      and be sampled by a shader.
-    //    . VK_IMAGE_USAGE_STORAGE_BIT specifies that the image can be used to create a VkImageView suitable for occupying a 
-    //      VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_STORAGE_IMAGE.
-    //    . VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable for use 
-    //      as a color or resolve attachment in a VkFramebuffer.
-    //    . VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable 
-    //      for use as a depth / stencil or depth / stencil resolve attachment in a VkFramebuffer.
-    //    . VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT specifies that the memory bound to this image will have been allocated with 
-    //      the VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT. 
-    //      This bit can be set for any image that can be used to create a VkImageView suitable for use as a color, 
-    //      resolve, depth/stencil, or input attachment.
-    //    . VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT specifies that the image can be used to create a VkImageView suitable for 
-    //      occupying VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT; 
-    //      be read from a shader as an input attachment; and be used as an input attachment in a framebuffer.
-    //    . VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV specifies that the image can be used to create a VkImageView suitable 
-    //      for use as a shading rate image.
-    //    . VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT specifies that the image can be used to create a VkImageView 
-    //      suitable for use as a fragment density map image.
+    // - imageUsage bitmask describing the intended usage of 
+    //   the(acquired) swapchain images (VK_IMAGE_USAGE_):
+    //    . TRANSFER_SRC_BIT, TRANSFER_DST_BIT, SAMPLED_BIT, STORAGE_BIT, COLOR_ATTACHMENT_BIT, 
+    //      DEPTH_STENCIL_ATTACHMENT_BIT, TRANSIENT_ATTACHMENT_BIT, INPUT_ATTACHMENT_BIT, 
+    //      SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_BIT_EXT
     //
     // - imageSharingMode for the image(s) of the swapchain.
     //
@@ -395,55 +368,45 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     // - pQueueFamilyIndices having access to the images(s) 
     //   of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
     //
-    // - preTransform relative to the presentation engine’s natural orientation, applied to the image content prior to presentation.
-    //   If it does not match the currentTransform value returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR, 
-    //   the presentation engine will transform the image content as part of the presentation operation:
-    //   . VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR specifies that image content is presented without being transformed.
-    //   . VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR specifies that image content is rotated 90 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR specifies that image content is rotated 180 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR specifies that image content is rotated 270 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR specifies that image content is mirrored horizontally.
-    //   . VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR specifies that image content is mirrored horizontally, 
-    //     then rotated 90 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR specifies that image content is mirrored horizontally, 
-    //     then rotated 180 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR specifies that image content is mirrored horizontally, 
-    //     then rotated 270 degrees clockwise.
-    //   . VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR specifies that the presentation transform is not specified, 
-    //     and is instead determined by platform-specific considerations and mechanisms outside Vulkan.
+    // - preTransform relative to the presentation engine’s natural orientation, 
+    //   applied to the image content prior to presentation.
+    //   If it does not match the currentTransform value returned by 
+    //   vkGetPhysicalDeviceSurfaceCapabilitiesKHR, the presentation engine will transform 
+    //   the image content as part of the presentation operation (VK_SURFACE_TRANSFORM_):
+    //   . IDENTITY_BIT_KHR, ROTATE_90_BIT_KHR, ROTATE_180_BIT_KHR, ROTATE_270_BIT_KHR, 
+    //     HORIZONTAL_MIRROR_BIT_KHR, HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR, 
+    //     HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR, HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR, 
+    //     INHERIT_BIT_KHR specifies
     //
     // - compositeAlpha indicating the alpha compositing mode to use when this 
-    //   surface is composited together with other surfaces on certain window systems:
-    //   . VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR: The alpha channel, if it exists, of the images is ignored in the 
-    //     compositing process.Instead, the image is treated as if it has a constant alpha of 1.0.
-    //   . VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR: The alpha channel, if it exists, of the images is respected in 
-    //     the compositing process. The non-alpha channels of the image are expected to already be multiplied 
-    //     by the alpha channel by the application.
-    //   . VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR: The alpha channel, if it exists, of the images is respected in 
-    //     the compositing process. The non-alpha channels of the image are not expected to already be multiplied by 
-    //     the alpha channel by the application; instead, the compositor will multiply the non-alpha channels of the 
-    //     image by the alpha channel during compositing.
-    //   . VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR: The way in which the presentation engine treats the alpha channel in 
-    //     the images is unknown to the Vulkan API. Instead, the application is responsible for setting the composite 
-    //     alpha blending mode using native window system commands. If the application does not set the blending mode 
-    //     using native window system commands, then a platform-specific default will be used.
+    //   surface is composited together with other surfaces 
+    //   on certain window systems (VK_COMPOSITE_ALPHA_):
+    //   . OPAQUE_BIT_KHR, PRE_MULTIPLIED_BIT_KHR, POST_MULTIPLIED_BIT_KHR, INHERIT_BIT_KHR
     //
     // - presentMode the swapchain will use.
-    //   A swapchain’s present mode determines how incoming present requests will be processedand queued internally.
+    //   A swapchain’s present mode determines how incoming present requests will be processed 
+    //  and queued internally.
     //
-    // - clipped specifies whether the Vulkan implementation is allowed to discard rendering operations that 
-    //   affect regions of the surface that are not visible.
-    //   . If set to VK_TRUE, the presentable images associated with the swapchain may not own all of their pixels.
-    //     Pixels in the presentable images that correspond to regions of the target surface obscured by another window 
-    //     on the desktop, or subject to some other clipping mechanism will have undefined content when read back.
-    //     Pixel shaders may not execute for these pixels, and thus any side effects they would have had will not occur.
-    //     VK_TRUE value does not guarantee any clipping will occur, but allows more optimal presentation 
-    //     methods to be used on some platforms.
-    //   . If set to VK_FALSE, presentable images associated with the swapchain will own all of the pixels they contain.
+    // - clipped specifies whether the Vulkan implementation is allowed to discard rendering 
+    //   operations that  affect regions of the surface that are not visible.
+    //   . If set to VK_TRUE, the presentable images associated with the swapchain may not own 
+    //     all of their pixels.
+    //     Pixels in the presentable images that correspond to regions of the target 
+    //     surface obscured by another window 
+    //     on the desktop, or subject to some other clipping mechanism will have undefined 
+    //     content when read back.
+    //     Pixel shaders may not execute for these pixels, and thus any side effects 
+    //     they would have had will not occur.
+    //     VK_TRUE value does not guarantee any clipping will occur, but allows 
+    //     more optimal presentation methods to be used on some platforms.
+    //   . If set to VK_FALSE, presentable images associated with the swapchain will own 
+    //     all of the pixels they contain.
     //
-    // - oldSwapchain is VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface.
-    //   Providing a valid oldSwapchain may aid in the resource reuse, and also allows the application to still present 
-    //   any images that are already acquired from it.
+    // - oldSwapchain is VK_NULL_HANDLE, or the existing non-retired swapchain 
+    //   currently associated with surface.
+    //   Providing a valid oldSwapchain may aid in the resource reuse, 
+    //   and also allows the application to still present any images that are already 
+    //   acquired from it.
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface.vkSurface();
@@ -456,12 +419,15 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     createInfo.preTransform = surfaceCapabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode =
-        bestFitPresentMode(surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice()));
+        bestFitPresentMode(
+            surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice())
+        );
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     const uint32_t graphicsQueueFamilyIndex = physicalDevice.graphicsSupportQueueFamilyIndex();
-    const uint32_t presentationQueueFamilyIndex = physicalDevice.presentationSupportQueueFamilyIndex();
+    const uint32_t presentationQueueFamilyIndex = 
+        physicalDevice.presentationSupportQueueFamilyIndex();
     const uint32_t transferQueueFamilyIndex = physicalDevice.transferSupportQueueFamilyIndex();
 
     std::vector<uint32_t> queueFamilyIndices;

@@ -16,7 +16,8 @@ class WriteDescriptorSet;
 //
 // To allocate a DescriptorSet, you need both DescriptorPool and DescriptorSetLayout 
 // to be able to do it. The DescriptorSet represents memory that holds actual descriptors, 
-// and it can be configured so that a descriptor points to specific Buffer, BufferView, Image or Sampler.
+// and it can be configured so that a descriptor points to specific Buffer, 
+// BufferView, Image or Sampler.
 // You can do it by using function vkUpdateDescriptorSets.
 //
 // Descriptors are grouped together into descriptor set objects.
@@ -42,7 +43,8 @@ class DescriptorSets {
 public:
     // * descriptorPool which the descriptor sets will be allocated from.
     //
-    // * descriptorSetLayouts with each member specifying how the corresponding descriptor set is allocated.
+    // * descriptorSetLayouts with each member specifying how the corresponding 
+    //   descriptor set is allocated.
     DescriptorSets(const LogicalDevice& logicalDevice,
                    const DescriptorPool& descriptorPool,
                    const DescriptorSetLayout& descriptorSetLayout);
@@ -59,18 +61,21 @@ public:
     uint32_t
     size() const;
 
-    // Once allocated, descriptor sets can be updated with a combination of write and copy operations.
+    // Once allocated, descriptor sets can be updated with a combination of write 
+    // and copy operations.
     //
-    // * writeDescriptorSets to write to. The operations described by writeDescriptorSets are performed first, 
-    //   followed by the operations described by copyDescriptorSets. Within each array, the operations are performed in 
-    //   the order they appear in the array. Each element in the writeDescriptorSets array describes an operation 
+    // * writeDescriptorSets to write to. The operations described by writeDescriptorSets are 
+    //   performed first, followed by the operations described by copyDescriptorSets. 
+    //   Within each array, the operations are performed in the order they appear in the array. 
+    //   Each element in the writeDescriptorSets array describes an operation 
     //   updating the descriptor set using descriptors for resources specified in the structure
     //
     // * copyDescriptorSets describes an operation copying descriptors between sets. 
     //   If the dstSet member of any element of writeDescriptorSets or copyDescriptorSets is bound, accessed, 
-    //   or modified by any command that was recorded to a command buffer which is currently in the recording 
-    //   or executable state, and any of the descriptor bindings that are updated were not created with the 
-    //   VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT or VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT bits set, 
+    //   or modified by any command that was recorded to a command buffer which is currently 
+    //   in the recording or executable state, and any of the descriptor bindings that are 
+    //   updated were not created with the VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT or 
+    //   VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT bits set, 
     //   that command buffer becomes invalid.
     //
     // Preconditions:

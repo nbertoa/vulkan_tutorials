@@ -10,6 +10,7 @@ DescriptorSetLayoutBinding::DescriptorSetLayoutBinding(const uint32_t bindingNum
     mDescriptorSetLayoutBinding.descriptorType = descriptorType;
     mDescriptorSetLayoutBinding.descriptorCount = descriptorCount;
     mDescriptorSetLayoutBinding.stageFlags = stageFlags;
-    mDescriptorSetLayoutBinding.pImmutableSamplers = immutableSamplers.empty() ? nullptr : immutableSamplers.data();
+    mDescriptorSetLayoutBinding.pImmutableSamplers = 
+        immutableSamplers.empty() ? nullptr : immutableSamplers.data();
 }
 }

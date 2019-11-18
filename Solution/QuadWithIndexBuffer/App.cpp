@@ -176,7 +176,9 @@ App::initRenderPass() {
                                         VK_IMAGE_LAYOUT_UNDEFINED,
                                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-    std::vector<VkAttachmentReference> colorAttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+    std::vector<VkAttachmentReference> colorAttachmentReferences {
+        {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
+    };
     std::vector<SubpassDescription> subpassDescriptions;
     subpassDescriptions.emplace_back(VK_PIPELINE_BIND_POINT_GRAPHICS,
                                      colorAttachmentReferences);
@@ -219,7 +221,8 @@ App::submitCommandBufferAndPresent() {
     Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore(); 
     Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
-    const uint32_t swapChainImageIndex = mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
+    const uint32_t swapChainImageIndex = 
+        mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < mCommandBuffers->bufferCount());
 
     CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
@@ -298,8 +301,12 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
 void
 App::initShaderStages(ShaderStages& shaderStages) {
     ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/vert.spv",
-                                                                          VK_SHADER_STAGE_VERTEX_BIT));
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/frag.spv",
-                                                                          VK_SHADER_STAGE_FRAGMENT_BIT));
+    shaderStages.addShaderModule(
+        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/vert.spv",
+                                                 VK_SHADER_STAGE_VERTEX_BIT)
+    );
+    shaderStages.addShaderModule(
+        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/frag.spv",
+                                                 VK_SHADER_STAGE_FRAGMENT_BIT)
+    );
 }

@@ -23,23 +23,41 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
     createInfo.stageCount = static_cast<uint32_t>(shaderStages.vkStages().size());
     createInfo.pStages = shaderStages.vkStages().empty() ? nullptr : shaderStages.vkStages().data();
     createInfo.pVertexInputState = 
-        pipelineStates.vertexInputState() != nullptr ? &pipelineStates.vertexInputState()->vkState() : nullptr;
+        pipelineStates.vertexInputState() != nullptr ? 
+        &pipelineStates.vertexInputState()->vkState() : 
+        nullptr;
     createInfo.pInputAssemblyState = 
-        pipelineStates.inputAssemblyState() != nullptr ? &pipelineStates.inputAssemblyState()->vkState() : nullptr;
+        pipelineStates.inputAssemblyState() != nullptr ? 
+        &pipelineStates.inputAssemblyState()->vkState() : 
+        nullptr;
     createInfo.pViewportState = 
-        pipelineStates.viewportState() != nullptr ? &pipelineStates.viewportState()->vkState() : nullptr;
+        pipelineStates.viewportState() != nullptr ? 
+        &pipelineStates.viewportState()->vkState() : 
+        nullptr;
     createInfo.pRasterizationState = 
-        pipelineStates.rasterizationState() != nullptr ? &pipelineStates.rasterizationState()->vkState() : nullptr;
+        pipelineStates.rasterizationState() != nullptr ? 
+        &pipelineStates.rasterizationState()->vkState() : 
+        nullptr;
     createInfo.pMultisampleState = 
-        pipelineStates.multisampleState() != nullptr ? &pipelineStates.multisampleState()->vkState() : nullptr;
+        pipelineStates.multisampleState() != nullptr ? 
+        &pipelineStates.multisampleState()->vkState() : 
+        nullptr;
     createInfo.pDepthStencilState = 
-        pipelineStates.depthStencilState() != nullptr ? &pipelineStates.depthStencilState()->vkState() : nullptr;
+        pipelineStates.depthStencilState() != nullptr ? 
+        &pipelineStates.depthStencilState()->vkState() : 
+        nullptr;
     createInfo.pColorBlendState = 
-        pipelineStates.colorBlendState() != nullptr ? &pipelineStates.colorBlendState()->vkState() : nullptr;
+        pipelineStates.colorBlendState() != nullptr ? 
+        &pipelineStates.colorBlendState()->vkState() : 
+        nullptr;
     createInfo.pDynamicState = 
-        pipelineStates.dynamicState() != nullptr ? &pipelineStates.dynamicState()->vkState() : nullptr;
+        pipelineStates.dynamicState() != nullptr ? 
+        &pipelineStates.dynamicState()->vkState() : 
+        nullptr;
     createInfo.pTessellationState = 
-        pipelineStates.tessellationState() != nullptr ? &pipelineStates.tessellationState()->vkState() : nullptr;
+        pipelineStates.tessellationState() != nullptr ? 
+        &pipelineStates.tessellationState()->vkState() : 
+        nullptr;
     createInfo.layout = mPipelineLayout.vkPipelineLayout();
     createInfo.renderPass = renderPass.vkRenderPass();
     createInfo.subpass = subPassIndex;

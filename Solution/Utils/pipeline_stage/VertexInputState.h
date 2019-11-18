@@ -36,7 +36,8 @@ public:
     //   - location is the shader binding location number for this attribute.
     //   - binding number which this attribute takes its data from.
     //   - format is the size and type of the vertex attribute data.
-    //   - offset in bytes of this attribute relative to the start of an element in the vertex input binding. 
+    //   - offset in bytes of this attribute relative to the start of an 
+    //     element in the vertex input binding. 
     VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = {},
                      const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = {});
     VertexInputState(const VertexInputState& state);

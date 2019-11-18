@@ -34,26 +34,12 @@ public:
     // * shaderByteCodePath to the file that represents the piece of shader code, 
     //   in SPIR-V format.
     //
-    // * shaderStageFlag specifies the pipeline stage:
-    //   - VK_SHADER_STAGE_VERTEX_BIT
-    //   - VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
-    //   - VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
-    //   - VK_SHADER_STAGE_GEOMETRY_BIT 
-    //   - VK_SHADER_STAGE_FRAGMENT_BIT
-    //   - VK_SHADER_STAGE_COMPUTE_BIT
-    //   - VK_SHADER_STAGE_TASK_BIT_NV
-    //   - VK_SHADER_STAGE_MESH_BIT_NV
-    //   - VK_SHADER_STAGE_ALL_GRAPHICS is a combination of bits used as shorthand 
-    //     to specify all graphics stages defined above(excluding the compute stage).
-    //   - VK_SHADER_STAGE_ALL is a combination of bits used as shorthand to specify 
-    //     all shader stages supported by the device, including all additional stages 
-    //     which are introduced by extensions.
-    //   - VK_SHADER_STAGE_RAYGEN_BIT_NV specifies the ray generation stage.
-    //   - VK_SHADER_STAGE_ANY_HIT_BIT_NV
-    //   - VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV
-    //   - VK_SHADER_STAGE_MISS_BIT_NV
-    //   - VK_SHADER_STAGE_INTERSECTION_BIT_NV
-    //   - VK_SHADER_STAGE_CALLABLE_BIT_NV
+    // * shaderStageFlag specifies the pipeline stage S(VK_SHADER_STAGE_):
+    //
+    //   - VERTEX_BIT, TESSELLATION_CONTROL_BIT, TESSELLATION_EVALUATION_BIT, GEOMETRY_BIT,
+    //     FRAGMENT_BIT, COMPUTE_BIT, TASK_BIT_NV, MESH_BIT_NV, ALL_GRAPHICS, ALL, 
+    //     RAYGEN_BIT_NV, ANY_HIT_BIT_NV, CLOSEST_HIT_BIT_NV, MISS_BIT_NV, INTERSECTION_BIT_NV, 
+    //     CALLABLE_BIT_NV
     ShaderModule(const LogicalDevice& logicalDevice,
                  const std::string& shaderByteCodePath,
                  const VkShaderStageFlagBits shaderStageFlag,

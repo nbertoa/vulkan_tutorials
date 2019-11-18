@@ -14,7 +14,8 @@ class PhysicalDevice;
 //
 // VkImage wrapper
 //
-// Images (also known as textures) represent multidimensional(up to 3) arrays of data which can be used 
+// Images (also known as textures) represent multidimensional(up to 3) 
+// arrays of data which can be used 
 // for various purposes (e.g. attachments, textures), by binding them to a graphics or 
 // compute pipeline via descriptor sets, or by directly specifying 
 // them as parameters to certain commands.
@@ -79,11 +80,14 @@ public:
     //   layout each image subresource uses, and can transition an image subresource from 
     //   one layout to another. Transitions can happen with an image memory barrier
     //
-    //   - UNDEFINED, PREINITIALIZED, GENERAL, COLOR_ATTACHMENT_OPTIMAL, DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    //   - UNDEFINED, PREINITIALIZED, GENERAL, COLOR_ATTACHMENT_OPTIMAL, 
+    //     DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
     //     DEPTH_STENCIL_READ_ONLY_OPTIMAL, DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL, 
-    //     DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL, DEPTH_ATTACHMENT_OPTIMAL_KHR, DEPTH_READ_ONLY_OPTIMAL_KHR,
+    //     DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL, DEPTH_ATTACHMENT_OPTIMAL_KHR, 
+    //     DEPTH_READ_ONLY_OPTIMAL_KHR,
     //     STENCIL_ATTACHMENT_OPTIMAL_KHR, STENCIL_READ_ONLY_OPTIMAL_KHR, SHADER_READ_ONLY_OPTIMAL, 
-    //     TRANSFER_SRC_OPTIMAL, TRANSFER_DST_OPTIMAL, PRESENT_SRC_KHR, SHARED_PRESENT_KHR, SHADING_RATE_OPTIMAL_NV,
+    //     TRANSFER_SRC_OPTIMAL, TRANSFER_DST_OPTIMAL, PRESENT_SRC_KHR, SHARED_PRESENT_KHR, 
+    //     SHADING_RATE_OPTIMAL_NV,
     //     SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_OPTIMAL_EXT
     //
     // * imageType specifying the basic dimensionality of the image.

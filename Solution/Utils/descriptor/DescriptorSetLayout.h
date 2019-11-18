@@ -19,8 +19,8 @@ class LogicalDevice;
 // set of descriptors, where the types and number of descriptors is defined 
 // by a descriptor set layout. 
 //
-// But before you create a descriptor set, its layout must be specified by creating a DescriptorSetLayout, 
-// which behaves like a template for a descriptor set. 
+// But before you create a descriptor set, its layout must be specified 
+// by creating a DescriptorSetLayout, which behaves like a template for a descriptor set. 
 // The layout object may be used to define the association of each descriptor 
 // binding with memory or other hardware resources.
 //
