@@ -53,21 +53,24 @@ class Surface;
 // to a queue are executed in order[*1] relative to each other.
 // Command buffers submitted to different queues are unordered relative to each other unless 
 // you explicitly synchronize them with VkSemaphore. You can only submit work to a queue 
-// from one thread at a time, but different threads can submit work to different queues simultaneously.
+// from one thread at a time, but different threads can submit work to different 
+// queues simultaneously.
 //
 // Each queue can only perform certain kinds of operations:
 // - Graphics queues can run graphics pipelines started by vkCmdDraw* commands.
 // - Compute queues can run compute pipelines started by vkCmdDispatch* .
 // - Transfer queues can perform transfer(copy) operations from vkCmdCopy*.
-// - Sparse binding queues can change the binding of sparse resources to memory with vkQueueBindSparse
+// - Sparse binding queues can change the binding of sparse resources to memory with 
+//   vkQueueBindSparse
 // (note this is an operation submitted directly to a queue, not a command in a command buffer).
 //
-// Some queues can perform multiple kinds of operations. Every command that can be submitted to a queue have 
-// a "Command Properties" table that lists what queue types can execute the command.
+// Some queues can perform multiple kinds of operations. Every command that can be submitted 
+// to a queue have a "Command Properties" table that lists what queue types can execute the command.
 // A queue family just describes a set of queues with identical properties.
 //
-// [*1] Oversimplifying a bit. They start in order, but are allowed to proceed independently after that 
-// and complete out of order. Independent progress of different queues is not guaranteed though.
+// [*1] Oversimplifying a bit. They start in order, but are allowed to proceed independently 
+// after that and complete out of order. 
+// Independent progress of different queues is not guaranteed though.
 //
 class PhysicalDevice {
 public:
@@ -103,8 +106,8 @@ public:
     // PhysicalDevice can also enumerate Memory Heaps and Memory Types inside them. 
     // A Memory Heap represents a specific pool of RAM. 
     // It may abstract your system RAM on the motherboard or a certain memory space in video RAM 
-    // on a dedicated graphics card, or any other host- or device-specific memory the implementation 
-    // wants to expose. 
+    // on a dedicated graphics card, or any other host- or device-specific memory 
+    // the implementation wants to expose. 
     // You must specify the Memory Type when allocating memory. 
     // It holds specific requirements for the memory blob like visible to the host, 
     // coherent (between CPU and GPU) and cached. 
@@ -114,35 +117,12 @@ public:
     //   that are suitable.
     // 
     // * memoryPropertyFlags is used to check if there is a memory type in the physical device
-    //   that is suitable for the buffer that also has all of the properties we need:
+    //   that is suitable for the buffer that also 
+    //   has all of the properties we need (VK_MEMORY_PROPERTY_):
     //
-    //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
-    //     this type is the most efficient for device access.
-    //     This property will be set ifand only if the memory type belongs to a heap 
-    //     with the VK_MEMORY_HEAP_DEVICE_LOCAL_BIT set.
-    //   - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit specifies that memory allocated with 
-    //     this type can be mapped for host access using vkMapMemory.
-    //   - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT bit specifies that the host cache 
-    //     management commands vkFlushMappedMemoryRanges and vkInvalidateMappedMemoryRanges 
-    //     are not needed to flush host writes to the device or make device writes visible 
-    //     to the host, respectively.
-    //   - VK_MEMORY_PROPERTY_HOST_CACHED_BIT bit specifies that memory allocated with this 
-    //     type is cached on the host.Host memory accesses to uncached memory are slower than 
-    //     to cached memory, however uncached memory is always host coherent.
-    //   - VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT bit specifies that the memory type only 
-    //    allows device access to the memory.Memory types must not have both 
-    //     K_MEMORY_PROPERTY_LAZILY_ALLOCATED_BITand VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
-    //     Additionally, the object’s backing memory may be provided by the implementation lazily 
-    //     as specified in Lazily Allocated Memory.
-    //   - VK_MEMORY_PROPERTY_PROTECTED_BIT bit specifies that the memory type only allows device 
-    //     access to the memory, and allows protected queue operations to access the memory.
-    //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT setand any of 
-    //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set, or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, 
-    //     or VK_MEMORY_PROPERTY_HOST_CACHED_BIT set.
-    //   - VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD bit specifies that device accesses to 
-    //     allocations of this memory type are automatically made availableand visible.
-    //   - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
-    //     this type is not cached on the device.Uncached device memory is always device coherent.
+    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
+    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
+    //     DEVICE_UNCACHED_BIT_AMD
     uint32_t 
     memoryTypeIndex(const uint32_t memoryTypeFilter,
                     const VkMemoryPropertyFlags memoryPropertyFlags) const;

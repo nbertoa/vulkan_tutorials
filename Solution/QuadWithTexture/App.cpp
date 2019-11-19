@@ -81,8 +81,10 @@ App::initDescriptorSets() {
                                                                 {descriptorSetLayoutBinding}));
 
     // Create a descriptor set for each swap chain image, all with the same layout.
-    std::vector<VkDescriptorSetLayout> descriptorSetLayouts(mSystemManager.swapChain().imageViewCount(),
-                                                            mMatrixUBODescriptorSetLayout->vkDescriptorSetLayout());
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts(
+        mSystemManager.swapChain().imageViewCount(),
+        mMatrixUBODescriptorSetLayout->vkDescriptorSetLayout()
+    );
     mMatrixUBODescriptorSets.reset(new DescriptorSets(mSystemManager.logicalDevice(),
                                                       mDescriptorPool,
                                                       descriptorSetLayouts));
@@ -260,10 +262,14 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
 void
 App::initShaderStages(ShaderStages& shaderStages) {
     ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithTexture/resources/shaders/vert.spv",
-                                                                          VK_SHADER_STAGE_VERTEX_BIT));
-    shaderStages.addShaderModule(shaderModuleSystem.getOrLoadShaderModule("../../QuadWithTexture/resources/shaders/frag.spv",
-                                                                          VK_SHADER_STAGE_FRAGMENT_BIT));
+    shaderStages.addShaderModule(
+        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithTexture/resources/shaders/vert.spv",
+                                                 VK_SHADER_STAGE_VERTEX_BIT)
+    );
+    shaderStages.addShaderModule(
+        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithTexture/resources/shaders/frag.spv",
+                                                 VK_SHADER_STAGE_FRAGMENT_BIT)
+    );
 }
 
 void
@@ -288,7 +294,9 @@ App::initRenderPass() {
                                         VK_IMAGE_LAYOUT_UNDEFINED,
                                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-    std::vector<VkAttachmentReference> colorAttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+    std::vector<VkAttachmentReference> colorAttachmentReferences {
+        {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
+    };
     std::vector<SubpassDescription> subpassDescriptions;
     subpassDescriptions.emplace_back(VK_PIPELINE_BIND_POINT_GRAPHICS,
                                      colorAttachmentReferences);

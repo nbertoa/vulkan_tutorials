@@ -20,27 +20,18 @@ public:
     //
     // * descriptorType of each descriptor in imageInfos, bufferInfos, or texelBufferViews.
     //   It must be the same type as that specified in VkDescriptorSetLayoutBinding 
-    //   for destDescriptorSet at destBinding:
+    //   for destDescriptorSet at destBinding (VK_DESCRIPTOR_TYPE_):
     //
-    //   - VK_DESCRIPTOR_TYPE_SAMPLER
-    //   - VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-    //   - VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-    //   - VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-    //   - VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER
-    //   - VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
-    //   - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-    //   - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-    //   - VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-    //   - VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
-    //   - VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
-    //   - VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT
+    //   - SAMPLER, COMBINED_IMAGE_SAMPLER, SAMPLED_IMAGE, STORAGE_IMAGE, UNIFORM_TEXEL_BUFFER,
+    //     TEXEL_BUFFER, UNIFORM_BUFFER, STORAGE_BUFFER, UNIFORM_BUFFER_DYNAMIC, BUFFER_DYNAMIC,
+    //     INPUT_ATTACHMENT, INLINE_UNIFORM_BLOCK_EXT
     //
     // * destBinding within the destDescriptorSet.
     // 
     // * destArrayStartIndex is the starting element in the array.
-    //   If the descriptor binding identified by destDescriptorSet and destBinding has a descriptor type of 
-    //   VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then destArrayStartIndex specifies the starting 
-    //   byte offset within the binding.
+    //   If the descriptor binding identified by destDescriptorSet and 
+    //   destBinding has a descriptor type of VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT 
+    //   then destArrayStartIndex specifies the starting byte offset within the binding.
     //
     // * imageInfos:
     //
@@ -59,7 +50,8 @@ public:
     //
     //   - buffer resource.
     //   - offset in bytes from the start of buffer.
-    //     Access to buffer memory via this descriptor uses addressing that is relative to this starting offset.
+    //     Access to buffer memory via this descriptor uses addressing that is 
+    //     relative to this starting offset.
     //   - range in bytes that is used for this descriptor update, 
     //     or VK_WHOLE_SIZE to use the range from offset to the end of the buffer.
     //

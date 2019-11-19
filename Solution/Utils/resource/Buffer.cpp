@@ -36,7 +36,8 @@ Buffer::Buffer(const LogicalDevice& logicalDevice,
     // - device is the logical device that owns the buffer and memory.
     // - buffer to be attached to memory.
     // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to be bound to the buffer.
+    // - memoryOffset is the start offset of the region of memory which is to be 
+    //   bound to the buffer.
     //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
@@ -67,7 +68,8 @@ Buffer::Buffer(const LogicalDevice& logicalDevice,
     // - device is the logical device that owns the buffer and memory.
     // - buffer to be attached to memory.
     // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to be bound to the buffer.
+    // - memoryOffset is the start offset of the region of memory which is to be 
+    //   bound to the buffer.
     //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
@@ -125,7 +127,8 @@ Buffer::copyToHostMemory(void* sourceData,
     // - size of the memory range to map, or VK_WHOLE_SIZE to map from 
     //   offset to the end of the allocation.
     // - ppData will contain a host-accessible pointer to the beginning of the mapped range.
-    //   This pointer minus offset must be aligned to at least VkPhysicalDeviceLimits::minMemoryMapAlignment.
+    //   This pointer minus offset must be aligned to at least 
+    //   VkPhysicalDeviceLimits::minMemoryMapAlignment.
     vkChecker(vkMapMemory(mLogicalDevice.vkDevice(),
                           mDeviceMemory->vkDeviceMemory(),
                           offset,
@@ -160,8 +163,9 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     Fence executionCompletedFence(mLogicalDevice);
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                                          transferCommandPool);
+    CommandBuffer commandBuffer = 
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
+                                                                transferCommandPool);
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();
@@ -247,7 +251,9 @@ Buffer::createBuffer(const LogicalDevice& logicalDevice,
     createInfo.sharingMode = sharingMode;
     createInfo.flags = 0;
     createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? nullptr : queueFamilyIndices.data();
+    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? 
+        nullptr : 
+        queueFamilyIndices.data();
     
     vkChecker(vkCreateBuffer(logicalDevice.vkDevice(),
                              &createInfo,

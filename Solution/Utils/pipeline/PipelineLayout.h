@@ -21,7 +21,8 @@ class LogicalDevice;
 // by a pipeline.
 //
 // The pipeline layout represents a sequence of descriptor sets with each having a specific layout.
-// This sequence of layouts is used to determine the interface between shader stages and shader resources.
+// This sequence of layouts is used to determine the interface between shader stages and 
+// shader resources.
 // Each pipeline is created using a pipeline layout.
 //
 // You need the PipelineLayout to:
@@ -32,13 +33,15 @@ class LogicalDevice;
 //
 class PipelineLayout {
 public:
-    // * descriptorSetLayout: Read DescriptorSetLayout class comments for more information about this.
+    // * descriptorSetLayout: Read DescriptorSetLayout class comments for more information 
+    //   about this.
     //
     // * pushConstantRange:
     //
     //   - stageFlags describing the shader stages that will access a range 
-    //     of push constants. If a particular stage is not included in the range, then accessing members 
-    //     of that range of push constants from the corresponding shader stage will return undefined values.
+    //     of push constants. If a particular stage is not included in the range, 
+    //     then accessing members of that range of push constants from the corresponding 
+    //     shader stage will return undefined values.
     //   - offset and size are the start offset and size, respectively, consumed by the range.
     //     Both offset and size are in units of bytes and must be a multiple of 4. 
     //     The layout of the push constant variables is specified in the shader.

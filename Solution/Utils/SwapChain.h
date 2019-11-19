@@ -105,12 +105,15 @@ public:
     uint32_t
     imageViewCount() const;
 
-    // Image objects are not directly accessed by pipeline shaders for reading or writing image data. 
-    // Instead, image views representing contiguous ranges of the image subresources and containing 
-    // additional metadata are used for that purpose. 
-    // Views must be created on images of compatible types, and must represent a valid subset of image subresources.
+    // Image objects are not directly accessed by pipeline shaders for reading or 
+    // writing image data. 
+    // Instead, image views representing contiguous ranges of the image subresources 
+    // and containing additional metadata are used for that purpose. 
+    // Views must be created on images of compatible types, and must represent 
+    // a valid subset of image subresources.
     // VkImageView is a set of parameters referring to a specific image.
-    // There you can interpret pixels as having some other(compatible) format, swizzle any components, 
+    // There you can interpret pixels as having some other(compatible) format, 
+    // swizzle any components, 
     // and limit the view to a specific range of MIP levels or array layers.
     const std::vector<VkImageView>& 
     imageViews() const;
@@ -144,89 +147,52 @@ private:
     // The swap chain presentation mode is the most important setting for the swap chain because 
     // it represents the actual conditions for showing images to the screen.
     //
-    // * presentModes:
+    // * presentModes (VK_PRESENT_MODE_):
     //
-    //   - VK_PRESENT_MODE_IMMEDIATE_KHR specifies that the presentation engine does 
-    //     not wait for a vertical blanking period to update the current image, meaning 
-    //     this mode may result in visible tearing.No internal queuing of presentation 
-    //     requests is needed, as the requests are applied immediately.
-    //   - VK_PRESENT_MODE_MAILBOX_KHR specifies that the presentation engine waits for 
-    //     the next vertical blanking period to update the current image.Tearing cannot be observed.
-    //     An internal single - entry queue is used to hold pending presentation requests.
-    //     If the queue is full when a new presentation request is received, the new request 
-    //     replaces the existing entry, and any images associated with the prior entry become 
-    //     available for re - use by the application.
-    //     One request is removed from the queueand processed during each vertical blanking 
-    //     period in which the queue is non - empty.
-    //   - VK_PRESENT_MODE_FIFO_KHR specifies that the presentation engine waits for the 
-    //     next vertical blanking period to update the current image.Tearing cannot be observed.
-    //     An internal queue is used to hold pending presentation requests.
-    //     New requests are appended to the end of the queue, and one request is removed from the 
-    //     beginning of the queueand processed during each vertical blanking period in which the 
-    //     queue is non - empty.This is the only value of presentMode that is required to be supported.
-    //   - VK_PRESENT_MODE_FIFO_RELAXED_KHR specifies that the presentation engine generally 
-    //     waits for the next vertical blanking period to update the current image.
-    //     If a vertical blanking period has already passed since the last update of the current 
-    //     image then the presentation engine does not wait for another vertical blanking period 
-    //     for the update, meaning this mode may result in visible tearing in this case.
-    //     This mode is useful for reducing visual stutter with an application that will mostly 
-    //     present a new image before the next vertical blanking period, but may occasionally be 
-    //     late, and present a new image just after the next vertical blanking period.
-    //     An internal queue is used to hold pending presentation requests.
-    //     New requests are appended to the end of the queue, and one request is removed from the 
-    //     beginning of the queueand processed during or after each vertical blanking period in which 
-    //     the queue is non - empty.
-    //   - VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR specifies that the presentation engine and 
-    //     application have concurrent access to a single image, which is referred to as a shared 
-    //     presentable image. The presentation engine is only required to update the current 
-    //     image after a new presentation request is received.
-    //     Therefore the application must make a presentation request whenever an update is required.
-    //     However, the presentation engine may update the current image at any point, meaning 
-    //     this mode may result in visible tearing.
-    //   - VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR specifies that the presentation engine
-    //     and application have concurrent access to a single image, which is referred to as a 
-    //     shared presentable image. The presentation engine periodically updates the current image 
-    //     on its regular refresh cycle.
-    //     The application is only required to make one initial presentation request, 
-    //     after which the presentation engine must update the current image without any need for 
-    //     further presentation requests.
-    //     The application can indicate the image contents have been updated by making a presentation 
-    //     request, but this does not guarantee the timing of when it will be updated.
-    //     This mode may result in visible tearing if rendering to the image is not timed correctly.
+    //   - IMMEDIATE_KHR, MAILBOX_KHR, FIFO_KHR, FIFO_RELAXED_KHR, SHARED_DEMAND_REFRESH_KHR, 
+    //     SHARED_CONTINUOUS_REFRESH_KHR
     static VkPresentModeKHR 
     bestFitPresentMode(const std::vector<VkPresentModeKHR>& presentModes);
 
-    // The swap extent is the resolution of the swap chain images and it is almost always exactly equal to
-    // the resolution of the window that we are drawing to.
+    // The swap extent is the resolution of the swap chain images and it is almost always 
+    // exactly equal to the resolution of the window that we are drawing to.
     //
     // * surfaceCapabilities:
     //   - minImageCount the specified device supports for 
     //     a swapchain created for the surface, and will be at least one.
     //   - maxImageCount the specified device supports for a swapchain 
     //     created for the surface, and will be either 0, or greater than or equal to minImageCount. 
-    //     A value of 0 means that there is no limit on the number of images, though there may be limits related 
-    //     to the total amount of memory used by presentable images.
+    //     A value of 0 means that there is no limit on the number of images, 
+    //     though there may be limits related to the total amount of memory used 
+    //     by presentable images.
     //   - currentExtent  of the surface, or the special value 
     //     [eq]#(0xFFFFFFFF, 0xFFFFFFFF)# indicating that the surface size will be determined by 
     //     the extent of a swapchain targeting the surface.
     //   - minImageExtent of the surface, or the special value 
     //     [eq]#(0xFFFFFFFF, 0xFFFFFFFF)# indicating that the surface size will be determined by 
     //     the extent of a swapchain targeting the surface.
-    //   - maxImageExtent contains the largest valid swapchain extent for the surface on the specified device. 
-    //     The width and height of the extent will each be greater than or equal to the corresponding width and 
-    //     height of minImageExtent. The width and height of the extent will each be greater than or equal to the 
-    //     corresponding width and height of currentExtent, unless currentExtent has the special value described above.
-    //   - maxImageArrayLayers is the maximum number of layers presentable images can have for a swapchain created 
-    //     for this device and surface, and will be at least one.
+    //   - maxImageExtent contains the largest valid swapchain extent for the surface 
+    //     on the specified device. 
+    //     The width and height of the extent will each be greater than or equal to 
+    //     the corresponding width and height of minImageExtent. 
+    //     The width and height of the extent will each be greater than or equal to the 
+    //     corresponding width and height of currentExtent, unless currentExtent has 
+    //     the special value described above.
+    //   - maxImageArrayLayers is the maximum number of layers presentable images 
+    //     can have for a swapchain created for this device and surface, and will be at least one.
     //   - supportedTransforms bitmask indicating the presentation transforms 
     //     supported for the surface on the specified device. At least one bit will be set.
-    //   - currentTransform of the surface relative to the presentation engine's natural orientation.
+    //   - currentTransform of the surface relative to the presentation engine's 
+    //     natural orientation.
     //   - supportedCompositeAlpha bitmask representing the alpha compositing modes 
-    //     supported by the presentation engine for the surface on the specified device, and at least one bit will be set. 
-    //     Opaque composition can be achieved in any alpha compositing mode by either using an image format that has 
-    //     no alpha component, or by ensuring that all pixels in the presentable images have an alpha value of 1.0.
-    //   - supportedUsageFlags bitmask representing the ways the application can use the presentable images of 
-    //     a swapchain created with VkPresentModeKHR set to VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, 
+    //     supported by the presentation engine for the surface on the specified device, 
+    //     and at least one bit will be set. 
+    //     Opaque composition can be achieved in any alpha compositing mode by either using 
+    //     an image format that has no alpha component, or by ensuring that all pixels 
+    //     in the presentable images have an alpha value of 1.0.
+    //   - supportedUsageFlags bitmask representing the ways the application can use 
+    //     the presentable images of a swapchain created with VkPresentModeKHR set to 
+    //     VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, 
     //     VK_PRESENT_MODE_FIFO_KHR or VK_PRESENT_MODE_FIFO_RELAXED_KHR
     static VkExtent2D 
     swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, 

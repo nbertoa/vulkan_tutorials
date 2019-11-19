@@ -25,7 +25,8 @@ class LogicalDevice;
 // are used over the course of the subpasses. 
 // The use of a render pass in a command buffer is a render pass instance.
 //
-// Subpasses are not separate objects and they are important part of the rendering system in Vulkan.
+// Subpasses are not separate objects and they are important part of 
+// the rendering system in Vulkan.
 // Fortunately, you do not need to know all the details when preparing your workload.
 // For example, you can specify the number of triangles to render on submission.
 // The crucial part when defining a RenderPass in Vulkan is the number and 

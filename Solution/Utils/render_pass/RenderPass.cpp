@@ -15,11 +15,17 @@ RenderPass::RenderPass(const LogicalDevice& logicalDevice,
     VkRenderPassCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     createInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
-    createInfo.pAttachments = attachmentDescriptions.empty() ? nullptr : reinterpret_cast<const VkAttachmentDescription*>(attachmentDescriptions.data());
+    createInfo.pAttachments = attachmentDescriptions.empty() ? 
+        nullptr : 
+        reinterpret_cast<const VkAttachmentDescription*>(attachmentDescriptions.data());
     createInfo.subpassCount = static_cast<uint32_t>(subpassDescriptions.size());
-    createInfo.pSubpasses = subpassDescriptions.empty() ? nullptr : reinterpret_cast<const VkSubpassDescription*>(subpassDescriptions.data());
+    createInfo.pSubpasses = subpassDescriptions.empty() ? 
+        nullptr : 
+        reinterpret_cast<const VkSubpassDescription*>(subpassDescriptions.data());
     createInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
-    createInfo.pDependencies = subpassDependencies.empty() ? nullptr : reinterpret_cast<const VkSubpassDependency*>(subpassDependencies.data());
+    createInfo.pDependencies = subpassDependencies.empty() ? 
+        nullptr : 
+        reinterpret_cast<const VkSubpassDependency*>(subpassDependencies.data());
 
     vkChecker(vkCreateRenderPass(mLogicalDevice.vkDevice(),
                                  &createInfo,

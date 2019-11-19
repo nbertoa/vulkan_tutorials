@@ -46,20 +46,22 @@ public:
     // used as attachments in a given renderpass instance either happen-before the load operations 
     // for those attachments, or happen-after the store operations for those attachments.
     //
-    // For depth/stencil attachments, each aspect can be used separately as attachments and non-attachments 
-    // as long as the non-attachment accesses are also via an image subresource in either the 
-    // VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL layout or the 
-    // VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL layout, 
+    // For depth/stencil attachments, each aspect can be used separately as attachments and 
+    // non-attachments as long as the non-attachment accesses are also via an image 
+    // subresource in either the VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL 
+    // layout or the VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL layout, 
     // and the attachment resource uses whichever of those two layouts the image accesses do not. 
     // Use of non-attachment aspects in this case is only well defined if the attachment is used in 
-    // the subpass where the non-attachment access is being made, or the layout of the image subresource 
-    // is constant throughout the entire render pass instance, including the initialLayout and finalLayout.
+    // the subpass where the non-attachment access is being made, or the layout of the 
+    // image subresource is constant throughout the entire render pass instance, 
+    // including the initialLayout and finalLayout.
     //
     // It is legal for a subpass to use no color or depth/stencil attachments, 
     // and rather use shader side effects such as image stores and atomics to produce an output. 
     // In this case, the subpass continues to use the width, height, and layers of the framebuffer 
-    // to define the dimensions of the rendering area, and the rasterizationSamples from each pipeline’s 
-    // VkPipelineMultisampleStateCreateInfo to define the number of samples used in rasterization; 
+    // to define the dimensions of the rendering area, and the rasterizationSamples 
+    // from each pipeline’s VkPipelineMultisampleStateCreateInfo to define the number of 
+    // samples used in rasterization; 
     // however, if VkPhysicalDeviceFeatures::variableMultisampleRate is VK_FALSE, 
     // then all pipelines to be bound with a given zero-attachment subpass must have the same value 
     // for VkPipelineMultisampleStateCreateInfo::rasterizationSamples.

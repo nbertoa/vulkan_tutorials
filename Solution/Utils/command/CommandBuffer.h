@@ -19,8 +19,9 @@ class Semaphore;
 //
 // VkCommandBuffer wrapper.
 //
-// Command buffers are objects used to specify the order, type and parameters of tasks that should be 
-// performed when the CommandBuffer is submitted to a Queue and is finally consumed by the LogicalDevice.
+// Command buffers are objects used to specify the order, type and parameters of tasks 
+// that should be performed when the CommandBuffer is submitted to a queue 
+// and is finally consumed by the LogicalDevice.
 // It represents a buffer of various commands to be executed by a LogicalDevice.
 //
 // There are two levels of command buffers: 
@@ -46,14 +47,9 @@ class CommandBuffer {
 public:
     // * commandPool from which the command buffer is allocated.
     //
-    // * level for command buffer:
+    // * level for command buffer (VK_COMMAND_BUFFER_):
     // 
-    //   - VK_COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted
-    //   to a queue for execution, but cannot be called
-    //   from other command buffers.
-    //   - VK_COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted
-    //   directly, but can be called from primary command
-    //   buffers.
+    //   - LEVEL_PRIMARY, LEVEL_SECONDARY
     CommandBuffer(const LogicalDevice& logicalDevice,
                   const CommandPool& commandPool,
                   const VkCommandBufferLevel level);
@@ -71,16 +67,10 @@ public:
                                              const CommandPool& commandPool);
 
 
-    // * usageFlags bitmask specifying usage behavior for the command buffer.
+    // * usageFlags bitmask specifying usage behavior 
+    //   for the command buffer (VK_COMMAND_BUFFER_USAGE_):
     //
-    //   - VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
-    //   will be rerecorded right after executing it once.
-    //   - VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a 
-    //   secondary command buffer that will be entirely within a single
-    //   render pass.
-    //   - VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command
-    //   buffer can be resubmitted while it is also already pending 
-    //   execution.
+    //   - ONE_TIME_SUBMIT_BIT, SIMULTANEOUS_USE_BIT
     void 
     beginRecording(const VkCommandBufferUsageFlags usageFlags);
     
@@ -96,8 +86,9 @@ public:
     //   that is affected by the render pass.
     //
     // * clearValues contains clear values for each attachment, if the attachment 
-    //   uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil 
-    //   format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR.
+    //   uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or 
+    //   if the attachment has a depth/stencil format and uses a stencilLoadOp value 
+    //   of VK_ATTACHMENT_LOAD_OP_CLEAR.
     //   The array is indexed by attachment number.
     //   Only elements corresponding to cleared attachments are used.
     //   Other elements of clearValues are ignored.
@@ -148,33 +139,40 @@ public:
                       const VkImageLayout destImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     // When vkCmdPipelineBarrier (by calling this method) is submitted to a queue, it defines 
-    // a memory dependency between commands that were submitted before it, and those submitted after it.
+    // a memory dependency between commands that were submitted before it, 
+    // and those submitted after it.
     //
-    // If vkCmdPipelineBarrier was recorded outside a render pass instance, the first synchronization scope 
-    // includes all commands that occur earlier in submission order.
+    // If vkCmdPipelineBarrier was recorded outside a render pass instance, 
+    // the first synchronization scope includes all commands that occur 
+    // earlier in submission order.
     //
-    // If vkCmdPipelineBarrier was recorded inside a render pass instance, the first synchronization scope 
-    // includes only commands that occur earlier in submission order within the same subpass.
+    // If vkCmdPipelineBarrier was recorded inside a render pass instance, 
+    // the first synchronization scope includes only commands that occur earlier 
+    // in submission order within the same subpass.
     //
-    // In either case, the first synchronization scope is limited to operations on the pipeline stages 
-    // determined by the sourceStageMask.
+    // In either case, the first synchronization scope is limited to operations 
+    // on the pipeline stages determined by the sourceStageMask.
     //
-    // If vkCmdPipelineBarrier was recorded outside a render pass instance, the second synchronization scope 
-    // includes all commands that occur later in submission order.
+    // If vkCmdPipelineBarrier was recorded outside a render pass instance, 
+    // the second synchronization scope includes all commands that occur later in submission order.
     //
-    // If vkCmdPipelineBarrier was recorded inside a render pass instance, the second synchronization scope 
-    // includes only commands that occur later in submission order within the same subpass.
+    // If vkCmdPipelineBarrier was recorded inside a render pass instance, 
+    // the second synchronization scope includes only commands that occur 
+    // later in submission order within the same subpass.
     //
-    // In either case, the second synchronization scope is limited to operations on the pipeline stages 
-    // determined by the destStageMask.
+    // In either case, the second synchronization scope is limited to 
+    // operations on the pipeline stages determined by the destStageMask.
     //
     // * sourceStageMask specifying a set of source pipeline stages.
     //   The first access scope is limited to access in the pipeline stages determined by
-    //   the sourceStageMask:
-    //   Within that, the first access scope only includes the first access scopes defined by imageMemoryBarrier.
+    //   the sourceStageMask.
+    //   Within that, the first access scope only includes the first access scopes 
+    //   defined by imageMemoryBarrier.
     // * destStageMask specifying a set of destination pipeline stages.
-    //   The second access scope is limited to access in the pipeline stages determined by the destStageMask.
-    //   Within that, the second access scope only includes the second access scopes defined by elements of the pMemoryBarriers, pBufferMemoryBarriersand pImageMemoryBarriers arrays, which each define a set of memory barriers.If no memory barriers are specified, then the second access scope includes no accesses.
+    //   The second access scope is limited to access in the pipeline stages 
+    //   determined by the destStageMask.
+    //   Within that, the second access scope only includes the second access scopes 
+    //   defined by imageMemoryBarrier.
     //
     //   - The pipeline barrier specifies an execution dependency such that all work performed 
     //     by the set of pipeline stages included in sourceStageMask of the first set of 
@@ -182,7 +180,8 @@ public:
     //     included in destStageMask of the second set of commands begins.
     //     Read submit() comments to check the possible values of these parameters.
     //
-    // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, then the dependency is by-region
+    // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, 
+    //   then the dependency is by-region.
     void
     imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
                          const VkPipelineStageFlags sourceStageMask,
@@ -213,56 +212,17 @@ public:
     //   command buffers have completed execution. 
     //
     // * waitStageFlags is a pipeline stage at which 
-    //   the waitSemaphore wait will occur:
+    //   the waitSemaphore wait will occur (VK_PIPELINE_STAGE_):
     //
-    //   - VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT specifies the stage of the pipeline 
-    //     where any commands are initially received by the queue.
-    //   - VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT specifies the stage of the pipeline where 
-    //     Draw/DispatchIndirect data structures are consumed. This stage also includes 
-    //     reading commands written by vkCmdProcessCommandsNVX.
-    //   - VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV stage
-    //   - VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV stage.
-    //   - VK_PIPELINE_STAGE_VERTEX_INPUT_BIT specifies the stage of the pipeline where 
-    //     vertex and index buffers are consumed.
-    //   - VK_PIPELINE_STAGE_VERTEX_SHADER_BIT stage.
-    //   - VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT stage
-    //   - VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT stage
-    //   - VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT stage.
-    //   - VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT stage.
-    //   - VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT specifies the stage of the pipeline where 
-    //     early fragment tests(depth and stencil tests before fragment shading) are performed.
-    //     This stage also includes subpass load operations for framebuffer attachments with a depth/stencil format.
-    //   - VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT specifies the stage of the pipeline where late 
-    //     fragment tests(depth and stencil tests after fragment shading) are performed.
-    //     This stage also includes subpass store operations for framebuffer attachments with a depth/stencil format.
-    //   - VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT specifies the stage of the pipeline after 
-    //     blending where the final color values are output from the pipeline.This stage also includes 
-    //     subpass load and store operationsand multisample resolve operations for framebuffer 
-    //     attachments with a color or depth / stencil format.
-    //   - VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT stage.
-    //   - VK_PIPELINE_STAGE_TRANSFER_BIT specifies the execution of copy commands.
-    //     This includes the operations resulting from all copy commands, 
-    //     clear commands(with the exception of vkCmdClearAttachments), and vkCmdCopyQueryPoolResults.
-    //   - VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT specifies the final stage in the pipeline where operations 
-    //     generated by all commands complete execution.
-    //   - VK_PIPELINE_STAGE_HOST_BIT specifies a pseudo-stage indicating execution on the host of reads/writes 
-    //     of device memory. This stage is not invoked by any commands recorded in a command buffer.
-    //   - VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV specifies the execution of the ray tracing shader stages.
-    //   - VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV specifies the execution of vkCmdBuildAccelerationStructureNV, 
-    //     vkCmdCopyAccelerationStructureNV, and vkCmdWriteAccelerationStructuresPropertiesNV.
-    //   - VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT specifies the execution of all graphics pipeline stages.
-    //   - VK_PIPELINE_STAGE_ALL_COMMANDS_BIT is equivalent to the logical OR of every other pipeline stage flag that 
-    //     is supported on the queue it is used with.
-    //   - VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT specifies the stage of the pipeline where the predicate of 
-    //     conditional rendering is consumed.
-    //   - VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT specifies the stage of the pipeline where vertex attribute 
-    //     output values are written to the transform feedback buffers.
-    //   - VK_PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX specifies the stage of the pipeline where device-side generation of 
-    //     commands via vkCmdProcessCommandsNVX is handled.
-    //   - VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV specifies the stage of the pipeline where the shading rate image 
-    //     is read to determine the shading rate for portions of a rasterized primitive.
-    //   - VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT specifies the stage of the pipeline where the fragment 
-    //     density map is read to generate the fragment areas.
+    //   - TOP_OF_PIPE_BIT, DRAW_INDIRECT_BIT, TASK_SHADER_BIT_NV,
+    //     MESH_SHADER_BIT_NV, VERTEX_INPUT_BIT, VERTEX_SHADER_BIT,
+    //     TESSELLATION_CONTROL_SHADER_BIT, TESSELLATION_EVALUATION_SHADER_BIT,
+    //     GEOMETRY_SHADER_BIT, FRAGMENT_SHADER_BIT, EARLY_FRAGMENT_TESTS_BIT, 
+    //     LATE_FRAGMENT_TESTS_BIT, COLOR_ATTACHMENT_OUTPUT_BIT, COMPUTE_SHADER_BIT,
+    //     TRANSFER_BIT, BOTTOM_OF_PIPE_BIT, HOST_BIT, RAY_TRACING_SHADER_BIT_NV,
+    //     ALL_GRAPHICS_BIT, ALL_COMMANDS_BIT, CONDITIONAL_RENDERING_BIT_EXT,
+    //     TRANSFORM_FEEDBACK_BIT_EXT, COMMAND_PROCESS_BIT_NVX, SHADING_RATE_IMAGE_BIT_NV,
+    //     FRAGMENT_DENSITY_PROCESS_BIT_EXT
     void 
     submit(const VkQueue queue,
            const Semaphore* waitSemaphore,

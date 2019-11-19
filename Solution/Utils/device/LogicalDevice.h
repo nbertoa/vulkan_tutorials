@@ -77,8 +77,9 @@ private:
     // 
     // VkDeviceQueueCreateInfo:
     // - flags bitmask indicating behavior of the queue.
-    // - queueFamilyIndex to create on this device. This index corresponds to the index of an element of the 
-    //   pQueueFamilyProperties array that was returned by vkGetPhysicalDeviceQueueFamilyProperties.
+    // - queueFamilyIndex to create on this device. This index corresponds to 
+    //   the index of an element of the pQueueFamilyProperties array that was returned 
+    //   by vkGetPhysicalDeviceQueueFamilyProperties.
     // - queueCount to create in the queue family indicated by queueFamilyIndex.
     // - pQueuePriorities array that contains normalized floating point values, 
     //   specifying priorities of work that will be submitted to each created queue.

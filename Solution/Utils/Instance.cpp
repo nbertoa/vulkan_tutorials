@@ -86,7 +86,8 @@ Instance::createInstance() {
 
     const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
 #ifdef _DEBUG
-    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = DebugMessenger::messengerCreateInfo();
+    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = 
+        DebugMessenger::messengerCreateInfo();
     debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
 #endif
 
@@ -127,7 +128,9 @@ Instance::createInstance() {
     instanceInfo.flags = 0;    
     instanceInfo.pNext = debugMessengerCreateInfoPtr;
     instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
-    instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? nullptr : instanceExtensions.data();
+    instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? 
+        nullptr : 
+        instanceExtensions.data();
     instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
     instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
 
@@ -147,14 +150,17 @@ Instance::getInstanceLayerNames() {
     std::vector<const char*> instanceLayers;
 #ifdef _DEBUG
     // Validation: the main, comprehensive Khronos validation layer.
-    // This layer encompasses the entire functionality of the deprecated layers, and supercedes them. 
-    // As the other layers are deprecated this layer should be used for all validation going forward.
+    // This layer encompasses the entire functionality of the deprecated layers, 
+    // and supercedes them. 
+    // As the other layers are deprecated this layer should be used for all validation 
+    // going forward.
     instanceLayers.emplace_back("VK_LAYER_KHRONOS_validation");
 
     // Utility: print API calls and their parameters and values
     //instanceLayers.emplace_back("VK_LAYER_LUNARG_api_dump");
 
-    // Utility: allows modification of an actual device's reported features, limits, and capabilities
+    // Utility: allows modification of an actual device's reported features, limits, 
+    // and capabilities
     //instanceLayers.emplace_back("VK_LAYER_LUNARG_device_simulation");
     
     // Utility: outputs specified frames to an image file as they are presented
@@ -163,7 +169,8 @@ Instance::getInstanceLayerNames() {
     assert(areInstanceLayersSupported(instanceLayers));
 #endif
 
-    // Utility: outputs the frames-per-second of the target application in the applications title bar
+    // Utility: outputs the frames-per-second of the target application in 
+    // the applications title bar
     instanceLayers.emplace_back("VK_LAYER_LUNARG_monitor");
 
     return instanceLayers;

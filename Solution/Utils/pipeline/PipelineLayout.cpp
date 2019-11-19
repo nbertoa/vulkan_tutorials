@@ -64,7 +64,8 @@ PipelineLayout::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& d
     createInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
     createInfo.pSetLayouts = descriptorSetLayouts.empty() ? nullptr : descriptorSetLayouts.data();
     createInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
-    createInfo.pPushConstantRanges = pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
+    createInfo.pPushConstantRanges = 
+        pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
 
     vkChecker(vkCreatePipelineLayout(mLogicalDevice.vkDevice(),
                                      &createInfo,

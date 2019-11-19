@@ -39,12 +39,14 @@ class ShaderStages;
 // - Render pass: the attachments referenced by the pipeline 
 //   stages and their usage.
 //
-// All those parameters that used to be separate settings in much older graphics APIs (DirectX 9, OpenGL), 
-// were later grouped into a smaller number of state objects as the APIs progressed (DirectX 10 and 11) and 
-// must now be baked into a single big, immutable object with today’s modern APIs like Vulkan.
+// All those parameters that used to be separate settings in much older graphics APIs 
+// (DirectX 9, OpenGL), were later grouped into a smaller number of state objects as the 
+// APIs progressed (DirectX 10 and 11) and must now be baked into a single big, 
+// immutable object with today’s modern APIs like Vulkan.
 //
 // For each different set of parameters needed during rendering you must create a new Pipeline.
-// You can then set it as the current active Pipeline in a CommandBuffer by calling the function vkCmdBindPipeline.
+// You can then set it as the current active Pipeline in a CommandBuffer by calling the 
+// function vkCmdBindPipeline.
 //
 // You need the GraphicsPipeline to:
 // - CommandBuffer execution of the command vkCmbBindPipeline
@@ -57,7 +59,8 @@ class ShaderStages;
 class GraphicsPipeline {
 public:
     // * renderPass describes the environment in which the pipeline will be used; 
-    //   the pipeline must only be used with an instance of any render pass compatible with the one provided.
+    //   the pipeline must only be used with an instance of any render pass compatible 
+    //   with the one provided.
     //
     // * subPassIndex in the render pass where this pipeline will be used.
     //
@@ -67,8 +70,8 @@ public:
     // * pipelineStates (Read PipelineStates to understand)
     //
     // Notes:
-    // If any shader stage fails to compile, the compile log will be reported back to the application, 
-    // and VK_ERROR_INVALID_SHADER_NV will be generated.
+    // If any shader stage fails to compile, the compile log will be reported back 
+    // to the application, and VK_ERROR_INVALID_SHADER_NV will be generated.
     //
     // pipelineLayout will be "moved" to this instance.
     GraphicsPipeline(const LogicalDevice& logicalDevice,

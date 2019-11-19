@@ -33,7 +33,8 @@ class PhysicalDevice;
 // that reside in on-devide memory.
 //
 // You should not allocate separate DeviceMemory for each Buffer or Image. 
-// Instead, you should allocate bigger chunks of memory and assign parts of them to your Buffers and Images. 
+// Instead, you should allocate bigger chunks of memory and assign parts of 
+// them to your Buffers and Images. 
 // Allocation is a costly operation and there is a limit on maximum number of allocations as well, 
 // all of which can be queried from your PhysicalDevice.
 //
@@ -69,35 +70,10 @@ public:
     //
     // * memoryPropertyFlags is used to get the memory index that is an index
     //   that identifies a memory type from the memoryTypes array of the 
-    //   VkPhysicalDeviceMemoryProperties structure:
+    //   VkPhysicalDeviceMemoryProperties structure (VK_MEMORY_PROPERTY_):
     //
-    //   - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit specifies that memory allocated with 
-    //     this type is the most efficient for device access.
-    //     This property will be set if and only if the memory type belongs to a heap 
-    //     with the VK_MEMORY_HEAP_DEVICE_LOCAL_BIT set.
-    //   - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit specifies that memory allocated with 
-    //     this type can be mapped for host access using vkMapMemory.
-    //   - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT bit specifies that the host cache 
-    //     management commands vkFlushMappedMemoryRanges and vkInvalidateMappedMemoryRanges 
-    //     are not needed to flush host writes to the device or make device writes visible 
-    //     to the host, respectively.
-    //   - VK_MEMORY_PROPERTY_HOST_CACHED_BIT bit specifies that memory allocated with this 
-    //     type is cached on the host. Host memory accesses to uncached memory are slower than 
-    //     to cached memory, however uncached memory is always host coherent.
-    //   - VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT bit specifies that the memory type only 
-    //     allows device access to the memory. Memory types must not have both 
-    //     VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BITand VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set.
-    //     Additionally, the object is backing memory may be provided by the implementation lazily 
-    //     as specified in Lazily Allocated Memory.
-    //   - VK_MEMORY_PROPERTY_PROTECTED_BIT bit specifies that the memory type only allows device 
-    //     access to the memory, and allows protected queue operations to access the memory.
-    //     Memory types must not have VK_MEMORY_PROPERTY_PROTECTED_BIT set and any of 
-    //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT set, or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, 
-    //     or VK_MEMORY_PROPERTY_HOST_CACHED_BIT set.
-    //   - VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD bit specifies that device accesses to 
-    //     allocations of this memory type are automatically made available and visible.
-    //   - VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD bit specifies that memory allocated with 
-    //     this type is not cached on the device. Uncached device memory is always device coherent.
+    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT, 
+    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, DEVICE_COHERENT_BIT_AMD, DEVICE_UNCACHED_BIT_AMD.
     DeviceMemory(const LogicalDevice& logicalDevice,
                  const PhysicalDevice& physicalDevice,
                  const VkMemoryRequirements& memoryRequirements,

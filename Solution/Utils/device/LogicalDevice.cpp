@@ -55,12 +55,14 @@ VkDevice
 LogicalDevice::createLogicalDevice(const PhysicalDevice& physicalDevice) {
     VkDevice logicalDevice;
 
-    const std::vector<VkDeviceQueueCreateInfo> createInfoVector = physicalDeviceQueuesCreateInfo(physicalDevice);
+    const std::vector<VkDeviceQueueCreateInfo> createInfoVector = 
+        physicalDeviceQueuesCreateInfo(physicalDevice);
     const std::vector<const char*>& deviceExtensions = physicalDevice.deviceExtensionNames();
     
     // VkDeviceCreateInfo:
     // - queueCreateInfoCount
-    // - pQueueCreateInfos describes the queues that are requested to be created along with the logical device.
+    // - pQueueCreateInfos describes the queues that are requested to be created 
+    //   along with the logical device.
     // - enabledExtensionCount is the number of device extensions to enable.
     // - ppEnabledExtensionNames to enable for the created device.
     // - pEnabledFeatures is an optional VkPhysicalDeviceFeatures structure containing 

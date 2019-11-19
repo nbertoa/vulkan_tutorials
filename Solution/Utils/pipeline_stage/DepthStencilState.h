@@ -17,19 +17,13 @@ class DepthStencilState {
 public:
     // * depthTestEnable controls whether depth testing is enabled.
     //
-    // * depthWriteEnable controls whether depth writes are enabled when depthTestEnable is VK_TRUE.
+    // * depthWriteEnable controls whether depth writes are enabled 
+    //   when depthTestEnable is VK_TRUE.
     //   Depth writes are always disabled when depthTestEnable is VK_FALSE.
     //
-    // * depthCompareOp is the comparison operator used in the depth test:
+    // * depthCompareOp is the comparison operator used in the depth test (VK_COMPARE_OP_):
     //
-    //   - VK_COMPARE_OP_NEVER specifies that the test never passes.
-    //   - VK_COMPARE_OP_LESS specifies that the test passes when R < S.
-    //   - VK_COMPARE_OP_EQUAL specifies that the test passes when R = S.
-    //   - VK_COMPARE_OP_LESS_OR_EQUAL specifies that the test passes when R ≤ S.
-    //   - VK_COMPARE_OP_GREATER specifies that the test passes when R > S.
-    //   - VK_COMPARE_OP_NOT_EQUAL specifies that the test passes when R ≠ S.
-    //   - VK_COMPARE_OP_GREATER_OR_EQUAL specifies that the test passes when R ≥ S.
-    //   - VK_COMPARE_OP_ALWAYS specifies that the test always passes.
+    //   - NEVER, LESS, EQUAL, LESS_OR_EQUAL, GREATER, NOT_EQUAL, GREATER_OR_EQUAL, ALWAYS
     //
     // * depthBoundsTestEnable controls whether depth bounds testing is enabled.
     //
@@ -38,16 +32,19 @@ public:
     // * front and back control the parameters of the stencil test:
     //
     //   - failOp specifying the action performed on samples that fail the stencil test.
-    //   - passOp specifying the action performed on samples that pass both the depth and stencil tests.
+    //   - passOp specifying the action performed on samples that pass both the 
+    //     depth and stencil tests.
     //   - depthFailOp specifying the action performed on samples that 
     //     pass the stencil test and fail the depth test.
     //   - compareOp specifying the comparison operator used in the stencil test.
-    //   - compareMask selects the bits of the unsigned integer stencil values participating in the stencil test.
+    //   - compareMask selects the bits of the unsigned integer stencil values 
+    //     participating in the stencil test.
     //   - writeMask selects the bits of the unsigned integer stencil values 
     //     updated by the stencil test in the stencil framebuffer attachment.
     //   - reference value that is used in the unsigned stencil comparison.
     //
-    // * minDepthBounds and maxDepthBounds define the range of values used in the depth bounds test.
+    // * minDepthBounds and maxDepthBounds define the range of values used 
+    //   in the depth bounds test.
     //
     // The default constructor arguments enable depth test and disable stencil test.
     DepthStencilState(const VkBool32 depthTestEnable = VK_TRUE,

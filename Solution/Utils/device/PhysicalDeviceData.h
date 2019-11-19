@@ -59,44 +59,36 @@ private:
     //   and you can create up to 16 queues of that type.
     // - Another kind can only do transfer operations, and you can only create one queue 
     //   of this kind. Usually this is for asynchronously DMAing data between hostand device 
-    //   memory on discrete GPUs, so transfers can be done concurrently with independent graphics/compute operations.
+    //   memory on discrete GPUs, so transfers can be done concurrently with 
+    //   independent graphics/compute operations.
     // - Finally, you can create up to 8 queues that are only capable of compute operations.
     //
     // Some queues might only correspond to separate queues in the host-side scheduler, 
     // other queues might correspond to actual independent queues in hardware. 
-    // For example, many GPUs only have one hardware graphics queue, so even if you create two VkQueues 
-    // from a graphics-capable queue family, command buffers submitted to those queues will progress through 
-    // the kernel driver's command buffer scheduler independently, but will execute in some serial order on the GPU. 
-    // But some GPUs have multiple compute-only hardware queues, so two VkQueues for a compute-only queue family 
-    // might actually proceed independently and concurrently all the way through the GPU. Vulkan doesn't expose this.
+    // For example, many GPUs only have one hardware graphics queue, so even if you create 
+    // two VkQueues from a graphics-capable queue family, command buffers submitted to those 
+    // queues will progress through 
+    // the kernel driver's command buffer scheduler independently, but will execute 
+    // in some serial order on the GPU. 
+    // But some GPUs have multiple compute-only hardware queues, so two VkQueues 
+    // for a compute-only queue family might actually proceed independently and concurrently 
+    // all the way through the GPU. Vulkan doesn't expose this.
     //
-    // Bottom line, decide how many queues you can usefully use, based on how much concurrency you have. 
+    // Bottom line, decide how many queues you can usefully use, based on how much 
+    // concurrency you have. 
     // For many apps, a single "universal" queue is all they need. 
-    // More advanced ones might have one graphics+compute queue, a separate compute-only queue for asynchronous compute work, 
-    // and a transfer queue for async DMA. 
-    // Then map what you'd like onto what's available; you may need to do your own multiplexing, e.g. on a device that 
-    // doesn't have a compute-only queue family, you might create multiple graphics+compute queues instead, 
-    // or serialize your async compute jobs onto your single graphics+compute queue yourself.
+    // More advanced ones might have one graphics+compute queue, a separate compute-only queue 
+    // for asynchronous compute work, and a transfer queue for async DMA. 
+    // Then map what you'd like onto what's available; you may need to do your own multiplexing, 
+    // e.g. on a device that doesn't have a compute-only queue family, you might create multiple 
+    // graphics+compute queues instead, or serialize your async compute jobs onto your 
+    // single graphics+compute queue yourself.
     //
     // * queueFamilyProperties:
     //
     //   - queueFlags is a bitmask of VkQueueFlagBits indicating 
-    //     capabilities of the queues in this queue family:    //
-    //     . VK_QUEUE_GRAPHICS_BIT specifies that queues in this queue 
-    //       family support graphics operations.
-    //     . VK_QUEUE_COMPUTE_BIT specifies that queues in this queue family 
-    //       support compute operations.
-    //     . VK_QUEUE_TRANSFER_BIT specifies that queues in this queue family 
-    //       support transfer operations.
-    //     . VK_QUEUE_SPARSE_BINDING_BIT specifies that queues in this queue family 
-    //       support sparse memory management operations.
-    //       If any of the sparse resource features are enabled, 
-    //       then at least one queue family must support this bit.
-    //     . if VK_QUEUE_PROTECTED_BIT is set, then the queues in this queue family 
-    //       support the VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT bit.
-    //       If the protected memory physical device feature is supported, 
-    //       then at least one queue family of at least one physical device exposed 
-    //       by the implementation must support this bit.
+    //     capabilities of the queues in this queue family (VK_QUEUE_): 
+    //     . GRAPHICS_BIT, COMPUTE_BIT, TRANSFER_BIT, SPARSE_BINDING_BIT, PROTECTED_BIT.
     //   - queueCount is the unsigned integer count of queues in this queue family.
     //     Each queue family must support at least one queue.
     //   - timestampValidBits is the unsigned integer count of meaningful bits 
