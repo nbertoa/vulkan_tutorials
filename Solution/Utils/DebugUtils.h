@@ -15,13 +15,7 @@ inline void glfwChecker(const int returnCode) {
 inline void glfwChecker(const int) {}
 #endif
 
-#ifdef _DEBUG
-inline void vkChecker(const VkResult result) {
-    assert(result == VK_SUCCESS);
-}
-#else
-inline void vkChecker(const VkResult ) {}
-#endif
+void vkChecker(const VkResult result);
 }
 
 #endif

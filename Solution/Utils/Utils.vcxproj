@@ -146,6 +146,7 @@
     <ClCompile Include="command\CommandBuffer.cpp" />
     <ClCompile Include="command\CommandBuffers.cpp" />
     <ClCompile Include="command\CommandPool.cpp" />
+    <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="descriptor\CopyDescriptorSet.cpp" />
     <ClCompile Include="descriptor\DescriptorPool.cpp" />
     <ClCompile Include="descriptor\DescriptorSetLayout.cpp" />
