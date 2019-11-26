@@ -123,7 +123,10 @@ private:
     areDeviceExtensionsSupported(const std::vector<const char*>& deviceExtensions);
 
     bool 
-    isSwapChainSupported(const Surface& surface);
+    isSwapChainSupported(const Surface& surface) const;
+
+    bool
+    areDeviceFeaturesSupported() const;
     
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
     uint32_t mGraphicsSupportQueueFamilyIndex = 0;

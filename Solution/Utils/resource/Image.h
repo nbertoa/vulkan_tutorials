@@ -178,7 +178,7 @@ private:
     VkMemoryRequirements
     imageMemoryRequirements() const;
 
-    // Read Buffer() constructor to understand the parameters.
+    // Read Image() constructor to understand the parameters.
     VkImage
     createImage(const VkFormat format,
                 const VkImageUsageFlags imageUsageFlags,

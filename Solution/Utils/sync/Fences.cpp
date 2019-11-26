@@ -29,7 +29,7 @@ Fence&
 Fences::nextAvailableFence() {
     assert(mFences.empty() == false);
 
-    mCurrentFence = (mCurrentFence + 1) % mFences.size();
+    mCurrentFence = (mCurrentFence + 1) % static_cast<uint32_t>(mFences.size());
     Fence& fence = mFences[mCurrentFence];    
 
     return fence;

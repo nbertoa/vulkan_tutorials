@@ -87,19 +87,19 @@ Image::vkImage() const {
 
 uint32_t
 Image::width() const {
-    assert(mImage != nullptr);
+    assert(mImage != VK_NULL_HANDLE);
     return mExtent.width;
 }
 
 uint32_t
 Image::height() const {
-    assert(mImage != nullptr);
+    assert(mImage != VK_NULL_HANDLE);
     return mExtent.height;
 }
 
 VkImageLayout
 Image::lastImageLayout() const {
-    assert(mImage != nullptr);
+    assert(mImage != VK_NULL_HANDLE);
     return mLastLayout;
 }
 

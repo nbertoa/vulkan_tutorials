@@ -8,9 +8,10 @@
 #include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/render_pass/RenderPass.h"
+#include "Utils/resource/Image.h"
 #include "Utils/shader/ShaderModule.h"
 #include "Utils/shader/ShaderStages.h"
-#include "Utils/vertex/PosColorVertex.h"
+#include "Utils/vertex/PosTexCoordVertex.h"
 
 using namespace vk;
 
@@ -20,10 +21,7 @@ App::App(const uint32_t windowWidth,
     : mSystemManager(windowWidth,
                      windowHeight,
                      windowTitle)
-    , mDescriptorPool(mSystemManager.logicalDevice(),
-                      VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                      mSystemManager.swapChain().imageViewCount(),
-                      mSystemManager.swapChain().imageViewCount())
+    , mTextureSampler(mSystemManager.logicalDevice())
 {
     initUniformBuffers();
     initVertexBuffer();
@@ -71,23 +69,36 @@ App::processCurrentFrame() {
 
 void
 App::initDescriptorSets() {
-    assert(mMatrixUBODescriptorSetLayout == nullptr);
+    assert(mDescriptorPool == nullptr);
+    mDescriptorPool.reset(new DescriptorPool(mSystemManager.logicalDevice(),
+                                             {VkDescriptorPoolSize{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                                   mSystemManager.swapChain().imageViewCount()},
+                                              VkDescriptorPoolSize{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                                                   mSystemManager.swapChain().imageViewCount()}},
+                                             mSystemManager.swapChain().imageViewCount()));
+
+    assert(mDescriptorSetLayout == nullptr);
 
     DescriptorSetLayoutBinding descriptorSetLayoutBinding(0,
                                                           VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                                                           1,
                                                           VK_SHADER_STAGE_VERTEX_BIT);
-    mMatrixUBODescriptorSetLayout.reset(new DescriptorSetLayout(mSystemManager.logicalDevice(),
-                                                                {descriptorSetLayoutBinding}));
+    DescriptorSetLayoutBinding descriptorSetLayoutBinding2(1,
+                                                           VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                                           1,
+                                                           VK_SHADER_STAGE_FRAGMENT_BIT);
+    mDescriptorSetLayout.reset(new DescriptorSetLayout(mSystemManager.logicalDevice(),
+                                                       {descriptorSetLayoutBinding,
+                                                        descriptorSetLayoutBinding2}));
 
     // Create a descriptor set for each swap chain image, all with the same layout.
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts(
         mSystemManager.swapChain().imageViewCount(),
-        mMatrixUBODescriptorSetLayout->vkDescriptorSetLayout()
+        mDescriptorSetLayout->vkDescriptorSetLayout()
     );
-    mMatrixUBODescriptorSets.reset(new DescriptorSets(mSystemManager.logicalDevice(),
-                                                      mDescriptorPool,
-                                                      descriptorSetLayouts));
+    mDescriptorSets.reset(new DescriptorSets(mSystemManager.logicalDevice(),
+                                             *mDescriptorPool,
+                                             descriptorSetLayouts));
 
     // The descriptor sets have been allocated now, but the descriptors within still
     // need to be configured.
@@ -95,37 +106,59 @@ App::initDescriptorSets() {
     bufferInfos.emplace_back(VkDescriptorBufferInfo{VK_NULL_HANDLE,
                                                     0,
                                                     sizeof(MatrixUBO)});
+
+    assert(mImageView != nullptr);
+    std::vector<VkDescriptorImageInfo> imageInfos;
+    imageInfos.emplace_back(VkDescriptorImageInfo{mTextureSampler.vkSampler(),
+                                                  mImageView->vkImageView(),
+                                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+                                                  
     for (uint32_t i = 0; i < mSystemManager.swapChain().imageViewCount(); ++i) {   
         bufferInfos.back().buffer = mUniformBuffers->buffer(i).vkBuffer();
-        WriteDescriptorSet writeDescriptorSet(bufferInfos,
-                                              VK_NULL_HANDLE,
-                                              VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                              0);
-        mMatrixUBODescriptorSets->updateDescriptorSet(i,
-                                                      writeDescriptorSet);
+        WriteDescriptorSet bufferWriteDescriptorSet(bufferInfos,
+                                                    (*mDescriptorSets)[i],
+                                                    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                    0);
+
+        WriteDescriptorSet imageWriteDescriptorSet(imageInfos,
+                                                   (*mDescriptorSets)[i],
+                                                   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                                   1);
+
+        mDescriptorSets->updateDescriptorSet({bufferWriteDescriptorSet,
+                                             imageWriteDescriptorSet});
     }
 }
 
 void
 App::initImages() {
+    assert(mImageView == nullptr);
+
     const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
     Image& image = mSystemManager.imageSystem().getOrLoadImage(path,
                                                                mSystemManager.transferCommandPool());
+
+    image.transitionImageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                mSystemManager.transferCommandPool());
+
+    mImageView.reset(new ImageView(mSystemManager.logicalDevice(),
+                                   VK_FORMAT_R8G8B8A8_UNORM,
+                                   image));
 }
 
 void 
 App::initVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
-    std::vector<PosColorVertex> screenSpaceVertices
+    std::vector<PosTexCoordVertex> screenSpaceVertices
     {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}}
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}}
     };
 
-    const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
+    const size_t verticesSize = sizeof(PosTexCoordVertex) * screenSpaceVertices.size();
 
     mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
                                       mSystemManager.physicalDevice(),
@@ -202,7 +235,7 @@ App::recordCommandBuffers() {
                                       VK_INDEX_TYPE_UINT32);
 
         commandBuffer.bindDescriptorSet(mGraphicsPipeline->pipelineLayout(),
-                                        (*mMatrixUBODescriptorSets)[i]);
+                                        (*mDescriptorSets)[i]);
 
         commandBuffer.drawIndexed(static_cast<uint32_t>(mGpuIndexBuffer->size() / sizeof(uint32_t)));
 
@@ -215,7 +248,7 @@ App::recordCommandBuffers() {
 void
 App::initGraphicsPipeline() {
     assert(mGraphicsPipeline == nullptr);
-    assert(mMatrixUBODescriptorSetLayout != nullptr);
+    assert(mDescriptorSetLayout != nullptr);
 
     PipelineStates pipelineStates;
     initPipelineStates(pipelineStates);
@@ -224,7 +257,7 @@ App::initGraphicsPipeline() {
     initShaderStages(shaderStages);
 
     PipelineLayout pipelineLayout(mSystemManager.logicalDevice(),
-                                  mMatrixUBODescriptorSetLayout.get());
+                                  mDescriptorSetLayout.get());
 
     mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
                                                  *mRenderPass,
@@ -237,10 +270,10 @@ App::initGraphicsPipeline() {
 void
 App::initPipelineStates(PipelineStates& pipelineStates) const {
     std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
-    PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
+    PosTexCoordVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
 
     std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
-    PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
+    PosTexCoordVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
 
     pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
                                        vertexInputAttributeDescriptions});

@@ -13,6 +13,8 @@
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/render_pass/RenderPass.h"
 #include "Utils/resource/Buffers.h"
+#include "Utils/resource/ImageView.h"
+#include "Utils/resource/Sampler.h"
 #include "Utils/sync/Fences.h"
 #include "Utils/sync/Semaphores.h"
 
@@ -93,12 +95,14 @@ protected:
     std::unique_ptr<vk::Buffer> mGpuIndexBuffer;
 
     std::unique_ptr<vk::Buffers> mUniformBuffers;
-    vk::DescriptorPool mDescriptorPool;
+    std::unique_ptr<vk::DescriptorPool> mDescriptorPool;
 
     MatrixUBO mMatrixUBO;
-    std::unique_ptr<vk::DescriptorSetLayout> mMatrixUBODescriptorSetLayout;
-    std::unique_ptr<vk::DescriptorSets> mMatrixUBODescriptorSets;
-    
+    std::unique_ptr<vk::DescriptorSetLayout> mDescriptorSetLayout;
+    std::unique_ptr<vk::DescriptorSets> mDescriptorSets;
+
+    vk::Sampler mTextureSampler;
+    std::unique_ptr<vk::ImageView> mImageView;
 };
 
 #endif 

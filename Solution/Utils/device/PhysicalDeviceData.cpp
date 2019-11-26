@@ -19,7 +19,8 @@ PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
                    isTransferQueueFamilySupported() &&
                    isPresentationSupported(surface) &&
                    areDeviceExtensionsSupported(deviceExtensions) &&
-                   isSwapChainSupported(surface);
+                   isSwapChainSupported(surface) &&
+                   areDeviceFeaturesSupported();
 }
 
 VkPhysicalDevice
@@ -163,9 +164,20 @@ PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>&
 }
 
 bool
-PhysicalDeviceData::isSwapChainSupported(const Surface& surface) {
+PhysicalDeviceData::isSwapChainSupported(const Surface& surface) const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return surface.physicalDeviceSurfaceFormats(mPhysicalDevice).empty() == false &&
            surface.physicalDeviceSurfacePresentModes(mPhysicalDevice).empty() == false;
+}
+
+bool
+PhysicalDeviceData::areDeviceFeaturesSupported() const {
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+   
+    VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(mPhysicalDevice,
+                                &supportedFeatures);
+
+    return supportedFeatures.samplerAnisotropy;
 }
 }

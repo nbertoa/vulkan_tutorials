@@ -27,7 +27,7 @@ Semaphore&
 Semaphores::nextAvailableSemaphore() {
     assert(mSemaphores.empty() == false);
     
-    mCurrentSemaphore = (mCurrentSemaphore + 1) % mSemaphores.size();
+    mCurrentSemaphore = (mCurrentSemaphore + 1) % static_cast<uint32_t>(mSemaphores.size());
     Semaphore& semaphore = mSemaphores[mCurrentSemaphore];
 
     return semaphore;

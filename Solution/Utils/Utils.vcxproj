@@ -182,6 +182,8 @@
     <ClCompile Include="resource\Image.cpp" />
     <ClCompile Include="resource\ImageMemoryBarrier.cpp" />
     <ClCompile Include="resource\ImageSystem.cpp" />
+    <ClCompile Include="resource\ImageView.cpp" />
+    <ClCompile Include="resource\Sampler.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp" />
     <ClCompile Include="shader\ShaderModuleSystem.cpp" />
     <ClCompile Include="shader\ShaderStages.cpp" />
@@ -193,6 +195,7 @@
     <ClCompile Include="sync\Semaphores.cpp" />
     <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp" />
+    <ClCompile Include="vertex\PosTexCoordVertex.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +238,8 @@
     <ClInclude Include="resource\Image.h" />
     <ClInclude Include="resource\ImageMemoryBarrier.h" />
     <ClInclude Include="resource\ImageSystem.h" />
+    <ClInclude Include="resource\ImageView.h" />
+    <ClInclude Include="resource\Sampler.h" />
     <ClInclude Include="shader\ShaderModule.h" />
     <ClInclude Include="shader\ShaderModuleSystem.h" />
     <ClInclude Include="shader\ShaderStages.h" />
@@ -246,6 +251,7 @@
     <ClInclude Include="sync\Semaphores.h" />
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="vertex\PosColorVertex.h" />
+    <ClInclude Include="vertex\PosTexCoordVertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

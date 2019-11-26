@@ -67,6 +67,9 @@ LogicalDevice::createLogicalDevice(const PhysicalDevice& physicalDevice) {
     // - ppEnabledExtensionNames to enable for the created device.
     // - pEnabledFeatures is an optional VkPhysicalDeviceFeatures structure containing 
     //   boolean indicators of all the features to be enabled.
+    VkPhysicalDeviceFeatures physicalDeviceFeatures = {};
+    physicalDeviceFeatures.samplerAnisotropy = VK_TRUE;
+
     VkDeviceCreateInfo physicalDeviceCreateInfo = {};
     physicalDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;    
     physicalDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(createInfoVector.size());
@@ -75,7 +78,7 @@ LogicalDevice::createLogicalDevice(const PhysicalDevice& physicalDevice) {
     physicalDeviceCreateInfo.ppEnabledLayerNames = nullptr; // deprecated and ignored
     physicalDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     physicalDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
-    physicalDeviceCreateInfo.pEnabledFeatures = nullptr;
+    physicalDeviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
 
     vkChecker(vkCreateDevice(physicalDevice.vkPhysicalDevice(),
                              &physicalDeviceCreateInfo, 
