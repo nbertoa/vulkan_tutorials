@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkFence wrapper.
 //
@@ -41,8 +39,9 @@ public:
     //   - VK_FENCE_CREATE_SIGNALED_BIT specifies that the fence object 
     //     is created in the signaled state.
     //   - Otherwise, it is created in the unsignaled state.
-    Fence(const LogicalDevice& logicalDevice,
-          const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
+    //
+    // Notes: The global logical devices creates the fence
+    Fence(const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
     ~Fence();
     Fence(Fence&& other) noexcept;
     Fence(const Fence&) = delete;
@@ -61,7 +60,6 @@ public:
     waitAndReset() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkFence mFence = VK_NULL_HANDLE;
 };
 }

@@ -4,15 +4,22 @@
 #include "Instance.h"
 
 namespace vk {
-Window::Window(const uint32_t width, 
-               const uint32_t height, 
-               const char* title) {
+GLFWwindow* 
+Window::mWindow = nullptr;
+
+VkSurfaceKHR 
+Window::mSurface = VK_NULL_HANDLE;
+
+void
+Window::initialize(const uint32_t width, 
+                   const uint32_t height,
+                   const char* title) {
     assert(width > 0);
     assert(height > 0);
     assert(title != nullptr);
-
-    glfwChecker(glfwInit());
-
+    assert(mWindow == nullptr);
+    assert(mSurface == VK_NULL_HANDLE);
+    
     // Avoid OpenGL context creation
     glfwWindowHint(GLFW_CLIENT_API, 
                    GLFW_NO_API);
@@ -27,34 +34,32 @@ Window::Window(const uint32_t width,
                                nullptr, 
                                nullptr);
     assert(mWindow != nullptr && "Window creation failed");
+
+    vkChecker(glfwCreateWindowSurface(Instance::vkInstance(),
+                                      mWindow,
+                                      nullptr,
+                                      &mSurface));
 }
 
-Window::~Window() {
+void
+Window::finalize() {
+    assert(mSurface != VK_NULL_HANDLE);
+    vkDestroySurfaceKHR(Instance::vkInstance(),
+                        mSurface,
+                        nullptr);
+
     glfwDestroyWindow(mWindow);
     glfwTerminate();
 }
 
-Window::Window(Window&& other) noexcept
-    : mWindow(other.mWindow)
-{
-    other.mWindow = nullptr;
-}
-
 VkSurfaceKHR
-Window::createSurfaceForWindow(const Instance& instance) const {
-    assert(mWindow != nullptr);
-
-    VkSurfaceKHR surface;
-    vkChecker(glfwCreateWindowSurface(instance.vkInstance(),
-                                      mWindow,
-                                      nullptr,
-                                      &surface));
-
-    return surface;
+Window::vkSurface() {
+    assert(mSurface != VK_NULL_HANDLE);
+    return mSurface;
 }
 
 bool 
-Window::shouldCloseWindow() const {
+Window::shouldCloseWindow() {
     assert(mWindow != nullptr);
 
     return glfwWindowShouldClose(mWindow) != 0;
@@ -62,7 +67,7 @@ Window::shouldCloseWindow() const {
 
 void
 Window::widthAndHeight(uint32_t& width, 
-                       uint32_t& height) const {
+                       uint32_t& height) {
     assert(mWindow != nullptr);
     int w;
     int h;
@@ -72,7 +77,7 @@ Window::widthAndHeight(uint32_t& width,
 }
 
 uint32_t
-Window::width() const {
+Window::width() {
     assert(mWindow != nullptr);
     int w;
     int h;
@@ -83,7 +88,7 @@ Window::width() const {
 }
 
 uint32_t
-Window::height() const {
+Window::height() {
     assert(mWindow != nullptr);
     int w;
     int h;
@@ -91,5 +96,79 @@ Window::height() const {
                       &w, 
                       &h);
     return static_cast<uint32_t>(h);
+}
+
+VkSurfaceCapabilitiesKHR
+Window::physicalDeviceSurfaceCapabilities(const VkPhysicalDevice physicalDevice) {
+    assert(physicalDevice != VK_NULL_HANDLE);
+    assert(mSurface != VK_NULL_HANDLE);
+
+    VkSurfaceCapabilitiesKHR surfaceCapabilities;
+    vkChecker(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice,
+                                                        mSurface,
+                                                        &surfaceCapabilities));
+
+    return surfaceCapabilities;
+}
+
+std::vector<VkSurfaceFormatKHR>
+Window::physicalDeviceSurfaceFormats(const VkPhysicalDevice physicalDevice) {
+    assert(physicalDevice != VK_NULL_HANDLE);
+    assert(mSurface != VK_NULL_HANDLE);
+
+    uint32_t surfaceFormatCount;
+    vkChecker(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice,
+                                                   mSurface,
+                                                   &surfaceFormatCount,
+                                                   nullptr));
+
+    std::vector<VkSurfaceFormatKHR> surfaceFormats;
+    if (surfaceFormatCount > 0) {
+        surfaceFormats.resize(surfaceFormatCount);
+        vkChecker(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice,
+                                                       mSurface,
+                                                       &surfaceFormatCount,
+                                                       surfaceFormats.data()));
+    }
+
+    return surfaceFormats;
+}
+
+std::vector<VkPresentModeKHR>
+Window::physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice) {
+    assert(physicalDevice != VK_NULL_HANDLE);
+    assert(mSurface != VK_NULL_HANDLE);
+
+    uint32_t presentModeCount;
+    vkChecker(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice,
+                                                        mSurface,
+                                                        &presentModeCount,
+                                                        nullptr));
+
+    std::vector<VkPresentModeKHR> presentModes;
+    if (presentModeCount > 0) {
+        presentModes.resize(presentModeCount);
+        vkChecker(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice,
+                                                            mSurface,
+                                                            &presentModeCount,
+                                                            presentModes.data()));
+    }
+
+    return presentModes;
+}
+
+bool
+Window::isPhysicalDeviceSupported(const VkPhysicalDevice physicalDevice,
+                                  const uint32_t queueFamilyIndex) {
+    assert(mSurface != VK_NULL_HANDLE);
+    assert(physicalDevice != VK_NULL_HANDLE);
+
+    VkBool32 supported = false;
+    vkChecker(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice,
+                                                   queueFamilyIndex,
+                                                   mSurface,
+                                                   &supported));
+
+    return supported;
 }
 }

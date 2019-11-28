@@ -4,9 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-class PhysicalDevice;
-
 //
 // VkDeviceMemory wrapper.
 //
@@ -74,9 +71,11 @@ public:
     //
     //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT, 
     //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, DEVICE_COHERENT_BIT_AMD, DEVICE_UNCACHED_BIT_AMD.
-    DeviceMemory(const LogicalDevice& logicalDevice,
-                 const PhysicalDevice& physicalDevice,
-                 const VkMemoryRequirements& memoryRequirements,
+    //
+    // Notes: The global physical device is used to get the memory index that is an index
+    //        that identifies a memory type from the memoryTypes array of the 
+    //        VkPhysicalDeviceMemoryProperties structure.
+    DeviceMemory(const VkMemoryRequirements& memoryRequirements,
                  const VkMemoryPropertyFlags memoryPropertyFlags);
     ~DeviceMemory();
     DeviceMemory(DeviceMemory&& other) noexcept;
@@ -87,7 +86,6 @@ public:
     vkDeviceMemory() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkDeviceMemory mDeviceMemory = VK_NULL_HANDLE;
 };
 }

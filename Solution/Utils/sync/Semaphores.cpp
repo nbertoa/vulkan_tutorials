@@ -5,13 +5,12 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-Semaphores::Semaphores(const LogicalDevice& logicalDevice,
-                       const uint32_t semaphoreCount) {
+Semaphores::Semaphores(const uint32_t semaphoreCount) {
     assert(semaphoreCount > 0);
 
     mSemaphores.reserve(semaphoreCount);
     for (uint32_t i = 0; i < semaphoreCount; ++i) {
-        Semaphore semaphore(logicalDevice);
+        Semaphore semaphore;
         mSemaphores.emplace_back(std::move(semaphore));
     }
 }

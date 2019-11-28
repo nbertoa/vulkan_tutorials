@@ -10,7 +10,6 @@ namespace vk {
 #ifdef _DEBUG
 class DebugMessenger;
 #endif
-class Surface;
 
 //
 // VkInstance wrapper.
@@ -41,29 +40,31 @@ class Surface;
 //
 class Instance {
 public:
-    // Preconditions:
-    // - GLFW must be initialized first.
-    Instance();
-    ~Instance();
-    Instance(Instance&& other) noexcept;
+    Instance() = delete;
+    ~Instance() = delete;
+    Instance(Instance&& other) = delete;
     Instance(const Instance&) = delete;
     const Instance& operator=(const Instance&) = delete;
 
-    const VkInstance& 
-    vkInstance() const;
+    // Preconditions:
+    // - GLFW must be initialized first.
+    static void
+    initialize();
+
+    static void
+    finalize();
+
+    static const VkInstance&
+    vkInstance();
 
     // Return a list of candidate physical devices
     // based on surface support and device extension support.
-    std::vector<PhysicalDeviceData>
-    getCandidatePhysicalDevices(const Surface& surface,
-                                const std::vector<const char*>& deviceExtensionNames) const;
+    static std::vector<PhysicalDeviceData>
+    getCandidatePhysicalDevices(const std::vector<const char*>& deviceExtensionNames);
 
 private:
-    std::vector<VkPhysicalDevice>
-    physicalDevices() const;
-
-    void 
-    createInstance();
+    static std::vector<VkPhysicalDevice>
+    physicalDevices();
 
     // Validation layers are optional components that hook into Vulkan function calls
     // to apply additional operations. We use them for debugging functionality.
@@ -78,10 +79,10 @@ private:
     static std::vector<const char*> 
     getInstanceExtensionNames();
     
-    VkInstance mInstance = VK_NULL_HANDLE;
+    static VkInstance mInstance;
 
 #ifdef _DEBUG
-    DebugMessenger* mMessenger = nullptr;
+    static DebugMessenger* mMessenger;
 #endif    
 };
 }

@@ -2,13 +2,8 @@
 
 #include <cassert>
 
-#include "../device/LogicalDevice.h"
-#include "../device/PhysicalDevice.h"
-
 namespace vk {
-Buffers::Buffers(const LogicalDevice& logicalDevice,
-                 const PhysicalDevice& physicalDevice,
-                 const uint32_t bufferCount,
+Buffers::Buffers(const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
                  const VkMemoryPropertyFlags memoryPropertyFlags,
@@ -18,9 +13,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
     for (uint32_t i = 0; i < bufferCount; ++i) {
-        Buffer buffer(logicalDevice,
-                      physicalDevice,
-                      size,
+        Buffer buffer(size,
                       usageFlags,
                       memoryPropertyFlags,
                       sharingMode,
@@ -30,8 +23,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     }
 }
 
-Buffers::Buffers(const LogicalDevice& logicalDevice,
-                 const uint32_t bufferCount,
+Buffers::Buffers(const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
                  const DeviceMemory& deviceMemory,
@@ -41,8 +33,7 @@ Buffers::Buffers(const LogicalDevice& logicalDevice,
     mBuffers.reserve(bufferCount);
     std::vector<VkCommandBuffer> commandBuffers(bufferCount);
     for (uint32_t i = 0; i < bufferCount; ++i) {
-        mBuffers.emplace_back(std::move(Buffer(logicalDevice,
-                                               size,
+        mBuffers.emplace_back(std::move(Buffer(size,
                                                usageFlags,
                                                deviceMemory,
                                                sharingMode,

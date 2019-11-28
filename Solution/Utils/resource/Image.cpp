@@ -6,13 +6,10 @@
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
-#include "../device/PhysicalDevice.h"
 #include "../sync/Fence.h"
 
 namespace vk {
-Image::Image(const LogicalDevice& logicalDevice,
-             const PhysicalDevice& physicalDevice,
-             const uint32_t imageWidth,
+Image::Image(const uint32_t imageWidth,
              const uint32_t imageHeight,
              const VkFormat format,
              const VkImageUsageFlags imageUsageFlags,
@@ -27,8 +24,7 @@ Image::Image(const LogicalDevice& logicalDevice,
              const VkSharingMode sharingMode,
              const VkImageCreateFlags flags,
              const std::vector<uint32_t> & queueFamilyIndices)
-    : mLogicalDevice(logicalDevice)
-    , mExtent {imageWidth, imageHeight, imageDepth}
+    : mExtent {imageWidth, imageHeight, imageDepth}
     , mLastLayout(initialImageLayout)
     , mImage(createImage(format,
                          imageUsageFlags,
@@ -41,9 +37,7 @@ Image::Image(const LogicalDevice& logicalDevice,
                          flags,
                          queueFamilyIndices))
     , mHasDeviceMemoryOwnership(true)
-    , mDeviceMemory(new DeviceMemory(mLogicalDevice,
-                                     physicalDevice,
-                                     imageMemoryRequirements(),
+    , mDeviceMemory(new DeviceMemory(imageMemoryRequirements(),
                                      memoryPropertyFlags))
 {
     // - device is the logical device that owns the buffer and memory.
@@ -55,14 +49,14 @@ Image::Image(const LogicalDevice& logicalDevice,
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
     //   aligment field.
-    vkChecker(vkBindImageMemory(mLogicalDevice.vkDevice(),
+    vkChecker(vkBindImageMemory(LogicalDevice::vkDevice(),
                                 mImage,
                                 mDeviceMemory->vkDeviceMemory(),
                                 0));
 }
 
 Image::~Image() {
-    vkDestroyImage(mLogicalDevice.vkDevice(),
+    vkDestroyImage(LogicalDevice::vkDevice(),
                    mImage,
                    nullptr);
 
@@ -72,8 +66,7 @@ Image::~Image() {
 }
 
 Image::Image(Image&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mImage(other.mImage)
+    : mImage(other.mImage)
     , mDeviceMemory(other.mDeviceMemory) {
     other.mImage = VK_NULL_HANDLE;
     other.mDeviceMemory = nullptr;
@@ -106,7 +99,6 @@ Image::lastImageLayout() const {
 void
 Image::copyFromDataToDeviceMemory(void* sourceData,
                                   const VkDeviceSize size,
-                                  const PhysicalDevice& physicalDevice,
                                   const CommandPool& transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
@@ -115,18 +107,15 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                           transferCommandPool);
 
     Buffer stagingBuffer = Buffer::createAndFillStagingBuffer(sourceData,
-                                                              size,
-                                                              physicalDevice,
-                                                              mLogicalDevice);
+                                                              size);
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    Fence executionCompletedFence(mLogicalDevice);
+    Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
     CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                transferCommandPool);
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transferCommandPool);
 
     VkBufferImageCopy bufferImageCopy = {};
     bufferImageCopy.bufferOffset = 0;
@@ -144,7 +133,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
 
     commandBuffer.endRecording();
 
-    commandBuffer.submit(mLogicalDevice.transferQueue(),
+    commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
                          executionCompletedFence,
@@ -161,12 +150,11 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
 
     // Fence to be signaled once
     // the transition operation is complete. 
-    Fence executionCompletedFence(mLogicalDevice);
+    Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
     CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                transitionCommandPool);
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transitionCommandPool);
 
     VkAccessFlags destAccessType = 0;
     VkPipelineStageFlags destPipelineStages = 0;
@@ -212,7 +200,7 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
 
     commandBuffer.endRecording();
 
-    commandBuffer.submit(mLogicalDevice.transferQueue(),
+    commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
                          executionCompletedFence,
@@ -230,7 +218,7 @@ Image::imageMemoryRequirements() const {
     assert(mImage != VK_NULL_HANDLE);
 
     VkMemoryRequirements memoryRequirements;
-    vkGetImageMemoryRequirements(mLogicalDevice.vkDevice(),
+    vkGetImageMemoryRequirements(LogicalDevice::vkDevice(),
                                  mImage,
                                  &memoryRequirements);
 
@@ -267,7 +255,7 @@ Image::createImage(const VkFormat format,
         queueFamilyIndices.data();
 
     VkImage image;
-    vkChecker(vkCreateImage(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateImage(LogicalDevice::vkDevice(),
                             &createInfo,
                             nullptr,
                             &image));

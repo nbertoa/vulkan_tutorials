@@ -7,13 +7,10 @@
 #include "render_pass/RenderPass.h"
 
 namespace vk {
-FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,                           
-                           const RenderPass& renderPass,
+FrameBuffers::FrameBuffers(const RenderPass& renderPass,
                            const std::vector<VkImageView> imageViews,
                            const uint32_t imageWidth,
-                           const uint32_t imageHeight)
-    : mLogicalDevice(logicalDevice)
-{
+                           const uint32_t imageHeight) {
     assert(imageViews.empty() == false);
     mFrameBuffers.resize(imageViews.size());
     
@@ -45,7 +42,7 @@ FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
         VkImageView attachments[] = {imageViews[i]};
         createInfo.pAttachments = attachments;
 
-        vkChecker(vkCreateFramebuffer(mLogicalDevice.vkDevice(),
+        vkChecker(vkCreateFramebuffer(LogicalDevice::vkDevice(),
                                       &createInfo,
                                       nullptr,
                                       &mFrameBuffers[i]));
@@ -55,15 +52,14 @@ FrameBuffers::FrameBuffers(const LogicalDevice& logicalDevice,
 FrameBuffers::~FrameBuffers() {
     for (const VkFramebuffer frameBuffer : mFrameBuffers) {
         assert(frameBuffer != VK_NULL_HANDLE);
-        vkDestroyFramebuffer(mLogicalDevice.vkDevice(),
+        vkDestroyFramebuffer(LogicalDevice::vkDevice(),
                              frameBuffer,
                              nullptr);
     }
 }
 
 FrameBuffers::FrameBuffers(FrameBuffers&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mFrameBuffers(std::move(other.mFrameBuffers))
+    : mFrameBuffers(std::move(other.mFrameBuffers))
 {
 
 }

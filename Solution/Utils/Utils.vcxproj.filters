@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="DebugMessenger.cpp" />
     <ClCompile Include="FrameBuffers.cpp" />
-    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp">
@@ -100,7 +99,6 @@
     <ClCompile Include="pipeline\PipelineLayout.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
-    <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp">
       <Filter>shader</Filter>
     </ClCompile>
@@ -147,12 +145,12 @@
     <ClCompile Include="vertex\PosTexCoordVertex.cpp">
       <Filter>vertex</Filter>
     </ClCompile>
+    <ClCompile Include="SystemInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FrameBuffers.h" />
-    <ClInclude Include="Surface.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="vertex\PosColorVertex.h">
@@ -249,7 +247,6 @@
     <ClInclude Include="pipeline\PipelineLayout.h">
       <Filter>pipeline</Filter>
     </ClInclude>
-    <ClInclude Include="SystemManager.h" />
     <ClInclude Include="shader\ShaderModule.h">
       <Filter>shader</Filter>
     </ClInclude>
@@ -295,6 +292,7 @@
     <ClInclude Include="vertex\PosTexCoordVertex.h">
       <Filter>vertex</Filter>
     </ClInclude>
+    <ClInclude Include="SystemInitializer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">

@@ -6,12 +6,9 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-RenderPass::RenderPass(const LogicalDevice& logicalDevice,
-                       const std::vector<AttachmentDescription>& attachmentDescriptions,
+RenderPass::RenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions,
                        const std::vector<SubpassDescription>& subpassDescriptions,
-                       const std::vector<SubpassDependency>& subpassDependencies)
-    : mLogicalDevice(logicalDevice)
-{
+                       const std::vector<SubpassDependency>& subpassDependencies) {
     VkRenderPassCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     createInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
@@ -27,7 +24,7 @@ RenderPass::RenderPass(const LogicalDevice& logicalDevice,
         nullptr : 
         reinterpret_cast<const VkSubpassDependency*>(subpassDependencies.data());
 
-    vkChecker(vkCreateRenderPass(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateRenderPass(LogicalDevice::vkDevice(),
                                  &createInfo,
                                  nullptr,
                                  &mRenderPass));
@@ -35,14 +32,13 @@ RenderPass::RenderPass(const LogicalDevice& logicalDevice,
 }
 
 RenderPass::~RenderPass() {
-    vkDestroyRenderPass(mLogicalDevice.vkDevice(),
+    vkDestroyRenderPass(LogicalDevice::vkDevice(),
                         mRenderPass,
                         nullptr);
 }
 
 RenderPass::RenderPass(RenderPass&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mRenderPass(other.mRenderPass)
+    : mRenderPass(other.mRenderPass)
 {
     other.mRenderPass = VK_NULL_HANDLE;
 }

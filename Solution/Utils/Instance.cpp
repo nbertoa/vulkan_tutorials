@@ -6,79 +6,16 @@
 #include "DebugUtils.h"
 
 namespace vk {
-Instance::Instance() {
-    createInstance();
-}
-
-Instance::~Instance() {
-#ifdef _DEBUG
-    delete mMessenger;
-#endif
-
-    vkDestroyInstance(mInstance, 
-                      nullptr);
-}
-
-Instance::Instance(Instance&& other) noexcept
-    : mInstance(other.mInstance)
-#ifdef _DEBUG
-    , mMessenger(other.mMessenger)
-#endif
-{
-    other.mInstance = VK_NULL_HANDLE;
+VkInstance 
+Instance::mInstance = VK_NULL_HANDLE;
 
 #ifdef _DEBUG
-    other.mMessenger = nullptr;
-#endif    
-}
-
-const VkInstance& 
-Instance::vkInstance() const {
-    assert(mInstance != nullptr);
-    return mInstance;
-}
-
-std::vector<PhysicalDeviceData>
-Instance::getCandidatePhysicalDevices(const Surface& surface,
-                                      const std::vector<const char*>& deviceExtensionNames) const {
-    assert(mInstance != VK_NULL_HANDLE);
-
-    const std::vector<VkPhysicalDevice> devices = physicalDevices();
-    std::vector<PhysicalDeviceData> supportedPhysicalDevices;
-    for (const VkPhysicalDevice& device : devices) {
-        assert(device != VK_NULL_HANDLE);
-
-        PhysicalDeviceData deviceData(device,
-                                      surface,
-                                      deviceExtensionNames);
-        if (deviceData.isSupported()) {
-            supportedPhysicalDevices.emplace_back(deviceData);
-        }
-    }
-
-    return supportedPhysicalDevices;
-}
-
-std::vector<VkPhysicalDevice>
-Instance::physicalDevices() const {
-    assert(mInstance != nullptr);
-
-    uint32_t physicalDeviceCount = 0;
-    vkChecker(vkEnumeratePhysicalDevices(mInstance,
-                                         &physicalDeviceCount,
-                                         nullptr));
-    assert(physicalDeviceCount > 0);
-
-    std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-    vkChecker(vkEnumeratePhysicalDevices(mInstance,
-                                         &physicalDeviceCount,
-                                         physicalDevices.data()));
-
-    return physicalDevices;
-}
+DebugMessenger* 
+Instance::mMessenger = nullptr;
+#endif  
 
 void
-Instance::createInstance() {
+Instance::initialize() {
     assert(mInstance == VK_NULL_HANDLE);
 #ifdef _DEBUG
     assert(mMessenger == VK_NULL_HANDLE);
@@ -86,7 +23,7 @@ Instance::createInstance() {
 
     const VkDebugUtilsMessengerCreateInfoEXT* debugMessengerCreateInfoPtr = nullptr;
 #ifdef _DEBUG
-    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = 
+    const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo =
         DebugMessenger::messengerCreateInfo();
     debugMessengerCreateInfoPtr = &debugMessengerCreateInfo;
 #endif
@@ -125,11 +62,11 @@ Instance::createInstance() {
     VkInstanceCreateInfo instanceInfo = {};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pApplicationInfo = &appInfo;
-    instanceInfo.flags = 0;    
+    instanceInfo.flags = 0;
     instanceInfo.pNext = debugMessengerCreateInfoPtr;
     instanceInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
-    instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ? 
-        nullptr : 
+    instanceInfo.ppEnabledExtensionNames = instanceExtensions.empty() ?
+        nullptr :
         instanceExtensions.data();
     instanceInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
     instanceInfo.ppEnabledLayerNames = instanceLayers.empty() ? nullptr : instanceLayers.data();
@@ -141,8 +78,61 @@ Instance::createInstance() {
 
     // In debug mode, we need to create the debug messenger.
 #ifdef _DEBUG
-    mMessenger = new DebugMessenger(*this);
+    mMessenger = new DebugMessenger();
 #endif
+}
+
+void
+Instance::finalize() {
+#ifdef _DEBUG
+    delete mMessenger;
+#endif
+
+    vkDestroyInstance(mInstance, 
+                      nullptr);
+}
+
+const VkInstance& 
+Instance::vkInstance() {
+    assert(mInstance != nullptr);
+    return mInstance;
+}
+
+std::vector<PhysicalDeviceData>
+Instance::getCandidatePhysicalDevices(const std::vector<const char*>& deviceExtensionNames) {
+    assert(mInstance != VK_NULL_HANDLE);
+
+    const std::vector<VkPhysicalDevice> devices = physicalDevices();
+    std::vector<PhysicalDeviceData> supportedPhysicalDevices;
+    for (const VkPhysicalDevice& device : devices) {
+        assert(device != VK_NULL_HANDLE);
+
+        PhysicalDeviceData deviceData(device,
+                                      deviceExtensionNames);
+        if (deviceData.isSupported()) {
+            supportedPhysicalDevices.emplace_back(deviceData);
+        }
+    }
+
+    return supportedPhysicalDevices;
+}
+
+std::vector<VkPhysicalDevice>
+Instance::physicalDevices() {
+    assert(mInstance != nullptr);
+
+    uint32_t physicalDeviceCount = 0;
+    vkChecker(vkEnumeratePhysicalDevices(mInstance,
+                                         &physicalDeviceCount,
+                                         nullptr));
+    assert(physicalDeviceCount > 0);
+
+    std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
+    vkChecker(vkEnumeratePhysicalDevices(mInstance,
+                                         &physicalDeviceCount,
+                                         physicalDevices.data()));
+
+    return physicalDevices;
 }
 
 std::vector<const char*>

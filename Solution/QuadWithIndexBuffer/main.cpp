@@ -1,9 +1,13 @@
 #include "App.h"
+#include "Utils/SystemInitializer.h"
 
 int main() {
-    App app(800,
-            600,
-            "Simple Triangle With Index Buffer App");
+    vk::system_initializer::initialize();
 
-    app.run();
+    {
+        App app;
+        app.run();
+    }
+
+    vk::system_initializer::finalize();
 }

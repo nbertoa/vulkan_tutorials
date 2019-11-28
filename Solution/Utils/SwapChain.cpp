@@ -4,26 +4,15 @@
 #include <cassert>
 
 #include "DebugUtils.h"
-#include "Surface.h"
+#include "Window.h"
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
 #include "sync/Semaphore.h"
 
 namespace vk {
-SwapChain::SwapChain(const LogicalDevice& logicalDevice,
-                     const PhysicalDevice& physicalDevice,
-                     const uint32_t imageWidth,
-                     const uint32_t imageHeight,
-                     const Surface& surface)
-    : mLogicalDevice(logicalDevice) 
-{       
-    initSwapChain(imageWidth,
-                  imageHeight,
-                  surface,
-                  physicalDevice);
-
+SwapChain::SwapChain() {       
+    initSwapChain();
     initImagesAndViews();
-
     initViewportAndScissorRect();
 }
 
@@ -32,19 +21,18 @@ SwapChain::~SwapChain() {
 
     for (const VkImageView view : mSwapChainImageViews) {
         assert(view != VK_NULL_HANDLE);
-        vkDestroyImageView(mLogicalDevice.vkDevice(),
+        vkDestroyImageView(LogicalDevice::vkDevice(),
                            view,
                            nullptr);
     }
 
-    vkDestroySwapchainKHR(mLogicalDevice.vkDevice(), 
+    vkDestroySwapchainKHR(LogicalDevice::vkDevice(),
                           mSwapChain, 
                           nullptr);
 }
 
 SwapChain::SwapChain(SwapChain&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mSwapChain(other.mSwapChain)
+    : mSwapChain(other.mSwapChain)
     , mSwapChainImages(std::move(mSwapChainImages))
     , mSwapChainImageViews(std::move(mSwapChainImageViews))
     , mImageFormat(other.mImageFormat)
@@ -69,7 +57,7 @@ SwapChain::acquireNextImage(const Semaphore& semaphore) {
     // - fence that will become signaled when the presentation engine
     //   has released ownership of the image.
     // - Image index of the next image to use.
-    vkChecker(vkAcquireNextImageKHR(mLogicalDevice.vkDevice(),
+    vkChecker(vkAcquireNextImageKHR(LogicalDevice::vkDevice(),
                                     mSwapChain,
                                     std::numeric_limits<uint64_t>::max(),
                                     semaphore.vkSemaphore(),
@@ -108,7 +96,7 @@ SwapChain::present(const Semaphore& waitSemaphore,
     info.pSwapchains = &mSwapChain;
     info.pImageIndices = &imageIndex;
 
-    vkChecker(vkQueuePresentKHR(mLogicalDevice.presentationQueue(),
+    vkChecker(vkQueuePresentKHR(LogicalDevice::presentationQueue(),
                                 &info));
 }
 
@@ -253,12 +241,12 @@ SwapChain::initImagesAndViews() {
 
     // Images
     uint32_t swapChainImageCount;
-    vkChecker(vkGetSwapchainImagesKHR(mLogicalDevice.vkDevice(),
+    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::vkDevice(),
                                       mSwapChain,
                                       &swapChainImageCount,
                                       nullptr));
     mSwapChainImages.resize(swapChainImageCount);
-    vkChecker(vkGetSwapchainImagesKHR(mLogicalDevice.vkDevice(),
+    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::vkDevice(),
                                       mSwapChain,
                                       &swapChainImageCount,
                                       mSwapChainImages.data()));
@@ -291,7 +279,7 @@ SwapChain::initImagesAndViews() {
     mSwapChainImageViews.resize(swapChainImageCount);
     for (uint32_t i = 0; i < swapChainImageCount; ++i) {
         createInfo.image = mSwapChainImages[i];
-        vkChecker(vkCreateImageView(mLogicalDevice.vkDevice(),
+        vkChecker(vkCreateImageView(LogicalDevice::vkDevice(),
                                     &createInfo,
                                     nullptr,
                                     &mSwapChainImageViews[i]));
@@ -318,18 +306,15 @@ SwapChain::initViewportAndScissorRect() {
 }
 
 void
-SwapChain::initSwapChain(const uint32_t imageWidth,
-                         const uint32_t imageHeight,
-                         const Surface& surface,
-                         const PhysicalDevice& physicalDevice) {
+SwapChain::initSwapChain() {
     const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
-        surface.physicalDeviceSurfaceCapabilities(physicalDevice.vkPhysicalDevice());
+        Window::physicalDeviceSurfaceCapabilities(PhysicalDevice::vkPhysicalDevice());
     mExtent = swapChainExtent(surfaceCapabilities, 
-                              imageWidth, 
-                              imageHeight);
+                              Window::width(),
+                              Window::height());
 
     const VkSurfaceFormatKHR surfaceFormat =
-        bestFitSurfaceFormat(surface.physicalDeviceSurfaceFormats(physicalDevice.vkPhysicalDevice()));
+        bestFitSurfaceFormat(Window::physicalDeviceSurfaceFormats(PhysicalDevice::vkPhysicalDevice()));
     mImageFormat = surfaceFormat.format;
 
     // VkSwapchainCreateInfoKHR:
@@ -409,7 +394,7 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     //   acquired from it.
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface.vkSurface();
+    createInfo.surface = Window::vkSurface();
     createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
     createInfo.imageFormat = mImageFormat;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -420,15 +405,14 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode =
         bestFitPresentMode(
-            surface.physicalDeviceSurfacePresentModes(physicalDevice.vkPhysicalDevice())
+            Window::physicalDeviceSurfacePresentModes(PhysicalDevice::vkPhysicalDevice())
         );
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    const uint32_t graphicsQueueFamilyIndex = physicalDevice.graphicsSupportQueueFamilyIndex();
-    const uint32_t presentationQueueFamilyIndex = 
-        physicalDevice.presentationSupportQueueFamilyIndex();
-    const uint32_t transferQueueFamilyIndex = physicalDevice.transferSupportQueueFamilyIndex();
+    const uint32_t graphicsQueueFamilyIndex = PhysicalDevice::graphicsSupportQueueFamilyIndex();
+    const uint32_t presentationQueueFamilyIndex = PhysicalDevice::presentationSupportQueueFamilyIndex();
+    const uint32_t transferQueueFamilyIndex = PhysicalDevice::transferSupportQueueFamilyIndex();
 
     std::vector<uint32_t> queueFamilyIndices;
     if (graphicsQueueFamilyIndex == presentationQueueFamilyIndex) {
@@ -469,7 +453,7 @@ SwapChain::initSwapChain(const uint32_t imageWidth,
         createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
     }
 
-    vkChecker(vkCreateSwapchainKHR(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateSwapchainKHR(LogicalDevice::vkDevice(),
                                    &createInfo,
                                    nullptr,
                                    &mSwapChain));

@@ -4,58 +4,81 @@
 
 #include "../DebugUtils.h"
 #include "../Instance.h"
-#include "../Surface.h"
 
 namespace vk {
-PhysicalDevice::PhysicalDevice(const Instance& instance,
-                               const Surface& surface)
-    : mDeviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME} 
-{
-    initPhysicalDevice(instance.getCandidatePhysicalDevices(surface,
-                                                            mDeviceExtensions));
+VkPhysicalDevice 
+PhysicalDevice::mPhysicalDevice = VK_NULL_HANDLE;
+
+uint32_t 
+PhysicalDevice::mGraphicsSupportQueueFamilyIndex = 0;
+
+uint32_t 
+PhysicalDevice::mTransferSupportQueueFamilyIndex = 0;
+
+uint32_t 
+PhysicalDevice::mPresentationSupportQueueFamilyIndex = 0;
+
+std::vector<const char*> mDeviceExtensions;
+
+void
+PhysicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames) {
+    assert(deviceExtensionNames.empty() == false);
+
+    const std::vector<PhysicalDeviceData> candidatePhysicalDevices = Instance::getCandidatePhysicalDevices(deviceExtensionNames);
+
+    const PhysicalDeviceData* chosenDeviceData = &candidatePhysicalDevices.front();
+
+    // From all the suitable physical devices, we get the first that is a discrete GPU.
+    // Otherwise, we get the first device in the list.
+    for (const PhysicalDeviceData& deviceData : candidatePhysicalDevices) {
+        VkPhysicalDeviceProperties deviceProperties;
+        vkGetPhysicalDeviceProperties(deviceData.vkPhysicalDevice(),
+                                      &deviceProperties);
+
+        if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+            chosenDeviceData = &deviceData;
+            break;
+        }
+    }
+
+    mPhysicalDevice = chosenDeviceData->vkPhysicalDevice();
+    mGraphicsSupportQueueFamilyIndex = chosenDeviceData->graphicsSupportQueueFamilyIndex();
+    mTransferSupportQueueFamilyIndex = chosenDeviceData->transferSupportQueueFamilyIndex();
+    mPresentationSupportQueueFamilyIndex = chosenDeviceData->presentationSupportQueueFamilyIndex();
 }
-PhysicalDevice::PhysicalDevice(PhysicalDevice&& other) noexcept
-    : mPhysicalDevice(other.mPhysicalDevice)
-    , mGraphicsSupportQueueFamilyIndex(other.mGraphicsSupportQueueFamilyIndex)
-    , mPresentationSupportQueueFamilyIndex(other.mPresentationSupportQueueFamilyIndex)
-    , mDeviceExtensions(std::move(other.mDeviceExtensions))
-{
-    other.mPhysicalDevice = VK_NULL_HANDLE;
+
+void
+PhysicalDevice::finalize() {
+
 }
 
 VkPhysicalDevice 
-PhysicalDevice::vkPhysicalDevice() const {
+PhysicalDevice::vkPhysicalDevice() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mPhysicalDevice;
 }
 
 uint32_t 
-PhysicalDevice::graphicsSupportQueueFamilyIndex() const {
+PhysicalDevice::graphicsSupportQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mGraphicsSupportQueueFamilyIndex;
 }
 
 uint32_t 
-PhysicalDevice::transferSupportQueueFamilyIndex() const {
+PhysicalDevice::transferSupportQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mTransferSupportQueueFamilyIndex;
 }
 
 uint32_t 
-PhysicalDevice::presentationSupportQueueFamilyIndex() const {
+PhysicalDevice::presentationSupportQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mPresentationSupportQueueFamilyIndex;
 }
 
-const std::vector<const char*>& 
-PhysicalDevice::deviceExtensionNames() const {
-    assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return mDeviceExtensions;
-}
-
 uint32_t 
 PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
-                                const VkMemoryPropertyFlags memoryPropertyFlags) const {
+                                const VkMemoryPropertyFlags memoryPropertyFlags) {
 
     uint32_t typeIndex = std::numeric_limits<uint32_t>::max();
 
@@ -148,32 +171,7 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
 }
 
 bool 
-PhysicalDevice::isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const {
+PhysicalDevice::isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) {
     return memoryTypeIndex != std::numeric_limits<uint32_t>::max();
-}
-
-void
-PhysicalDevice::initPhysicalDevice(const std::vector<PhysicalDeviceData>& supportedPhysicalDevices) {
-    assert(mPhysicalDevice == VK_NULL_HANDLE);
-    
-    const PhysicalDeviceData* chosenDeviceData = &supportedPhysicalDevices.front();
-
-    // From all the suitable physical devices, we get the first that is a discrete GPU.
-    // Otherwise, we get the first device in the list.
-    for (const PhysicalDeviceData& deviceData : supportedPhysicalDevices) {
-        VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(deviceData.vkPhysicalDevice(), 
-                                      &deviceProperties);
-
-        if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-            chosenDeviceData = &deviceData;
-            break;
-        }
-    }
-        
-    mPhysicalDevice = chosenDeviceData->vkPhysicalDevice();
-    mGraphicsSupportQueueFamilyIndex = chosenDeviceData->graphicsSupportQueueFamilyIndex();
-    mTransferSupportQueueFamilyIndex = chosenDeviceData->transferSupportQueueFamilyIndex();
-    mPresentationSupportQueueFamilyIndex = chosenDeviceData->presentationSupportQueueFamilyIndex();
 }
 }

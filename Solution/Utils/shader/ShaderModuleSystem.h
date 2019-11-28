@@ -6,31 +6,29 @@
 #include "ShaderModule.h"
 
 namespace vk {
-class LogicalDevice;
 
 class ShaderModuleSystem {
 public:
-    ShaderModuleSystem(const LogicalDevice& logicalDevice);
-    ~ShaderModuleSystem();
+    ShaderModuleSystem() = delete;
+    ~ShaderModuleSystem() = delete;
     ShaderModuleSystem(ShaderModuleSystem&&) noexcept = delete;
     ShaderModuleSystem(const ShaderModuleSystem&) = delete;
     const ShaderModuleSystem& operator=(const ShaderModuleSystem&) = delete;
 
-    const ShaderModule& 
+    static const ShaderModule& 
     getOrLoadShaderModule(const std::string& shaderByteCodePath,
                           const VkShaderStageFlagBits shaderStageFlag,
                           const char* entryPointName = "main");
 
-    void 
+    static void 
     eraseShaderModule(const std::string& shaderByteCodePath);
 
-    void 
+    static void 
     clear();
 
 private:
-    const LogicalDevice& mLogicalDevice;
     using ShaderModuleByPath = std::unordered_map<std::string, const ShaderModule*>;
-    ShaderModuleByPath mShaderModuleByPath;
+    static ShaderModuleByPath mShaderModuleByPath;
 };
 }
 

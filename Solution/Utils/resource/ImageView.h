@@ -9,8 +9,6 @@ namespace vk {
 class CommandPool;
 class DeviceMemory;
 class Image;
-class LogicalDevice;
-class PhysicalDevice;
 
 //
 // VkImageView wrapper
@@ -41,8 +39,9 @@ public:
     // * componentMapping for color or depth/stencil.
     //
     // * flags describing additional parameters of the image view.
-    ImageView(const LogicalDevice& logicalDevice,
-              const VkFormat format,
+    //
+    // Notes: The global logical devices creates the image view.
+    ImageView(const VkFormat format,
               const Image& image,
               const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
               const VkComponentMapping& componentMapping = VkComponentMapping{VK_COMPONENT_SWIZZLE_IDENTITY, 
@@ -58,17 +57,7 @@ public:
     VkImageView
     vkImageView() const;
 
-private:
-    // Read ImageView() constructor to understand the parameters.
-    VkImageView
-    createView(const VkFormat format,
-               const Image& image,
-               const VkImageViewType viewType,
-               const VkComponentMapping& componentsRemapping,
-               const VkImageViewCreateFlags flags);
-
-    const LogicalDevice& mLogicalDevice;
-    
+private:    
     VkImageView mImageView = VK_NULL_HANDLE; 
 };
 }

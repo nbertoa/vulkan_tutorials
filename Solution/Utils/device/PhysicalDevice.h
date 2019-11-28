@@ -7,9 +7,6 @@
 #include "PhysicalDeviceData.h"
 
 namespace vk {
-class Instance;
-class Surface;
-
 //
 // VkPhysicalDevice wrapper.
 //
@@ -74,30 +71,28 @@ class Surface;
 //
 class PhysicalDevice {
 public:
-    // * surface is used to check if the candidate physical device
-    //   supports presentation and also if our swap chain is supported.
-    PhysicalDevice(const Instance& instance,
-                   const Surface& surface);
-    PhysicalDevice(PhysicalDevice&& other) noexcept;
+    PhysicalDevice() = delete;
+    PhysicalDevice(PhysicalDevice&& other) = delete;
     PhysicalDevice(const PhysicalDevice&) = delete;
     const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 
-    VkPhysicalDevice 
-    vkPhysicalDevice() const;
+    static void
+    initialize(const std::vector<const char*>& deviceExtensionNames);
 
-    uint32_t 
-    graphicsSupportQueueFamilyIndex() const;
+    static void
+    finalize();
 
-    uint32_t 
-    transferSupportQueueFamilyIndex() const;
+    static VkPhysicalDevice 
+    vkPhysicalDevice();
 
-    uint32_t 
-    presentationSupportQueueFamilyIndex() const;
+    static uint32_t
+    graphicsSupportQueueFamilyIndex();
 
-    // Extensions may define new Vulkan commands, structures, and enumerants.
-    // Extensions may extend or change the behavior of the Vulkan API.
-    const std::vector<const char*>& 
-    deviceExtensionNames() const;
+    static uint32_t
+    transferSupportQueueFamilyIndex();
+
+    static uint32_t
+    presentationSupportQueueFamilyIndex();
 
     // Returns the memory type index of this physical device that is
     // suitable. If there is not a suitable memory property, then it returns
@@ -123,24 +118,21 @@ public:
     //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
     //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
     //     DEVICE_UNCACHED_BIT_AMD
-    uint32_t 
+    static uint32_t
     memoryTypeIndex(const uint32_t memoryTypeFilter,
-                    const VkMemoryPropertyFlags memoryPropertyFlags) const;
+                    const VkMemoryPropertyFlags memoryPropertyFlags);
 
-    bool 
-    isValidMemoryTypeIndex(const uint32_t memoryTypeIndex) const;
+    static bool
+    isValidMemoryTypeIndex(const uint32_t memoryTypeIndex);
 
 private:                            
-    void 
-    initPhysicalDevice(const std::vector<PhysicalDeviceData>& supportedPhysicalDevices);
+    static VkPhysicalDevice mPhysicalDevice;
 
-    VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
+    static uint32_t mGraphicsSupportQueueFamilyIndex;
+    static uint32_t mTransferSupportQueueFamilyIndex;
+    static uint32_t mPresentationSupportQueueFamilyIndex;
 
-    uint32_t mGraphicsSupportQueueFamilyIndex = 0;
-    uint32_t mTransferSupportQueueFamilyIndex = 0;
-    uint32_t mPresentationSupportQueueFamilyIndex = 0;
-
-    std::vector<const char*> mDeviceExtensions;
+    static std::vector<const char*> mDeviceExtensions;
 };
 }
 

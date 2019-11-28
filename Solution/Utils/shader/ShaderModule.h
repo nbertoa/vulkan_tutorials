@@ -6,8 +6,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkShaderModule wrapper.
 //
@@ -40,8 +38,9 @@ public:
     //     FRAGMENT_BIT, COMPUTE_BIT, TASK_BIT_NV, MESH_BIT_NV, ALL_GRAPHICS, ALL, 
     //     RAYGEN_BIT_NV, ANY_HIT_BIT_NV, CLOSEST_HIT_BIT_NV, MISS_BIT_NV, INTERSECTION_BIT_NV, 
     //     CALLABLE_BIT_NV
-    ShaderModule(const LogicalDevice& logicalDevice,
-                 const std::string& shaderByteCodePath,
+    //
+    // Notes: The global logical devices creates the shader module.
+    ShaderModule(const std::string& shaderByteCodePath,
                  const VkShaderStageFlagBits shaderStageFlag,
                  const char* entryPointName = "main");
     ~ShaderModule();
@@ -65,10 +64,6 @@ private:
     static std::vector<char> 
     readFile(const std::string& shaderByteCodePath);
 
-    VkShaderModule 
-    createShaderModule();
-
-    const LogicalDevice& mLogicalDevice;
     VkShaderStageFlagBits mShaderStageFlag;
     std::string mShaderByteCodePath;
     VkShaderModule mShaderModule = VK_NULL_HANDLE;

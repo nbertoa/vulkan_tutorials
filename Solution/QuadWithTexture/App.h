@@ -4,8 +4,9 @@
 #include "MatrixUBO.h"
 
 #include "Utils/FrameBuffers.h"
-#include "Utils/SystemManager.h"
+#include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
+#include "Utils/command/CommandPool.h"
 #include "Utils/descriptor/DescriptorPool.h"
 #include "Utils/descriptor/DescriptorSetLayout.h"
 #include "Utils/descriptor/DescriptorSets.h"
@@ -24,16 +25,14 @@ class ShaderStages;
 
 class App {
 public:
-    App(const uint32_t windowWidth,
-        const uint32_t windowHeight,
-        const char* windowTitle);
+    App();
 
     void
     run();
 
 protected:
     void 
-    processCurrentFrame();
+    updateUniformBuffers();
 
     void
     initDescriptorSets();
@@ -77,14 +76,17 @@ protected:
     void
     initSemaphoresAndFences();
 
-    // The member variables declaration order is important because
-    // the destruction order must be this.
-    vk::SystemManager mSystemManager;
+    vk::SwapChain mSwapChain;
+
+    std::unique_ptr<vk::CommandPool> mGraphicsCommandPool;
+    std::unique_ptr<vk::CommandPool> mTransferCommandPool;
+
     std::unique_ptr<vk::RenderPass> mRenderPass;
     std::unique_ptr<vk::FrameBuffers> mFrameBuffers;
-    std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
-    std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
 
+    std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
+
+    std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
     vk::PipelineStates mPipelineStates;
 
     std::unique_ptr<vk::Semaphores> mImageAvailableSemaphores;
@@ -96,7 +98,6 @@ protected:
 
     std::unique_ptr<vk::Buffers> mUniformBuffers;
     std::unique_ptr<vk::DescriptorPool> mDescriptorPool;
-
     MatrixUBO mMatrixUBO;
     std::unique_ptr<vk::DescriptorSetLayout> mDescriptorSetLayout;
     std::unique_ptr<vk::DescriptorSets> mDescriptorSets;

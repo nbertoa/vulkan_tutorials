@@ -9,14 +9,12 @@
 namespace vk {
 class CommandPool;
 class GraphicsPipeline;
-class LogicalDevice;
 class RenderPass;
 
 class CommandBuffers {
 public:
     // Read CommandBuffer to understand this
-    CommandBuffers(const LogicalDevice& logicalDevice,
-                   const CommandPool& commandPool,
+    CommandBuffers(const CommandPool& commandPool,
                    const uint32_t bufferCount,
                    const VkCommandBufferLevel level);
     CommandBuffers(CommandBuffers&& other) noexcept;

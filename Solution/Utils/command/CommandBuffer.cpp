@@ -14,8 +14,7 @@
 #include "../sync/Semaphore.h"
 
 namespace vk {
-CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
-                             const CommandPool& commandPool,
+CommandBuffer::CommandBuffer(const CommandPool& commandPool,
                              const VkCommandBufferLevel level) {
     VkCommandBufferAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -23,7 +22,7 @@ CommandBuffer::CommandBuffer(const LogicalDevice& logicalDevice,
     info.commandBufferCount = 1;
     info.level = level;   
 
-    vkChecker(vkAllocateCommandBuffers(logicalDevice.vkDevice(),
+    vkChecker(vkAllocateCommandBuffers(LogicalDevice::vkDevice(),
                                        &info,
                                        &mCommandBuffer));
 }
@@ -41,10 +40,8 @@ CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
 }
 
 CommandBuffer
-CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(const LogicalDevice& logicalDevice,
-                                                        const CommandPool& commandPool) {
-    CommandBuffer commandBuffer(logicalDevice,
-                                commandPool,
+CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(const CommandPool& commandPool) {
+    CommandBuffer commandBuffer(commandPool,
                                 VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
     commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);

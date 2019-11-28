@@ -6,11 +6,8 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
-                               const DescriptorSetLayout* const descriptorSetLayout,
-                               const VkPushConstantRange* const pushConstantRange)
-    : mLogicalDevice(logicalDevice)
-{
+PipelineLayout::PipelineLayout(const DescriptorSetLayout* const descriptorSetLayout,
+                               const VkPushConstantRange* const pushConstantRange) {
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
     if (descriptorSetLayout != nullptr) {
         descriptorSetLayouts.push_back(descriptorSetLayout->vkDescriptorSetLayout());
@@ -24,14 +21,13 @@ PipelineLayout::PipelineLayout(const LogicalDevice& logicalDevice,
 }
 
 PipelineLayout::~PipelineLayout() {
-    vkDestroyPipelineLayout(mLogicalDevice.vkDevice(),
+    vkDestroyPipelineLayout(LogicalDevice::vkDevice(),
                             mPipelineLayout,
                             nullptr);
 }
 
 PipelineLayout::PipelineLayout(PipelineLayout&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mPipelineLayout(other.mPipelineLayout)
+    : mPipelineLayout(other.mPipelineLayout)
 {
     other.mPipelineLayout = VK_NULL_HANDLE;
 }
@@ -67,7 +63,7 @@ PipelineLayout::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& d
     createInfo.pPushConstantRanges = 
         pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
 
-    vkChecker(vkCreatePipelineLayout(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreatePipelineLayout(LogicalDevice::vkDevice(),
                                      &createInfo,
                                      nullptr,
                                      &mPipelineLayout));

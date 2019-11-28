@@ -7,31 +7,27 @@
 #include "../device/PhysicalDevice.h"
 
 namespace vk {
-CommandPool::CommandPool(const LogicalDevice& logicalDevice,
-                         const uint32_t queueFamilyIndex,
-                         const VkCommandPoolCreateFlags flags)
-    : mLogicalDevice(logicalDevice)
-{
+CommandPool::CommandPool(const uint32_t queueFamilyIndex,
+                         const VkCommandPoolCreateFlags flags) {
     VkCommandPoolCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.flags = flags;
     createInfo.queueFamilyIndex = queueFamilyIndex;
     
-    vkChecker(vkCreateCommandPool(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateCommandPool(LogicalDevice::vkDevice(),
                                   &createInfo,
                                   nullptr,
                                   &mCommandPool));
 }
 
 CommandPool::~CommandPool() {
-    vkDestroyCommandPool(mLogicalDevice.vkDevice(),
+    vkDestroyCommandPool(LogicalDevice::vkDevice(),
                          mCommandPool,
                          nullptr);
 }
 
 CommandPool::CommandPool(CommandPool&& other) noexcept 
-    : mLogicalDevice(other.mLogicalDevice)
-    , mCommandPool(other.mCommandPool)
+    : mCommandPool(other.mCommandPool)
 {
     other.mCommandPool = VK_NULL_HANDLE;
 }

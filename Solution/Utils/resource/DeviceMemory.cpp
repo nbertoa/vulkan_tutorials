@@ -7,33 +7,28 @@
 #include "../device/PhysicalDevice.h"
 
 namespace vk {
-DeviceMemory::DeviceMemory(const LogicalDevice& logicalDevice,
-                           const PhysicalDevice& physicalDevice,
-                           const VkMemoryRequirements& memoryRequirements,
-                           const VkMemoryPropertyFlags memoryPropertyFlags)
-    : mLogicalDevice(logicalDevice)
-{
+DeviceMemory::DeviceMemory(const VkMemoryRequirements& memoryRequirements,
+                           const VkMemoryPropertyFlags memoryPropertyFlags) {
     VkMemoryAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     info.allocationSize = memoryRequirements.size;
-    info.memoryTypeIndex = physicalDevice.memoryTypeIndex(memoryRequirements.memoryTypeBits,
-                                                          memoryPropertyFlags);
-    assert(physicalDevice.isValidMemoryTypeIndex(info.memoryTypeIndex));
-    vkChecker(vkAllocateMemory(mLogicalDevice.vkDevice(),
+    info.memoryTypeIndex = PhysicalDevice::memoryTypeIndex(memoryRequirements.memoryTypeBits,
+                                                                           memoryPropertyFlags);
+    assert(PhysicalDevice::isValidMemoryTypeIndex(info.memoryTypeIndex));
+    vkChecker(vkAllocateMemory(LogicalDevice::vkDevice(),
                                &info,
                                nullptr,
                                &mDeviceMemory));
 }
 
 DeviceMemory::~DeviceMemory() {
-    vkFreeMemory(mLogicalDevice.vkDevice(),
+    vkFreeMemory(LogicalDevice::vkDevice(),
                  mDeviceMemory,
                  nullptr);
 }
 
 DeviceMemory::DeviceMemory(DeviceMemory&& other) noexcept 
-    : mLogicalDevice(other.mLogicalDevice)
-    , mDeviceMemory(other.mDeviceMemory)
+    : mDeviceMemory(other.mDeviceMemory)
 {
     other.mDeviceMemory = VK_NULL_HANDLE;
 }

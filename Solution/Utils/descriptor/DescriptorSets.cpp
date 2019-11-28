@@ -10,37 +10,10 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-DescriptorSets::DescriptorSets(const LogicalDevice& logicalDevice,
-                               const DescriptorPool& descriptorPool,
-                               const DescriptorSetLayout& descriptorSetLayout)
-    : mLogicalDevice(logicalDevice) {
 
-    std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-    descriptorSetLayouts.push_back(descriptorSetLayout.vkDescriptorSetLayout());
-    createDescriptorSets(descriptorPool,
-                         descriptorSetLayouts);
-}
-
-DescriptorSets::DescriptorSets(const LogicalDevice& logicalDevice,
-                               const DescriptorPool& descriptorPool,
+DescriptorSets::DescriptorSets(const DescriptorPool& descriptorPool,
                                const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts)
-    : mLogicalDevice(logicalDevice) 
 {
-    createDescriptorSets(descriptorPool,
-                        descriptorSetLayouts);
-}
-
-DescriptorSets::DescriptorSets(DescriptorSets&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mDescriptorSets(std::move(other.mDescriptorSets)) 
-{
-    other.mDescriptorSets.clear();
-}
-
-void
-DescriptorSets::createDescriptorSets(const DescriptorPool& descriptorPool,
-                                     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts) {
-    assert(mDescriptorSets.empty());
     assert(descriptorSetLayouts.empty() == false);
 
     VkDescriptorSetAllocateInfo allocInfo = {};
@@ -50,9 +23,15 @@ DescriptorSets::createDescriptorSets(const DescriptorPool& descriptorPool,
     allocInfo.descriptorSetCount = static_cast<uint32_t>(descriptorSetLayouts.size());
 
     mDescriptorSets.resize(descriptorSetLayouts.size());
-    vkChecker(vkAllocateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkChecker(vkAllocateDescriptorSets(LogicalDevice::vkDevice(),
                                        &allocInfo,
                                        mDescriptorSets.data()));
+}
+
+DescriptorSets::DescriptorSets(DescriptorSets&& other) noexcept
+    : mDescriptorSets(std::move(other.mDescriptorSets)) 
+{
+    other.mDescriptorSets.clear();
 }
 
 void 
@@ -62,7 +41,7 @@ DescriptorSets::updateDescriptorSet(const WriteDescriptorSet& writeDescriptorSet
                      mDescriptorSets.end(),
                      writeDescriptorSet.vkDescriptorSet().dstSet) != mDescriptorSets.end());
 
-    vkUpdateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkUpdateDescriptorSets(LogicalDevice::vkDevice(),
                            1, // descriptor set count
                            &writeDescriptorSet.vkDescriptorSet(),
                            0, // descriptor copy count
@@ -88,7 +67,7 @@ DescriptorSets::updateDescriptorSet(const std::vector<WriteDescriptorSet>& write
     }
 #endif
 
-    vkUpdateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkUpdateDescriptorSets(LogicalDevice::vkDevice(),
                            static_cast<uint32_t>(writeDescriptorSets.size()), // desc set count
                            reinterpret_cast<const VkWriteDescriptorSet*>(writeDescriptorSets.data()),
                            0, // descriptor copy count
@@ -102,7 +81,7 @@ DescriptorSets::updateDescriptorSet(const CopyDescriptorSet& copyDescriptorSet) 
                      mDescriptorSets.end(),
                      copyDescriptorSet.vkDescriptorSet().srcSet) != mDescriptorSets.end());
 
-    vkUpdateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkUpdateDescriptorSets(LogicalDevice::vkDevice(),
                            0, // descriptor set count
                            nullptr,
                            1, // descriptor copy count
@@ -121,7 +100,7 @@ DescriptorSets::updateDescriptorSet(const std::vector<CopyDescriptorSet>& copyDe
     }
 #endif
 
-    vkUpdateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkUpdateDescriptorSets(LogicalDevice::vkDevice(),
                            0, // descriptor set count
                            nullptr,
                            static_cast<uint32_t>(copyDescriptorSets.size()), // desc copy count
@@ -149,7 +128,7 @@ DescriptorSets::updateDescriptorSet(const std::vector<WriteDescriptorSet>& write
     }
 #endif
 
-    vkUpdateDescriptorSets(mLogicalDevice.vkDevice(),
+    vkUpdateDescriptorSets(LogicalDevice::vkDevice(),
                            static_cast<uint32_t>(writeDescriptorSets.size()), // desc set count
                            reinterpret_cast<const VkWriteDescriptorSet*>(writeDescriptorSets.data()),
                            static_cast<uint32_t>(copyDescriptorSets.size()), // desc copy count

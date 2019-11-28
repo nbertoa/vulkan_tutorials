@@ -3,23 +3,25 @@
 #include <cassert>
 
 #include "Utils/DebugUtils.h"
+#include "Utils/SwapChain.h"
+#include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
+#include "Utils/device/PhysicalDevice.h"
 #include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/render_pass/RenderPass.h"
 #include "Utils/shader/ShaderModule.h"
+#include "Utils/shader/ShaderModuleSystem.h"
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
 using namespace vk;
 
-App::App(const uint32_t windowWidth,
-         const uint32_t windowHeight,
-         const char* windowTitle)
-    : mSystemManager(windowWidth,
-                     windowHeight,
-                     windowTitle)
-{
+App::App() {
+    mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsSupportQueueFamilyIndex()));
+    mTransferCommandPool.reset(new CommandPool(PhysicalDevice::transferSupportQueueFamilyIndex(),
+                                               VK_COMMAND_POOL_CREATE_TRANSIENT_BIT));
+
     initRenderPass();
     initFrameBuffers();
     initCommandBuffers();
@@ -31,7 +33,7 @@ App::App(const uint32_t windowWidth,
 
 void
 App::run() {
-    while (mSystemManager.window().shouldCloseWindow() == false) {
+    while (Window::shouldCloseWindow() == false) {
         glfwPollEvents();
         
         submitCommandBufferAndPresent();
@@ -42,7 +44,7 @@ App::run() {
     // vkDeviceWaitIdle is equivalent to submitting fences to all
     // the queues owned yb the device a and waiting with an infinite 
     // timeout for these fences to signal.
-    vkChecker(vkDeviceWaitIdle(mSystemManager.logicalDevice().vkDevice()));
+    vkChecker(vkDeviceWaitIdle(LogicalDevice::vkDevice()));
 }
 
 void 
@@ -66,18 +68,14 @@ App::initVertexBuffer() {
 
     const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
-    mGpuVertexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
-                                      mSystemManager.physicalDevice(),
-                                      verticesSize,
+    mGpuVertexBuffer.reset(new Buffer(verticesSize,
                                       VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                      VK_SHARING_MODE_EXCLUSIVE));
+                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
                                                  verticesSize,
-                                                 mSystemManager.physicalDevice(),
-                                                 mSystemManager.transferCommandPool());
+                                                 *mTransferCommandPool);
 }
 
 void 
@@ -92,18 +90,14 @@ App::initIndexBuffer() {
 
     const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
-    mGpuIndexBuffer.reset(new Buffer(mSystemManager.logicalDevice(),
-                                     mSystemManager.physicalDevice(),
-                                     indicesSize,
+    mGpuIndexBuffer.reset(new Buffer(indicesSize,
                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                      VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                     VK_SHARING_MODE_EXCLUSIVE));
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
                                                 indicesSize,
-                                                mSystemManager.physicalDevice(),
-                                                mSystemManager.transferCommandPool());
+                                                *mTransferCommandPool);
 }
 
 void
@@ -117,7 +111,7 @@ App::recordCommandBuffers() {
 
         commandBuffer.beginPass(*mRenderPass,
                                 mFrameBuffers->buffer(i),
-                                mSystemManager.swapChain().imageExtent());
+                                mSwapChain.imageExtent());
 
         commandBuffer.bindPipeline(*mGraphicsPipeline);
 
@@ -144,14 +138,12 @@ App::initGraphicsPipeline()  {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    PipelineLayout pipelineLayout(mSystemManager.logicalDevice());
+    PipelineLayout pipelineLayout;
 
-    mGraphicsPipeline.reset(new GraphicsPipeline(mSystemManager.logicalDevice(),
-                                                 *mRenderPass,
-                                                 0,
-                                                 pipelineLayout,
+    mGraphicsPipeline.reset(new GraphicsPipeline(pipelineLayout,
                                                  pipelineStates,
-                                                 shaderStages));
+                                                 shaderStages,
+                                                 *mRenderPass));
 }
 
 void 
@@ -170,7 +162,7 @@ App::initRenderPass() {
     // We want the image to be ready for presentation using the swap chain 
     // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
     // for the final layout.
-    attachmentDescriptions.emplace_back(mSystemManager.swapChain().imageFormat(),
+    attachmentDescriptions.emplace_back(mSwapChain.imageFormat(),
                                         VK_ATTACHMENT_LOAD_OP_CLEAR,
                                         VK_ATTACHMENT_STORE_OP_STORE,
                                         VK_IMAGE_LAYOUT_UNDEFINED,
@@ -205,8 +197,7 @@ App::initRenderPass() {
                                      VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
                                      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 
-    mRenderPass.reset(new RenderPass(mSystemManager.logicalDevice(),
-                                     attachmentDescriptions,
+    mRenderPass.reset(new RenderPass(attachmentDescriptions,
                                      subpassDescriptions,
                                      subpassDependencies));
 }
@@ -221,19 +212,18 @@ App::submitCommandBufferAndPresent() {
     Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore(); 
     Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
-    const uint32_t swapChainImageIndex = 
-        mSystemManager.swapChain().acquireNextImage(imageAvailableSemaphore);
+    const uint32_t swapChainImageIndex = mSwapChain.acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < mCommandBuffers->bufferCount());
 
     CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
-    commandBuffer.submit(mSystemManager.logicalDevice().graphicsQueue(),
+    commandBuffer.submit(LogicalDevice::graphicsQueue(),
                          &imageAvailableSemaphore,
                          &renderFinishedSemaphore,
                          fence,
                          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 
-    mSystemManager.swapChain().present(renderFinishedSemaphore,
-                                       swapChainImageIndex);
+    mSwapChain.present(renderFinishedSemaphore,
+                       swapChainImageIndex);
 }
 
 void
@@ -241,11 +231,10 @@ App::initFrameBuffers() {
     assert(mFrameBuffers == nullptr);
     assert(mRenderPass != nullptr);
 
-    mFrameBuffers.reset(new FrameBuffers(mSystemManager.logicalDevice(),
-                                         *mRenderPass,
-                                         mSystemManager.swapChain().imageViews(),
-                                         mSystemManager.swapChain().imageWidth(),
-                                         mSystemManager.swapChain().imageHeight()));
+    mFrameBuffers.reset(new FrameBuffers(*mRenderPass,
+                                         mSwapChain.imageViews(),
+                                         mSwapChain.imageWidth(),
+                                         mSwapChain.imageHeight()));
 }
 
 void
@@ -253,8 +242,7 @@ App::initCommandBuffers() {
     assert(mCommandBuffers == nullptr);
     assert(mFrameBuffers != nullptr);
 
-    mCommandBuffers.reset(new CommandBuffers(mSystemManager.logicalDevice(),
-                                             mSystemManager.graphicsCommandPool(),
+    mCommandBuffers.reset(new CommandBuffers(*mGraphicsCommandPool,
                                              mFrameBuffers->bufferCount(),
                                              VK_COMMAND_BUFFER_LEVEL_PRIMARY));
 }
@@ -265,12 +253,9 @@ App::initSemaphoresAndFences() {
     assert(mRenderFinishedSemaphores == nullptr);
     assert(mFences == nullptr);
 
-    mImageAvailableSemaphores.reset(new Semaphores(mSystemManager.logicalDevice(),
-                                                   mFrameBuffers->bufferCount()));
-    mRenderFinishedSemaphores.reset(new Semaphores(mSystemManager.logicalDevice(),
-                                                   mFrameBuffers->bufferCount()));
-    mFences.reset(new Fences(mSystemManager.logicalDevice(),
-                             mFrameBuffers->bufferCount()));
+    mImageAvailableSemaphores.reset(new Semaphores(mFrameBuffers->bufferCount()));
+    mRenderFinishedSemaphores.reset(new Semaphores(mFrameBuffers->bufferCount()));
+    mFences.reset(new Fences(mFrameBuffers->bufferCount()));
 }
 
 void 
@@ -287,8 +272,8 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
     pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                          VK_FALSE});
 
-    pipelineStates.setViewportState({mSystemManager.swapChain().viewport(),
-                                     mSystemManager.swapChain().scissorRect()});
+    pipelineStates.setViewportState({mSwapChain.viewport(),
+                                     mSwapChain.scissorRect()});
 
     pipelineStates.setRasterizationState({});
 
@@ -300,13 +285,12 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
 
 void
 App::initShaderStages(ShaderStages& shaderStages) {
-    ShaderModuleSystem& shaderModuleSystem = mSystemManager.shaderModuleSystem();
     shaderStages.addShaderModule(
-        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/vert.spv",
-                                                 VK_SHADER_STAGE_VERTEX_BIT)
+        ShaderModuleSystem::getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/vert.spv",
+                                                  VK_SHADER_STAGE_VERTEX_BIT)
     );
     shaderStages.addShaderModule(
-        shaderModuleSystem.getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/frag.spv",
-                                                 VK_SHADER_STAGE_FRAGMENT_BIT)
+        ShaderModuleSystem::getOrLoadShaderModule("../../QuadWithIndexBuffer/resources/shaders/frag.spv",
+                                                  VK_SHADER_STAGE_FRAGMENT_BIT)
     );
 }

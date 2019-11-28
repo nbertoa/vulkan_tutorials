@@ -10,8 +10,7 @@ namespace vk {
 class Fences {
 public:
     // Read Fence to understand this
-    Fences(const LogicalDevice& logicalDevice,
-           const uint32_t fenceCount,
+    Fences(const uint32_t fenceCount,
            const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
     Fences(Fences&& other) noexcept;
                

@@ -6,9 +6,7 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-Fence::Fence(const LogicalDevice& logicalDevice,
-             const VkFenceCreateFlags flags)
-    : mLogicalDevice(logicalDevice) {
+Fence::Fence(const VkFenceCreateFlags flags) {
 
     // - flags is a bitmask of VkFenceCreateFlagBits specifying the 
     //   initial state and behavior of the fence.
@@ -16,20 +14,19 @@ Fence::Fence(const LogicalDevice& logicalDevice,
     createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     createInfo.flags = flags;
 
-    vkChecker(vkCreateFence(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateFence(LogicalDevice::vkDevice(),
                             &createInfo,
                             nullptr,
                             &mFence));
 }
 
 Fence::Fence(Fence&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mFence(std::move(other.mFence)) {
+    : mFence(std::move(other.mFence)) {
     other.mFence = VK_NULL_HANDLE;
 }
 
 Fence::~Fence() {
-    vkDestroyFence(mLogicalDevice.vkDevice(),
+    vkDestroyFence(LogicalDevice::vkDevice(),
                    mFence,
                    nullptr);
 }
@@ -44,7 +41,7 @@ void
 Fence::wait() const {
     assert(mFence != VK_NULL_HANDLE);
 
-    vkChecker(vkWaitForFences(mLogicalDevice.vkDevice(),
+    vkChecker(vkWaitForFences(LogicalDevice::vkDevice(),
                               1,
                               &mFence,
                               VK_TRUE,
@@ -55,7 +52,7 @@ void
 Fence::reset() const {
     assert(mFence != VK_NULL_HANDLE);
 
-    vkChecker(vkResetFences(mLogicalDevice.vkDevice(),
+    vkChecker(vkResetFences(LogicalDevice::vkDevice(),
                             1,
                             &mFence));
 }
@@ -64,12 +61,12 @@ void
 Fence::waitAndReset() const {
     assert(mFence != VK_NULL_HANDLE);
 
-    vkChecker(vkWaitForFences(mLogicalDevice.vkDevice(),
+    vkChecker(vkWaitForFences(LogicalDevice::vkDevice(),
                               1,
                               &mFence,
                               VK_TRUE,
                               std::numeric_limits<uint64_t>::max()));
-    vkChecker(vkResetFences(mLogicalDevice.vkDevice(),
+    vkChecker(vkResetFences(LogicalDevice::vkDevice(),
                             1,
                             &mFence));
 }

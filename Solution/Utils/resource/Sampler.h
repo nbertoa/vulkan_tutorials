@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkSampler wrapper
 //
@@ -67,8 +65,9 @@ public:
     //   lookup the texel is in the range of zero to the image
     //   dimensions for x, y and z.
     //   When se to VK_FALSE the range of image coordinates is zero to one.
-    Sampler(const LogicalDevice& logicalDevice,
-            const VkFilter magnificationFilter = VK_FILTER_LINEAR,
+    //
+    // Notes: The global logical device creates the sampler.
+    Sampler(const VkFilter magnificationFilter = VK_FILTER_LINEAR,
             const VkFilter minificationFilter = VK_FILTER_LINEAR,
             const VkSamplerMipmapMode mipmapFilter = VK_SAMPLER_MIPMAP_MODE_LINEAR,
             const VkSamplerAddressMode addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
@@ -92,7 +91,6 @@ public:
     vkSampler() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkSampler mSampler = VK_NULL_HANDLE;
 };
 }

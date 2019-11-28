@@ -6,10 +6,7 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-class PhysicalDevice;
 class Semaphore;
-class Surface;
 
 //
 // VkSwapChain wrapper.
@@ -44,14 +41,12 @@ class Surface;
 //
 class SwapChain {
 public:
-    // * physicalDevice and surface are used to get properties
+    // Note: The global physical and logical device are used.
+    //
+    // * The global physical device and surface are used to get properties
     //   like surface capabilities, formats, and present modes,
     //   needed for swap chain creation.
-    SwapChain(const LogicalDevice& logicalDevice,
-              const PhysicalDevice& physicalDevice,
-              const uint32_t imageWidth,
-              const uint32_t imageHeight,
-              const Surface& surface);
+    SwapChain();
     ~SwapChain();
     SwapChain(SwapChain&& other) noexcept;
     SwapChain(const SwapChain&) = delete;
@@ -203,19 +198,14 @@ private:
     swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
     
     void 
-    initSwapChain(const uint32_t imageWidth,
-                  const uint32_t imageHeight,
-                  const Surface& surface,
-                  const PhysicalDevice& physicalDevice);
+    initSwapChain();
 
     void 
     initImagesAndViews();
     
     void 
     initViewportAndScissorRect();
-
-    const LogicalDevice& mLogicalDevice;
-    
+        
     VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 
     std::vector<VkImage> mSwapChainImages;

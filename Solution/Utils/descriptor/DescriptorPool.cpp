@@ -6,40 +6,22 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-DescriptorPool::DescriptorPool(const LogicalDevice& logicalDevice,
-                               const VkDescriptorType descriptorType,
-                               const uint32_t descriptorCount,
+DescriptorPool::DescriptorPool(const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
                                const uint32_t maxDescriptorSetCount,
-                               const VkDescriptorPoolCreateFlags flags)
-    : mLogicalDevice(logicalDevice)
-{
-    std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
-    descriptorPoolSizes.emplace_back(VkDescriptorPoolSize{descriptorType, descriptorCount});
-    createPool(descriptorPoolSizes,
-               maxDescriptorSetCount,
-               flags);
-}
-
-DescriptorPool::DescriptorPool(const LogicalDevice& logicalDevice,
-                               const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
-                               const uint32_t maxDescriptorSetCount,
-                               const VkDescriptorPoolCreateFlags flags)
-    : mLogicalDevice(logicalDevice) 
-{
+                               const VkDescriptorPoolCreateFlags flags) {
     createPool(descriptorPoolSizes,
                maxDescriptorSetCount,
                flags);
 }
 
 DescriptorPool::~DescriptorPool() {
-    vkDestroyDescriptorPool(mLogicalDevice.vkDevice(),
+    vkDestroyDescriptorPool(LogicalDevice::vkDevice(),
                             mDescriptorPool,
                             nullptr);
 }
 
 DescriptorPool::DescriptorPool(DescriptorPool&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mDescriptorPool(other.mDescriptorPool)
+    : mDescriptorPool(other.mDescriptorPool)
 {
     other.mDescriptorPool = VK_NULL_HANDLE;
 }
@@ -64,7 +46,7 @@ DescriptorPool::createPool(const std::vector<VkDescriptorPoolSize>& descriptorPo
     createInfo.maxSets = maxDescriptorSetCount;
     createInfo.flags = flags;
 
-    vkChecker(vkCreateDescriptorPool(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateDescriptorPool(LogicalDevice::vkDevice(),
                                      &createInfo,
                                      nullptr,
                                      &mDescriptorPool));

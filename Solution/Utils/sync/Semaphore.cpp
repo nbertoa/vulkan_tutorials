@@ -6,27 +6,24 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-Semaphore::Semaphore(const LogicalDevice& logicalDevice)
-    : mLogicalDevice(logicalDevice)
-{
+Semaphore::Semaphore() {
     VkSemaphoreCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-    vkChecker(vkCreateSemaphore(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateSemaphore(LogicalDevice::vkDevice(),
                                 &createInfo,
                                 nullptr,
                                 &mSemaphore));
 }
 
 Semaphore::Semaphore(Semaphore&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mSemaphore(std::move(other.mSemaphore))
+    : mSemaphore(std::move(other.mSemaphore))
 {
     other.mSemaphore = VK_NULL_HANDLE;
 }
 
 Semaphore::~Semaphore() {
-    vkDestroySemaphore(mLogicalDevice.vkDevice(),
+    vkDestroySemaphore(LogicalDevice::vkDevice(),
                        mSemaphore,
                        nullptr);
 }

@@ -4,13 +4,8 @@
 #include <cstring>
 
 namespace vk {
-ShaderModuleSystem::ShaderModuleSystem(const LogicalDevice& logicalDevice) 
-    : mLogicalDevice(logicalDevice)
-{}
-
-ShaderModuleSystem::~ShaderModuleSystem() {
-    clear();
-}
+ShaderModuleSystem::ShaderModuleByPath 
+ShaderModuleSystem::mShaderModuleByPath = {};
 
 const ShaderModule&
 ShaderModuleSystem::getOrLoadShaderModule(const std::string& shaderByteCodePath,
@@ -26,8 +21,7 @@ ShaderModuleSystem::getOrLoadShaderModule(const std::string& shaderByteCodePath,
         assert(strcmp(entryPointName, shaderModule->entryPointName()) == 0);
         assert(shaderStageFlag == shaderModule->shaderStageFlag());
     } else {
-        shaderModule = new ShaderModule(mLogicalDevice,
-                                        shaderByteCodePath,
+        shaderModule = new ShaderModule(shaderByteCodePath,
                                         shaderStageFlag,
                                         entryPointName);
 

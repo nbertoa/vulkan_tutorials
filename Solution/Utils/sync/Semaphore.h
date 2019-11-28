@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkSemaphore wrapper.
 //
@@ -44,7 +42,8 @@ class LogicalDevice;
 class Semaphore {
 public:
     // A Semaphore is created without configuration parameters.
-    Semaphore(const LogicalDevice& logicalDevice);    
+    // The global logical device creates the semaphore
+    Semaphore();    
     ~Semaphore();
     Semaphore(Semaphore&& other) noexcept;
     Semaphore(const Semaphore&) = delete;
@@ -54,7 +53,6 @@ public:
     vkSemaphore() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkSemaphore mSemaphore = VK_NULL_HANDLE;
 };
 }

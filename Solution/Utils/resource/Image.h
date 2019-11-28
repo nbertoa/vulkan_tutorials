@@ -8,8 +8,6 @@
 namespace vk {
 class CommandPool;
 class DeviceMemory;
-class LogicalDevice;
-class PhysicalDevice;
 
 //
 // VkImage wrapper
@@ -107,9 +105,9 @@ public:
     //
     // * queueFamilyIndices is a list of queue families that will access this 
     //   image (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
-    Image(const LogicalDevice& logicalDevice,
-          const PhysicalDevice& physicalDevice,   
-          const uint32_t imageWidth,
+    //
+    // Notes: The global logical device owns the image and memory.
+    Image(const uint32_t imageWidth,
           const uint32_t imageHeight,
           const VkFormat format,
           const VkImageUsageFlags imageUsageFlags,
@@ -146,15 +144,14 @@ public:
     //
     // This method creates an internal staging buffer to be able to do the copy,
     // and use fences to be signaled once the copy operation finishes.
-    //
-    // * physicalDevice to be used to create the staging buffer
-    //
+    //    
     // * transferCommandPool that will be used to create 
     //  the CommandBuffer which will do the transfer operation.
+    //
+    // Notes: The global physical device is used to create the staging buffer
     void
     copyFromDataToDeviceMemory(void* sourceData,
                                const VkDeviceSize size,
-                               const PhysicalDevice& physicalDevice,
                                const CommandPool& transferCommandPool);
 
     // * transitionCommandPool that will be used to create 
@@ -190,9 +187,7 @@ private:
                 const VkSharingMode sharingMode,
                 const VkImageCreateFlags flags,
                 const std::vector<uint32_t>& queueFamilyIndices);
-
-    const LogicalDevice& mLogicalDevice;
-
+                
     VkExtent3D mExtent = {};
     VkImageLayout mLastLayout;
     VkAccessFlags mLastAccessType = 0;

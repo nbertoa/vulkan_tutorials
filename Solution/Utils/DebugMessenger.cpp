@@ -21,19 +21,17 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
 }
 
 namespace vk {
-DebugMessenger::DebugMessenger(const Instance& instance)
-    : mInstance(instance)
-{
+DebugMessenger::DebugMessenger() {
     // The function to create a debug utils messenger is an extension function, 
     // so it is not automatically loaded. We need to look up its address
     // ourselves.
     PFN_vkCreateDebugUtilsMessengerEXT function =
         reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-            vkGetInstanceProcAddr(mInstance.vkInstance(),
+            vkGetInstanceProcAddr(Instance::vkInstance(),
                                   "vkCreateDebugUtilsMessengerEXT"));
     assert(function);
     const VkDebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
-    vkChecker(function(mInstance.vkInstance(),
+    vkChecker(function(Instance::vkInstance(),
                        &createInfo,
                        nullptr, 
                        &mMessenger));
@@ -49,17 +47,16 @@ DebugMessenger::~DebugMessenger() {
     // ourselves.
     PFN_vkDestroyDebugUtilsMessengerEXT function =
         reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-            vkGetInstanceProcAddr(mInstance.vkInstance(),
+            vkGetInstanceProcAddr(Instance::vkInstance(),
                                   "vkDestroyDebugUtilsMessengerEXT"));
     assert(function);
-    function(mInstance.vkInstance(),
+    function(Instance::vkInstance(),
              mMessenger, 
              nullptr);
 }
 
 DebugMessenger::DebugMessenger(DebugMessenger&& other) noexcept
-    : mInstance(other.mInstance)
-    , mMessenger(other.mMessenger)
+    : mMessenger(other.mMessenger)
 {
     other.mMessenger = VK_NULL_HANDLE;
 }

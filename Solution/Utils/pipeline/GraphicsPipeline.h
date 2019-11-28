@@ -9,7 +9,6 @@
 
 namespace vk {
 class DynamicState;
-class LogicalDevice;
 class PipelineStates;
 class RenderPass;
 class ShaderStages;
@@ -58,28 +57,28 @@ class ShaderStages;
 //
 class GraphicsPipeline {
 public:
+    // * pipelineLayout is the description of binding locations used by both 
+    //   the pipeline and descriptor sets used with the pipeline.
+    //   pipelineLayout will be "moved" to this instance.
+    //
+    // * pipelineStates (Read PipelineStates to understand)
+    //
     // * renderPass describes the environment in which the pipeline will be used; 
     //   the pipeline must only be used with an instance of any render pass compatible 
     //   with the one provided.
     //
     // * subPassIndex in the render pass where this pipeline will be used.
     //
-    // * pipelineLayout is the description of binding locations used by both 
-    //   the pipeline and descriptor sets used with the pipeline.
-    //
-    // * pipelineStates (Read PipelineStates to understand)
-    //
     // Notes:
     // If any shader stage fails to compile, the compile log will be reported back 
     // to the application, and VK_ERROR_INVALID_SHADER_NV will be generated.
     //
-    // pipelineLayout will be "moved" to this instance.
-    GraphicsPipeline(const LogicalDevice& logicalDevice,
-                     const RenderPass& renderPass,
-                     const uint32_t subPassIndex,
-                     PipelineLayout& pipelineLayout,
+    // The global logical device is the device that creates the graphics pipeline.
+    GraphicsPipeline(PipelineLayout& pipelineLayout,
                      const PipelineStates& pipelineStates,
-                     const ShaderStages& shaderStages);
+                     const ShaderStages& shaderStages,
+                     const RenderPass& renderPass,
+                     const uint32_t subPassIndex = 0);
     ~GraphicsPipeline();
     GraphicsPipeline(GraphicsPipeline&& other) noexcept;
     GraphicsPipeline(const GraphicsPipeline&) = delete;
@@ -92,7 +91,6 @@ public:
     pipelineLayout() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkPipeline mPipeline = VK_NULL_HANDLE;
     PipelineLayout mPipelineLayout;
 };

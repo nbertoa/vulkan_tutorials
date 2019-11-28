@@ -9,8 +9,7 @@
 namespace vk {
 class Semaphores {
 public:
-    Semaphores(const LogicalDevice& logicalDevice,
-               const uint32_t semaphoreCount);
+    Semaphores(const uint32_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
     Semaphore& 

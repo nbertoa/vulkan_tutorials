@@ -7,8 +7,6 @@
 #include "../descriptor/DescriptorSetLayout.h"
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkPipelineLayout wrapper.
 //
@@ -45,8 +43,9 @@ public:
     //   - offset and size are the start offset and size, respectively, consumed by the range.
     //     Both offset and size are in units of bytes and must be a multiple of 4. 
     //     The layout of the push constant variables is specified in the shader.
-    PipelineLayout(const LogicalDevice& logicalDevice,
-                   const DescriptorSetLayout* const descriptorSetLayout = nullptr,
+    //
+    // Notes: The global logical device is the device that creates the pipeline layout.
+    PipelineLayout(const DescriptorSetLayout* const descriptorSetLayout = nullptr,
                    const VkPushConstantRange* const pushConstantRange = nullptr);
     ~PipelineLayout();
     PipelineLayout(PipelineLayout&& other) noexcept;
@@ -61,7 +60,6 @@ private:
     createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                          const std::vector<VkPushConstantRange>& pushConstantRanges);
 
-    const LogicalDevice& mLogicalDevice;
     VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
 };
 }

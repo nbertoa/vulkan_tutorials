@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class Instance;
-
 //
 // VkDebugUtilsMessengerEXT wrapper.
 //
@@ -14,7 +12,7 @@ class Instance;
 //
 class DebugMessenger {
 public:
-    DebugMessenger(const Instance& instance);
+    DebugMessenger();
     ~DebugMessenger();
     DebugMessenger(DebugMessenger&& other) noexcept;
     DebugMessenger(const DebugMessenger&) = delete;
@@ -33,7 +31,6 @@ public:
     messengerCreateInfo();
 
 private:
-    const Instance& mInstance;
     VkDebugUtilsMessengerEXT mMessenger = VK_NULL_HANDLE;
 };
 }

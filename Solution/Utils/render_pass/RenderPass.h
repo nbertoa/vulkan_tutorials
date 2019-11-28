@@ -9,8 +9,6 @@
 #include "SubpassDescription.h"
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkRenderPass wrapper.
 //
@@ -44,8 +42,9 @@ public:
     // * subpassDescriptions of the RenderPass
     //
     // * subpassDependencies between pairs of subpasses.
-    RenderPass(const LogicalDevice& logicalDevice,
-               const std::vector<AttachmentDescription>& attachmentDescriptions,
+    //
+    // Notes: The global logical device is the device that creates the render pass.
+    RenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions,
                const std::vector<SubpassDescription>& subpassDescriptions,
                const std::vector<SubpassDependency>& subpassDependencies);
     ~RenderPass();
@@ -57,7 +56,6 @@ public:
     vkRenderPass() const;
     
 private:
-    const LogicalDevice& mLogicalDevice;
     VkRenderPass mRenderPass = VK_NULL_HANDLE;
 };
 }

@@ -2,33 +2,27 @@
 
 #include <cassert>
 
+#include "DeviceMemory.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 #include "../sync/Fence.h"
-#include "DeviceMemory.h"
 
 namespace vk {
-Buffer::Buffer(const LogicalDevice& logicalDevice,
-               const PhysicalDevice& physicalDevice,
-               const VkDeviceSize size,
+Buffer::Buffer(const VkDeviceSize size,
                const VkBufferUsageFlags usageFlags,               
                const VkMemoryPropertyFlags memoryPropertyFlags,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
-    : mLogicalDevice(logicalDevice)
-    , mBuffer(createBuffer(logicalDevice,
-                           size,
+    : mBuffer(createBuffer(size,
                            usageFlags,
                            sharingMode,
                            queueFamilyIndices))
     , mSizeInBytes(size)
     , mHasDeviceMemoryOwnership(true)
-    , mDeviceMemory(new DeviceMemory(mLogicalDevice,
-                                     physicalDevice,
-                                     bufferMemoryRequirements(),
+    , mDeviceMemory(new DeviceMemory(bufferMemoryRequirements(),
                                      memoryPropertyFlags))
 {
     assert(mSizeInBytes > 0);
@@ -42,21 +36,18 @@ Buffer::Buffer(const LogicalDevice& logicalDevice,
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
     //   aligment field.
-    vkChecker(vkBindBufferMemory(mLogicalDevice.vkDevice(),
+    vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
                                  0));
 }
 
-Buffer::Buffer(const LogicalDevice& logicalDevice,
-               const VkDeviceSize size,
+Buffer::Buffer(const VkDeviceSize size,
                const VkBufferUsageFlags usageFlags,               
                const DeviceMemory& deviceMemory,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
-    : mLogicalDevice(logicalDevice)
-    , mBuffer(createBuffer(logicalDevice,
-                           size,
+    : mBuffer(createBuffer(size,
                            usageFlags,
                            sharingMode,
                            queueFamilyIndices))
@@ -74,14 +65,14 @@ Buffer::Buffer(const LogicalDevice& logicalDevice,
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
     //   aligment field.
-    vkChecker(vkBindBufferMemory(mLogicalDevice.vkDevice(),
+    vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
                                  0));
 }
 
 Buffer::~Buffer() {
-    vkDestroyBuffer(mLogicalDevice.vkDevice(),
+    vkDestroyBuffer(LogicalDevice::vkDevice(),
                     mBuffer,
                     nullptr);
 
@@ -103,8 +94,7 @@ Buffer::size() const {
 }
 
 Buffer::Buffer(Buffer&& other) noexcept 
-    : mLogicalDevice(other.mLogicalDevice)
-    , mBuffer(other.mBuffer)
+    : mBuffer(other.mBuffer)
     , mSizeInBytes(other.mSizeInBytes)
     , mDeviceMemory(other.mDeviceMemory)
 {
@@ -129,7 +119,7 @@ Buffer::copyToHostMemory(void* sourceData,
     // - ppData will contain a host-accessible pointer to the beginning of the mapped range.
     //   This pointer minus offset must be aligned to at least 
     //   VkPhysicalDeviceLimits::minMemoryMapAlignment.
-    vkChecker(vkMapMemory(mLogicalDevice.vkDevice(),
+    vkChecker(vkMapMemory(LogicalDevice::vkDevice(),
                           mDeviceMemory->vkDeviceMemory(),
                           offset,
                           size,
@@ -142,7 +132,7 @@ Buffer::copyToHostMemory(void* sourceData,
 
     // - device is the logical device that owns the memory.
     // - memory to be unmapped.
-    vkUnmapMemory(mLogicalDevice.vkDevice(),
+    vkUnmapMemory(LogicalDevice::vkDevice(),
                   mDeviceMemory->vkDeviceMemory());
 }
 
@@ -160,12 +150,11 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    Fence executionCompletedFence(mLogicalDevice);
+    Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
     CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(mLogicalDevice,
-                                                                transferCommandPool);
+        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transferCommandPool);
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();
@@ -175,7 +164,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
     commandBuffer.endRecording();
 
-    commandBuffer.submit(mLogicalDevice.transferQueue(),
+    commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
                          executionCompletedFence,
@@ -187,15 +176,12 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 void
 Buffer::copyFromDataToDeviceMemory(void* sourceData,
                                    const VkDeviceSize size,
-                                   const PhysicalDevice& physicalDevice,
                                    const CommandPool& transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
 
     Buffer buffer = createAndFillStagingBuffer(sourceData,
-                                               size,
-                                               physicalDevice,
-                                               mLogicalDevice);
+                                               size);
 
     copyFromBufferToDeviceMemory(buffer,
                                  transferCommandPool);
@@ -203,19 +189,14 @@ Buffer::copyFromDataToDeviceMemory(void* sourceData,
 
 Buffer
 Buffer::createAndFillStagingBuffer(void* sourceData,
-                                   const VkDeviceSize size, 
-                                   const PhysicalDevice& physicalDevice,
-                                   const LogicalDevice& logicalDevice) {
+                                   const VkDeviceSize size) {
     assert(sourceData != nullptr);
     assert(size > 0);
 
-    Buffer buffer(logicalDevice,
-                  physicalDevice,
-                  size,
+    Buffer buffer(size,
                   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                  VK_SHARING_MODE_EXCLUSIVE);
+                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     buffer.copyToHostMemory(sourceData,
                             size,
@@ -229,7 +210,7 @@ Buffer::bufferMemoryRequirements() const {
     assert(mBuffer != VK_NULL_HANDLE);
 
     VkMemoryRequirements memoryRequirements;
-    vkGetBufferMemoryRequirements(mLogicalDevice.vkDevice(),
+    vkGetBufferMemoryRequirements(LogicalDevice::vkDevice(),
                                   mBuffer,
                                   &memoryRequirements);
 
@@ -237,8 +218,7 @@ Buffer::bufferMemoryRequirements() const {
 }
 
 VkBuffer
-Buffer::createBuffer(const LogicalDevice& logicalDevice,
-                     const VkDeviceSize size,
+Buffer::createBuffer(const VkDeviceSize size,
                      const VkBufferUsageFlags usageFlags,
                      const VkSharingMode sharingMode,
                      const std::vector<uint32_t>& queueFamilyIndices) {
@@ -255,7 +235,7 @@ Buffer::createBuffer(const LogicalDevice& logicalDevice,
         nullptr : 
         queueFamilyIndices.data();
     
-    vkChecker(vkCreateBuffer(logicalDevice.vkDevice(),
+    vkChecker(vkCreateBuffer(LogicalDevice::vkDevice(),
                              &createInfo,
                              nullptr,
                              &buffer));

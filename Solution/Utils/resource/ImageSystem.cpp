@@ -8,14 +8,8 @@
 #include "Image.h"
 
 namespace vk {
-ImageSystem::ImageSystem(const LogicalDevice& logicalDevice,
-                         const PhysicalDevice& physicalDevice)
-    : mLogicalDevice(logicalDevice) 
-    , mPhysicalDevice(physicalDevice) {}
-
-ImageSystem::~ImageSystem() {
-    clear();
-}
+ImageSystem::ImageByPath 
+ImageSystem::mImageByPath = {};
 
 Image&
 ImageSystem::getOrLoadImage(const std::string& imageFilePath,
@@ -41,9 +35,7 @@ ImageSystem::getOrLoadImage(const std::string& imageFilePath,
 
         const VkDeviceSize imageSize = static_cast<VkDeviceSize>(textureWidth) * textureHeight * 4;
 
-        image = new Image(mLogicalDevice,
-                          mPhysicalDevice,
-                          textureWidth,
+        image = new Image(textureWidth,
                           textureHeight,
                           VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_USAGE_TRANSFER_DST_BIT | 
@@ -52,7 +44,6 @@ ImageSystem::getOrLoadImage(const std::string& imageFilePath,
 
         image->copyFromDataToDeviceMemory(imageData,
                                           imageSize,
-                                          mPhysicalDevice,
                                           transferCommandPool);
 
         mImageByPath[imageFilePath] = image;

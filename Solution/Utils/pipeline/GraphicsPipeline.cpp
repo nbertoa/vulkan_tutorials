@@ -9,14 +9,12 @@
 #include "../shader/ShaderStages.h"
 
 namespace vk {
-GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
-                                   const RenderPass& renderPass,
-                                   const uint32_t subPassIndex,
-                                   PipelineLayout& pipelineLayout,
+GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
                                    const PipelineStates& pipelineStates,
-                                   const ShaderStages& shaderStages)
-    : mLogicalDevice(logicalDevice)
-    , mPipelineLayout(std::move(pipelineLayout))
+                                   const ShaderStages& shaderStages,
+                                   const RenderPass& renderPass,
+                                   const uint32_t subPassIndex)
+    : mPipelineLayout(std::move(pipelineLayout))
 {
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -72,7 +70,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
     createInfo.basePipelineHandle = VK_NULL_HANDLE;
     createInfo.basePipelineIndex = -1;
 
-    vkChecker(vkCreateGraphicsPipelines(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateGraphicsPipelines(LogicalDevice::vkDevice(),
                                         VK_NULL_HANDLE,
                                         1,
                                         &createInfo,
@@ -83,14 +81,13 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice& logicalDevice,
 
 GraphicsPipeline::~GraphicsPipeline() {
     assert(mPipeline != VK_NULL_HANDLE);
-    vkDestroyPipeline(mLogicalDevice.vkDevice(),
+    vkDestroyPipeline(LogicalDevice::vkDevice(),
                       mPipeline,
                       nullptr);
 }
 
 GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mPipeline(other.mPipeline)
+    : mPipeline(other.mPipeline)
     , mPipelineLayout(std::move(other.mPipelineLayout))
 {
     other.mPipeline = VK_NULL_HANDLE;

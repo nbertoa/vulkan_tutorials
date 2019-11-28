@@ -7,8 +7,6 @@
 #include "DescriptorSetLayoutBinding.h"
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkDescriptorSetLayout wrapper.
 //
@@ -49,8 +47,10 @@ class LogicalDevice;
 class DescriptorSetLayout {
 public:
     // * descriptorSetLayoutBindings for the descriptor set layout.
-    DescriptorSetLayout(const LogicalDevice& logicalDevice,
-                        const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings);
+    //
+    // Notes: The global logical device is the device that 
+    //        creates the descriptor set layout
+    DescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings);
     ~DescriptorSetLayout();
     DescriptorSetLayout(DescriptorSetLayout&& other) noexcept;
     DescriptorSetLayout(const DescriptorSetLayout&) = delete;
@@ -60,7 +60,6 @@ public:
     vkDescriptorSetLayout() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
 };
 }

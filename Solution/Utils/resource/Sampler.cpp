@@ -6,8 +6,7 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-Sampler::Sampler(const LogicalDevice& logicalDevice,
-                 const VkFilter magnificationFilter,
+Sampler::Sampler(const VkFilter magnificationFilter,
                  const VkFilter minificationFilter,
                  const VkSamplerMipmapMode mipmapFilter,
                  const VkSamplerAddressMode addressModeU,
@@ -21,9 +20,7 @@ Sampler::Sampler(const LogicalDevice& logicalDevice,
                  const float minLod,
                  const float maxLod,
                  const VkBorderColor predefinedBorderColor,
-                 const VkBool32 unnormalizedCoordinates)
-    : mLogicalDevice(logicalDevice)
-{
+                 const VkBool32 unnormalizedCoordinates) {
     VkSamplerCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     createInfo.magFilter = magnificationFilter;
@@ -42,21 +39,20 @@ Sampler::Sampler(const LogicalDevice& logicalDevice,
     createInfo.borderColor = predefinedBorderColor;
     createInfo.unnormalizedCoordinates = unnormalizedCoordinates;
 
-    vkChecker(vkCreateSampler(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateSampler(LogicalDevice::vkDevice(),
                               &createInfo,
                               nullptr,
                               &mSampler));
 }
 
 Sampler::~Sampler() {
-    vkDestroySampler(mLogicalDevice.vkDevice(),
+    vkDestroySampler(LogicalDevice::vkDevice(),
                      mSampler,
                      nullptr);
 }
 
 Sampler::Sampler(Sampler&& other) noexcept
-    : mLogicalDevice(other.mLogicalDevice)
-    , mSampler(other.mSampler)
+    : mSampler(other.mSampler)
 {
     other.mSampler = VK_NULL_HANDLE;
 }

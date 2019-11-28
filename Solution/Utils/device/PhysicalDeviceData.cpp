@@ -5,11 +5,10 @@
 #include <unordered_set>
 
 #include "../DebugUtils.h"
-#include "../Surface.h"
+#include "../Window.h"
 
 namespace vk {
 PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
-                                       const Surface& surface,
                                        const std::vector<const char*>& deviceExtensions)
     : mPhysicalDevice(physicalDevice)
 {
@@ -17,9 +16,9 @@ PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
 
     mIsSupported = isGraphicQueueFamilySupported() &&
                    isTransferQueueFamilySupported() &&
-                   isPresentationSupported(surface) &&
+                   isPresentationSupported() &&
                    areDeviceExtensionsSupported(deviceExtensions) &&
-                   isSwapChainSupported(surface) &&
+                   isSwapChainSupported() &&
                    areDeviceFeaturesSupported();
 }
 
@@ -121,7 +120,7 @@ PhysicalDeviceData::isTransferQueueFamilySupported() {
 }
 
 bool
-PhysicalDeviceData::isPresentationSupported(const Surface& surface) {
+PhysicalDeviceData::isPresentationSupported() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
 
     std::vector<VkQueueFamilyProperties> properties;
@@ -130,7 +129,7 @@ PhysicalDeviceData::isPresentationSupported(const Surface& surface) {
     mPresentationSupportQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0) {
-            if (surface.isPhysicalDeviceSupported(mPhysicalDevice,
+            if (Window::isPhysicalDeviceSupported(mPhysicalDevice,
                                                   mPresentationSupportQueueFamilyIndex)) {
                 return true;
             }
@@ -164,10 +163,10 @@ PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>&
 }
 
 bool
-PhysicalDeviceData::isSwapChainSupported(const Surface& surface) const {
+PhysicalDeviceData::isSwapChainSupported() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return surface.physicalDeviceSurfaceFormats(mPhysicalDevice).empty() == false &&
-           surface.physicalDeviceSurfacePresentModes(mPhysicalDevice).empty() == false;
+    return Window::physicalDeviceSurfaceFormats(mPhysicalDevice).empty() == false &&
+           Window::physicalDeviceSurfacePresentModes(mPhysicalDevice).empty() == false;
 }
 
 bool

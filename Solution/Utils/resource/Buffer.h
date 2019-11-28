@@ -9,8 +9,6 @@ namespace vk {
 class CommandPool;
 class DeviceMemory;
 class Fence;
-class LogicalDevice;
-class PhysicalDevice;
 
 //
 // VkBuffer wrapper.
@@ -49,10 +47,6 @@ public:
     // This constructor must be used if you want that this buffer also creates
     // its own DeviceMemory.
     //
-    // * logicalDevice owns the buffer and the device memory
-    //
-    // * physicalDevice is used to create the DeviceMemory
-    //
     // * size in bytes of the buffer to be created.
     //
     // * usage of the buffer (VK_BUFFER_USAGE_):
@@ -76,22 +70,25 @@ public:
     //
     // * queueFamilyIndices that will access this buffer
     //   (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
-    Buffer(const LogicalDevice& logicalDevice,
-           const PhysicalDevice& physicalDevice,
-           const VkDeviceSize size, 
+    //
+    // Notes:     
+    //   - The global logical device owns the buffer and the device memory
+    //   - The global physical device is used to create the device memory
+    Buffer(const VkDeviceSize size, 
            const VkBufferUsageFlags usageFlags,           
            const VkMemoryPropertyFlags memoryPropertyFlags,
-           const VkSharingMode sharingMode,
+           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});
 
     // This constructor must be used if you want to provide
     // the DeviceMemory that the buffer should use.
     // Check the first constructor for an explanation of each parameter.
-    Buffer(const LogicalDevice& logicalDevice,
-           const VkDeviceSize size,
+    // Notes:     
+    //   - The global logical device owns the buffer and the device memory
+    Buffer(const VkDeviceSize size,
            const VkBufferUsageFlags usageFlags,           
            const DeviceMemory& deviceMemory,
-           const VkSharingMode sharingMode,
+           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Buffer();
     Buffer(Buffer&& other) noexcept;
@@ -151,17 +148,17 @@ public:
     // These methods create internal staging buffers to be able to do the copy,
     // and use fences to be signaled once the copy operation finishes.
     //
-    // * physicalDevice to be used to create the staging buffer
     //
     // * transferCommandPool that will be used to create 
     //  the CommandBuffer which will do the transfer operation.
+    //
+    // Notes: The global physical device is used to create the staging buffer
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                  const CommandPool& transferCommandPool);
     void
     copyFromDataToDeviceMemory(void* sourceData,
                                const VkDeviceSize size,
-                               const PhysicalDevice& physicalDevice,
                                const CommandPool& transferCommandPool);
 
     // Creates a staging buffer with flags:
@@ -171,9 +168,7 @@ public:
     // and copies "size" bytes from the sourceData to it
     static Buffer
     createAndFillStagingBuffer(void* sourceData,
-                               const VkDeviceSize size,
-                               const PhysicalDevice& physicalDevice,
-                               const LogicalDevice& logicalDevice);
+                               const VkDeviceSize size);
 
 private:
     // Return the buffer memory requirements. This is used to create
@@ -192,13 +187,11 @@ private:
 
     // Read Buffer() constructor to understand the parameters.
     static VkBuffer 
-    createBuffer(const LogicalDevice& logicalDevice,
-                 const VkDeviceSize sizeInBytes,
+    createBuffer(const VkDeviceSize sizeInBytes,
                  const VkBufferUsageFlags usageFlags,
                  const VkSharingMode sharingMode,
                  const std::vector<uint32_t>& queueFamilyIndices);
-
-    const LogicalDevice& mLogicalDevice;    
+  
     VkBuffer mBuffer = VK_NULL_HANDLE;
     const VkDeviceSize mSizeInBytes = 0;
 

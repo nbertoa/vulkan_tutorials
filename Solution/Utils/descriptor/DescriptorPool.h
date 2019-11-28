@@ -5,8 +5,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
-
 //
 // VkDescriptorPool wrapper.
 //
@@ -28,14 +26,16 @@ class LogicalDevice;
 //
 class DescriptorPool {
 public:
-    // * descriptorType (VK_DESCRIPTOR_TYPE_): 
-    //   - SAMPLER, COMBINED_IMAGE_SAMPLER, SAMPLED_IMAGE, STORAGE_IMAGE, UNIFORM_TEXEL_BUFFER,
-    //     TEXEL_BUFFER, UNIFORM_BUFFER, STORAGE_BUFFER, UNIFORM_BUFFER_DYNAMIC, BUFFER_DYNAMIC,
-    //     INPUT_ATTACHMENT, INLINE_UNIFORM_BLOCK_EXT
+    // * descriptorPoolSizes:
     //
-    // * descriptorCount of that type to allocate.
-    //   If type is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount 
-    //   is the number of bytes to allocate for descriptors of this type.
+    //   - descriptorType (VK_DESCRIPTOR_TYPE_): 
+    //     . SAMPLER, COMBINED_IMAGE_SAMPLER, SAMPLED_IMAGE, STORAGE_IMAGE, UNIFORM_TEXEL_BUFFER,
+    //       TEXEL_BUFFER, UNIFORM_BUFFER, STORAGE_BUFFER, UNIFORM_BUFFER_DYNAMIC, BUFFER_DYNAMIC,
+    //       INPUT_ATTACHMENT, INLINE_UNIFORM_BLOCK_EXT
+    //
+    //   - descriptorCount of that type to allocate.
+    //     If type is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT then descriptorCount 
+    //     is the number of bytes to allocate for descriptors of this type.
     //
     // * maxDescriptorSetCount that can be allocated from the pool.
     //
@@ -75,13 +75,9 @@ public:
     // total number of descriptors across all pools(including this one) created with this bit 
     // set exceeds maxUpdateAfterBindDescriptorsInAllPools, 
     // or if fragmentation of the underlying hardware resources occurs.
-    DescriptorPool(const LogicalDevice& logicalDevice,
-                   const VkDescriptorType descriptorType,
-                   const uint32_t descriptorCount,
-                   const uint32_t maxDescriptorSetCount,
-                   const VkDescriptorPoolCreateFlags flags = 0);
-    DescriptorPool(const LogicalDevice& logicalDevice,
-                   const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
+    //
+    // The global logical device is the device that creates the descriptor pool.
+    DescriptorPool(const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
                    const uint32_t maxDescriptorSetCount,
                    const VkDescriptorPoolCreateFlags flags = 0);
     ~DescriptorPool();
@@ -98,7 +94,6 @@ private:
                const uint32_t maxDescriptorSetCount,
                const VkDescriptorPoolCreateFlags flags);
 
-    const LogicalDevice& mLogicalDevice;
     VkDescriptorPool mDescriptorPool = VK_NULL_HANDLE;
 };
 }

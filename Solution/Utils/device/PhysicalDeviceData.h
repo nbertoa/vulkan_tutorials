@@ -5,7 +5,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class Surface;
 //
 // Useful data for the PhysicalDevice which includes
 // the vulkan device and queue family indices.
@@ -27,7 +26,6 @@ public:
     //   Extensions may define new Vulkan commands, structures, and enumerants.
     //   Extensions may extend or change the behavior of the Vulkan API.
     PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
-                       const Surface& surface,
                        const std::vector<const char*>& deviceExtensions);
 
     VkPhysicalDevice
@@ -117,13 +115,13 @@ private:
     isTransferQueueFamilySupported();
 
     bool
-    isPresentationSupported(const Surface& surface);
+    isPresentationSupported();
 
     bool
     areDeviceExtensionsSupported(const std::vector<const char*>& deviceExtensions);
 
     bool 
-    isSwapChainSupported(const Surface& surface) const;
+    isSwapChainSupported() const;
 
     bool
     areDeviceFeaturesSupported() const;

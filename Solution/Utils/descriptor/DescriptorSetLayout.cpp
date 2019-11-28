@@ -6,10 +6,7 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice& logicalDevice,
-                                         const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings)
-    : mLogicalDevice(logicalDevice)
-{
+DescriptorSetLayout::DescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings) {
     assert(descriptorSetLayoutBindings.empty() == false);
 
     VkDescriptorSetLayoutCreateInfo createInfo = {};
@@ -17,21 +14,20 @@ DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice& logicalDevice,
     createInfo.bindingCount = static_cast<uint32_t>(descriptorSetLayoutBindings.size());
     createInfo.pBindings = reinterpret_cast<const VkDescriptorSetLayoutBinding*>(descriptorSetLayoutBindings.data());
 
-    vkChecker(vkCreateDescriptorSetLayout(mLogicalDevice.vkDevice(),
+    vkChecker(vkCreateDescriptorSetLayout(LogicalDevice::vkDevice(),
                                           &createInfo,
                                           nullptr,
                                           &mDescriptorSetLayout));
 }
 
 DescriptorSetLayout::~DescriptorSetLayout() {
-    vkDestroyDescriptorSetLayout(mLogicalDevice.vkDevice(),
+    vkDestroyDescriptorSetLayout(LogicalDevice::vkDevice(),
                                  mDescriptorSetLayout,
                                  nullptr);
 }
 
 DescriptorSetLayout::DescriptorSetLayout(DescriptorSetLayout&& other) noexcept 
-    : mLogicalDevice(other.mLogicalDevice)
-    , mDescriptorSetLayout(other.mDescriptorSetLayout)
+    : mDescriptorSetLayout(other.mDescriptorSetLayout)
 {
     other.mDescriptorSetLayout = VK_NULL_HANDLE;
 }

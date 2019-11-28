@@ -5,7 +5,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
 class RenderPass;
 
 //
@@ -65,8 +64,9 @@ public:
     // however, if VkPhysicalDeviceFeatures::variableMultisampleRate is VK_FALSE, 
     // then all pipelines to be bound with a given zero-attachment subpass must have the same value 
     // for VkPipelineMultisampleStateCreateInfo::rasterizationSamples.
-    FrameBuffers(const LogicalDevice& logicalDevice,
-                 const RenderPass& renderPass,
+    //
+    // Notes: The global logical device create the frame buffers
+    FrameBuffers(const RenderPass& renderPass,
                  const std::vector<VkImageView> imageViews,
                  const uint32_t imageWidth,
                  const uint32_t imageHeight);
@@ -82,7 +82,6 @@ public:
     buffer(const uint32_t bufferIndex) const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     std::vector<VkFramebuffer> mFrameBuffers;
 };
 }

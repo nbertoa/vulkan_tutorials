@@ -38,16 +38,27 @@ class PhysicalDevice;
 //
 class LogicalDevice {
 public:
-    // * physicalDevice will be used to get the queue families (indices uint32_t) 
-    //   which are needed for VKQueues creation.
-    LogicalDevice(const PhysicalDevice& physicalDevice);
-    ~LogicalDevice();
-    LogicalDevice(LogicalDevice&& other) noexcept;
+    LogicalDevice() = delete;
+    ~LogicalDevice() = delete;
+    LogicalDevice(LogicalDevice&& other) = delete;
     LogicalDevice(const LogicalDevice&) = delete;
     const LogicalDevice& operator=(const LogicalDevice&) = delete;
 
-    VkDevice 
-    vkDevice() const;
+    // The global physical device will be used to get the 
+    // queue families (indices uint32_t) which are needed for VKQueues creation.
+    //
+    // Extensions may define new Vulkan commands, structures, and enumerants.
+    // Extensions may extend or change the behavior of the Vulkan API.
+    //
+    // The global physical device is used to create this logical device.
+    static void
+    initialize(const std::vector<const char*>& deviceExtensionNames);
+
+    static void
+    finalize();
+
+    static VkDevice
+    vkDevice();
 
     // Creating a logical device also creates the queues associated with that device.
     //
@@ -60,18 +71,18 @@ public:
     // This way you can enable asynchronous compute, which can lead to a 
     // substantial speed up if done right.
 
-    VkQueue 
-    graphicsQueue() const;
+    static VkQueue
+    graphicsQueue();
 
-    VkQueue 
-    transferQueue() const;
+    static VkQueue
+    transferQueue();
 
-    VkQueue 
-    presentationQueue() const;   
+    static VkQueue
+    presentationQueue();   
 
 private:
     static VkDevice
-    createLogicalDevice(const PhysicalDevice& physicalDevice);
+    createLogicalDevice(const std::vector<const char*>& deviceExtensionNames);
 
     // Get the necessary structures to create the queues.
     // 
@@ -84,18 +95,18 @@ private:
     // - pQueuePriorities array that contains normalized floating point values, 
     //   specifying priorities of work that will be submitted to each created queue.
     static std::vector<VkDeviceQueueCreateInfo> 
-    physicalDeviceQueuesCreateInfo(const PhysicalDevice& physicalDevice);
+    physicalDeviceQueuesCreateInfo();
    
     // - physicalDevice is used to get the queue family indices
     //   used to create the queues
-    void 
-    initQueues(const PhysicalDevice& physicalDevice);
+    static void
+    initQueues();
 
-    VkDevice mLogicalDevice = VK_NULL_HANDLE;
+    static VkDevice mLogicalDevice;
 
-    VkQueue mGraphicsQueue = VK_NULL_HANDLE;
-    VkQueue mTransferQueue = VK_NULL_HANDLE;
-    VkQueue mPresentationQueue = VK_NULL_HANDLE;
+    static VkQueue mGraphicsQueue;
+    static VkQueue mTransferQueue;
+    static VkQueue mPresentationQueue;
 };
 }
 

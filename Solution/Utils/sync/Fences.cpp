@@ -5,15 +5,13 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk {
-Fences::Fences(const LogicalDevice& logicalDevice,
-               const uint32_t fenceCount,
+Fences::Fences(const uint32_t fenceCount,
                const VkFenceCreateFlags flags) {
     assert(fenceCount > 0);
 
     mFences.reserve(fenceCount);
     for (uint32_t i = 0; i < fenceCount; ++i) {
-        Fence fence(logicalDevice,
-                    flags);
+        Fence fence(flags);
         mFences.emplace_back(std::move(fence));
     }
 }

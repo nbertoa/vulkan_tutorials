@@ -10,8 +10,7 @@
 #include "../render_pass/RenderPass.h"
 
 namespace vk {
-CommandBuffers::CommandBuffers(const LogicalDevice& logicalDevice,
-                               const CommandPool& commandPool,
+CommandBuffers::CommandBuffers(const CommandPool& commandPool,
                                const uint32_t bufferCount,
                                const VkCommandBufferLevel level)
 {
@@ -25,7 +24,7 @@ CommandBuffers::CommandBuffers(const LogicalDevice& logicalDevice,
     info.level = level;
     info.commandBufferCount = bufferCount;
 
-    vkChecker(vkAllocateCommandBuffers(logicalDevice.vkDevice(),
+    vkChecker(vkAllocateCommandBuffers(LogicalDevice::vkDevice(),
                                        &info,
                                        commandBuffers.data()));
 

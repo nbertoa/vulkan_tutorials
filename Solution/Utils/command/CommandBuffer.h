@@ -11,7 +11,6 @@ class Fence;
 class GraphicsPipeline;
 class Image;
 class ImageMemoryBarrier;
-class LogicalDevice;
 class PipelineLayout;
 class RenderPass;
 class Semaphore;
@@ -46,12 +45,12 @@ class Semaphore;
 class CommandBuffer {
 public:
     // * commandPool from which the command buffer is allocated.
+    //   The global logical device owns the command pool
     //
     // * level for command buffer (VK_COMMAND_BUFFER_):
     // 
     //   - LEVEL_PRIMARY, LEVEL_SECONDARY
-    CommandBuffer(const LogicalDevice& logicalDevice,
-                  const CommandPool& commandPool,
+    CommandBuffer(const CommandPool& commandPool,
                   const VkCommandBufferLevel level);
     CommandBuffer(const VkCommandBuffer commandBuffer);
     CommandBuffer(CommandBuffer&& other) noexcept;
@@ -62,9 +61,9 @@ public:
     // with flag VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT.
     //
     // * commandPool from which the command buffer is allocated.
+    //   The global logical device owns the command pool.
     static CommandBuffer
-    createAndBeginOneTimeSubmitCommandBuffer(const LogicalDevice& logicalDevice,
-                                             const CommandPool& commandPool);
+    createAndBeginOneTimeSubmitCommandBuffer(const CommandPool& commandPool);
 
 
     // * usageFlags bitmask specifying usage behavior 

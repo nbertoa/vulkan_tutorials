@@ -4,7 +4,6 @@
 #include <vulkan/vulkan.h>
 
 namespace vk {
-class LogicalDevice;
 class PhysicalDevice;
 
 //
@@ -38,8 +37,9 @@ public:
     //   command buffers allocated from it (VK_COMMAND_POOL_CREATE_):
     // 
     //   - TRANSIENT_BIT, RESET_COMMAND_BUFFER_BIT, PROTECTED_BIT
-    CommandPool(const LogicalDevice& logicalDevice,
-                const uint32_t queueFamilyIndex,
+    //
+    // Notes: The global logical device is the device that creates the command pool.
+    CommandPool(const uint32_t queueFamilyIndex,
                 const VkCommandPoolCreateFlags flags = 0);
     ~CommandPool();
     CommandPool(CommandPool&& other) noexcept;
@@ -50,7 +50,6 @@ public:
     vkCommandPool() const;
 
 private:
-    const LogicalDevice& mLogicalDevice;
     VkCommandPool mCommandPool = VK_NULL_HANDLE;
 };
 }

@@ -8,7 +8,6 @@ namespace vk {
 class CopyDescriptorSet;
 class DescriptorPool;
 class DescriptorSetLayout;
-class LogicalDevice;
 class WriteDescriptorSet;
 
 //
@@ -45,11 +44,9 @@ public:
     //
     // * descriptorSetLayouts with each member specifying how the corresponding 
     //   descriptor set is allocated.
-    DescriptorSets(const LogicalDevice& logicalDevice,
-                   const DescriptorPool& descriptorPool,
-                   const DescriptorSetLayout& descriptorSetLayout);
-    DescriptorSets(const LogicalDevice& logicalDevice,
-                   const DescriptorPool& descriptorPool,
+    //
+    // Notes: The global logical device is the device that owns the descriptor pool
+    DescriptorSets(const DescriptorPool& descriptorPool,
                    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
     DescriptorSets(DescriptorSets&& other) noexcept;
     DescriptorSets(const DescriptorSets&) = delete;
@@ -101,12 +98,7 @@ public:
     updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets,
                         const std::vector<CopyDescriptorSet>& copyDescriptorSets);
 
-private:
-    void 
-    createDescriptorSets(const DescriptorPool& descriptorPool,
-                         const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
-                              
-    const LogicalDevice& mLogicalDevice;
+private:                              
     std::vector<VkDescriptorSet> mDescriptorSets;
 };
 }
