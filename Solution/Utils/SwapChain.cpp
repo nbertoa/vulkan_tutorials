@@ -9,7 +9,7 @@
 #include "device/PhysicalDevice.h"
 #include "sync/Semaphore.h"
 
-namespace vk {
+namespace vk2 {
 SwapChain::SwapChain() {       
     initSwapChain();
     initImagesAndViews();

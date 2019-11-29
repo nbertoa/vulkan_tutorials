@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 class CommandPool;
 class DeviceMemory;
 class Fence;
@@ -13,13 +13,9 @@ class Fence;
 //
 // VkBuffer wrapper.
 //
-// A buffer is a container for any binary data that just 
-// has its length, expressed in bytes.
-//
-// They represent linear arrays of data which are 
-// used for various purposes by binding them to a
-// graphics or compute pipeline via descriptor sets
-// or via certain commands, or by directly specifying 
+// Buffers represent linear arrays of data which are used for various 
+// purposes by binding them to a graphics or compute pipeline via 
+// descriptor sets or via certain commands, or by directly specifying
 // them as parameters to certain commands.
 //
 // Creating a Buffer of certain length does not automatically allocate memory for it. 
@@ -47,9 +43,9 @@ public:
     // This constructor must be used if you want that this buffer also creates
     // its own DeviceMemory.
     //
-    // * size in bytes of the buffer to be created.
+    // * bufferSize in bytes.
     //
-    // * usage of the buffer (VK_BUFFER_USAGE_):
+    // * bufferUsage (VK_BUFFER_USAGE_):
     //
     //   - TRANSFER_SRC_BIT, TRANSFER_DST_BIT, UNIFORM_TEXEL_BUFFER_BIT, STORAGE_TEXEL_BUFFER_BIT,
     //     UNIFORM_BUFFER_BIT, STORAGE_BUFFER_BIT, INDEX_BUFFER_BIT, VERTEX_BUFFER_BIT,
@@ -57,7 +53,7 @@ public:
     //     TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT, RAY_TRACING_BIT_NV, 
     //     SHADER_DEVICE_ADDRESS_BIT_EXT
     //
-    // * memoryPropertyFlags is used to create the DeviceMemory (VK_MEMORY_PROPERTY_):
+    // * deviceMemoryProperties to create the DeviceMemory (VK_MEMORY_PROPERTY_):
     //
     //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
     //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
@@ -74,9 +70,9 @@ public:
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
     //   - The global physical device is used to create the device memory
-    Buffer(const VkDeviceSize size, 
-           const VkBufferUsageFlags usageFlags,           
-           const VkMemoryPropertyFlags memoryPropertyFlags,
+    Buffer(const VkDeviceSize bufferSize,
+           const VkBufferUsageFlags bufferUsage,
+           const VkMemoryPropertyFlags deviceMemoryProperties,
            const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});
 
@@ -85,8 +81,8 @@ public:
     // Check the first constructor for an explanation of each parameter.
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
-    Buffer(const VkDeviceSize size,
-           const VkBufferUsageFlags usageFlags,           
+    Buffer(const VkDeviceSize bufferSize,
+           const VkBufferUsageFlags bufferUsage,
            const DeviceMemory& deviceMemory,
            const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});

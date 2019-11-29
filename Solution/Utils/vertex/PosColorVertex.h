@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 // Vertex with position and color in that order.
 struct PosColorVertex {
     glm::vec3 mPosition = {0.0f, 0.0f, 0.0f};

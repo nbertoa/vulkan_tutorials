@@ -4,7 +4,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 ImageView::ImageView(const VkFormat format,
                      const Image& image,
                      const VkImageViewType viewType,

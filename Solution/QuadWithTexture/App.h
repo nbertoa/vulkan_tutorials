@@ -19,7 +19,7 @@
 #include "Utils/sync/Fences.h"
 #include "Utils/sync/Semaphores.h"
 
-namespace vk {
+namespace vk2 {
 class ShaderStages;
 }
 
@@ -56,10 +56,10 @@ protected:
     initGraphicsPipeline();
 
     void
-    initPipelineStates(vk::PipelineStates& pipelineStates) const;
+    initPipelineStates(vk2::PipelineStates& pipelineStates) const;
 
     void
-    initShaderStages(vk::ShaderStages& shaderStages);
+    initShaderStages(vk2::ShaderStages& shaderStages);
 
     void 
     initRenderPass();
@@ -76,34 +76,34 @@ protected:
     void
     initSemaphoresAndFences();
 
-    vk::SwapChain mSwapChain;
+    vk2::SwapChain mSwapChain;
 
-    std::unique_ptr<vk::CommandPool> mGraphicsCommandPool;
-    std::unique_ptr<vk::CommandPool> mTransferCommandPool;
+    std::unique_ptr<vk2::CommandPool> mGraphicsCommandPool;
+    std::unique_ptr<vk2::CommandPool> mTransferCommandPool;
 
-    std::unique_ptr<vk::RenderPass> mRenderPass;
-    std::unique_ptr<vk::FrameBuffers> mFrameBuffers;
+    std::unique_ptr<vk2::RenderPass> mRenderPass;
+    std::unique_ptr<vk2::FrameBuffers> mFrameBuffers;
 
-    std::unique_ptr<vk::CommandBuffers> mCommandBuffers;
+    std::unique_ptr<vk2::CommandBuffers> mCommandBuffers;
 
-    std::unique_ptr<vk::GraphicsPipeline> mGraphicsPipeline;
-    vk::PipelineStates mPipelineStates;
+    std::unique_ptr<vk2::GraphicsPipeline> mGraphicsPipeline;
+    vk2::PipelineStates mPipelineStates;
 
-    std::unique_ptr<vk::Semaphores> mImageAvailableSemaphores;
-    std::unique_ptr<vk::Semaphores> mRenderFinishedSemaphores;
-    std::unique_ptr<vk::Fences> mFences;
+    std::unique_ptr<vk2::Semaphores> mImageAvailableSemaphores;
+    std::unique_ptr<vk2::Semaphores> mRenderFinishedSemaphores;
+    std::unique_ptr<vk2::Fences> mFences;
 
-    std::unique_ptr<vk::Buffer> mGpuVertexBuffer;
-    std::unique_ptr<vk::Buffer> mGpuIndexBuffer;
+    std::unique_ptr<vk2::Buffer> mGpuVertexBuffer;
+    std::unique_ptr<vk2::Buffer> mGpuIndexBuffer;
 
-    std::unique_ptr<vk::Buffers> mUniformBuffers;
-    std::unique_ptr<vk::DescriptorPool> mDescriptorPool;
+    std::unique_ptr<vk2::Buffers> mUniformBuffers;
+    std::unique_ptr<vk2::DescriptorPool> mDescriptorPool;
     MatrixUBO mMatrixUBO;
-    std::unique_ptr<vk::DescriptorSetLayout> mDescriptorSetLayout;
-    std::unique_ptr<vk::DescriptorSets> mDescriptorSets;
+    std::unique_ptr<vk2::DescriptorSetLayout> mDescriptorSetLayout;
+    std::unique_ptr<vk2::DescriptorSets> mDescriptorSets;
 
-    vk::Sampler mTextureSampler;
-    std::unique_ptr<vk::ImageView> mImageView;
+    vk2::Sampler mTextureSampler;
+    std::unique_ptr<vk2::ImageView> mImageView;
 };
 
 #endif 

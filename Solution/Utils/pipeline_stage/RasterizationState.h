@@ -3,15 +3,18 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineRasterizationStateCreateInfo wrapper
 //
-// The rasterizer takes the geometry that is shaped by the vertices from the vertex shader 
-// and turns it into fragments to be colored by the fragment shader. 
+// The rasterizer takes the geometry that is shaped by 
+// the vertices from the vertex shader and turns it 
+// into fragments to be colored by the fragment shader. 
+//
 // It also performs depth testing, face culling and the scissor test, 
 // and it can be configured to output fragments that fill entire 
 // polygons or just the edges(wireframe rendering).
+//
 // All this is configured using the VkPipelineRasterizationStateCreateInfo structure.
 //
 // You need this class to:

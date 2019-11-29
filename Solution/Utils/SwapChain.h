@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 class Semaphore;
 
 //

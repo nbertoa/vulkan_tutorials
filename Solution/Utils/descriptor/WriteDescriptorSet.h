@@ -13,7 +13,7 @@
 // This is used by DescriptorSets
 //
 
-namespace vk {
+namespace vk2 {
 class WriteDescriptorSet {
 public:
     // * destDescriptorSet to update.

@@ -1,6 +1,6 @@
 #include "VertexInputState.h"
 
-namespace vk {
+namespace vk2 {
 VertexInputState::VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions,
                                    const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions) 
     : mBindingDescriptions(bindingDescriptions)

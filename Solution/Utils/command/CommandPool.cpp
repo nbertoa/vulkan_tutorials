@@ -6,7 +6,7 @@
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 CommandPool::CommandPool(const uint32_t queueFamilyIndex,
                          const VkCommandPoolCreateFlags flags) {
     VkCommandPoolCreateInfo createInfo = {};
@@ -36,5 +36,17 @@ VkCommandPool
 CommandPool::vkCommandPool() const {
     assert(mCommandPool != VK_NULL_HANDLE);
     return mCommandPool;
+}
+
+CommandBuffer
+CommandPool::createAndBeginOneTimeSubmitCommandBuffer() const {
+    assert(mCommandPool != VK_NULL_HANDLE);
+
+    CommandBuffer commandBuffer(*this,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+    return commandBuffer;
 }
 }

@@ -7,7 +7,7 @@
 
 #include "Image.h"
 
-namespace vk {
+namespace vk2 {
 ImageSystem::ImageByPath 
 ImageSystem::mImageByPath = {};
 

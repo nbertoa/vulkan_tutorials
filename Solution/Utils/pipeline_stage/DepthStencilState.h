@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineDepthStencilStateCreateInfo wrapper
 //
@@ -29,19 +29,7 @@ public:
     //
     // * stencilTestEnable controls whether stencil testing is enabled.
     //
-    // * front and back control the parameters of the stencil test:
-    //
-    //   - failOp specifying the action performed on samples that fail the stencil test.
-    //   - passOp specifying the action performed on samples that pass both the 
-    //     depth and stencil tests.
-    //   - depthFailOp specifying the action performed on samples that 
-    //     pass the stencil test and fail the depth test.
-    //   - compareOp specifying the comparison operator used in the stencil test.
-    //   - compareMask selects the bits of the unsigned integer stencil values 
-    //     participating in the stencil test.
-    //   - writeMask selects the bits of the unsigned integer stencil values 
-    //     updated by the stencil test in the stencil framebuffer attachment.
-    //   - reference value that is used in the unsigned stencil comparison.
+    // * front and back control the parameters of the stencil test
     //
     // * minDepthBounds and maxDepthBounds define the range of values used 
     //   in the depth bounds test.

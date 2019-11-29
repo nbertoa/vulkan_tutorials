@@ -1,6 +1,6 @@
 #include "DescriptorSetLayoutBinding.h"
 
-namespace vk {
+namespace vk2 {
 DescriptorSetLayoutBinding::DescriptorSetLayoutBinding(const uint32_t bindingNumber,
                                                        const VkDescriptorType descriptorType,
                                                        const uint32_t descriptorCount,

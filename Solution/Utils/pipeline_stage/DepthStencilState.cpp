@@ -1,6 +1,6 @@
 #include "DepthStencilState.h"
 
-namespace vk {
+namespace vk2 {
 DepthStencilState::DepthStencilState(const VkBool32 depthTestEnable,
                                      const VkBool32 depthWriteEnable,
                                      const VkCompareOp depthCompareOp,

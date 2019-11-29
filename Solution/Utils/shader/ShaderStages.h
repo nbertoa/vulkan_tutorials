@@ -4,17 +4,21 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 class ShaderModule;
 
 //
 // VkPipelineShaderStageCreateInfo vector wrapper
 //
-// Shader compilation is a multi-stage process in Vulkan. First, Vulkan does not support any
-// high-level shading language like GLSL or HLSL. 
-// Instead, Vulkan accepts an intermediate format called SPIR-V which any higher-level language can emit.
+// Shader compilation is a multi-stage process in Vulkan. 
+//
+// First, Vulkan does not support any high-level shading language like GLSL or HLSL. 
+//
+// Instead, Vulkan accepts an intermediate format called 
+// SPIR-V which any higher-level language can emit.
 //
 // A buffer filled with data in SPIR-V is used to create a ShaderModule.
+//
 // This object represents a piece of shader code, possibly in some partially compiled form, 
 // but it is not anything the GPU can execute yet.
 //

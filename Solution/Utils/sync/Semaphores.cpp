@@ -4,7 +4,7 @@
 
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 Semaphores::Semaphores(const uint32_t semaphoreCount) {
     assert(semaphoreCount > 0);
 

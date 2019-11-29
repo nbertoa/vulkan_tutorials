@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 RenderPass::RenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions,
                        const std::vector<SubpassDescription>& subpassDescriptions,
                        const std::vector<SubpassDependency>& subpassDependencies) {

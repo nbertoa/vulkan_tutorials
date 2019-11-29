@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 Fence::Fence(const VkFenceCreateFlags flags) {
 
     // - flags is a bitmask of VkFenceCreateFlagBits specifying the 

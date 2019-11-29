@@ -1,6 +1,6 @@
 #include "PosColorVertex.h"
 
-namespace vk {
+namespace vk2 {
 void
 PosColorVertex::vertexInputBindingDescriptions(std::vector<VkVertexInputBindingDescription>& descriptions) {
     descriptions.resize(1);

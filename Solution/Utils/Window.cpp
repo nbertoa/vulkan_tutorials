@@ -3,7 +3,7 @@
 #include "DebugUtils.h"
 #include "Instance.h"
 
-namespace vk {
+namespace vk2 {
 GLFWwindow* 
 Window::mWindow = nullptr;
 
@@ -158,8 +158,8 @@ Window::physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice)
 }
 
 bool
-Window::isPhysicalDeviceSupported(const VkPhysicalDevice physicalDevice,
-                                  const uint32_t queueFamilyIndex) {
+Window::isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice,
+                                                const uint32_t queueFamilyIndex) {
     assert(mSurface != VK_NULL_HANDLE);
     assert(physicalDevice != VK_NULL_HANDLE);
 

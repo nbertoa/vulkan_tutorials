@@ -1,6 +1,6 @@
 #include "AttachmentDescription.h"
 
-namespace vk {
+namespace vk2 {
 AttachmentDescription::AttachmentDescription(const VkFormat format,
                                              const VkAttachmentLoadOp colorAndDepthLoadOperation,
                                              const VkAttachmentStoreOp colorAndDepthStoreOperation,

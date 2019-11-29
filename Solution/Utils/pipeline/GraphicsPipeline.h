@@ -7,7 +7,7 @@
 
 #include "PipelineLayout.h"
 
-namespace vk {
+namespace vk2 {
 class DynamicState;
 class PipelineStates;
 class RenderPass;

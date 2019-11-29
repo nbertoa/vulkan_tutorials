@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 Semaphore::Semaphore() {
     VkSemaphoreCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

@@ -1,6 +1,6 @@
 #include "ColorBlendState.h"
 
-namespace vk {
+namespace vk2 {
 ColorBlendState::ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState,
                                  const VkBool32 logicOpEnable,
                                  const VkLogicOp logicalOperation) 

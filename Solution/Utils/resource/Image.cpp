@@ -5,10 +5,11 @@
 #include "ImageMemoryBarrier.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
+#include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 #include "../sync/Fence.h"
 
-namespace vk {
+namespace vk2 {
 Image::Image(const uint32_t imageWidth,
              const uint32_t imageHeight,
              const VkFormat format,
@@ -114,8 +115,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transferCommandPool);
+    CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
     VkBufferImageCopy bufferImageCopy = {};
     bufferImageCopy.bufferOffset = 0;
@@ -153,8 +153,7 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transitionCommandPool);
+    CommandBuffer commandBuffer = transitionCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
     VkAccessFlags destAccessType = 0;
     VkPipelineStageFlags destPipelineStages = 0;

@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace vk {
+namespace vk2 {
 #ifdef _DEBUG
 void vkChecker(const VkResult result) {
     std::string errorMsg;

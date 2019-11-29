@@ -1,6 +1,6 @@
 #include "ColorBlendAttachmentState.h"
 
-namespace vk {
+namespace vk2 {
 ColorBlendAttachmentState::ColorBlendAttachmentState(const VkBool32 blendEnable,
                                                      const VkColorComponentFlags colorWriteMask,
                                                      const VkBlendFactor srcColorBlendFactor,

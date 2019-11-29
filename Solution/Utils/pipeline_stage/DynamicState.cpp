@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace vk {
+namespace vk2 {
 DynamicState::DynamicState(const std::vector<VkDynamicState>& dynamicStates) 
     : mDynamicStates(dynamicStates)
 {

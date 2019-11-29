@@ -6,7 +6,7 @@
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 DeviceMemory::DeviceMemory(const VkMemoryRequirements& memoryRequirements,
                            const VkMemoryPropertyFlags memoryPropertyFlags) {
     VkMemoryAllocateInfo info = {};

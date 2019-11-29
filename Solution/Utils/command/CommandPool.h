@@ -3,35 +3,31 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+#include "CommandBuffer.h"
+
+namespace vk2 {
 class PhysicalDevice;
 
 //
 // VkCommandPool wrapper.
 //
-// CommandPool is a simple object that is used to allocate CommandBuffers.
-// It is connected to a specific Queue Family.
+// Command pools are opaque objects that command buffer memory is allocated from, 
+// and which allow the implementation to amortize the cost of 
+// resource creation across multiple command buffers.
 //
-// Command pools are opaque objects that command buffer 
-// memory is allocated from, and which allow the implementation 
-// to amortize the cost of resource creation across multiple 
-// command buffers.
+// Command pools are externally synchronized, meaning that a 
+// command pool must not be used concurrently in multiple threads.
 //
-// Command pools are application-synchronized, meaning that 
-// a command pool must not be used concurrently in multiple 
-// threads.
-// That includes use via recording command buffers allocated 
-// from the pool, as well as operations that allocate, free, 
-// and reset command buffers or the pool itself.
+// That includes use via recording commands on any command buffers allocated from the pool, 
+// as well as operations that allocate, free, and reset command buffers or the pool itself.
 //
 // You need the CommandPool to:
-// - Create CommandBuffers
+// - Allocate CommandBuffers through vkAllocateCommandBuffer
 //
 class CommandPool {
 public:
-
-    // * queueFamilyIndex designates a queue family. All command buffers allocated 
-    //   from this command pool must be submitted on queues from the same queue family.
+    // * queueFamilyIndex where all command buffers, allocated 
+    //   from this command pool, must be submitted on.
     //
     // * flags bitmask indicates usage behavior for the pool and 
     //   command buffers allocated from it (VK_COMMAND_POOL_CREATE_):
@@ -46,11 +42,16 @@ public:
     CommandPool(const CommandPool&) = delete;
     const CommandPool& operator=(const CommandPool&) = delete;
 
-    VkCommandPool 
+    VkCommandPool
     vkCommandPool() const;
 
+    // Returns a command buffer that already begun the recording
+    // with flag VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT.
+    CommandBuffer
+    createAndBeginOneTimeSubmitCommandBuffer() const;
+
 private:
-    VkCommandPool mCommandPool = VK_NULL_HANDLE;
+  VkCommandPool mCommandPool = VK_NULL_HANDLE;
 };
 }
 

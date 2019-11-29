@@ -10,61 +10,45 @@
 #include "../device/PhysicalDevice.h"
 #include "../sync/Fence.h"
 
-namespace vk {
-Buffer::Buffer(const VkDeviceSize size,
-               const VkBufferUsageFlags usageFlags,               
-               const VkMemoryPropertyFlags memoryPropertyFlags,
+namespace vk2 {
+Buffer::Buffer(const VkDeviceSize bufferSize,
+               const VkBufferUsageFlags bufferUsage,
+               const VkMemoryPropertyFlags deviceMemoryProperties,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
-    : mBuffer(createBuffer(size,
-                           usageFlags,
+    : mBuffer(createBuffer(bufferSize,
+                           bufferUsage,
                            sharingMode,
                            queueFamilyIndices))
-    , mSizeInBytes(size)
+    , mSizeInBytes(bufferSize)
     , mHasDeviceMemoryOwnership(true)
     , mDeviceMemory(new DeviceMemory(bufferMemoryRequirements(),
-                                     memoryPropertyFlags))
+                                     deviceMemoryProperties))
 {
     assert(mSizeInBytes > 0);
 
-    // - device is the logical device that owns the buffer and memory.
-    // - buffer to be attached to memory.
-    // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to be 
-    //   bound to the buffer.
-    //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
-    //   starting from memoryOffset bytes, will be bound to the specified buffer.
-    //   If the offset is non-zero, then it is required to be divisible by memory requirements
-    //   aligment field.
+    // Binds device memory to this buffer
     vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
                                  0));
 }
 
-Buffer::Buffer(const VkDeviceSize size,
-               const VkBufferUsageFlags usageFlags,               
+Buffer::Buffer(const VkDeviceSize bufferSize,
+               const VkBufferUsageFlags bufferUsage,
                const DeviceMemory& deviceMemory,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
-    : mBuffer(createBuffer(size,
-                           usageFlags,
+    : mBuffer(createBuffer(bufferSize,
+                           bufferUsage,
                            sharingMode,
                            queueFamilyIndices))
-    , mSizeInBytes(size)
+    , mSizeInBytes(bufferSize)
     , mHasDeviceMemoryOwnership(false)
     , mDeviceMemory(&deviceMemory) {
     assert(mSizeInBytes > 0);
 
-    // - device is the logical device that owns the buffer and memory.
-    // - buffer to be attached to memory.
-    // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to be 
-    //   bound to the buffer.
-    //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
-    //   starting from memoryOffset bytes, will be bound to the specified buffer.
-    //   If the offset is non-zero, then it is required to be divisible by memory requirements
-    //   aligment field.
+    // Binds device memory to this buffer
     vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
@@ -153,8 +137,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     Fence executionCompletedFence;
     executionCompletedFence.waitAndReset();
 
-    CommandBuffer commandBuffer = 
-        CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(transferCommandPool);
+    CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();

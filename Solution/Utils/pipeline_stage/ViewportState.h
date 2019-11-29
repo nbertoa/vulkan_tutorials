@@ -3,12 +3,14 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineViewportStateCreateInfo wrapper
 //
 // A viewport basically describes the region of the framebuffer that the output 
-// will be rendered to. This will almost always be(0, 0) to (window width, window height)
+// will be rendered to. 
+//
+// This will almost always be (0, 0) to (window width, window height)
 //
 // You need this class to:
 // - Create the GraphicsPipeline

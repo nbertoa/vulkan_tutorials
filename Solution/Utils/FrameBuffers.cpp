@@ -6,7 +6,7 @@
 #include "device/LogicalDevice.h"
 #include "render_pass/RenderPass.h"
 
-namespace vk {
+namespace vk2 {
 FrameBuffers::FrameBuffers(const RenderPass& renderPass,
                            const std::vector<VkImageView> imageViews,
                            const uint32_t imageWidth,

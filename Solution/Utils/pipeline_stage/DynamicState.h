@@ -4,14 +4,15 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineDynamicStateCreateInfo  wrapper
 //
-// A dynamic pipeline state is a state that can be changed by a command buffer command 
-// during the execution of a command buffer. Advance notification of what states 
-// are dynamic during command buffer execution may be useful for a driver as it sets up 
-// the GPU for command buffer execution.
+// A dynamic pipeline state is a state that can be changed by 
+// a command buffer command during the execution of a command buffer. 
+//
+// Advance notification of what states are dynamic during command buffer 
+// execution may be useful for a driver as it sets up the GPU for command buffer execution.
 //
 // You need this class to:
 // - Create the GraphicsPipeline

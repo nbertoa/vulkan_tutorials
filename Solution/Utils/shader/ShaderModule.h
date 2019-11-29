@@ -5,24 +5,39 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkShaderModule wrapper.
 //
-// Shader compilation is a multi-stage process in Vulkan. First, Vulkan does not support any
-// high-level shading language like GLSL or HLSL. 
-// Instead, Vulkan accepts an intermediate format called SPIR-V which any higher-level language can emit.
+// A shader specifies programmable operations that execute for each vertex, 
+// control point, tessellated vertex, primitive, fragment, or workgroup in the 
+// corresponding stage(s) of the graphics and compute pipelines.
 //
-// A buffer filled with data in SPIR-V is used to create a ShaderModule.
-// This object represents a piece of shader code, possibly in some partially compiled form, 
-// but it is not anything the GPU can execute yet.
+// Shaders can read from input variables, and read from and write to output variables.
 //
-// Only when creating the Pipeline for each shader stage you are going to use
-// (vertex, tessellation control, tessellation evaluation, geometry, fragment, or compute) 
-// do you specify the ShaderModule plus the name of the entry point function (like “main”).
+// Input and output variables can be used to transfer data between shader stages, 
+// or to allow the shader to interact with values that exist in the execution environment.
 //
-// VkShaderModule is just a thin wrapper around the shader bytecode that 
-// we have previously loaded from a file and the functions defined in it.
+// Similarly, the execution environment provides constants that describe capabilities.
+//
+// Shader variables are associated with execution environment-provided inputs 
+// and outputs using built-in decorations in the shader.
+//
+// Shaders are selected from a shader module by specifying an entry point as 
+// part of pipeline creation.The stages of a pipeline can
+// use shaders that come from different modules.
+//
+// Shader modules contain shader codeand one or more entry points.
+//
+// Shaders are selected from a shader module by specifying an entry point as part of 
+// pipeline creation.
+//
+// The stages of a pipeline can use shaders that come from different modules.
+//
+// The shader code defining a shader module must be in the SPIR-V format
+//
+// Once a shader module has been created, any entry points it contains 
+// can be used in pipeline shader stages.
 //
 // You need the ShaderModule to:
 // - Create the Pipeline (calling pipelineShaderStageCreateInfo())

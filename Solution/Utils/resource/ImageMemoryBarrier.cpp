@@ -2,7 +2,7 @@
 
 #include "Image.h"
 
-namespace vk {
+namespace vk2 {
 ImageMemoryBarrier::ImageMemoryBarrier(const Image& image,
                                        const VkImageLayout newImageLayout,
                                        const VkAccessFlags sourceAccessType,

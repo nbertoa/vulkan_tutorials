@@ -8,7 +8,7 @@
 #include "../render_pass/RenderPass.h"
 #include "../shader/ShaderStages.h"
 
-namespace vk {
+namespace vk2 {
 GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
                                    const PipelineStates& pipelineStates,
                                    const ShaderStages& shaderStages,

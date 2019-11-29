@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace vk {
+namespace vk2 {
 class CommandPool;
 class Image;
 

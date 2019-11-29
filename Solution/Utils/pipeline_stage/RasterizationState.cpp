@@ -1,6 +1,6 @@
 #include "RasterizationState.h"
 
-namespace vk {
+namespace vk2 {
 RasterizationState::RasterizationState(const VkBool32 depthClampEnable,
                                        const VkBool32 rasterizerDiscardEnable,
                                        const VkPolygonMode polygonMode,

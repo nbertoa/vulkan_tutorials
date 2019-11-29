@@ -11,9 +11,10 @@
 #include "VertexInputState.h"
 #include "ViewportState.h"
 
-namespace vk {
+namespace vk2 {
 //
 // This class is used to initialize all the needed pipeline states.
+//
 // If you do not initialize a pipeline state (with its specific setter)
 // then you will get nullptr (with its specific getter).
 //

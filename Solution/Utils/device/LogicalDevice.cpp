@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "PhysicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 VkDevice 
 LogicalDevice::mLogicalDevice = VK_NULL_HANDLE;
 
@@ -22,7 +22,7 @@ void
 LogicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames) {
     assert(mLogicalDevice == VK_NULL_HANDLE);
 
-    mLogicalDevice = createLogicalDevice(deviceExtensionNames);
+    initLogicalDevice(deviceExtensionNames);
 
     initQueues();
 }
@@ -59,21 +59,13 @@ LogicalDevice::presentationQueue() {
     return mPresentationQueue;
 }
 
-VkDevice
-LogicalDevice::createLogicalDevice(const std::vector<const char*>& deviceExtensionNames) {
-    VkDevice logicalDevice;
+void
+LogicalDevice::initLogicalDevice(const std::vector<const char*>& deviceExtensionNames) {
+    assert(mLogicalDevice == VK_NULL_HANDLE);
 
     const std::vector<VkDeviceQueueCreateInfo> createInfoVector = 
         physicalDeviceQueuesCreateInfo();
     
-    // VkDeviceCreateInfo:
-    // - queueCreateInfoCount
-    // - pQueueCreateInfos describes the queues that are requested to be created 
-    //   along with the logical device.
-    // - enabledExtensionCount is the number of device extensions to enable.
-    // - ppEnabledExtensionNames to enable for the created device.
-    // - pEnabledFeatures is an optional VkPhysicalDeviceFeatures structure containing 
-    //   boolean indicators of all the features to be enabled.
     VkPhysicalDeviceFeatures physicalDeviceFeatures = {};
     physicalDeviceFeatures.samplerAnisotropy = VK_TRUE;
 
@@ -81,8 +73,6 @@ LogicalDevice::createLogicalDevice(const std::vector<const char*>& deviceExtensi
     physicalDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;    
     physicalDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(createInfoVector.size());
     physicalDeviceCreateInfo.pQueueCreateInfos = createInfoVector.data();
-    physicalDeviceCreateInfo.enabledLayerCount = 0; // deprecated and ignored
-    physicalDeviceCreateInfo.ppEnabledLayerNames = nullptr; // deprecated and ignored
     physicalDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensionNames.size());
     physicalDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensionNames.data();
     physicalDeviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
@@ -90,10 +80,7 @@ LogicalDevice::createLogicalDevice(const std::vector<const char*>& deviceExtensi
     vkChecker(vkCreateDevice(PhysicalDevice::vkPhysicalDevice(),
                              &physicalDeviceCreateInfo, 
                              nullptr, 
-                             &logicalDevice));
-    assert(logicalDevice != VK_NULL_HANDLE);
-
-    return logicalDevice;
+                             &mLogicalDevice));
 }
 
 std::vector<VkDeviceQueueCreateInfo>

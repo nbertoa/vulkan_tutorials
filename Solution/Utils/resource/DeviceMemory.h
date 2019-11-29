@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkDeviceMemory wrapper.
 //

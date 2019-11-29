@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace vk {
+namespace vk2 {
 Buffers::Buffers(const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,

@@ -6,7 +6,7 @@
 
 #include "../descriptor/DescriptorSetLayout.h"
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineLayout wrapper.
 //

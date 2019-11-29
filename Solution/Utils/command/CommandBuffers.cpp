@@ -9,7 +9,7 @@
 #include "../pipeline/GraphicsPipeline.h"
 #include "../render_pass/RenderPass.h"
 
-namespace vk {
+namespace vk2 {
 CommandBuffers::CommandBuffers(const CommandPool& commandPool,
                                const uint32_t bufferCount,
                                const VkCommandBufferLevel level)

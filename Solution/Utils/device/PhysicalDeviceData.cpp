@@ -7,7 +7,7 @@
 #include "../DebugUtils.h"
 #include "../Window.h"
 
-namespace vk {
+namespace vk2 {
 PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
                                        const std::vector<const char*>& deviceExtensions)
     : mPhysicalDevice(physicalDevice)
@@ -129,8 +129,8 @@ PhysicalDeviceData::isPresentationSupported() {
     mPresentationSupportQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0) {
-            if (Window::isPhysicalDeviceSupported(mPhysicalDevice,
-                                                  mPresentationSupportQueueFamilyIndex)) {
+            if (Window::isPresentationSupportedByPhysicalDevice(mPhysicalDevice,
+                                                                mPresentationSupportQueueFamilyIndex)) {
                 return true;
             }
         }

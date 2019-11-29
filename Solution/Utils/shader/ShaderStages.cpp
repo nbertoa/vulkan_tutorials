@@ -2,7 +2,7 @@
 
 #include "ShaderModule.h"
 
-namespace vk {
+namespace vk2 {
 void
 ShaderStages::addShaderModule(const ShaderModule& shaderModule) {
     VkPipelineShaderStageCreateInfo createInfo = {};

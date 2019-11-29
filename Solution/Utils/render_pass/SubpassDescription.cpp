@@ -1,6 +1,6 @@
 #include "SubpassDescription.h"
 
-namespace vk {
+namespace vk2 {
 SubpassDescription::SubpassDescription(const VkPipelineBindPoint pipelineBindPoint,
                                        const std::vector<VkAttachmentReference>& colorAttachmentReferences,
                                        const std::vector<VkAttachmentReference>& inputAttachmentReferences,

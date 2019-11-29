@@ -1,6 +1,6 @@
 #include "MultisampleState.h"
 
-namespace vk {
+namespace vk2 {
 MultisampleState::MultisampleState(const VkSampleCountFlagBits rasterizationSamples,
                                    const VkBool32 sampleShadingEnable,
                                    const float minSampleShading,

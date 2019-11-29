@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 DescriptorSetLayout::DescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings) {
     assert(descriptorSetLayoutBindings.empty() == false);
 

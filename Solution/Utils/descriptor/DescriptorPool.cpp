@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 DescriptorPool::DescriptorPool(const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes,
                                const uint32_t maxDescriptorSetCount,
                                const VkDescriptorPoolCreateFlags flags) {

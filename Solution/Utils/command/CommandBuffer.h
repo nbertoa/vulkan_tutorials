@@ -4,7 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 class Buffer;
 class CommandPool;
 class Fence;
@@ -18,6 +18,9 @@ class Semaphore;
 //
 // VkCommandBuffer wrapper.
 //
+// Command buffers are objects used to record commands 
+// which can be subsequently submitted to a device queue for execution.  
+//
 // Command buffers are objects used to specify the order, type and parameters of tasks 
 // that should be performed when the CommandBuffer is submitted to a queue 
 // and is finally consumed by the LogicalDevice.
@@ -30,8 +33,33 @@ class Semaphore;
 //   primary command buffers, and which are not directly
 //   submitted to queues.
 //
-// CommandBuffer is allocated from a specific CommandPool.
-// You can call various functions on a command buffer, all of them starting with vkCmd.
+// Each command buffer is always in one of the following states:
+// - Initial: When a command buffer is allocated, it is in the initial state.
+//   Some commands are able to reset a command buffer, or a set of command buffers, 
+//   back to this state from any of the executable, recording or invalid state.
+//   Command buffers in the initial state can only be moved to the recording state, or freed.
+//
+// - Recording: vkBeginCommandBuffer changes the state of a command buffer 
+//   from the initial state to the recording state. 
+//   Once a command buffer is in the recording state, 
+//   vkCmd* commands can be used to record to the command buffer.
+//
+// - Executable: vkEndCommandBuffer ends the recording of a command buffer, 
+//   moves it from the recording state to the executable state.
+//   Executable command buffers can be submitted, reset, or recorded to another command buffer.
+//
+// - Pending: Queue submission of a command buffer changes the state of a command buffer 
+//   from the executable state to the pending state. Whilst in the pending state, 
+//   applications must not attempt to modify the command buffer in any way-as the device may 
+//   be processing the commands recorded to it.
+//   Once execution of a command buffer completes, the command buffer reverts back 
+//   to either the executable state, or the invalid state if it was recorded 
+//   with VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT.
+//   A synchronization command should be used to detect when this occurs.
+//
+// - Invalid: Some operations, such as modifying or deleting a resource that was used 
+//   in a command recorded to a command buffer, will transition the state of that command buffer 
+//   into the invalid state.Command buffers in the invalid state can only be reset or freed.
 //
 // You need the CommandBuffer to:
 // - Submit it to the Queue using vkQueueSubmit
@@ -55,16 +83,7 @@ public:
     CommandBuffer(const VkCommandBuffer commandBuffer);
     CommandBuffer(CommandBuffer&& other) noexcept;
     CommandBuffer(const CommandBuffer&) = delete;
-    const CommandBuffer& operator=(const CommandBuffer&) = delete;
-
-    // Returns a constructor that begun the recording
-    // with flag VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT.
-    //
-    // * commandPool from which the command buffer is allocated.
-    //   The global logical device owns the command pool.
-    static CommandBuffer
-    createAndBeginOneTimeSubmitCommandBuffer(const CommandPool& commandPool);
-
+    const CommandBuffer& operator=(const CommandBuffer&) = delete;    
 
     // * usageFlags bitmask specifying usage behavior 
     //   for the command buffer (VK_COMMAND_BUFFER_USAGE_):
@@ -106,6 +125,7 @@ public:
     // * pipelineLayout used to program the bindings
     //
     // * descriptorSet to write to.
+    //
     // Notes:
     // Once bound, a descriptor set affects rendering of subsequent graphics commands 
     // in the command buffer until a different set is bound to the same set number, 
@@ -200,15 +220,15 @@ public:
                 const uint32_t vertexOffset = 0,
                 const uint32_t firstInstance = 0);
 
-    // * waitSemaphore to wait before the command buffers for this batch begin execution.
+    // * waitSemaphore to wait before this command buffer begin execution.
     //   If it is provided, then it defines a semaphore wait operation.
     //
-    // * signalSemaphore that will be signaled when the command buffers 
-    //   for this batch have completed execution.
+    // * signalSemaphore that will be signaled when 
+    //   this command buffer has completed execution.
     //   If it is provided, then it defines a semaphore signal operation.
     //
-    // * executionCompletedFence to be signaled once all submitted 
-    //   command buffers have completed execution. 
+    // * executionCompletedFence to be signaled once this
+    //   command buffer has completed execution. 
     //
     // * waitStageFlags is a pipeline stage at which 
     //   the waitSemaphore wait will occur (VK_PIPELINE_STAGE_):

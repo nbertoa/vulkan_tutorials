@@ -13,7 +13,7 @@
 #include "../sync/Fence.h"
 #include "../sync/Semaphore.h"
 
-namespace vk {
+namespace vk2 {
 CommandBuffer::CommandBuffer(const CommandPool& commandPool,
                              const VkCommandBufferLevel level) {
     VkCommandBufferAllocateInfo info = {};
@@ -37,16 +37,6 @@ CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
     : mCommandBuffer(other.mCommandBuffer)
 {
     other.mCommandBuffer = VK_NULL_HANDLE;
-}
-
-CommandBuffer
-CommandBuffer::createAndBeginOneTimeSubmitCommandBuffer(const CommandPool& commandPool) {
-    CommandBuffer commandBuffer(commandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-    return commandBuffer;
 }
 
 void

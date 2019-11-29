@@ -1,6 +1,6 @@
 #include "PipelineStates.h"
 
-namespace vk {
+namespace vk2 {
 void
 PipelineStates::setColorBlendState(const ColorBlendState& colorBlendState) {
     mUseColorBlendState = true;

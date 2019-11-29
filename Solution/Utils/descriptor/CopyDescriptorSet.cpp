@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace vk {
+namespace vk2 {
 CopyDescriptorSet::CopyDescriptorSet(const VkDescriptorSet sourceDescriptorSet,
                                      const uint32_t sourceBinding,
                                      const uint32_t sourceArrayElement,

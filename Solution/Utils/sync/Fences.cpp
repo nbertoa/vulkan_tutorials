@@ -4,7 +4,7 @@
 
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 Fences::Fences(const uint32_t fenceCount,
                const VkFenceCreateFlags flags) {
     assert(fenceCount > 0);

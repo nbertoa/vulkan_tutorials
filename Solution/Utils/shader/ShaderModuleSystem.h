@@ -5,16 +5,10 @@
 
 #include "ShaderModule.h"
 
-namespace vk {
+namespace vk2 {
 
 class ShaderModuleSystem {
 public:
-    ShaderModuleSystem() = delete;
-    ~ShaderModuleSystem() = delete;
-    ShaderModuleSystem(ShaderModuleSystem&&) noexcept = delete;
-    ShaderModuleSystem(const ShaderModuleSystem&) = delete;
-    const ShaderModuleSystem& operator=(const ShaderModuleSystem&) = delete;
-
     static const ShaderModule& 
     getOrLoadShaderModule(const std::string& shaderByteCodePath,
                           const VkShaderStageFlagBits shaderStageFlag,
@@ -27,6 +21,12 @@ public:
     clear();
 
 private:
+    ShaderModuleSystem() = delete;
+    ~ShaderModuleSystem() = delete;
+    ShaderModuleSystem(ShaderModuleSystem&&) noexcept = delete;
+    ShaderModuleSystem(const ShaderModuleSystem&) = delete;
+    const ShaderModuleSystem& operator=(const ShaderModuleSystem&) = delete;
+
     using ShaderModuleByPath = std::unordered_map<std::string, const ShaderModule*>;
     static ShaderModuleByPath mShaderModuleByPath;
 };

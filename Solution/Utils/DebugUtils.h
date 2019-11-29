@@ -6,7 +6,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-namespace vk {
+namespace vk2 {
 #ifdef _DEBUG
 inline void glfwChecker(const int returnCode) {
     assert(returnCode == GLFW_TRUE);

@@ -6,7 +6,7 @@
 
 #include "Buffer.h"
 
-namespace vk {
+namespace vk2 {
 class Buffers {
 public:
     // Read Buffer constructor to understand this.

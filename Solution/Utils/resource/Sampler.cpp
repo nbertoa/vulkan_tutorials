@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 Sampler::Sampler(const VkFilter magnificationFilter,
                  const VkFilter minificationFilter,
                  const VkSamplerMipmapMode mipmapFilter,

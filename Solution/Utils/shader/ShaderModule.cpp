@@ -6,7 +6,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
                            const VkShaderStageFlagBits shaderStageFlag,
                            const char* entryPointName)

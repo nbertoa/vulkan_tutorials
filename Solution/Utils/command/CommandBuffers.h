@@ -6,7 +6,7 @@
 
 #include "CommandBuffer.h"
 
-namespace vk {
+namespace vk2 {
 class CommandPool;
 class GraphicsPipeline;
 class RenderPass;

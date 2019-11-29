@@ -3,12 +3,13 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineInputAssemblyStateCreateInfo wrapper
 //
 // The VkPipelineInputAssemblyStateCreateInfo struct describes two things: 
-// what kind of geometry will be drawn from the vertices and if primitive restart should be enabled.
+// - What kind of geometry will be drawn from the vertices
+// - If primitive restart should be enabled.
 //
 // You need this class to:
 // - Create the GraphicsPipeline

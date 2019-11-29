@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace vk {
+namespace vk2 {
 WriteDescriptorSet::WriteDescriptorSet(const std::vector<VkDescriptorImageInfo>& imageInfos,
                                        const VkDescriptorSet destDescriptorSet,
                                        const VkDescriptorType descriptorType,

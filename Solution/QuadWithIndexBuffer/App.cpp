@@ -15,7 +15,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
-using namespace vk;
+using namespace vk2;
 
 App::App() {
     mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsSupportQueueFamilyIndex()));

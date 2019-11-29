@@ -6,7 +6,7 @@
 
 #include "Fence.h"
 
-namespace vk {
+namespace vk2 {
 class Fences {
 public:
     // Read Fence to understand this

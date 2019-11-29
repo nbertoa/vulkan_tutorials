@@ -3,18 +3,23 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkPipelineMultisampleStateCreateInfo wrapper
 //
 // The VkPipelineMultisampleStateCreateInfo struct configures multisampling, 
 // which is one of the ways to perform anti-aliasing.
+//
 // It works by combining the fragment shader results of multiple polygons that 
 // rasterize to the same pixel.
-// This mainly occurs along edges, which is also where the most noticeable aliasing artifacts occur.
+//
+// This mainly occurs along edges, which is also where 
+// the most noticeable aliasing artifacts occur.
+//
 // Because it does not need to run the fragment shader multiple times if only 
 // one polygon maps to a pixel, it is significantly less expensive than simply rendering to a 
 // higher resolution and then downscaling. 
+//
 // Enabling it requires enabling a GPU feature.
 //
 // You need this class to:

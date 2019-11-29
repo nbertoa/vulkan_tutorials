@@ -15,7 +15,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
-using namespace vk;
+using namespace vk2;
 
 App::App() {
     mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsSupportQueueFamilyIndex()));
@@ -52,7 +52,7 @@ App::initBuffers() {
     assert(mGpuVertexBuffer == nullptr);
 
     // The vertex position is in screen space.
-    std::vector<vk::PosColorVertex> screenSpaceVertices
+    std::vector<vk2::PosColorVertex> screenSpaceVertices
     {
         {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
         {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},

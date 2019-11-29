@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 PipelineLayout::PipelineLayout(const DescriptorSetLayout* const descriptorSetLayout,
                                const VkPushConstantRange* const pushConstantRange) {
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts;

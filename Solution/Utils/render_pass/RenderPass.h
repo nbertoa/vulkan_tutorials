@@ -8,7 +8,7 @@
 #include "SubpassDependency.h"
 #include "SubpassDescription.h"
 
-namespace vk {
+namespace vk2 {
 //
 // VkRenderPass wrapper.
 //

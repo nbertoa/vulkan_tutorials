@@ -6,7 +6,7 @@
 
 #include "Semaphore.h"
 
-namespace vk {
+namespace vk2 {
 class Semaphores {
 public:
     Semaphores(const uint32_t semaphoreCount);

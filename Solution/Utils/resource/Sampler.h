@@ -3,12 +3,13 @@
 
 #include <vulkan/vulkan.h>
 
-namespace vk {
+namespace vk2 {
 //
 // VkSampler wrapper
 //
-// Image sampler is used to read image data and apply
-// filtering and other transformations for the shader.
+// VkSampler objects represent the state of an image sampler which 
+// is used by the implementation to read image dataand apply filtering
+// and other transformations for the shader.
 //
 // You need the Sampler to:
 // - Update descriptors sets through vkUpdateDescriptorSets
@@ -18,8 +19,6 @@ namespace vk {
 //
 class Sampler {
 public:
-    // * flags describing additional parameters of the sampler      
-    //
     // * magnificationFilter to apply to lookups (VK_FILTER_)    
     // * minificationFilter to apply to lookups (VK_FILTER_)
     //
@@ -35,9 +34,8 @@ public:
     //
     //   - REPEAT, MIRRORED_REPEAT, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRROR_CLAMP_TO_EDGE
     //
-    // * mipmapLodBias is the bias to be added to mipmap LOD (level-of-detail) calculation and bias provided
-    //   by image sampling functions in SPIR-V,
-    //
+    // * mipmapLodBias is the bias to be added to mipmap LOD (level-of-detail) 
+    //   calculation and bias provided by image sampling functions in SPIR-V
     //
     // * anisotropyEnable is True to enable anisotropic filtering.
     //

@@ -6,7 +6,7 @@
 
 #include "DescriptorSetLayoutBinding.h"
 
-namespace vk {
+namespace vk2 {
 //
 // VkDescriptorSetLayout wrapper.
 //

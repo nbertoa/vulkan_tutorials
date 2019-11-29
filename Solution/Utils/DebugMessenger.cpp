@@ -20,7 +20,7 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
 }
 }
 
-namespace vk {
+namespace vk2 {
 DebugMessenger::DebugMessenger() {
     // The function to create a debug utils messenger is an extension function, 
     // so it is not automatically loaded. We need to look up its address

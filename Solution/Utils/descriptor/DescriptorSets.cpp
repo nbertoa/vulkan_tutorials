@@ -9,7 +9,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk {
+namespace vk2 {
 
 DescriptorSets::DescriptorSets(const DescriptorPool& descriptorPool,
                                const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts)

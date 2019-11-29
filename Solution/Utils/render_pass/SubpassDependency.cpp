@@ -1,6 +1,6 @@
 #include "SubpassDependency.h"
 
-namespace vk {
+namespace vk2 {
 SubpassDependency::SubpassDependency(const uint32_t sourceSubpassIndex,
                                      const uint32_t destSubpassIndex,
                                      const VkPipelineStageFlags sourceStageMask,

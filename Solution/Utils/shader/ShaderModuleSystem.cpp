@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace vk {
+namespace vk2 {
 ShaderModuleSystem::ShaderModuleByPath 
 ShaderModuleSystem::mShaderModuleByPath = {};
 

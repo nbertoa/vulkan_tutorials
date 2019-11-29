@@ -1,6 +1,6 @@
 #include "ViewportState.h"
 
-namespace vk {
+namespace vk2 {
 ViewportState::ViewportState(const VkViewport& viewport,
                              const VkRect2D& scissorRectangle) 
     : mViewport(viewport)

@@ -6,76 +6,54 @@
 
 #include "PhysicalDeviceData.h"
 
-namespace vk {
+namespace vk2 {
 //
 // VkPhysicalDevice wrapper.
 //
+// Once Vulkan is initialized, devices and queues are the 
+// primary objects used to interact with a Vulkan implementation.
+//
 // Vulkan separates the concept of physical and logical devices.
+//
 // A physical device usually represents a single complete implementation 
 // of Vulkan (excluding instance-level functionality) available to the host, 
 // of which there are a finite number.
+//
 // A logical device represents an instance of that implementation with its 
 // own state and resources independent of other logical devices.
 //
-// PhysicalDevice represents a specific Vulkan-compatible device, like a graphics card. 
-//
-// PhysicalDevice can enumerate all available types of Queue Families. 
-// The graphics queue is the main one, but you may also have additional ones 
-// that support only Compute or Transfer.
-//
-// PhysicalDevice can also enumerate Memory Heaps and Memory Types inside them. 
-// A Memory Heap represents a specific pool of RAM. 
-// It may abstract your system RAM on the motherboard or a certain memory space in video RAM 
-// on a dedicated graphics card, or any other host- or device-specific memory the implementation 
-// wants to expose. 
-// You must specify the Memory Type when allocating memory. 
-// It holds specific requirements for the memory blob like visible to the host, 
-// coherent (between CPU and GPU) and cached. 
-// There may be an arbitrary combination of these, depending on the device driver.
-//
-// You enumerate these from Instance and you can then query them for their vendorID, 
-// deviceID, and supported features, as well as other properties and limits.
-//
+// A Vulkan application will first query for all physical devices in a system.   
+// 
 // You need the PhysicalDevice to:
-// - Get the memory heap from where you can get the memory type (indices uint32_t)
-//   which is needed for DeviceMemory creation.
-// - Get queue family (indices uint32_t) which are needed for Queues creation 
-//   in LogicalDevice. (read below)
+// - Get the memory heap for DeviceMemory creation:
+//   Device memory is explicitly managed by the application.
+//   
+//   Each device may advertise one or more heaps, representing different areas of memory.
+//   
+//   Memory heaps are either device local or host local, but are always visible to the device.
+//   
+//   On other architectures, there may only be a single heap that can be used for any purpose.
+//
+// - Get queue family index which are needed for Queues creation in LogicalDevice:  
+//   Queue is an object representing a queue of commands to be executed on the device.
+//
+//   The set of queues supported by a device is partitioned into families 
+//   (idenfitied by its index).
+//
+//   Each family supports one or more types of functionality and 
+//   may contain multiple queues with similar characteristics.
+//
+//   Queues within a single family are considered compatible with one another, 
+//   and work produced for a family of queues can be executed on any queue within that family.
+//
+//   Specification defines four types of functionality that queues may support: 
+//   * graphics, compute, transfer, and sparse memory management.
 //
 // To create/use the PhysicalDevice you need:
 // - Instance
 //
-// To understand queue families, you first have to understand queues.
-// A queue is something you submit command buffers to, and command buffers submitted 
-// to a queue are executed in order[*1] relative to each other.
-// Command buffers submitted to different queues are unordered relative to each other unless 
-// you explicitly synchronize them with VkSemaphore. You can only submit work to a queue 
-// from one thread at a time, but different threads can submit work to different 
-// queues simultaneously.
-//
-// Each queue can only perform certain kinds of operations:
-// - Graphics queues can run graphics pipelines started by vkCmdDraw* commands.
-// - Compute queues can run compute pipelines started by vkCmdDispatch* .
-// - Transfer queues can perform transfer(copy) operations from vkCmdCopy*.
-// - Sparse binding queues can change the binding of sparse resources to memory with 
-//   vkQueueBindSparse
-// (note this is an operation submitted directly to a queue, not a command in a command buffer).
-//
-// Some queues can perform multiple kinds of operations. Every command that can be submitted 
-// to a queue have a "Command Properties" table that lists what queue types can execute the command.
-// A queue family just describes a set of queues with identical properties.
-//
-// [*1] Oversimplifying a bit. They start in order, but are allowed to proceed independently 
-// after that and complete out of order. 
-// Independent progress of different queues is not guaranteed though.
-//
 class PhysicalDevice {
 public:
-    PhysicalDevice() = delete;
-    PhysicalDevice(PhysicalDevice&& other) = delete;
-    PhysicalDevice(const PhysicalDevice&) = delete;
-    const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
-
     static void
     initialize(const std::vector<const char*>& deviceExtensionNames);
 
@@ -98,18 +76,10 @@ public:
     // suitable. If there is not a suitable memory property, then it returns
     // std::numeric_limits<uint32_t>::max()
     //
-    // PhysicalDevice can also enumerate Memory Heaps and Memory Types inside them. 
-    // A Memory Heap represents a specific pool of RAM. 
-    // It may abstract your system RAM on the motherboard or a certain memory space in video RAM 
-    // on a dedicated graphics card, or any other host- or device-specific memory 
-    // the implementation wants to expose. 
-    // You must specify the Memory Type when allocating memory. 
-    // It holds specific requirements for the memory blob like visible to the host, 
-    // coherent (between CPU and GPU) and cached. 
-    // There may be an arbitrary combination of these, depending on the device driver.
-    //
     // * memoryTypeFilter is to specify the bit field of memory types
-    //   that are suitable.
+    //   that are suitable. It holds specific requirements for 
+    //   the memory blob like visible to the host, coherent (between CPU and GPU) and cached.
+    //   There may be an arbitrary combination of these, depending on the device driver.
     // 
     // * memoryPropertyFlags is used to check if there is a memory type in the physical device
     //   that is suitable for the buffer that also 
@@ -125,7 +95,12 @@ public:
     static bool
     isValidMemoryTypeIndex(const uint32_t memoryTypeIndex);
 
-private:                            
+private:           
+    PhysicalDevice() = delete;
+    PhysicalDevice(PhysicalDevice&& other) = delete;
+    PhysicalDevice(const PhysicalDevice&) = delete;
+    const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+
     static VkPhysicalDevice mPhysicalDevice;
 
     static uint32_t mGraphicsSupportQueueFamilyIndex;
