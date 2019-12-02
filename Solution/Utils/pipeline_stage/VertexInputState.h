@@ -2,7 +2,7 @@
 #define UTILS_PIPELINE_STAGE_VERTEX_INPUT_STATE
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

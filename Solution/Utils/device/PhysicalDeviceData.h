@@ -2,7 +2,7 @@
 #define UTILS_DEVICE_PHYSICAL_DEVICE_DATA
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //
@@ -22,11 +22,11 @@ public:
     // * deviceExtensions contains the extensions that the device must support.
     //   Extensions may define new Vulkan commands, structures, and enumerants.
     //   Extensions may extend or change the behavior of the Vulkan API.
-    PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
+    PhysicalDeviceData(const vk::PhysicalDevice physicalDevice,
                        const std::vector<const char*>& deviceExtensions);
 
-    VkPhysicalDevice
-    vkPhysicalDevice() const;
+    vk::PhysicalDevice
+    device() const;
 
     uint32_t
     graphicsQueueFamilyIndex() const;
@@ -41,14 +41,6 @@ public:
     isSupported() const;
 
 private:
-    // Queue family properties like number of queues in the family
-    // and capabilities (grapphics, compute, etc)
-    void
-    queueFamilyProperties(std::vector<VkQueueFamilyProperties>& queueFamilyProperties);
-
-    void
-    extensionProperties(std::vector<VkExtensionProperties>& extensionProperties);
-
     bool
     isGraphicQueueFamilySupported();
 
@@ -67,8 +59,8 @@ private:
     bool
     areDeviceFeaturesSupported() const;
     
-    VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
-    uint32_t mgraphicsQueueFamilyIndex = 0;
+    vk::PhysicalDevice mPhysicalDevice;
+    uint32_t mGraphicsQueueFamilyIndex = 0;
     uint32_t mTransferQueueFamilyIndex = 0;
     uint32_t mPresentationQueueFamilyIndex = 0;
     bool mIsSupported = false;

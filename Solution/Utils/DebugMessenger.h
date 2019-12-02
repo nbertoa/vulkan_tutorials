@@ -1,7 +1,7 @@
 #ifndef UTILS_DEBUG_MESSENGER
 #define UTILS_DEBUG_MESSENGER
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

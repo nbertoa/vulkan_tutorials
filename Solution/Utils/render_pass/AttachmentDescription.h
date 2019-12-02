@@ -1,7 +1,7 @@
 #ifndef UTILS_RENDER_PASS_ATTACHMENT_DESCRIPTION
 #define UTILS_RENDER_PASS_ATTACHMENT_DESCRIPTION
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

@@ -1,7 +1,7 @@
 #ifndef UTILS_RENDER_PASS_SUBPASS_DEPENDENCY
 #define UTILS_RENDER_PASS_SUBPASS_DEPENDENCY
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

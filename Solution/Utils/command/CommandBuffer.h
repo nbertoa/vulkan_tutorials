@@ -2,7 +2,7 @@
 #define UTILS_COMMAND_COMMAND_BUFFER
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {

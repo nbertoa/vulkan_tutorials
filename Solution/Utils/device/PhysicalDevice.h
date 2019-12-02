@@ -2,13 +2,13 @@
 #define UTILS_DEVICE_PHYSICAL_DEVICE
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "PhysicalDeviceData.h"
 
 namespace vk2 {
 //
-// VkPhysicalDevice wrapper.
+// PhysicalDevice wrapper.
 //
 // Once Vulkan is initialized, devices and queues are the 
 // primary objects used to interact with a Vulkan implementation.
@@ -61,7 +61,7 @@ public:
     finalize();
 
     static VkPhysicalDevice 
-    vkPhysicalDevice();
+    device();
 
     static uint32_t
     graphicsQueueFamilyIndex();
@@ -101,7 +101,7 @@ private:
     PhysicalDevice(const PhysicalDevice&) = delete;
     const PhysicalDevice& operator=(const PhysicalDevice&) = delete;
 
-    static VkPhysicalDevice mPhysicalDevice;
+    static vk::PhysicalDevice mPhysicalDevice;
 
     static uint32_t mGraphicsQueueFamilyIndex;
     static uint32_t mTransferQueueFamilyIndex;

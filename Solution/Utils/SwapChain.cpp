@@ -307,13 +307,13 @@ SwapChain::initViewportAndScissorRect() {
 void
 SwapChain::initSwapChain() {
     const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
-        Window::physicalDeviceSurfaceCapabilities(PhysicalDevice::vkPhysicalDevice());
+        Window::physicalDeviceSurfaceCapabilities(PhysicalDevice::device());
     mExtent = swapChainExtent(surfaceCapabilities, 
                               Window::width(),
                               Window::height());
 
     const VkSurfaceFormatKHR surfaceFormat =
-        bestFitSurfaceFormat(Window::physicalDeviceSurfaceFormats(PhysicalDevice::vkPhysicalDevice()));
+        bestFitSurfaceFormat(Window::physicalDeviceSurfaceFormats(PhysicalDevice::device()));
     mImageFormat = surfaceFormat.format;
 
     // VkSwapchainCreateInfoKHR:
@@ -404,7 +404,7 @@ SwapChain::initSwapChain() {
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode =
         bestFitPresentMode(
-            Window::physicalDeviceSurfacePresentModes(PhysicalDevice::vkPhysicalDevice())
+            Window::physicalDeviceSurfacePresentModes(PhysicalDevice::device())
         );
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;

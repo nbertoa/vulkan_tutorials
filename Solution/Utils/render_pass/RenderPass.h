@@ -2,7 +2,7 @@
 #define UTILS_RENDER_PASS_RENDER_PASS
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "AttachmentDescription.h"
 #include "SubpassDependency.h"

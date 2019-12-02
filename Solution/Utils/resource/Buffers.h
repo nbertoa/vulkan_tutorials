@@ -2,7 +2,7 @@
 #define UTILS_RESOURCE_BUFFERS
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "Buffer.h"
 

@@ -2,7 +2,7 @@
 #define UTILS_PIPELINE_PIPELINE_LAYOUT
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "../descriptor/DescriptorSetLayout.h"
 

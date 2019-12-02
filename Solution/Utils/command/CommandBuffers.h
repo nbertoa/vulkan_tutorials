@@ -2,7 +2,7 @@
 #define UTILS_COMMAND_COMMAND_BUFFERS
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "CommandBuffer.h"
 

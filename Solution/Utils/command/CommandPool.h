@@ -1,7 +1,7 @@
 #ifndef UTILS_COMMAND_COMMAND_POOL 
 #define UTILS_COMMAND_COMMAND_POOL
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "CommandBuffer.h"
 

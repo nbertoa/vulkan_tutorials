@@ -1,7 +1,7 @@
 #ifndef UTILS_PIPELINE_STAGE_RASTERIZATION_STATE
 #define UTILS_PIPELINE_STAGE_RASTERIZATION_STATE
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

@@ -2,7 +2,7 @@
 #define UTILS_DESCRIPTOR_DESCRIPTOR_SET_LAYOUT
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "DescriptorSetLayoutBinding.h"
 

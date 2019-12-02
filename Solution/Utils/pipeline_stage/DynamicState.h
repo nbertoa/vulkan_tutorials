@@ -2,7 +2,7 @@
 #define UTILS_PIPELINE_STAGE_DYNAMIC_STATE
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

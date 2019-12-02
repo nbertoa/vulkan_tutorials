@@ -2,7 +2,7 @@
 #define UTILS_DESCRIPTOR_WRITE_DESCRIPTOR_SET
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 //
 // VkWriteDescriptorSet wrapper

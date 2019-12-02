@@ -6,8 +6,8 @@
 #include "../Instance.h"
 
 namespace vk2 {
-VkPhysicalDevice 
-PhysicalDevice::mPhysicalDevice = VK_NULL_HANDLE;
+vk::PhysicalDevice 
+PhysicalDevice::mPhysicalDevice;
 
 uint32_t 
 PhysicalDevice::mGraphicsQueueFamilyIndex = 0;
@@ -32,17 +32,16 @@ PhysicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames)
     // From all the suitable physical devices, we get the first that is a discrete GPU.
     // Otherwise, we get the first device in the list.
     for (const PhysicalDeviceData& deviceData : candidatePhysicalDevices) {
-        VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(deviceData.vkPhysicalDevice(),
-                                      &deviceProperties);
+        const vk::PhysicalDeviceProperties properties =
+            deviceData.device().getProperties();
 
-        if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+        if (properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu) {
             chosenDeviceData = &deviceData;
             break;
         }
     }
 
-    mPhysicalDevice = chosenDeviceData->vkPhysicalDevice();
+    mPhysicalDevice = chosenDeviceData->device();
     mGraphicsQueueFamilyIndex = chosenDeviceData->graphicsQueueFamilyIndex();
     mTransferQueueFamilyIndex = chosenDeviceData->transferQueueFamilyIndex();
     mPresentationQueueFamilyIndex = chosenDeviceData->presentationQueueFamilyIndex();
@@ -54,7 +53,7 @@ PhysicalDevice::finalize() {
 }
 
 VkPhysicalDevice 
-PhysicalDevice::vkPhysicalDevice() {
+PhysicalDevice::device() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mPhysicalDevice;
 }

@@ -8,7 +8,7 @@
 #include "../Window.h"
 
 namespace vk2 {
-PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
+PhysicalDeviceData::PhysicalDeviceData(const vk::PhysicalDevice physicalDevice,
                                        const std::vector<const char*>& deviceExtensions)
     : mPhysicalDevice(physicalDevice)
 {
@@ -22,8 +22,8 @@ PhysicalDeviceData::PhysicalDeviceData(const VkPhysicalDevice physicalDevice,
                    areDeviceFeaturesSupported();
 }
 
-VkPhysicalDevice
-PhysicalDeviceData::vkPhysicalDevice() const {
+vk::PhysicalDevice
+PhysicalDeviceData::device() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mPhysicalDevice;
 }
@@ -31,7 +31,7 @@ PhysicalDeviceData::vkPhysicalDevice() const {
 uint32_t
 PhysicalDeviceData::graphicsQueueFamilyIndex() const {
     assert(mIsSupported);
-    return mgraphicsQueueFamilyIndex;
+    return mGraphicsQueueFamilyIndex;
 }
 
 uint32_t
@@ -51,51 +51,21 @@ PhysicalDeviceData::isSupported() const {
     return mIsSupported;
 }
 
-void
-PhysicalDeviceData::queueFamilyProperties(std::vector<VkQueueFamilyProperties>& queueFamilyProperties) {
-    assert(mPhysicalDevice != VK_NULL_HANDLE);
-
-    uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice,
-                                             &queueFamilyCount,
-                                             nullptr);
-
-    queueFamilyProperties.resize(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice,
-                                             &queueFamilyCount,
-                                             queueFamilyProperties.data());
-}
-
-void
-PhysicalDeviceData::extensionProperties(std::vector<VkExtensionProperties>& extensionProperties) {
-    assert(mPhysicalDevice != VK_NULL_HANDLE);
-
-    uint32_t extensionCount;
-    vkChecker(vkEnumerateDeviceExtensionProperties(mPhysicalDevice,
-                                                   nullptr,
-                                                   &extensionCount,
-                                                   nullptr));
-
-    extensionProperties.resize(extensionCount);
-    vkChecker(vkEnumerateDeviceExtensionProperties(mPhysicalDevice,
-                                                   nullptr,
-                                                   &extensionCount,
-                                                   extensionProperties.data()));
-}
-
 bool
 PhysicalDeviceData::isGraphicQueueFamilySupported() {
-    std::vector<VkQueueFamilyProperties> properties;
-    queueFamilyProperties(properties);
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
 
-    mgraphicsQueueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
+    const std::vector<vk::QueueFamilyProperties> properties =
+        mPhysicalDevice.getQueueFamilyProperties();
+
+    mGraphicsQueueFamilyIndex = 0;
+    for (const vk::QueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0 &&
-            queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            queueFamilyProperty.queueFlags & vk::QueueFlagBits::eGraphics) {
             return true;
         }
 
-        ++mgraphicsQueueFamilyIndex;
+        ++mGraphicsQueueFamilyIndex;
     }
 
     return false;
@@ -103,13 +73,15 @@ PhysicalDeviceData::isGraphicQueueFamilySupported() {
 
 bool
 PhysicalDeviceData::isTransferQueueFamilySupported() {
-    std::vector<VkQueueFamilyProperties> properties;
-    queueFamilyProperties(properties);
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+
+    const std::vector<vk::QueueFamilyProperties> properties =
+        mPhysicalDevice.getQueueFamilyProperties();
 
     mTransferQueueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
+    for (const vk::QueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0 &&
-            queueFamilyProperty.queueFlags & VK_QUEUE_TRANSFER_BIT) {
+            queueFamilyProperty.queueFlags & vk::QueueFlagBits::eTransfer) {
             return true;
         }
 
@@ -123,8 +95,8 @@ bool
 PhysicalDeviceData::isPresentationSupported() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
 
-    std::vector<VkQueueFamilyProperties> properties;
-    queueFamilyProperties(properties);
+    const std::vector<vk::QueueFamilyProperties> properties =
+        mPhysicalDevice.getQueueFamilyProperties();
 
     mPresentationQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
@@ -143,13 +115,15 @@ PhysicalDeviceData::isPresentationSupported() {
 
 bool
 PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>& deviceExtensions) {
-    std::vector<VkExtensionProperties> properties;
-    extensionProperties(properties);
+    assert(mPhysicalDevice != VK_NULL_HANDLE);
+    
+    const std::vector<vk::ExtensionProperties> properties =
+        mPhysicalDevice.enumerateDeviceExtensionProperties();
 
     std::unordered_set<std::string> requiredExtensions(deviceExtensions.begin(),
                                                        deviceExtensions.end());
 
-    for (const VkExtensionProperties& extensionProperty : properties) {
+    for (const vk::ExtensionProperties& extensionProperty : properties) {
         requiredExtensions.erase(extensionProperty.extensionName);
     }
 
@@ -172,11 +146,7 @@ PhysicalDeviceData::isSwapChainSupported() const {
 bool
 PhysicalDeviceData::areDeviceFeaturesSupported() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-   
-    VkPhysicalDeviceFeatures supportedFeatures;
-    vkGetPhysicalDeviceFeatures(mPhysicalDevice,
-                                &supportedFeatures);
 
-    return supportedFeatures.samplerAnisotropy;
+    return mPhysicalDevice.getFeatures().samplerAnisotropy;
 }
 }

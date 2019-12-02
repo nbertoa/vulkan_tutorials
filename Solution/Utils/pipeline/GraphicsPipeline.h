@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "PipelineLayout.h"
 

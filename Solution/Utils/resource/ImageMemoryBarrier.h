@@ -1,7 +1,7 @@
 #ifndef UTILS_RESOURCE_IMAGE_MEMORY_BARRIER
 #define UTILS_RESOURCE_IMAGE_MEMORY_BARRIER
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Image;

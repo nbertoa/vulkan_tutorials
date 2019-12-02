@@ -2,7 +2,7 @@
 #define UTILS_INSTANCE
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "device/PhysicalDeviceData.h"
 

@@ -1,7 +1,7 @@
 #ifndef UTILS_RESOURCE_DEVICE_MEMORY 
 #define UTILS_RESOURCE_DEVICE_MEMORY
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

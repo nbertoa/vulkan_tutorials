@@ -2,7 +2,7 @@
 #define UTILS_FRAME_BUFFERS
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class RenderPass;

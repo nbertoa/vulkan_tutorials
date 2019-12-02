@@ -2,7 +2,7 @@
 #define UTILS_DESCRIPTOR_COPY_DESCRIPTOR_SET
 
 #include <vector>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //

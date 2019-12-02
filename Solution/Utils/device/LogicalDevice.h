@@ -2,14 +2,13 @@
 #define UTILS_DEVICE_LOGICAL_DEVICE
 
 #include <vector>
-#include <vulkan/vulkan.h>
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class PhysicalDevice;
 
 //
-// VkDevice wrapper.
+// Device wrapper.
 //
 // Once Vulkan is initialized, devices and queues are the 
 // primary objects used to interact with a Vulkan implementation.
@@ -77,11 +76,13 @@ private:
     initLogicalDevice(const std::vector<const char*>& deviceExtensionNames);
 
     // Get the necessary structures to create the queues
+    //
+    // queuePriority is passed by reference on purpose
+    // because DeviceQueueCreateInfo receives a pointer
+    // to a queue priority.
     static std::vector<vk::DeviceQueueCreateInfo> 
-    physicalDeviceQueuesCreateInfo(const float& queuePriority);
+    queuesCreateInfo(const float& queuePriority);
    
-    // - physicalDevice is used to get the queue family indices
-    //   used to create the queues
     static void
     initQueues();
 
