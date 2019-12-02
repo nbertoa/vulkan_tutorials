@@ -8,7 +8,7 @@ namespace vk2 {
 class ShaderModule;
 
 //
-// VkPipelineShaderStageCreateInfo vector wrapper
+// PipelineShaderStageCreateInfo vector wrapper
 //
 // Shader compilation is a multi-stage process in Vulkan. 
 //
@@ -35,11 +35,11 @@ public:
     void 
     addShaderModule(const ShaderModule& shaderModule);
 
-    const std::vector<VkPipelineShaderStageCreateInfo>&
-    vkStages() const;
+    const std::vector<vk::PipelineShaderStageCreateInfo>&
+    stages() const;
 
 private:
-    std::vector<VkPipelineShaderStageCreateInfo> mCreateInfoVec;
+    std::vector<vk::PipelineShaderStageCreateInfo> mCreateInfoVec;
 };
 }
 

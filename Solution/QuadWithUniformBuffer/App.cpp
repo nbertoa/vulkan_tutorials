@@ -253,11 +253,11 @@ void
 App::initShaderStages(ShaderStages& shaderStages) {
     shaderStages.addShaderModule(
         ShaderModuleSystem::getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/vert.spv",
-                                                  VK_SHADER_STAGE_VERTEX_BIT)
+                                                  vk::ShaderStageFlagBits::eVertex)
     );
     shaderStages.addShaderModule(
         ShaderModuleSystem::getOrLoadShaderModule("../../QuadWithUniformBuffer/resources/shaders/frag.spv",
-                                                  VK_SHADER_STAGE_FRAGMENT_BIT)
+                                                  vk::ShaderStageFlagBits::eFragment)
     );
 }
 

@@ -8,7 +8,7 @@
 
 namespace vk2 {
 ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
-                           const VkShaderStageFlagBits shaderStageFlag,
+                           const vk::ShaderStageFlagBits shaderStageFlag,
                            const char* entryPointName)
     : mShaderStageFlag(shaderStageFlag)
     , mShaderByteCodePath(shaderByteCodePath)
@@ -19,51 +19,37 @@ ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
 
     const std::vector<char> shaderByteCode = readFile(mShaderByteCodePath);
 
-    VkShaderModuleCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = shaderByteCode.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderByteCode.data());
+    vk::ShaderModuleCreateInfo createInfo = 
+    {
+        vk::ShaderModuleCreateFlags(),
+        shaderByteCode.size(),
+        reinterpret_cast<const uint32_t*>(shaderByteCode.data())
+    };
 
-    vkChecker(vkCreateShaderModule(LogicalDevice::device(),
-                                   &createInfo,
-                                   nullptr,
-                                   &mShaderModule));
-}
-
-ShaderModule::~ShaderModule() {
-    vkDestroyShaderModule(LogicalDevice::device(), 
-                          mShaderModule, 
-                          nullptr);
-}
-ShaderModule::ShaderModule(ShaderModule&& other) noexcept
-    : mShaderStageFlag(other.mShaderStageFlag)
-    , mShaderByteCodePath(std::move(other.mShaderByteCodePath))
-    , mShaderModule(other.mShaderModule)
-{
-    other.mShaderModule = VK_NULL_HANDLE;
+    mShaderModule = LogicalDevice::device().createShaderModuleUnique(createInfo);
 }
 
 const std::string& 
 ShaderModule::shaderByteCodePath() const {
-    assert(mShaderModule != VK_NULL_HANDLE);
+    assert(mShaderModule.get() != VK_NULL_HANDLE);
     return mShaderByteCodePath;
 }
 
-VkShaderStageFlagBits 
+vk::ShaderStageFlagBits 
 ShaderModule::shaderStageFlag() const {
-    assert(mShaderModule != VK_NULL_HANDLE);
+    assert(mShaderModule.get() != VK_NULL_HANDLE);
     return mShaderStageFlag;
 }
 
-VkShaderModule
-ShaderModule::vkShaderModule() const {
-    assert(mShaderModule != VK_NULL_HANDLE);
-    return mShaderModule;
+vk::ShaderModule
+ShaderModule::module() const {
+    assert(mShaderModule.get() != VK_NULL_HANDLE);
+    return mShaderModule.get();
 }
 
 const char*
 ShaderModule::entryPointName() const {
-    assert(mShaderModule != VK_NULL_HANDLE);
+    assert(mShaderModule.get() != VK_NULL_HANDLE);
     return mEntryPointName;
 }
 

@@ -18,8 +18,9 @@ GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
 {
     VkGraphicsPipelineCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    createInfo.stageCount = static_cast<uint32_t>(shaderStages.vkStages().size());
-    createInfo.pStages = shaderStages.vkStages().empty() ? nullptr : shaderStages.vkStages().data();
+    createInfo.stageCount = static_cast<uint32_t>(shaderStages.stages().size());
+    createInfo.pStages = 
+        shaderStages.stages().empty() ? nullptr : ( VkPipelineShaderStageCreateInfo*)shaderStages.stages().data();
     createInfo.pVertexInputState = 
         pipelineStates.vertexInputState() != nullptr ? 
         &pipelineStates.vertexInputState()->vkState() : 

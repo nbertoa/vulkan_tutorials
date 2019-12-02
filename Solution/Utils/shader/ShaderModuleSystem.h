@@ -11,10 +11,10 @@ class ShaderModuleSystem {
 public:
     static const ShaderModule& 
     getOrLoadShaderModule(const std::string& shaderByteCodePath,
-                          const VkShaderStageFlagBits shaderStageFlag,
+                          const vk::ShaderStageFlagBits shaderStageFlag,
                           const char* entryPointName = "main");
 
-    static void 
+    static void
     eraseShaderModule(const std::string& shaderByteCodePath);
 
     static void 

@@ -9,7 +9,7 @@ ShaderModuleSystem::mShaderModuleByPath = {};
 
 const ShaderModule&
 ShaderModuleSystem::getOrLoadShaderModule(const std::string& shaderByteCodePath,
-                                          const VkShaderStageFlagBits shaderStageFlag,
+                                          const vk::ShaderStageFlagBits shaderStageFlag,
                                           const char* entryPointName) {
     const ShaderModule* shaderModule = nullptr;
 

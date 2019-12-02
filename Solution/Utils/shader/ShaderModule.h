@@ -7,7 +7,7 @@
 
 namespace vk2 {
 //
-// VkShaderModule wrapper.
+// ShaderModule wrapper.
 //
 // A shader specifies programmable operations that execute for each vertex, 
 // control point, tessellated vertex, primitive, fragment, or workgroup in the 
@@ -47,30 +47,23 @@ public:
     // * shaderByteCodePath to the file that represents the piece of shader code, 
     //   in SPIR-V format.
     //
-    // * shaderStageFlag specifies the pipeline stage S(VK_SHADER_STAGE_):
-    //
-    //   - VERTEX_BIT, TESSELLATION_CONTROL_BIT, TESSELLATION_EVALUATION_BIT, GEOMETRY_BIT,
-    //     FRAGMENT_BIT, COMPUTE_BIT, TASK_BIT_NV, MESH_BIT_NV, ALL_GRAPHICS, ALL, 
-    //     RAYGEN_BIT_NV, ANY_HIT_BIT_NV, CLOSEST_HIT_BIT_NV, MISS_BIT_NV, INTERSECTION_BIT_NV, 
-    //     CALLABLE_BIT_NV
+    // * shaderStageFlag specifies the pipeline stages
     //
     // Notes: The global logical devices creates the shader module.
     ShaderModule(const std::string& shaderByteCodePath,
-                 const VkShaderStageFlagBits shaderStageFlag,
+                 const vk::ShaderStageFlagBits shaderStageFlag,
                  const char* entryPointName = "main");
-    ~ShaderModule();
-    ShaderModule(ShaderModule&& other) noexcept;
     ShaderModule(const ShaderModule&) = delete;
     const ShaderModule& operator=(const ShaderModule&) = delete;
 
     const std::string& 
     shaderByteCodePath() const;
 
-    VkShaderStageFlagBits 
+    vk::ShaderStageFlagBits 
     shaderStageFlag() const;
 
-    VkShaderModule
-    vkShaderModule() const;
+    vk::ShaderModule
+    module() const;
 
     const char* 
     entryPointName() const;
@@ -79,9 +72,9 @@ private:
     static std::vector<char> 
     readFile(const std::string& shaderByteCodePath);
 
-    VkShaderStageFlagBits mShaderStageFlag;
+    vk::ShaderStageFlagBits mShaderStageFlag;
     std::string mShaderByteCodePath;
-    VkShaderModule mShaderModule = VK_NULL_HANDLE;
+    vk::UniqueShaderModule mShaderModule;
     const char* mEntryPointName = nullptr;
 };
 }
