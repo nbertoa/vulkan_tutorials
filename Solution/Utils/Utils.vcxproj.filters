@@ -72,9 +72,6 @@
     <ClCompile Include="resource\DeviceMemory.cpp">
       <Filter>resource</Filter>
     </ClCompile>
-    <ClCompile Include="sync\Fence.cpp">
-      <Filter>sync</Filter>
-    </ClCompile>
     <ClCompile Include="sync\Fences.cpp">
       <Filter>sync</Filter>
     </ClCompile>
@@ -213,9 +210,6 @@
     </ClInclude>
     <ClInclude Include="resource\DeviceMemory.h">
       <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\Fence.h">
-      <Filter>sync</Filter>
     </ClInclude>
     <ClInclude Include="sync\Fences.h">
       <Filter>sync</Filter>

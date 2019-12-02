@@ -187,7 +187,6 @@
     <ClCompile Include="shader\ShaderModuleSystem.cpp" />
     <ClCompile Include="shader\ShaderStages.cpp" />
     <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="sync\Fence.cpp" />
     <ClCompile Include="sync\Fences.cpp" />
     <ClCompile Include="sync\Semaphores.cpp" />
     <ClCompile Include="SystemInitializer.cpp" />
@@ -240,7 +239,6 @@
     <ClInclude Include="shader\ShaderModuleSystem.h" />
     <ClInclude Include="shader\ShaderStages.h" />
     <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="sync\Fence.h" />
     <ClInclude Include="sync\Fences.h" />
     <ClInclude Include="sync\Semaphores.h" />
     <ClInclude Include="SystemInitializer.h" />

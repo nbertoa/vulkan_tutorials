@@ -206,8 +206,12 @@ void
 App::submitCommandBufferAndPresent() {
     assert(mCommandBuffers != nullptr);
 
-    const Fence& fence = mFences->nextAvailableFence();
-    fence.waitAndReset();
+    const vk::Fence& fence = mFences->nextAvailableFence();
+    vk::Device device(LogicalDevice::vkDevice());
+    vkChecker(device.waitForFences({fence},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
+    device.resetFences({fence});
 
     vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
     vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();

@@ -7,7 +7,6 @@
 #include "../command/CommandBuffer.h"
 #include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
-#include "../sync/Fence.h"
 
 namespace vk2 {
 Image::Image(const uint32_t imageWidth,
@@ -112,8 +111,12 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    Fence executionCompletedFence;
-    executionCompletedFence.waitAndReset();
+    vk::Device device(LogicalDevice::vkDevice());
+    vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
+    device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
@@ -136,10 +139,12 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
-                         executionCompletedFence,
+                         fence.get(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT);
 
-    executionCompletedFence.wait();
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
 }
 
 void
@@ -150,8 +155,12 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
 
     // Fence to be signaled once
     // the transition operation is complete. 
-    Fence executionCompletedFence;
-    executionCompletedFence.waitAndReset();
+    vk::Device device(LogicalDevice::vkDevice());
+    vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
+    device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer = transitionCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
@@ -202,10 +211,12 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
-                         executionCompletedFence,
+                         fence.get(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT);
 
-    executionCompletedFence.wait();
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
 
     mLastLayout = newImageLayout;
     mLastAccessType = destAccessType;

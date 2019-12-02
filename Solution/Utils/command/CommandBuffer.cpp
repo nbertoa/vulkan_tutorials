@@ -10,7 +10,6 @@
 #include "../resource/Buffer.h"
 #include "../resource/Image.h"
 #include "../resource/ImageMemoryBarrier.h"
-#include "../sync/Fence.h"
 
 namespace vk2 {
 CommandBuffer::CommandBuffer(const CommandPool& commandPool,
@@ -211,7 +210,7 @@ void
 CommandBuffer::submit(const VkQueue queue, 
                       const vk::Semaphore* waitSemaphore,
                       const vk::Semaphore* signalSemaphore,
-                      const Fence& executionCompletedFence,
+                      const vk::Fence& executionCompletedFence,
                       const VkPipelineStageFlags waitStageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(queue != VK_NULL_HANDLE);
@@ -240,9 +239,10 @@ CommandBuffer::submit(const VkQueue queue,
     info.signalSemaphoreCount = signalSemaphore != nullptr ? 1 : 0;
     info.pSignalSemaphores = signalSemaphore != nullptr ? (VkSemaphore*)signalSemaphore : nullptr;
 
-    vkChecker(vkQueueSubmit(queue,
+    vk::Queue queueToSubmit(queue);
+    vkChecker(vkQueueSubmit(queueToSubmit,
                             1,
                             &info,
-                            executionCompletedFence.vkFence()));
+                            executionCompletedFence));
 }
 }

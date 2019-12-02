@@ -6,13 +6,14 @@
 
 namespace vk2 {
 Fences::Fences(const uint32_t fenceCount,
-               const VkFenceCreateFlags flags) {
+               const vk::FenceCreateFlagBits flags) {
     assert(fenceCount > 0);
+
+    vk::Device device(LogicalDevice::vkDevice());
 
     mFences.reserve(fenceCount);
     for (uint32_t i = 0; i < fenceCount; ++i) {
-        Fence fence(flags);
-        mFences.emplace_back(std::move(fence));
+        mFences.emplace_back(device.createFenceUnique({flags}));
     }
 }
 
@@ -23,19 +24,19 @@ Fences::Fences(Fences&& other) noexcept
 
 }
 
-Fence&
+vk::Fence&
 Fences::nextAvailableFence() {
     assert(mFences.empty() == false);
 
     mCurrentFence = (mCurrentFence + 1) % static_cast<uint32_t>(mFences.size());
-    Fence& fence = mFences[mCurrentFence];    
+    vk::UniqueFence& fence = mFences[mCurrentFence];    
 
-    return fence;
+    return fence.get();
 }
 
-Fence& 
+vk::Fence& 
 Fences::currentFence() {
     assert(mCurrentFence < mFences.size());
-    return mFences[mCurrentFence];
+    return mFences[mCurrentFence].get();
 }
 }

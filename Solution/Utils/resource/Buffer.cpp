@@ -8,7 +8,6 @@
 #include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
-#include "../sync/Fence.h"
 
 namespace vk2 {
 Buffer::Buffer(const VkDeviceSize bufferSize,
@@ -134,8 +133,12 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    Fence executionCompletedFence;
-    executionCompletedFence.waitAndReset();
+    vk::Device device(LogicalDevice::vkDevice());
+    vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
+    device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
 
@@ -150,10 +153,12 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     commandBuffer.submit(LogicalDevice::transferQueue(),
                          nullptr,
                          nullptr,
-                         executionCompletedFence,
+                         fence.get(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT);
 
-    executionCompletedFence.wait();
+    vkChecker(device.waitForFences({fence.get()},
+                                   VK_TRUE,
+                                   std::numeric_limits<uint64_t>::max()));
 }
 
 void

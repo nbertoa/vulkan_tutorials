@@ -246,7 +246,7 @@ public:
     submit(const VkQueue queue,
            const vk::Semaphore* waitSemaphore,
            const vk::Semaphore* signalSemaphore,
-           const Fence& executionCompletedFence,
+           const vk::Fence& executionCompletedFence,
            const VkPipelineStageFlags waitStageFlags);
 
 private:

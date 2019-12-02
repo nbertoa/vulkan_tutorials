@@ -3,25 +3,24 @@
 
 #include <limits>
 #include <vector>
-
-#include "Fence.h"
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Fences {
 public:
     // Read Fence to understand this
     Fences(const uint32_t fenceCount,
-           const VkFenceCreateFlags flags = VK_FENCE_CREATE_SIGNALED_BIT);
+           const vk::FenceCreateFlagBits flags = vk::FenceCreateFlagBits::eSignaled);
     Fences(Fences&& other) noexcept;
                
-    Fence& 
+    vk::Fence& 
     nextAvailableFence();
 
-    Fence& 
+    vk::Fence& 
     currentFence();
 
 private:
-    std::vector<Fence> mFences;
+    std::vector<vk::UniqueFence> mFences;
     uint32_t mCurrentFence = std::numeric_limits<uint32_t>::max();
 };
 }
