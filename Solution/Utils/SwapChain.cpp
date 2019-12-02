@@ -20,12 +20,12 @@ SwapChain::~SwapChain() {
 
     for (const VkImageView view : mSwapChainImageViews) {
         assert(view != VK_NULL_HANDLE);
-        vkDestroyImageView(LogicalDevice::vkDevice(),
+        vkDestroyImageView(LogicalDevice::device(),
                            view,
                            nullptr);
     }
 
-    vkDestroySwapchainKHR(LogicalDevice::vkDevice(),
+    vkDestroySwapchainKHR(LogicalDevice::device(),
                           mSwapChain, 
                           nullptr);
 }
@@ -56,7 +56,7 @@ SwapChain::acquireNextImage(const vk::Semaphore& semaphore) {
     // - fence that will become signaled when the presentation engine
     //   has released ownership of the image.
     // - Image index of the next image to use.
-    vkChecker(vkAcquireNextImageKHR(LogicalDevice::vkDevice(),
+    vkChecker(vkAcquireNextImageKHR(LogicalDevice::device(),
                                     mSwapChain,
                                     std::numeric_limits<uint64_t>::max(),
                                     semaphore,
@@ -240,12 +240,12 @@ SwapChain::initImagesAndViews() {
 
     // Images
     uint32_t swapChainImageCount;
-    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::vkDevice(),
+    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::device(),
                                       mSwapChain,
                                       &swapChainImageCount,
                                       nullptr));
     mSwapChainImages.resize(swapChainImageCount);
-    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::vkDevice(),
+    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::device(),
                                       mSwapChain,
                                       &swapChainImageCount,
                                       mSwapChainImages.data()));
@@ -278,7 +278,7 @@ SwapChain::initImagesAndViews() {
     mSwapChainImageViews.resize(swapChainImageCount);
     for (uint32_t i = 0; i < swapChainImageCount; ++i) {
         createInfo.image = mSwapChainImages[i];
-        vkChecker(vkCreateImageView(LogicalDevice::vkDevice(),
+        vkChecker(vkCreateImageView(LogicalDevice::device(),
                                     &createInfo,
                                     nullptr,
                                     &mSwapChainImageViews[i]));
@@ -409,9 +409,9 @@ SwapChain::initSwapChain() {
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    const uint32_t graphicsQueueFamilyIndex = PhysicalDevice::graphicsSupportQueueFamilyIndex();
-    const uint32_t presentationQueueFamilyIndex = PhysicalDevice::presentationSupportQueueFamilyIndex();
-    const uint32_t transferQueueFamilyIndex = PhysicalDevice::transferSupportQueueFamilyIndex();
+    const uint32_t graphicsQueueFamilyIndex = PhysicalDevice::graphicsQueueFamilyIndex();
+    const uint32_t presentationQueueFamilyIndex = PhysicalDevice::presentationQueueFamilyIndex();
+    const uint32_t transferQueueFamilyIndex = PhysicalDevice::transferQueueFamilyIndex();
 
     std::vector<uint32_t> queueFamilyIndices;
     if (graphicsQueueFamilyIndex == presentationQueueFamilyIndex) {
@@ -452,7 +452,7 @@ SwapChain::initSwapChain() {
         createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
     }
 
-    vkChecker(vkCreateSwapchainKHR(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateSwapchainKHR(LogicalDevice::device(),
                                    &createInfo,
                                    nullptr,
                                    &mSwapChain));

@@ -29,13 +29,13 @@ public:
     vkPhysicalDevice() const;
 
     uint32_t
-    graphicsSupportQueueFamilyIndex() const;
+    graphicsQueueFamilyIndex() const;
 
     uint32_t
-    transferSupportQueueFamilyIndex() const;
+    transferQueueFamilyIndex() const;
 
     uint32_t
-    presentationSupportQueueFamilyIndex() const;
+    presentationQueueFamilyIndex() const;
 
     bool
     isSupported() const;
@@ -68,9 +68,9 @@ private:
     areDeviceFeaturesSupported() const;
     
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
-    uint32_t mGraphicsSupportQueueFamilyIndex = 0;
-    uint32_t mTransferSupportQueueFamilyIndex = 0;
-    uint32_t mPresentationSupportQueueFamilyIndex = 0;
+    uint32_t mgraphicsQueueFamilyIndex = 0;
+    uint32_t mTransferQueueFamilyIndex = 0;
+    uint32_t mPresentationQueueFamilyIndex = 0;
     bool mIsSupported = false;
 };
 }

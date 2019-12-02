@@ -49,14 +49,14 @@ Image::Image(const uint32_t imageWidth,
     //   starting from memoryOffset bytes, will be bound to the specified buffer.
     //   If the offset is non-zero, then it is required to be divisible by memory requirements
     //   aligment field.
-    vkChecker(vkBindImageMemory(LogicalDevice::vkDevice(),
+    vkChecker(vkBindImageMemory(LogicalDevice::device(),
                                 mImage,
                                 mDeviceMemory->vkDeviceMemory(),
                                 0));
 }
 
 Image::~Image() {
-    vkDestroyImage(LogicalDevice::vkDevice(),
+    vkDestroyImage(LogicalDevice::device(),
                    mImage,
                    nullptr);
 
@@ -111,7 +111,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
     vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,
@@ -155,7 +155,7 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
 
     // Fence to be signaled once
     // the transition operation is complete. 
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
     vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,
@@ -228,7 +228,7 @@ Image::imageMemoryRequirements() const {
     assert(mImage != VK_NULL_HANDLE);
 
     VkMemoryRequirements memoryRequirements;
-    vkGetImageMemoryRequirements(LogicalDevice::vkDevice(),
+    vkGetImageMemoryRequirements(LogicalDevice::device(),
                                  mImage,
                                  &memoryRequirements);
 
@@ -265,7 +265,7 @@ Image::createImage(const VkFormat format,
         queueFamilyIndices.data();
 
     VkImage image;
-    vkChecker(vkCreateImage(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateImage(LogicalDevice::device(),
                             &createInfo,
                             nullptr,
                             &image));

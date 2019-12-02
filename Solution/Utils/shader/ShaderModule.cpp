@@ -24,14 +24,14 @@ ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
     createInfo.codeSize = shaderByteCode.size();
     createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderByteCode.data());
 
-    vkChecker(vkCreateShaderModule(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateShaderModule(LogicalDevice::device(),
                                    &createInfo,
                                    nullptr,
                                    &mShaderModule));
 }
 
 ShaderModule::~ShaderModule() {
-    vkDestroyShaderModule(LogicalDevice::vkDevice(), 
+    vkDestroyShaderModule(LogicalDevice::device(), 
                           mShaderModule, 
                           nullptr);
 }

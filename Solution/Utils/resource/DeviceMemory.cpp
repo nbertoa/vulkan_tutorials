@@ -15,14 +15,14 @@ DeviceMemory::DeviceMemory(const VkMemoryRequirements& memoryRequirements,
     info.memoryTypeIndex = PhysicalDevice::memoryTypeIndex(memoryRequirements.memoryTypeBits,
                                                                            memoryPropertyFlags);
     assert(PhysicalDevice::isValidMemoryTypeIndex(info.memoryTypeIndex));
-    vkChecker(vkAllocateMemory(LogicalDevice::vkDevice(),
+    vkChecker(vkAllocateMemory(LogicalDevice::device(),
                                &info,
                                nullptr,
                                &mDeviceMemory));
 }
 
 DeviceMemory::~DeviceMemory() {
-    vkFreeMemory(LogicalDevice::vkDevice(),
+    vkFreeMemory(LogicalDevice::device(),
                  mDeviceMemory,
                  nullptr);
 }

@@ -15,7 +15,7 @@ DescriptorPool::DescriptorPool(const std::vector<VkDescriptorPoolSize>& descript
 }
 
 DescriptorPool::~DescriptorPool() {
-    vkDestroyDescriptorPool(LogicalDevice::vkDevice(),
+    vkDestroyDescriptorPool(LogicalDevice::device(),
                             mDescriptorPool,
                             nullptr);
 }
@@ -46,7 +46,7 @@ DescriptorPool::createPool(const std::vector<VkDescriptorPoolSize>& descriptorPo
     createInfo.maxSets = maxDescriptorSetCount;
     createInfo.flags = flags;
 
-    vkChecker(vkCreateDescriptorPool(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateDescriptorPool(LogicalDevice::device(),
                                      &createInfo,
                                      nullptr,
                                      &mDescriptorPool));

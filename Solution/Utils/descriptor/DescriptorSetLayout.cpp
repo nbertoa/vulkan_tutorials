@@ -14,14 +14,14 @@ DescriptorSetLayout::DescriptorSetLayout(const std::vector<DescriptorSetLayoutBi
     createInfo.bindingCount = static_cast<uint32_t>(descriptorSetLayoutBindings.size());
     createInfo.pBindings = reinterpret_cast<const VkDescriptorSetLayoutBinding*>(descriptorSetLayoutBindings.data());
 
-    vkChecker(vkCreateDescriptorSetLayout(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateDescriptorSetLayout(LogicalDevice::device(),
                                           &createInfo,
                                           nullptr,
                                           &mDescriptorSetLayout));
 }
 
 DescriptorSetLayout::~DescriptorSetLayout() {
-    vkDestroyDescriptorSetLayout(LogicalDevice::vkDevice(),
+    vkDestroyDescriptorSetLayout(LogicalDevice::device(),
                                  mDescriptorSetLayout,
                                  nullptr);
 }

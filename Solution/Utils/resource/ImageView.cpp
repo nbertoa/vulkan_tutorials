@@ -24,14 +24,14 @@ ImageView::ImageView(const VkFormat format,
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
 
-    vkChecker(vkCreateImageView(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateImageView(LogicalDevice::device(),
                                 &createInfo,
                                 nullptr,
                                 &mImageView));
 }
 
 ImageView::~ImageView() {
-    vkDestroyImageView(LogicalDevice::vkDevice(),
+    vkDestroyImageView(LogicalDevice::device(),
                        mImageView,
                        nullptr);
 }

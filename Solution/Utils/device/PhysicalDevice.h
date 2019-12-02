@@ -64,13 +64,13 @@ public:
     vkPhysicalDevice();
 
     static uint32_t
-    graphicsSupportQueueFamilyIndex();
+    graphicsQueueFamilyIndex();
 
     static uint32_t
-    transferSupportQueueFamilyIndex();
+    transferQueueFamilyIndex();
 
     static uint32_t
-    presentationSupportQueueFamilyIndex();
+    presentationQueueFamilyIndex();
 
     // Returns the memory type index of this physical device that is
     // suitable. If there is not a suitable memory property, then it returns
@@ -103,9 +103,9 @@ private:
 
     static VkPhysicalDevice mPhysicalDevice;
 
-    static uint32_t mGraphicsSupportQueueFamilyIndex;
-    static uint32_t mTransferSupportQueueFamilyIndex;
-    static uint32_t mPresentationSupportQueueFamilyIndex;
+    static uint32_t mGraphicsQueueFamilyIndex;
+    static uint32_t mTransferQueueFamilyIndex;
+    static uint32_t mPresentationQueueFamilyIndex;
 
     static std::vector<const char*> mDeviceExtensions;
 };

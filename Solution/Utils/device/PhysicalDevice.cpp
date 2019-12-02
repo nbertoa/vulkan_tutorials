@@ -10,13 +10,13 @@ VkPhysicalDevice
 PhysicalDevice::mPhysicalDevice = VK_NULL_HANDLE;
 
 uint32_t 
-PhysicalDevice::mGraphicsSupportQueueFamilyIndex = 0;
+PhysicalDevice::mGraphicsQueueFamilyIndex = 0;
 
 uint32_t 
-PhysicalDevice::mTransferSupportQueueFamilyIndex = 0;
+PhysicalDevice::mTransferQueueFamilyIndex = 0;
 
 uint32_t 
-PhysicalDevice::mPresentationSupportQueueFamilyIndex = 0;
+PhysicalDevice::mPresentationQueueFamilyIndex = 0;
 
 std::vector<const char*> mDeviceExtensions;
 
@@ -43,9 +43,9 @@ PhysicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames)
     }
 
     mPhysicalDevice = chosenDeviceData->vkPhysicalDevice();
-    mGraphicsSupportQueueFamilyIndex = chosenDeviceData->graphicsSupportQueueFamilyIndex();
-    mTransferSupportQueueFamilyIndex = chosenDeviceData->transferSupportQueueFamilyIndex();
-    mPresentationSupportQueueFamilyIndex = chosenDeviceData->presentationSupportQueueFamilyIndex();
+    mGraphicsQueueFamilyIndex = chosenDeviceData->graphicsQueueFamilyIndex();
+    mTransferQueueFamilyIndex = chosenDeviceData->transferQueueFamilyIndex();
+    mPresentationQueueFamilyIndex = chosenDeviceData->presentationQueueFamilyIndex();
 }
 
 void
@@ -60,21 +60,21 @@ PhysicalDevice::vkPhysicalDevice() {
 }
 
 uint32_t 
-PhysicalDevice::graphicsSupportQueueFamilyIndex() {
+PhysicalDevice::graphicsQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return mGraphicsSupportQueueFamilyIndex;
+    return mGraphicsQueueFamilyIndex;
 }
 
 uint32_t 
-PhysicalDevice::transferSupportQueueFamilyIndex() {
+PhysicalDevice::transferQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return mTransferSupportQueueFamilyIndex;
+    return mTransferQueueFamilyIndex;
 }
 
 uint32_t 
-PhysicalDevice::presentationSupportQueueFamilyIndex() {
+PhysicalDevice::presentationQueueFamilyIndex() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return mPresentationSupportQueueFamilyIndex;
+    return mPresentationQueueFamilyIndex;
 }
 
 uint32_t 

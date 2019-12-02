@@ -24,7 +24,7 @@ RenderPass::RenderPass(const std::vector<AttachmentDescription>& attachmentDescr
         nullptr : 
         reinterpret_cast<const VkSubpassDependency*>(subpassDependencies.data());
 
-    vkChecker(vkCreateRenderPass(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateRenderPass(LogicalDevice::device(),
                                  &createInfo,
                                  nullptr,
                                  &mRenderPass));
@@ -32,7 +32,7 @@ RenderPass::RenderPass(const std::vector<AttachmentDescription>& attachmentDescr
 }
 
 RenderPass::~RenderPass() {
-    vkDestroyRenderPass(LogicalDevice::vkDevice(),
+    vkDestroyRenderPass(LogicalDevice::device(),
                         mRenderPass,
                         nullptr);
 }

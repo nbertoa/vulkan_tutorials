@@ -24,7 +24,7 @@ CommandBuffers::CommandBuffers(const CommandPool& commandPool,
     info.level = level;
     info.commandBufferCount = bufferCount;
 
-    vkChecker(vkAllocateCommandBuffers(LogicalDevice::vkDevice(),
+    vkChecker(vkAllocateCommandBuffers(LogicalDevice::device(),
                                        &info,
                                        commandBuffers.data()));
 

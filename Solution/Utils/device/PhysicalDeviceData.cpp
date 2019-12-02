@@ -29,21 +29,21 @@ PhysicalDeviceData::vkPhysicalDevice() const {
 }
 
 uint32_t
-PhysicalDeviceData::graphicsSupportQueueFamilyIndex() const {
+PhysicalDeviceData::graphicsQueueFamilyIndex() const {
     assert(mIsSupported);
-    return mGraphicsSupportQueueFamilyIndex;
+    return mgraphicsQueueFamilyIndex;
 }
 
 uint32_t
-PhysicalDeviceData::transferSupportQueueFamilyIndex() const {
+PhysicalDeviceData::transferQueueFamilyIndex() const {
     assert(mIsSupported);
-    return mTransferSupportQueueFamilyIndex;
+    return mTransferQueueFamilyIndex;
 }
 
 uint32_t
-PhysicalDeviceData::presentationSupportQueueFamilyIndex() const {
+PhysicalDeviceData::presentationQueueFamilyIndex() const {
     assert(mIsSupported);
-    return mPresentationSupportQueueFamilyIndex;
+    return mPresentationQueueFamilyIndex;
 }
 
 bool 
@@ -88,14 +88,14 @@ PhysicalDeviceData::isGraphicQueueFamilySupported() {
     std::vector<VkQueueFamilyProperties> properties;
     queueFamilyProperties(properties);
 
-    mGraphicsSupportQueueFamilyIndex = 0;
+    mgraphicsQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0 &&
             queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             return true;
         }
 
-        ++mGraphicsSupportQueueFamilyIndex;
+        ++mgraphicsQueueFamilyIndex;
     }
 
     return false;
@@ -106,14 +106,14 @@ PhysicalDeviceData::isTransferQueueFamilySupported() {
     std::vector<VkQueueFamilyProperties> properties;
     queueFamilyProperties(properties);
 
-    mTransferSupportQueueFamilyIndex = 0;
+    mTransferQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0 &&
             queueFamilyProperty.queueFlags & VK_QUEUE_TRANSFER_BIT) {
             return true;
         }
 
-        ++mTransferSupportQueueFamilyIndex;
+        ++mTransferQueueFamilyIndex;
     }
 
     return false;
@@ -126,16 +126,16 @@ PhysicalDeviceData::isPresentationSupported() {
     std::vector<VkQueueFamilyProperties> properties;
     queueFamilyProperties(properties);
 
-    mPresentationSupportQueueFamilyIndex = 0;
+    mPresentationQueueFamilyIndex = 0;
     for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
         if (queueFamilyProperty.queueCount > 0) {
             if (Window::isPresentationSupportedByPhysicalDevice(mPhysicalDevice,
-                                                                mPresentationSupportQueueFamilyIndex)) {
+                                                                mPresentationQueueFamilyIndex)) {
                 return true;
             }
         }
 
-        ++mPresentationSupportQueueFamilyIndex;
+        ++mPresentationQueueFamilyIndex;
     }
 
     return false;

@@ -70,7 +70,7 @@ GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
     createInfo.basePipelineHandle = VK_NULL_HANDLE;
     createInfo.basePipelineIndex = -1;
 
-    vkChecker(vkCreateGraphicsPipelines(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateGraphicsPipelines(LogicalDevice::device(),
                                         VK_NULL_HANDLE,
                                         1,
                                         &createInfo,
@@ -81,7 +81,7 @@ GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
 
 GraphicsPipeline::~GraphicsPipeline() {
     assert(mPipeline != VK_NULL_HANDLE);
-    vkDestroyPipeline(LogicalDevice::vkDevice(),
+    vkDestroyPipeline(LogicalDevice::device(),
                       mPipeline,
                       nullptr);
 }

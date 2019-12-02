@@ -20,7 +20,7 @@ CommandBuffer::CommandBuffer(const CommandPool& commandPool,
     info.commandBufferCount = 1;
     info.level = level;   
 
-    vkChecker(vkAllocateCommandBuffers(LogicalDevice::vkDevice(),
+    vkChecker(vkAllocateCommandBuffers(LogicalDevice::device(),
                                        &info,
                                        &mCommandBuffer));
 }

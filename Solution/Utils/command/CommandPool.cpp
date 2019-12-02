@@ -14,14 +14,14 @@ CommandPool::CommandPool(const uint32_t queueFamilyIndex,
     createInfo.flags = flags;
     createInfo.queueFamilyIndex = queueFamilyIndex;
     
-    vkChecker(vkCreateCommandPool(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateCommandPool(LogicalDevice::device(),
                                   &createInfo,
                                   nullptr,
                                   &mCommandPool));
 }
 
 CommandPool::~CommandPool() {
-    vkDestroyCommandPool(LogicalDevice::vkDevice(),
+    vkDestroyCommandPool(LogicalDevice::device(),
                          mCommandPool,
                          nullptr);
 }

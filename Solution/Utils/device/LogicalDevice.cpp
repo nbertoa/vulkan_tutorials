@@ -6,21 +6,21 @@
 #include "PhysicalDevice.h"
 
 namespace vk2 {
-VkDevice 
-LogicalDevice::mLogicalDevice = VK_NULL_HANDLE;
+vk::Device 
+LogicalDevice::mLogicalDevice;
 
-VkQueue 
-LogicalDevice::mGraphicsQueue = VK_NULL_HANDLE;
+vk::Queue
+LogicalDevice::mGraphicsQueue;
 
-VkQueue 
-LogicalDevice::mTransferQueue = VK_NULL_HANDLE;
+vk::Queue
+LogicalDevice::mTransferQueue;
 
-VkQueue 
-LogicalDevice::mPresentationQueue = VK_NULL_HANDLE;
+vk::Queue
+LogicalDevice::mPresentationQueue;
 
 void
 LogicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames) {
-    assert(mLogicalDevice == VK_NULL_HANDLE);
+    assert(!mLogicalDevice);
 
     initLogicalDevice(deviceExtensionNames);
 
@@ -29,31 +29,29 @@ LogicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames) 
 
 void
 LogicalDevice::finalize() {
-    assert(mLogicalDevice != VK_NULL_HANDLE);
-
-    vkDestroyDevice(mLogicalDevice,
-                    nullptr);
+    assert(mLogicalDevice);
+    mLogicalDevice.destroy();
 }
 
-VkDevice
-LogicalDevice::vkDevice() {
-    assert(mLogicalDevice != VK_NULL_HANDLE);
+vk::Device
+LogicalDevice::device() {
+    assert(mLogicalDevice);
     return mLogicalDevice;
 }
 
-VkQueue
+vk::Queue
 LogicalDevice::graphicsQueue() {
     assert(mGraphicsQueue != VK_NULL_HANDLE);
     return mGraphicsQueue;
 }
 
-VkQueue
+vk::Queue
 LogicalDevice::transferQueue() {
     assert(mTransferQueue != VK_NULL_HANDLE);
     return mTransferQueue;
 }
 
-VkQueue
+vk::Queue
 LogicalDevice::presentationQueue() {
     assert(mPresentationQueue != VK_NULL_HANDLE);
     return mPresentationQueue;
@@ -61,60 +59,64 @@ LogicalDevice::presentationQueue() {
 
 void
 LogicalDevice::initLogicalDevice(const std::vector<const char*>& deviceExtensionNames) {
-    assert(mLogicalDevice == VK_NULL_HANDLE);
+    assert(!mLogicalDevice);
 
-    const std::vector<VkDeviceQueueCreateInfo> createInfoVector = 
-        physicalDeviceQueuesCreateInfo();
+    const float queuePriority = 1.0f;
+    const std::vector<vk::DeviceQueueCreateInfo> createInfoVector = 
+        physicalDeviceQueuesCreateInfo(queuePriority);
     
-    VkPhysicalDeviceFeatures physicalDeviceFeatures = {};
-    physicalDeviceFeatures.samplerAnisotropy = VK_TRUE;
+    vk::PhysicalDeviceFeatures physicalDeviceFeatures;
+    physicalDeviceFeatures.setSamplerAnisotropy(VK_TRUE);
 
-    VkDeviceCreateInfo physicalDeviceCreateInfo = {};
-    physicalDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;    
-    physicalDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(createInfoVector.size());
-    physicalDeviceCreateInfo.pQueueCreateInfos = createInfoVector.data();
-    physicalDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensionNames.size());
-    physicalDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensionNames.data();
-    physicalDeviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
+    vk::DeviceCreateInfo physicalDeviceCreateInfo = 
+    {
+        vk::DeviceCreateFlags(),
+        static_cast<uint32_t>(createInfoVector.size()),
+        createInfoVector.data(),
+        0, // deprecated layer count
+        nullptr, // deprecated layer names
+        static_cast<uint32_t>(deviceExtensionNames.size()),
+        deviceExtensionNames.data(),
+        &physicalDeviceFeatures
+    };    
 
-    vkChecker(vkCreateDevice(PhysicalDevice::vkPhysicalDevice(),
-                             &physicalDeviceCreateInfo, 
-                             nullptr, 
-                             &mLogicalDevice));
+    vk::PhysicalDevice physicalDevice(PhysicalDevice::vkPhysicalDevice());
+    mLogicalDevice = physicalDevice.createDevice({physicalDeviceCreateInfo});
 }
 
-std::vector<VkDeviceQueueCreateInfo>
-LogicalDevice::physicalDeviceQueuesCreateInfo() {
-    std::vector<VkDeviceQueueCreateInfo> createInfoVector;
+std::vector<vk::DeviceQueueCreateInfo>
+LogicalDevice::physicalDeviceQueuesCreateInfo(const float& queuePriority) {
+    std::vector<vk::DeviceQueueCreateInfo> createInfoVector;
 
     // Add graphics support queue family
-    VkDeviceQueueCreateInfo queueCreateInfo = {};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = PhysicalDevice::graphicsSupportQueueFamilyIndex();
-    queueCreateInfo.queueCount = 1;
-    const float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+    vk::DeviceQueueCreateInfo queueCreateInfo =
+    {
+        vk::DeviceQueueCreateFlags(),
+        PhysicalDevice::graphicsQueueFamilyIndex(),
+        1,
+        &queuePriority
+    };
     createInfoVector.emplace_back(queueCreateInfo);
 
     // If graphics and presentation support queue family indices are different, 
     // we add a new create info for presentation queue.
-    if (PhysicalDevice::graphicsSupportQueueFamilyIndex() !=
-        PhysicalDevice::presentationSupportQueueFamilyIndex()) {
-        queueCreateInfo.queueFamilyIndex = PhysicalDevice::presentationSupportQueueFamilyIndex();
+    if (PhysicalDevice::graphicsQueueFamilyIndex() !=
+        PhysicalDevice::presentationQueueFamilyIndex()) {
+        queueCreateInfo.setQueueFamilyIndex(PhysicalDevice::presentationQueueFamilyIndex());
         createInfoVector.emplace_back(queueCreateInfo);
 
         // If presentation and transfer support queue family indices are different,
         // then we add a new create info for transfer queue.
-        if (PhysicalDevice::presentationSupportQueueFamilyIndex() !=
-            PhysicalDevice::transferSupportQueueFamilyIndex()) {
-            queueCreateInfo.queueFamilyIndex = PhysicalDevice::transferSupportQueueFamilyIndex();
+        if (PhysicalDevice::presentationQueueFamilyIndex() !=
+            PhysicalDevice::transferQueueFamilyIndex()) {
+            queueCreateInfo.setQueueFamilyIndex(PhysicalDevice::transferQueueFamilyIndex());
             createInfoVector.emplace_back(queueCreateInfo);
         }
-    } else if (PhysicalDevice::graphicsSupportQueueFamilyIndex() !=
-               PhysicalDevice::transferSupportQueueFamilyIndex()) {
+    } else if (PhysicalDevice::graphicsQueueFamilyIndex() !=
+               PhysicalDevice::transferQueueFamilyIndex()) {
         // If graphics and transfer support queue family indices are different,
         // then we add a new create info for transfer queue.
-        queueCreateInfo.queueFamilyIndex = PhysicalDevice::transferSupportQueueFamilyIndex();
+        queueCreateInfo.setQueueFamilyIndex(PhysicalDevice::transferQueueFamilyIndex());
         createInfoVector.emplace_back(queueCreateInfo);
     }
 
@@ -123,25 +125,16 @@ LogicalDevice::physicalDeviceQueuesCreateInfo() {
 
 void
 LogicalDevice::initQueues() {
-    assert(mLogicalDevice != VK_NULL_HANDLE);
+    vk::Device device(device());
 
-    vkGetDeviceQueue(mLogicalDevice,
-                     PhysicalDevice::graphicsSupportQueueFamilyIndex(),
-                     0,
-                     &mGraphicsQueue);
-    assert(mGraphicsQueue != VK_NULL_HANDLE);
+    mGraphicsQueue = device.getQueue(PhysicalDevice::graphicsQueueFamilyIndex(),
+                                     0);
 
-    vkGetDeviceQueue(mLogicalDevice,
-                     PhysicalDevice::transferSupportQueueFamilyIndex(),
-                     0,
-                     &mTransferQueue);
-    assert(mTransferQueue != VK_NULL_HANDLE);
+    mTransferQueue = device.getQueue(PhysicalDevice::transferQueueFamilyIndex(),
+                                     0);
 
-    vkGetDeviceQueue(mLogicalDevice,
-                     PhysicalDevice::presentationSupportQueueFamilyIndex(),
-                     0,
-                     &mPresentationQueue);
-    assert(mPresentationQueue != VK_NULL_HANDLE);
+    mPresentationQueue = device.getQueue(PhysicalDevice::presentationQueueFamilyIndex(),
+                                         0);
 }
 
 }

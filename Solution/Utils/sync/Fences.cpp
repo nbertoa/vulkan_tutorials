@@ -9,7 +9,7 @@ Fences::Fences(const uint32_t fenceCount,
                const vk::FenceCreateFlagBits flags) {
     assert(fenceCount > 0);
 
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
 
     mFences.reserve(fenceCount);
     for (uint32_t i = 0; i < fenceCount; ++i) {

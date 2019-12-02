@@ -27,7 +27,7 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
     assert(mSizeInBytes > 0);
 
     // Binds device memory to this buffer
-    vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
+    vkChecker(vkBindBufferMemory(LogicalDevice::device(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
                                  0));
@@ -48,14 +48,14 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
     assert(mSizeInBytes > 0);
 
     // Binds device memory to this buffer
-    vkChecker(vkBindBufferMemory(LogicalDevice::vkDevice(),
+    vkChecker(vkBindBufferMemory(LogicalDevice::device(),
                                  mBuffer,
                                  mDeviceMemory->vkDeviceMemory(),
                                  0));
 }
 
 Buffer::~Buffer() {
-    vkDestroyBuffer(LogicalDevice::vkDevice(),
+    vkDestroyBuffer(LogicalDevice::device(),
                     mBuffer,
                     nullptr);
 
@@ -102,7 +102,7 @@ Buffer::copyToHostMemory(void* sourceData,
     // - ppData will contain a host-accessible pointer to the beginning of the mapped range.
     //   This pointer minus offset must be aligned to at least 
     //   VkPhysicalDeviceLimits::minMemoryMapAlignment.
-    vkChecker(vkMapMemory(LogicalDevice::vkDevice(),
+    vkChecker(vkMapMemory(LogicalDevice::device(),
                           mDeviceMemory->vkDeviceMemory(),
                           offset,
                           size,
@@ -115,7 +115,7 @@ Buffer::copyToHostMemory(void* sourceData,
 
     // - device is the logical device that owns the memory.
     // - memory to be unmapped.
-    vkUnmapMemory(LogicalDevice::vkDevice(),
+    vkUnmapMemory(LogicalDevice::device(),
                   mDeviceMemory->vkDeviceMemory());
 }
 
@@ -133,7 +133,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
     vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,
@@ -198,7 +198,7 @@ Buffer::bufferMemoryRequirements() const {
     assert(mBuffer != VK_NULL_HANDLE);
 
     VkMemoryRequirements memoryRequirements;
-    vkGetBufferMemoryRequirements(LogicalDevice::vkDevice(),
+    vkGetBufferMemoryRequirements(LogicalDevice::device(),
                                   mBuffer,
                                   &memoryRequirements);
 
@@ -223,7 +223,7 @@ Buffer::createBuffer(const VkDeviceSize size,
         nullptr : 
         queueFamilyIndices.data();
     
-    vkChecker(vkCreateBuffer(LogicalDevice::vkDevice(),
+    vkChecker(vkCreateBuffer(LogicalDevice::device(),
                              &createInfo,
                              nullptr,
                              &buffer));

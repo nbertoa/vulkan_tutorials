@@ -42,7 +42,7 @@ FrameBuffers::FrameBuffers(const RenderPass& renderPass,
         VkImageView attachments[] = {imageViews[i]};
         createInfo.pAttachments = attachments;
 
-        vkChecker(vkCreateFramebuffer(LogicalDevice::vkDevice(),
+        vkChecker(vkCreateFramebuffer(LogicalDevice::device(),
                                       &createInfo,
                                       nullptr,
                                       &mFrameBuffers[i]));
@@ -52,7 +52,7 @@ FrameBuffers::FrameBuffers(const RenderPass& renderPass,
 FrameBuffers::~FrameBuffers() {
     for (const VkFramebuffer frameBuffer : mFrameBuffers) {
         assert(frameBuffer != VK_NULL_HANDLE);
-        vkDestroyFramebuffer(LogicalDevice::vkDevice(),
+        vkDestroyFramebuffer(LogicalDevice::device(),
                              frameBuffer,
                              nullptr);
     }

@@ -21,7 +21,7 @@ PipelineLayout::PipelineLayout(const DescriptorSetLayout* const descriptorSetLay
 }
 
 PipelineLayout::~PipelineLayout() {
-    vkDestroyPipelineLayout(LogicalDevice::vkDevice(),
+    vkDestroyPipelineLayout(LogicalDevice::device(),
                             mPipelineLayout,
                             nullptr);
 }
@@ -63,7 +63,7 @@ PipelineLayout::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& d
     createInfo.pPushConstantRanges = 
         pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
 
-    vkChecker(vkCreatePipelineLayout(LogicalDevice::vkDevice(),
+    vkChecker(vkCreatePipelineLayout(LogicalDevice::device(),
                                      &createInfo,
                                      nullptr,
                                      &mPipelineLayout));

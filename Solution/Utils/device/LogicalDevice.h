@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class PhysicalDevice;
@@ -53,16 +54,16 @@ public:
     static void
     finalize();
 
-    static VkDevice
-    vkDevice();
+    static vk::Device
+    device();
     
-    static VkQueue
+    static vk::Queue
     graphicsQueue();
 
-    static VkQueue
+    static vk::Queue
     transferQueue();
 
-    static VkQueue
+    static vk::Queue
     presentationQueue();   
 
 private:
@@ -76,19 +77,19 @@ private:
     initLogicalDevice(const std::vector<const char*>& deviceExtensionNames);
 
     // Get the necessary structures to create the queues
-    static std::vector<VkDeviceQueueCreateInfo> 
-    physicalDeviceQueuesCreateInfo();
+    static std::vector<vk::DeviceQueueCreateInfo> 
+    physicalDeviceQueuesCreateInfo(const float& queuePriority);
    
     // - physicalDevice is used to get the queue family indices
     //   used to create the queues
     static void
     initQueues();
 
-    static VkDevice mLogicalDevice;
+    static vk::Device mLogicalDevice;
 
-    static VkQueue mGraphicsQueue;
-    static VkQueue mTransferQueue;
-    static VkQueue mPresentationQueue;
+    static vk::Queue mGraphicsQueue;
+    static vk::Queue mTransferQueue;
+    static vk::Queue mPresentationQueue;
 };
 }
 

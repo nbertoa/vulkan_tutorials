@@ -20,8 +20,8 @@
 using namespace vk2;
 
 App::App() {
-    mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsSupportQueueFamilyIndex()));
-    mTransferCommandPool.reset(new CommandPool(PhysicalDevice::transferSupportQueueFamilyIndex(),
+    mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsQueueFamilyIndex()));
+    mTransferCommandPool.reset(new CommandPool(PhysicalDevice::transferQueueFamilyIndex(),
                                                VK_COMMAND_POOL_CREATE_TRANSIENT_BIT));
 
     initBuffers();
@@ -52,7 +52,7 @@ App::run() {
     // vkDeviceWaitIdle is equivalent to submitting fences to all
     // the queues owned yb the device a and waiting with an infinite 
     // timeout for these fences to signal.
-    vkChecker(vkDeviceWaitIdle(LogicalDevice::vkDevice()));
+    vkChecker(vkDeviceWaitIdle(LogicalDevice::device()));
 }
 
 void
@@ -322,7 +322,7 @@ App::submitCommandBufferAndPresent() {
     assert(mCommandBuffers != nullptr);
 
     const vk::Fence& fence = mFences->nextAvailableFence();
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
     vkChecker(device.waitForFences({fence},
                                    VK_TRUE,
                                    std::numeric_limits<uint64_t>::max()));

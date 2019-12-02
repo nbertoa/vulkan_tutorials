@@ -9,7 +9,7 @@ namespace vk2 {
 Semaphores::Semaphores(const uint32_t semaphoreCount) {
     assert(semaphoreCount > 0);
     
-    vk::Device device(LogicalDevice::vkDevice());
+    vk::Device device(LogicalDevice::device());
     mSemaphores.reserve(semaphoreCount);
     for (uint32_t i = 0; i < semaphoreCount; ++i) {
         mSemaphores.emplace_back(device.createSemaphoreUnique({}));
