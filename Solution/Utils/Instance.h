@@ -12,7 +12,7 @@ class DebugMessenger;
 #endif
 
 //
-// VkInstance wrapper.
+// Instance wrapper.
 //
 // Instance is the first object you create.
 // In our case, we have a single and global Instance.
@@ -20,7 +20,7 @@ class DebugMessenger;
 // There is no global state in Vulkan and all per-application 
 // state is stored in a VkInstance object. 
 //
-// Creating a VkInstance object initializes the Vulkan library 
+// Creating a Instance object initializes the Vulkan library 
 // and allows the application to pass information about itself 
 // to the implementation.
 //
@@ -45,8 +45,8 @@ public:
     static void
     finalize();
 
-    static const VkInstance&
-    vkInstance();
+    static const vk::Instance&
+    instance();
 
     // Return a list of candidate physical devices
     // based on window's surface support and device extension support.
@@ -59,14 +59,11 @@ private:
     Instance(Instance&& other) = delete;
     Instance(const Instance&) = delete;
     const Instance& operator=(const Instance&) = delete;
-
-    static std::vector<VkPhysicalDevice>
-    physicalDevices();
-    
+        
     static bool 
     areInstanceLayersSupported(const std::vector<const char*>& instanceLayers);
     
-    static VkInstance mInstance;
+    static vk::Instance mInstance;
 
 #ifdef _DEBUG
     static DebugMessenger* mMessenger;

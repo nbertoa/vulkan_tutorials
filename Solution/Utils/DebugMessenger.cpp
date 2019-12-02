@@ -27,14 +27,14 @@ DebugMessenger::DebugMessenger() {
     // ourselves.
     PFN_vkCreateDebugUtilsMessengerEXT function =
         reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-            vkGetInstanceProcAddr(Instance::vkInstance(),
+            vkGetInstanceProcAddr(Instance::instance(),
                                   "vkCreateDebugUtilsMessengerEXT"));
     assert(function);
-    const VkDebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
-    vkChecker(function(Instance::vkInstance(),
-                       &createInfo,
+    const vk::DebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
+    vkChecker(function(Instance::instance(),
+                       (VkDebugUtilsMessengerCreateInfoEXT*)&createInfo,
                        nullptr, 
-                       &mMessenger));
+                       (VkDebugUtilsMessengerEXT*)&mMessenger));
 }
 
 DebugMessenger::~DebugMessenger() {
@@ -47,33 +47,27 @@ DebugMessenger::~DebugMessenger() {
     // ourselves.
     PFN_vkDestroyDebugUtilsMessengerEXT function =
         reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-            vkGetInstanceProcAddr(Instance::vkInstance(),
+            vkGetInstanceProcAddr(Instance::instance(),
                                   "vkDestroyDebugUtilsMessengerEXT"));
     assert(function);
-    function(Instance::vkInstance(),
+    function(Instance::instance(),
              mMessenger, 
              nullptr);
 }
 
-DebugMessenger::DebugMessenger(DebugMessenger&& other) noexcept
-    : mMessenger(other.mMessenger)
-{
-    other.mMessenger = VK_NULL_HANDLE;
-}
-
-VkDebugUtilsMessengerCreateInfoEXT
+vk::DebugUtilsMessengerCreateInfoEXT
 DebugMessenger::messengerCreateInfo() {
-    VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity =
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
-    createInfo.messageType =
-        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
+    vk::DebugUtilsMessengerCreateInfoEXT createInfo = 
+    {
+        vk::DebugUtilsMessengerCreateFlagsEXT(),
+        vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+        vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+        vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
+        vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
+        debugCallback
+    };
 
     return createInfo;
 }

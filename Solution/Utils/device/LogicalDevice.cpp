@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "PhysicalDevice.h"
 
 namespace vk2 {
@@ -80,8 +79,7 @@ LogicalDevice::initLogicalDevice(const std::vector<const char*>& deviceExtension
         &physicalDeviceFeatures
     };    
 
-    vk::PhysicalDevice physicalDevice(PhysicalDevice::device());
-    mLogicalDevice = physicalDevice.createDevice({physicalDeviceCreateInfo});
+    mLogicalDevice = PhysicalDevice::device().createDevice({physicalDeviceCreateInfo});
 }
 
 std::vector<vk::DeviceQueueCreateInfo>

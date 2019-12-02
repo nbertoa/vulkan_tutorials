@@ -35,7 +35,7 @@ Window::initialize(const uint32_t width,
                                nullptr);
     assert(mWindow != nullptr && "Window creation failed");
 
-    vkChecker(glfwCreateWindowSurface(Instance::vkInstance(),
+    vkChecker(glfwCreateWindowSurface(Instance::instance(),
                                       mWindow,
                                       nullptr,
                                       (VkSurfaceKHR*)&mSurface));
@@ -44,8 +44,7 @@ Window::initialize(const uint32_t width,
 void
 Window::finalize() {
     assert(mSurface != VK_NULL_HANDLE);
-    vk::Instance instance(Instance::vkInstance());
-    instance.destroySurfaceKHR(mSurface);
+    Instance::instance().destroySurfaceKHR(mSurface);
 
     glfwDestroyWindow(mWindow);
     glfwTerminate();
