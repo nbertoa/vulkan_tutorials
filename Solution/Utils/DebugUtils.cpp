@@ -198,5 +198,6 @@ void vkChecker(const vk::Result result) {
 
 #else
 void vkChecker(const VkResult) {}
+void vkChecker(const vk::Result) {}
 #endif
 }

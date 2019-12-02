@@ -15,53 +15,15 @@ SwapChain::SwapChain() {
     initViewportAndScissorRect();
 }
 
-SwapChain::~SwapChain() {
-    assert(mSwapChain != VK_NULL_HANDLE);
-
-    for (const VkImageView view : mSwapChainImageViews) {
-        assert(view != VK_NULL_HANDLE);
-        vkDestroyImageView(LogicalDevice::device(),
-                           view,
-                           nullptr);
-    }
-
-    vkDestroySwapchainKHR(LogicalDevice::device(),
-                          mSwapChain, 
-                          nullptr);
-}
-
-SwapChain::SwapChain(SwapChain&& other) noexcept
-    : mSwapChain(other.mSwapChain)
-    , mSwapChainImages(std::move(mSwapChainImages))
-    , mSwapChainImageViews(std::move(mSwapChainImageViews))
-    , mImageFormat(other.mImageFormat)
-    , mExtent(other.mExtent)
-    , mViewport(other.mViewport)
-    , mScissorRect(other.mScissorRect)
-{
-    other.mSwapChain = VK_NULL_HANDLE;
-}
-
 uint32_t 
 SwapChain::acquireNextImage(const vk::Semaphore& semaphore) {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    // - Logical device associated with the swap chain
-    // - Swapchain from which an image is being acquired
-    // - The third parameter specifies a timeout in nanoseconds 
-    //   for an image to become available. Using the maximum
-    //   value of a 64 bit unsigned integer disables the timeout.
-    // - semaphore that will become signaled when the presentation engine
-    //   has released ownership of the image.
-    // - fence that will become signaled when the presentation engine
-    //   has released ownership of the image.
-    // - Image index of the next image to use.
-    vkChecker(vkAcquireNextImageKHR(LogicalDevice::device(),
-                                    mSwapChain,
-                                    std::numeric_limits<uint64_t>::max(),
-                                    semaphore,
-                                    VK_NULL_HANDLE,
-                                    &mCurrentImageIndex));
+    vkChecker(LogicalDevice::device().acquireNextImageKHR(mSwapChain.get(),
+                                                          std::numeric_limits<uint64_t>::max(),
+                                                          semaphore,
+                                                          vk::Fence {},
+                                                          &mCurrentImageIndex));
 
     return mCurrentImageIndex;
 }
@@ -75,81 +37,71 @@ SwapChain::currentImageIndex() const {
 void
 SwapChain::present(const vk::Semaphore& waitSemaphore,
                    const uint32_t imageIndex) {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    // VkPresentInfoKHR:
-    // - waitSemaphoreCount to wait for before issuing the present request.The number may be zero.
-    // - pWaitSemaphores is an optional array semaphores with 
-    //   waitSemaphoreCount entries, and specifies the semaphores to wait for before 
-    //   issuing the present request.
-    // - swapchainCount being presented to by this command.
-    // - pSwapchains array where a given swapchain must not appear in this list more than once.
-    // - pImageIndices into the array of each swapchain’s presentable images, 
-    //   with swapchainCount entries. Each entry in this array identifies the image to present on 
-    //   the corresponding entry in the pSwapchains array.
-    VkPresentInfoKHR info = {};
-    info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    info.waitSemaphoreCount = 1;
-    info.pWaitSemaphores = (VkSemaphore*)&waitSemaphore;
-    info.swapchainCount = 1;
-    info.pSwapchains = &mSwapChain;
-    info.pImageIndices = &imageIndex;
+    vk::PresentInfoKHR info = 
+    {
+        1,
+        &waitSemaphore,
+        1,
+        &mSwapChain.get(),
+        &imageIndex
+    };
 
-    vkChecker(vkQueuePresentKHR(LogicalDevice::presentationQueue(),
-                                &info));
+    vkChecker(LogicalDevice::presentationQueue().presentKHR(info));
 }
 
 const vk::Viewport& 
 SwapChain::viewport() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mViewport;
 }
 
 const vk::Rect2D& 
 SwapChain::scissorRect() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mScissorRect;
 }
 
 vk::Format
 SwapChain::imageFormat() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mImageFormat;
 }
 
 uint32_t 
 SwapChain::imageViewCount() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return static_cast<uint32_t>(mSwapChainImageViews.size());
 }
 
-const std::vector<VkImageView>&
+const std::vector<vk::UniqueImageView>&
 SwapChain::imageViews() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mSwapChainImageViews;
 }
 
 uint32_t
 SwapChain::imageWidth() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mExtent.width;
 }
 
 uint32_t
 SwapChain::imageHeight() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mExtent.height;
 }
 
 float 
 SwapChain::imageAspectRatio() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mExtent.width / static_cast<float>(mExtent.height);
 }
 
 const vk::Extent2D&
 SwapChain::imageExtent() const {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
     return mExtent;
 }
 
@@ -236,78 +188,62 @@ SwapChain::swapChainImageCount(const vk::SurfaceCapabilitiesKHR& surfaceCapabili
 void 
 SwapChain::initImagesAndViews() {
     assert(mSwapChainImages.empty());
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    // Images
-    uint32_t swapChainImageCount;
-    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::device(),
-                                      mSwapChain,
-                                      &swapChainImageCount,
-                                      nullptr));
-    mSwapChainImages.resize(swapChainImageCount);
-    vkChecker(vkGetSwapchainImagesKHR(LogicalDevice::device(),
-                                      mSwapChain,
-                                      &swapChainImageCount,
-                                      mSwapChainImages.data()));
+    mSwapChainImages = LogicalDevice::device().getSwapchainImagesKHR(mSwapChain.get());
 
     // Image views
-    VkImageViewCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    // How the image data should be interpreted.
-    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    createInfo.format = (VkFormat)mImageFormat;
-    // Allows you to swizzle the color channels around.
-    // For example, you can map all of the channels to the red channel
-    // for a monocrhome texture. You can also map constant values
-    // of 0 and 1 to a channel.
-    // We stick to the default mapping.
-    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    // Subresource range field describes what the image's purpose
-    // is and which part of the image should be accessed.
-    // Our images will be used as color targets without any 
-    // mipmapping levels or multiple layers.
-    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    createInfo.subresourceRange.baseMipLevel = 0;
-    createInfo.subresourceRange.levelCount = 1;
-    createInfo.subresourceRange.baseArrayLayer = 0;
-    createInfo.subresourceRange.layerCount = 1;
+    vk::ImageViewCreateInfo createInfo = 
+    {
+        vk::ImageViewCreateFlags(),
+        vk::Image(), // This will be set later.
+        vk::ImageViewType::e2D,
+        mImageFormat,
+        vk::ComponentMapping(),
+        vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor,
+                                  0, // base mip level,
+                                  1, // level count
+                                  0, // base array layer
+                                  1} // layer count
+    };
 
+    const uint32_t swapChainImageCount = static_cast<uint32_t>(mSwapChainImages.size());
     mSwapChainImageViews.resize(swapChainImageCount);
     for (uint32_t i = 0; i < swapChainImageCount; ++i) {
-        createInfo.image = mSwapChainImages[i];
-        vkChecker(vkCreateImageView(LogicalDevice::device(),
-                                    &createInfo,
-                                    nullptr,
-                                    &mSwapChainImageViews[i]));
+        createInfo.setImage(mSwapChainImages[i]);
+        mSwapChainImageViews[i] = LogicalDevice::device().createImageViewUnique(createInfo);
     }
 }
 
 void
 SwapChain::initViewportAndScissorRect() {
-    assert(mSwapChain != VK_NULL_HANDLE);
+    assert(mSwapChain.get() != VK_NULL_HANDLE);
 
     // This will almost always be (0, 0) and width and height.
-    mViewport.x = 0.0f;
-    mViewport.y = 0.0f;
-    mViewport.width = static_cast<float>(mExtent.width);
-    mViewport.height = static_cast<float>(mExtent.height);
-    // Specify the range of depth values to use for the framebuffer.
-    mViewport.minDepth = 0.0f;
-    mViewport.maxDepth = 1.0f;
+    mViewport = 
+    {
+        0.0f, // x 
+        0.0f, // y
+        static_cast<float>(mExtent.width),
+        static_cast<float>(mExtent.height),
+        0.0f, // min depth
+        1.0f // max depth
+    };
 
     // We want to drwa to the entire framebuffer, so we 
     // will specify a scissor rectangle that covers it entirely.
-    mScissorRect.offset = {0, 0};
-    mScissorRect.extent = mExtent;
+    mScissorRect = 
+    {
+        {0, 0}, // offset
+        mExtent
+    };
 }
 
 void
 SwapChain::initSwapChain() {
     const vk::SurfaceCapabilitiesKHR surfaceCapabilities =
         PhysicalDevice::device().getSurfaceCapabilitiesKHR(Window::surface());
+
     mExtent = swapChainExtent(surfaceCapabilities, 
                               Window::width(),
                               Window::height());
@@ -391,23 +327,25 @@ SwapChain::initSwapChain() {
     //   Providing a valid oldSwapchain may aid in the resource reuse, 
     //   and also allows the application to still present any images that are already 
     //   acquired from it.
-    VkSwapchainCreateInfoKHR createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = Window::surface();
-    createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
-    createInfo.imageFormat = (VkFormat)mImageFormat;
-    createInfo.imageColorSpace = (VkColorSpaceKHR)surfaceFormat.colorSpace;
-    createInfo.imageExtent = mExtent;
-    createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    createInfo.preTransform = ( VkSurfaceTransformFlagBitsKHR)surfaceCapabilities.currentTransform;
-    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = (VkPresentModeKHR)
-        bestFitPresentMode(
-            PhysicalDevice::device().getSurfacePresentModesKHR(Window::surface())
-        );
-    createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
+    vk::SwapchainCreateInfoKHR createInfo = 
+    {
+        vk::SwapchainCreateFlagsKHR(),
+        Window::surface(),
+        swapChainImageCount(surfaceCapabilities),
+        mImageFormat,
+        surfaceFormat.colorSpace,
+        mExtent,
+        1, // image array layers
+        vk::ImageUsageFlagBits::eColorAttachment,
+        vk::SharingMode::eExclusive,
+        0, // queue family index count
+        nullptr, // queue family indices
+        vk::SurfaceTransformFlagBitsKHR::eIdentity,
+        vk::CompositeAlphaFlagBitsKHR::eOpaque,
+        bestFitPresentMode(PhysicalDevice::device().getSurfacePresentModesKHR(Window::surface())),
+        VK_TRUE, // clipped
+        nullptr, // old swap chain
+    };
 
     const uint32_t graphicsQueueFamilyIndex = PhysicalDevice::graphicsQueueFamilyIndex();
     const uint32_t presentationQueueFamilyIndex = PhysicalDevice::presentationQueueFamilyIndex();
@@ -417,45 +355,41 @@ SwapChain::initSwapChain() {
     if (graphicsQueueFamilyIndex == presentationQueueFamilyIndex) {
         if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
             // Single queue family
-            createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0;
-            createInfo.pQueueFamilyIndices = nullptr;
+            createInfo.setImageSharingMode(vk::SharingMode::eExclusive);
+            createInfo.setQueueFamilyIndexCount(0);
+            createInfo.setPQueueFamilyIndices(nullptr);
         } else {
             // Graphics and presentation queue family + transfer queue family
             queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
             queueFamilyIndices.push_back(transferQueueFamilyIndex);
-            createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = 2;
-            createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+            createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
+            createInfo.setQueueFamilyIndexCount(2);
+            createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
         }
     } else if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
         // Presentation and transfer queue family + graphics queue family
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(transferQueueFamilyIndex);
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-        createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
+        createInfo.setQueueFamilyIndexCount(2);
+        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
     } else if (graphicsQueueFamilyIndex == transferQueueFamilyIndex) {
         // Graphics and transfer queue family + presentation queue family
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(presentationQueueFamilyIndex);
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-        createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
+        createInfo.setQueueFamilyIndexCount(2);
+        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
     } else {
         // One queue family for each.
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(presentationQueueFamilyIndex);
         queueFamilyIndices.push_back(transferQueueFamilyIndex);
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-        createInfo.queueFamilyIndexCount = 3;
-        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
+        createInfo.setQueueFamilyIndexCount(3);
+        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
     }
 
-    vkChecker(vkCreateSwapchainKHR(LogicalDevice::device(),
-                                   &createInfo,
-                                   nullptr,
-                                   &mSwapChain));
-    assert(mSwapChain != VK_NULL_HANDLE);
+    mSwapChain = LogicalDevice::device().createSwapchainKHRUnique(createInfo);
 }
 }

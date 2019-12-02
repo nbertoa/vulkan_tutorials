@@ -8,7 +8,7 @@
 
 namespace vk2 {
 FrameBuffers::FrameBuffers(const RenderPass& renderPass,
-                           const std::vector<VkImageView> imageViews,
+                           const std::vector<vk::UniqueImageView>& imageViews,
                            const uint32_t imageWidth,
                            const uint32_t imageHeight) {
     assert(imageViews.empty() == false);
@@ -38,9 +38,9 @@ FrameBuffers::FrameBuffers(const RenderPass& renderPass,
     // pass attachments array.
     createInfo.attachmentCount = 1;
     for (size_t i = 0; i < imageViews.size(); ++i) {
-        assert(imageViews[i] != VK_NULL_HANDLE);
-        VkImageView attachments[] = {imageViews[i]};
-        createInfo.pAttachments = attachments;
+        assert(imageViews[i].get() != VK_NULL_HANDLE);
+        const vk::ImageView attachments[] = {imageViews[i].get()};
+        createInfo.pAttachments = (VkImageView*)attachments;
 
         vkChecker(vkCreateFramebuffer(LogicalDevice::device(),
                                       &createInfo,

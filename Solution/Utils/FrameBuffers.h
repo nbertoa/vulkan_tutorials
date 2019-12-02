@@ -67,7 +67,7 @@ public:
     //
     // Notes: The global logical device create the frame buffers
     FrameBuffers(const RenderPass& renderPass,
-                 const std::vector<VkImageView> imageViews,
+                 const std::vector<vk::UniqueImageView>& imageViews,
                  const uint32_t imageWidth,
                  const uint32_t imageHeight);
     ~FrameBuffers();
