@@ -11,7 +11,6 @@
 #include "../resource/Image.h"
 #include "../resource/ImageMemoryBarrier.h"
 #include "../sync/Fence.h"
-#include "../sync/Semaphore.h"
 
 namespace vk2 {
 CommandBuffer::CommandBuffer(const CommandPool& commandPool,
@@ -210,8 +209,8 @@ CommandBuffer::drawIndexed(const uint32_t indexCount,
 
 void 
 CommandBuffer::submit(const VkQueue queue, 
-                      const Semaphore* waitSemaphore,
-                      const Semaphore* signalSemaphore,
+                      const vk::Semaphore* waitSemaphore,
+                      const vk::Semaphore* signalSemaphore,
                       const Fence& executionCompletedFence,
                       const VkPipelineStageFlags waitStageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
@@ -234,12 +233,12 @@ CommandBuffer::submit(const VkQueue queue,
     VkSubmitInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     info.waitSemaphoreCount = waitSemaphore != nullptr ? 1 : 0;
-    info.pWaitSemaphores = waitSemaphore != nullptr ? &waitSemaphore->vkSemaphore() : nullptr;
+    info.pWaitSemaphores = waitSemaphore != nullptr ? (VkSemaphore*)waitSemaphore : nullptr;
     info.pWaitDstStageMask = &waitStageFlags;
     info.commandBufferCount = 1;
     info.pCommandBuffers = &mCommandBuffer;
     info.signalSemaphoreCount = signalSemaphore != nullptr ? 1 : 0;
-    info.pSignalSemaphores = signalSemaphore != nullptr ? &signalSemaphore->vkSemaphore() : nullptr;
+    info.pSignalSemaphores = signalSemaphore != nullptr ? (VkSemaphore*)signalSemaphore : nullptr;
 
     vkChecker(vkQueueSubmit(queue,
                             1,

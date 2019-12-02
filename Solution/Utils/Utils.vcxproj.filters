@@ -78,9 +78,6 @@
     <ClCompile Include="sync\Fences.cpp">
       <Filter>sync</Filter>
     </ClCompile>
-    <ClCompile Include="sync\Semaphore.cpp">
-      <Filter>sync</Filter>
-    </ClCompile>
     <ClCompile Include="sync\Semaphores.cpp">
       <Filter>sync</Filter>
     </ClCompile>
@@ -221,9 +218,6 @@
       <Filter>sync</Filter>
     </ClInclude>
     <ClInclude Include="sync\Fences.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\Semaphore.h">
       <Filter>sync</Filter>
     </ClInclude>
     <ClInclude Include="sync\Semaphores.h">

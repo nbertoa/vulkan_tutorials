@@ -209,8 +209,8 @@ App::submitCommandBufferAndPresent() {
     const Fence& fence = mFences->nextAvailableFence();
     fence.waitAndReset();
 
-    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore(); 
-    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     const uint32_t swapChainImageIndex = mSwapChain.acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < mCommandBuffers->bufferCount());

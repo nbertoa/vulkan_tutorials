@@ -3,8 +3,7 @@
 
 #include <limits>
 #include <vector>
-
-#include "Semaphore.h"
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Semaphores {
@@ -12,13 +11,13 @@ public:
     Semaphores(const uint32_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
-    Semaphore& 
+    vk::Semaphore& 
     nextAvailableSemaphore();
 
-    Semaphore& 
+    vk::Semaphore& 
     currentSemaphore();
 private:
-    std::vector<Semaphore> mSemaphores;
+    std::vector<vk::UniqueSemaphore> mSemaphores;
     uint32_t mCurrentSemaphore = std::numeric_limits<uint32_t>::max();
 };
 }

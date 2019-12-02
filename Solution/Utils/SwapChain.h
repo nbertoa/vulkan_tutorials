@@ -4,6 +4,7 @@
 #include <limits>
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Semaphore;
@@ -57,7 +58,7 @@ public:
     // * semaphore will become signaled when the presentation engine
     // has released ownership of the image.
     uint32_t 
-    acquireNextImage(const Semaphore& semaphore);
+    acquireNextImage(const vk::Semaphore& semaphore);
 
     // Precondition:
     // * acquireNextImage must have been called at least once.
@@ -66,7 +67,7 @@ public:
 
     // * waitSemaphore to wait for before issuing the present request.
     void 
-    present(const Semaphore& waitSemaphore,
+    present(const vk::Semaphore& waitSemaphore,
             const uint32_t imageIndex);
 
     // The viewport describes the region of the framebuffer that the output

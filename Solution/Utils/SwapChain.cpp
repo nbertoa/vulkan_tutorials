@@ -7,7 +7,6 @@
 #include "Window.h"
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
-#include "sync/Semaphore.h"
 
 namespace vk2 {
 SwapChain::SwapChain() {       
@@ -44,7 +43,7 @@ SwapChain::SwapChain(SwapChain&& other) noexcept
 }
 
 uint32_t 
-SwapChain::acquireNextImage(const Semaphore& semaphore) {
+SwapChain::acquireNextImage(const vk::Semaphore& semaphore) {
     assert(mSwapChain != VK_NULL_HANDLE);
 
     // - Logical device associated with the swap chain
@@ -60,7 +59,7 @@ SwapChain::acquireNextImage(const Semaphore& semaphore) {
     vkChecker(vkAcquireNextImageKHR(LogicalDevice::vkDevice(),
                                     mSwapChain,
                                     std::numeric_limits<uint64_t>::max(),
-                                    semaphore.vkSemaphore(),
+                                    semaphore,
                                     VK_NULL_HANDLE,
                                     &mCurrentImageIndex));
 
@@ -74,7 +73,7 @@ SwapChain::currentImageIndex() const {
 }
 
 void
-SwapChain::present(const Semaphore& waitSemaphore,
+SwapChain::present(const vk::Semaphore& waitSemaphore,
                    const uint32_t imageIndex) {
     assert(mSwapChain != VK_NULL_HANDLE);
 
@@ -91,7 +90,7 @@ SwapChain::present(const Semaphore& waitSemaphore,
     VkPresentInfoKHR info = {};
     info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     info.waitSemaphoreCount = 1;
-    info.pWaitSemaphores = &waitSemaphore.vkSemaphore();
+    info.pWaitSemaphores = (VkSemaphore*)&waitSemaphore;
     info.swapchainCount = 1;
     info.pSwapchains = &mSwapChain;
     info.pImageIndices = &imageIndex;

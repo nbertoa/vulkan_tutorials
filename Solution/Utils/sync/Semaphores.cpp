@@ -7,11 +7,12 @@
 namespace vk2 {
 Semaphores::Semaphores(const uint32_t semaphoreCount) {
     assert(semaphoreCount > 0);
+    
+    vk::Device device(LogicalDevice::vkDevice());
 
     mSemaphores.reserve(semaphoreCount);
     for (uint32_t i = 0; i < semaphoreCount; ++i) {
-        Semaphore semaphore;
-        mSemaphores.emplace_back(std::move(semaphore));
+        mSemaphores.emplace_back(device.createSemaphoreUnique({}));
     }
 }
 
@@ -22,19 +23,19 @@ Semaphores::Semaphores(Semaphores&& other) noexcept
 
 }
 
-Semaphore& 
+vk::Semaphore& 
 Semaphores::nextAvailableSemaphore() {
     assert(mSemaphores.empty() == false);
     
     mCurrentSemaphore = (mCurrentSemaphore + 1) % static_cast<uint32_t>(mSemaphores.size());
-    Semaphore& semaphore = mSemaphores[mCurrentSemaphore];
+    vk::UniqueSemaphore& semaphore = mSemaphores[mCurrentSemaphore];
 
-    return semaphore;
+    return semaphore.get();
 }
 
-Semaphore&
+vk::Semaphore&
 Semaphores::currentSemaphore() {
     assert(mCurrentSemaphore < mSemaphores.size());
-    return mSemaphores[mCurrentSemaphore];
+    return mSemaphores[mCurrentSemaphore].get();
 }
 }

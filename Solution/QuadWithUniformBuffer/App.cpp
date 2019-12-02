@@ -39,7 +39,7 @@ App::run() {
     while (Window::shouldCloseWindow() == false) {
         glfwPollEvents();
 
-        Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+        vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
         mSwapChain.acquireNextImage(imageAvailableSemaphore);
 
         processCurrentFrame();
@@ -325,9 +325,8 @@ App::submitCommandBufferAndPresent() {
     fence.waitAndReset();
 
     // This semaphore was already obtained in run()
-    Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
-
-    Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
+    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     // The next image was already obtained in run()
     const uint32_t swapChainImageIndex = mSwapChain.currentImageIndex();

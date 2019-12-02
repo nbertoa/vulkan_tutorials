@@ -189,7 +189,6 @@
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="sync\Fence.cpp" />
     <ClCompile Include="sync\Fences.cpp" />
-    <ClCompile Include="sync\Semaphore.cpp" />
     <ClCompile Include="sync\Semaphores.cpp" />
     <ClCompile Include="SystemInitializer.cpp" />
     <ClCompile Include="vertex\PosColorVertex.cpp" />
@@ -243,7 +242,6 @@
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="sync\Fence.h" />
     <ClInclude Include="sync\Fences.h" />
-    <ClInclude Include="sync\Semaphore.h" />
     <ClInclude Include="sync\Semaphores.h" />
     <ClInclude Include="SystemInitializer.h" />
     <ClInclude Include="vertex\PosColorVertex.h" />

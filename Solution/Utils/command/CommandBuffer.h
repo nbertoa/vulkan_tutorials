@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Buffer;
@@ -13,7 +14,6 @@ class Image;
 class ImageMemoryBarrier;
 class PipelineLayout;
 class RenderPass;
-class Semaphore;
 
 //
 // VkCommandBuffer wrapper.
@@ -244,8 +244,8 @@ public:
     //     FRAGMENT_DENSITY_PROCESS_BIT_EXT
     void 
     submit(const VkQueue queue,
-           const Semaphore* waitSemaphore,
-           const Semaphore* signalSemaphore,
+           const vk::Semaphore* waitSemaphore,
+           const vk::Semaphore* signalSemaphore,
            const Fence& executionCompletedFence,
            const VkPipelineStageFlags waitStageFlags);
 
