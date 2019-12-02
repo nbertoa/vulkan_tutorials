@@ -109,7 +109,7 @@ App::initDescriptorSets() {
 
     assert(mImageView != nullptr);
     std::vector<VkDescriptorImageInfo> imageInfos;
-    imageInfos.emplace_back(VkDescriptorImageInfo{mTextureSampler.vkSampler(),
+    imageInfos.emplace_back(VkDescriptorImageInfo{mTextureSampler.get(),
                                                   mImageView->vkImageView(),
                                                   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
                                                   
@@ -133,6 +133,10 @@ App::initDescriptorSets() {
 void
 App::initImages() {
     assert(mImageView == nullptr);
+    assert(!mTextureSampler);
+
+    vk::Device device(LogicalDevice::vkDevice());
+    mTextureSampler = device.createSamplerUnique({});
 
     const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
     Image& image = ImageSystem::getOrLoadImage(path,

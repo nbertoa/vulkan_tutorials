@@ -139,9 +139,6 @@
     <ClCompile Include="resource\ImageView.cpp">
       <Filter>resource</Filter>
     </ClCompile>
-    <ClCompile Include="resource\Sampler.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
     <ClCompile Include="vertex\PosTexCoordVertex.cpp">
       <Filter>vertex</Filter>
     </ClCompile>
@@ -284,9 +281,6 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="resource\ImageView.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\Sampler.h">
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="vertex\PosTexCoordVertex.h">

@@ -1,6 +1,8 @@
 #ifndef APP
 #define APP
 
+#include <vulkan/vulkan.hpp>
+
 #include "MatrixUBO.h"
 
 #include "Utils/FrameBuffers.h"
@@ -15,7 +17,6 @@
 #include "Utils/render_pass/RenderPass.h"
 #include "Utils/resource/Buffers.h"
 #include "Utils/resource/ImageView.h"
-#include "Utils/resource/Sampler.h"
 #include "Utils/sync/Fences.h"
 #include "Utils/sync/Semaphores.h"
 
@@ -102,7 +103,7 @@ protected:
     std::unique_ptr<vk2::DescriptorSetLayout> mDescriptorSetLayout;
     std::unique_ptr<vk2::DescriptorSets> mDescriptorSets;
 
-    vk2::Sampler mTextureSampler;
+    vk::UniqueSampler mTextureSampler;
     std::unique_ptr<vk2::ImageView> mImageView;
 };
 
