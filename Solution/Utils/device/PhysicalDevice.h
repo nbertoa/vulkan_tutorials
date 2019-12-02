@@ -60,7 +60,7 @@ public:
     static void
     finalize();
 
-    static VkPhysicalDevice 
+    static vk::PhysicalDevice 
     device();
 
     static uint32_t
@@ -90,7 +90,7 @@ public:
     //     DEVICE_UNCACHED_BIT_AMD
     static uint32_t
     memoryTypeIndex(const uint32_t memoryTypeFilter,
-                    const VkMemoryPropertyFlags memoryPropertyFlags);
+                    const vk::MemoryPropertyFlags memoryPropertyFlags);
 
     static bool
     isValidMemoryTypeIndex(const uint32_t memoryTypeIndex);

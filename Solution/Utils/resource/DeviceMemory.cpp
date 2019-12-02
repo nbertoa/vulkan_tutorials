@@ -13,7 +13,7 @@ DeviceMemory::DeviceMemory(const VkMemoryRequirements& memoryRequirements,
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     info.allocationSize = memoryRequirements.size;
     info.memoryTypeIndex = PhysicalDevice::memoryTypeIndex(memoryRequirements.memoryTypeBits,
-                                                                           memoryPropertyFlags);
+                                                           (vk::MemoryPropertyFlags)memoryPropertyFlags);
     assert(PhysicalDevice::isValidMemoryTypeIndex(info.memoryTypeIndex));
     vkChecker(vkAllocateMemory(LogicalDevice::device(),
                                &info,

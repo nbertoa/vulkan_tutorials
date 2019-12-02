@@ -54,14 +54,12 @@ PhysicalDeviceData::isSupported() const {
 bool
 PhysicalDeviceData::isGraphicQueueFamilySupported() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-
-    const std::vector<vk::QueueFamilyProperties> properties =
-        mPhysicalDevice.getQueueFamilyProperties();
-
+    
     mGraphicsQueueFamilyIndex = 0;
-    for (const vk::QueueFamilyProperties& queueFamilyProperty : properties) {
-        if (queueFamilyProperty.queueCount > 0 &&
-            queueFamilyProperty.queueFlags & vk::QueueFlagBits::eGraphics) {
+    for (const vk::QueueFamilyProperties& property : 
+         mPhysicalDevice.getQueueFamilyProperties()) {
+        if (property.queueCount > 0 &&
+            property.queueFlags & vk::QueueFlagBits::eGraphics) {
             return true;
         }
 
@@ -74,14 +72,12 @@ PhysicalDeviceData::isGraphicQueueFamilySupported() {
 bool
 PhysicalDeviceData::isTransferQueueFamilySupported() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-
-    const std::vector<vk::QueueFamilyProperties> properties =
-        mPhysicalDevice.getQueueFamilyProperties();
-
+    
     mTransferQueueFamilyIndex = 0;
-    for (const vk::QueueFamilyProperties& queueFamilyProperty : properties) {
-        if (queueFamilyProperty.queueCount > 0 &&
-            queueFamilyProperty.queueFlags & vk::QueueFlagBits::eTransfer) {
+    for (const vk::QueueFamilyProperties& property : 
+         mPhysicalDevice.getQueueFamilyProperties()) {
+        if (property.queueCount > 0 &&
+            property.queueFlags & vk::QueueFlagBits::eTransfer) {
             return true;
         }
 
@@ -95,14 +91,12 @@ bool
 PhysicalDeviceData::isPresentationSupported() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
 
-    const std::vector<vk::QueueFamilyProperties> properties =
-        mPhysicalDevice.getQueueFamilyProperties();
-
     mPresentationQueueFamilyIndex = 0;
-    for (const VkQueueFamilyProperties& queueFamilyProperty : properties) {
-        if (queueFamilyProperty.queueCount > 0) {
-            if (Window::isPresentationSupportedByPhysicalDevice(mPhysicalDevice,
-                                                                mPresentationQueueFamilyIndex)) {
+    for (const vk::QueueFamilyProperties& property : 
+         mPhysicalDevice.getQueueFamilyProperties()) {
+        if (property.queueCount > 0) {
+            if (mPhysicalDevice.getSurfaceSupportKHR(mPresentationQueueFamilyIndex,
+                                                     Window::surface())) {
                 return true;
             }
         }
@@ -117,14 +111,12 @@ bool
 PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>& deviceExtensions) {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     
-    const std::vector<vk::ExtensionProperties> properties =
-        mPhysicalDevice.enumerateDeviceExtensionProperties();
-
     std::unordered_set<std::string> requiredExtensions(deviceExtensions.begin(),
                                                        deviceExtensions.end());
 
-    for (const vk::ExtensionProperties& extensionProperty : properties) {
-        requiredExtensions.erase(extensionProperty.extensionName);
+    for (const vk::ExtensionProperties& property : 
+         mPhysicalDevice.enumerateDeviceExtensionProperties()) {
+        requiredExtensions.erase(property.extensionName);
     }
 
 #ifdef _DEBUG
@@ -139,14 +131,13 @@ PhysicalDeviceData::areDeviceExtensionsSupported(const std::vector<const char*>&
 bool
 PhysicalDeviceData::isSwapChainSupported() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-    return Window::physicalDeviceSurfaceFormats(mPhysicalDevice).empty() == false &&
-           Window::physicalDeviceSurfacePresentModes(mPhysicalDevice).empty() == false;
+    return mPhysicalDevice.getSurfaceFormatsKHR(Window::surface()).empty() == false &&
+           mPhysicalDevice.getSurfacePresentModesKHR(Window::surface()).empty() == false;
 }
 
 bool
 PhysicalDeviceData::areDeviceFeaturesSupported() const {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
-
     return mPhysicalDevice.getFeatures().samplerAnisotropy;
 }
 }

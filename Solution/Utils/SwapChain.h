@@ -4,13 +4,12 @@
 #include <limits>
 #include <vector>
 #include <vulkan/vulkan.hpp>
-#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 class Semaphore;
 
 //
-// VkSwapChain wrapper.
+// SwapChain wrapper.
 //
 // The swapchain provides the ability to present rendering results
 // to a surface. A swapchain is an abstraction for an array of
@@ -79,7 +78,7 @@ public:
     // - width and height
     // - minDepth and maxDepth are the depth range for the viewport.
     //   It is valid for minDepth to be greater than or equal to maxDepth.
-    const VkViewport& 
+    const vk::Viewport& 
     viewport() const;
 
     // While viewports define the transformation from the image to the framebuffer,
@@ -92,10 +91,10 @@ public:
     // same dimensionality.
     // - offset of the rectangle.
     // - extent of the rectangle.
-    const VkRect2D& 
+    const vk::Rect2D& 
     scissorRect() const;
 
-    VkFormat 
+    vk::Format 
     imageFormat() const;
 
     uint32_t
@@ -130,15 +129,15 @@ public:
     // VkExtent2D:
     // - width
     // - height
-    const VkExtent2D& 
+    const vk::Extent2D& 
     imageExtent() const;
 
 private:
     // VkSurfaceFormatKHR:
     // - format of the surface
     // - colorSpace of the surface
-    static VkSurfaceFormatKHR 
-    bestFitSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats);
+    static vk::SurfaceFormatKHR 
+    bestFitSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& surfaceFormats);
 
     // The swap chain presentation mode is the most important setting for the swap chain because 
     // it represents the actual conditions for showing images to the screen.
@@ -147,8 +146,8 @@ private:
     //
     //   - IMMEDIATE_KHR, MAILBOX_KHR, FIFO_KHR, FIFO_RELAXED_KHR, SHARED_DEMAND_REFRESH_KHR, 
     //     SHARED_CONTINUOUS_REFRESH_KHR
-    static VkPresentModeKHR 
-    bestFitPresentMode(const std::vector<VkPresentModeKHR>& presentModes);
+    static vk::PresentModeKHR 
+    bestFitPresentMode(const std::vector<vk::PresentModeKHR>& presentModes);
 
     // The swap extent is the resolution of the swap chain images and it is almost always 
     // exactly equal to the resolution of the window that we are drawing to.
@@ -190,13 +189,13 @@ private:
     //     the presentable images of a swapchain created with VkPresentModeKHR set to 
     //     VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, 
     //     VK_PRESENT_MODE_FIFO_KHR or VK_PRESENT_MODE_FIFO_RELAXED_KHR
-    static VkExtent2D 
-    swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, 
+    static vk::Extent2D 
+    swapChainExtent(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities, 
                     const uint32_t windowWidth,
                     const uint32_t windowHeight);
 
     static uint32_t 
-    swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
+    swapChainImageCount(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities);
     
     void 
     initSwapChain();
@@ -214,11 +213,11 @@ private:
 
     uint32_t mCurrentImageIndex = std::numeric_limits<uint32_t>::max();
 
-    VkFormat mImageFormat = {};
-    VkExtent2D mExtent = {};
+    vk::Format mImageFormat = {};
+    vk::Extent2D mExtent = {};
 
-    VkViewport mViewport = {};
-    VkRect2D mScissorRect = {};
+    vk::Viewport mViewport = {};
+    vk::Rect2D mScissorRect = {};
 };
 }
 

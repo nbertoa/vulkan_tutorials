@@ -4,10 +4,11 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
 //
-// GLFWwindow & VkSurfaceKHR wrapper.
+// GLFWwindow & SurfaceKHR wrapper.
 //
 // The GLFWwindow object encapsulates both a window and a context.
 // 
@@ -20,7 +21,7 @@ namespace vk2 {
 // To establish the connection between Vulkan and the window system to present
 // results to the screen, we need to use the WSI (Window System Integration) extensions.
 //
-// A VkSurfaceKHR object abstracts a native platform surface or window object for use 
+// A SurfaceKHR object abstracts a native platform surface or window object for use 
 // with Vulkan. 
 //
 // The VK_KHR_surface extension declares the VkSurfaceKHR object, and provides a function 
@@ -51,8 +52,8 @@ public:
     static void
     finalize();
 
-    static VkSurfaceKHR
-    vkSurface();
+    static vk::SurfaceKHR
+    surface();
     
     static bool 
     shouldCloseWindow();
@@ -67,30 +68,9 @@ public:
     static uint32_t
     height();
 
-    // Window's surface capabilities supported by the physical device that
-    // needed to create the swap chain
-    static VkSurfaceCapabilitiesKHR
-    physicalDeviceSurfaceCapabilities(const VkPhysicalDevice physicalDevice);
-
-    // Window's surface color formats supported by the physical device that 
-    // are needed to create the swap chain
-    static std::vector<VkSurfaceFormatKHR>
-    physicalDeviceSurfaceFormats(const VkPhysicalDevice physicalDevice);
-
-    // Window's surface presentation modes supported by the physical device
-    // that are needed to create the swap chain
-    static std::vector<VkPresentModeKHR>
-    physicalDeviceSurfacePresentModes(const VkPhysicalDevice physicalDevice);
-
-    // Returns true if presentation on window's surface is supported
-    // by the physicalDevice
-    static bool
-    isPresentationSupportedByPhysicalDevice(const VkPhysicalDevice physicalDevice,
-                                            const uint32_t queueFamilyIndex);
-
 private:
     static GLFWwindow* mWindow;
-    static VkSurfaceKHR mSurface;
+    static vk::SurfaceKHR mSurface;
 };
 }
 

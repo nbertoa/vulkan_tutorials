@@ -277,7 +277,7 @@ App::initRenderPass() {
     // We want the image to be ready for presentation using the swap chain 
     // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
     // for the final layout.
-    attachmentDescriptions.emplace_back(mSwapChain.imageFormat(),
+    attachmentDescriptions.emplace_back((VkFormat)mSwapChain.imageFormat(),
                                         VK_ATTACHMENT_LOAD_OP_CLEAR,
                                         VK_ATTACHMENT_STORE_OP_STORE,
                                         VK_IMAGE_LAYOUT_UNDEFINED,

@@ -52,7 +52,7 @@ PhysicalDevice::finalize() {
 
 }
 
-VkPhysicalDevice 
+vk::PhysicalDevice 
 PhysicalDevice::device() {
     assert(mPhysicalDevice != VK_NULL_HANDLE);
     return mPhysicalDevice;
@@ -78,15 +78,14 @@ PhysicalDevice::presentationQueueFamilyIndex() {
 
 uint32_t 
 PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
-                                const VkMemoryPropertyFlags memoryPropertyFlags) {
+                                const vk::MemoryPropertyFlags memoryPropertyFlags) {
 
     uint32_t typeIndex = std::numeric_limits<uint32_t>::max();
 
     // Each physical device can then be queried for its capabilities, 
     // including its queueand queue family properties.
-    VkPhysicalDeviceMemoryProperties memoryProperties;
-    vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice,
-                                        &memoryProperties);
+    const vk::PhysicalDeviceMemoryProperties memoryProperties =
+        mPhysicalDevice.getMemoryProperties();
 
     // memoryTypeFilter is used to specify the bit field of memory types
     // that are suitable.
@@ -98,7 +97,7 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
         // by simply iterating over them and checking if the corresponding
         // bit is set to 1.
         if (memoryTypeFilter & (1 << i)) {
-            const VkMemoryPropertyFlags currentMemoryPropertyFlags = 
+            const vk::MemoryPropertyFlags currentProperty = 
                 memoryProperties.memoryTypes[i].propertyFlags;
 
             // We may have more than one desiderable property, so we should
@@ -107,7 +106,7 @@ PhysicalDevice::memoryTypeIndex(const uint32_t memoryTypeFilter,
             // If there is a memory type suitable for the buffer that also
             // has all of the properties we need, then we return its index,
             // otherwise, std::numeric_limits<uint32_t>::max().
-            if ((currentMemoryPropertyFlags & memoryPropertyFlags) == memoryPropertyFlags) {
+            if ((currentProperty & memoryPropertyFlags) == memoryPropertyFlags) {
                 typeIndex = i;
                 break;
             }

@@ -99,19 +99,19 @@ SwapChain::present(const vk::Semaphore& waitSemaphore,
                                 &info));
 }
 
-const VkViewport& 
+const vk::Viewport& 
 SwapChain::viewport() const {
     assert(mSwapChain != VK_NULL_HANDLE);
     return mViewport;
 }
 
-const VkRect2D& 
+const vk::Rect2D& 
 SwapChain::scissorRect() const {
     assert(mSwapChain != VK_NULL_HANDLE);
     return mScissorRect;
 }
 
-VkFormat
+vk::Format
 SwapChain::imageFormat() const {
     assert(mSwapChain != VK_NULL_HANDLE);
     return mImageFormat;
@@ -147,22 +147,22 @@ SwapChain::imageAspectRatio() const {
     return mExtent.width / static_cast<float>(mExtent.height);
 }
 
-const VkExtent2D&
+const vk::Extent2D&
 SwapChain::imageExtent() const {
     assert(mSwapChain != VK_NULL_HANDLE);
     return mExtent;
 }
 
-VkSurfaceFormatKHR
-SwapChain::bestFitSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFormats) {
+vk::SurfaceFormatKHR
+SwapChain::bestFitSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& surfaceFormats) {
     assert(surfaceFormats.empty() == false);
 
-    for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats) {
+    for (const vk::SurfaceFormatKHR& surfaceFormat : surfaceFormats) {
         // For the color space we will use SRGB if it is available,
         // because it results in more accurate perceived colors.
         // For the format, we will use the standard RGB.
-        if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
-            surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+        if (surfaceFormat.format == vk::Format::eB8G8R8A8Unorm &&
+            surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
             return surfaceFormat;
         }
     }
@@ -170,26 +170,26 @@ SwapChain::bestFitSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& surfaceFo
     return surfaceFormats[0];
 }
 
-VkPresentModeKHR
-SwapChain::bestFitPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
-    // Some drivers currently do not properly support VK_PRESENT_MODE_FIFO_KHR.
-    // So we should prefer VK_PRESENT_MODE_IMMEDIATE_KHR if VK_PRESENT_MODE_MAILBOX_KHR
+vk::PresentModeKHR
+SwapChain::bestFitPresentMode(const std::vector<vk::PresentModeKHR>& presentModes) {
+    // Some drivers currently do not properly support PresentModeKHR::eFifo.
+    // So we should prefer PresentModeKHR::eImmediate if PresentModeKHR::eMailbox
     // is not available.
-    VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
+    vk::PresentModeKHR bestMode = vk::PresentModeKHR::eFifo;
 
-    for (const VkPresentModeKHR presentMode : presentModes) {
-        if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+    for (const vk::PresentModeKHR presentMode : presentModes) {
+        if (presentMode == vk::PresentModeKHR::eMailbox) {
             return presentMode;
-        } else if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-            bestMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+        } else if (presentMode == vk::PresentModeKHR::eImmediate) {
+            bestMode = vk::PresentModeKHR::eImmediate;
         }
     }
 
     return bestMode;
 }
 
-VkExtent2D
-SwapChain::swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, 
+vk::Extent2D
+SwapChain::swapChainExtent(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities, 
                            const uint32_t windowWidth, 
                            const uint32_t windowHeight) {
     // Vulkan tells us to match the resolution of the window by setting the width 
@@ -217,7 +217,7 @@ SwapChain::swapChainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities,
 }
 
 uint32_t
-SwapChain::swapChainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities) {
+SwapChain::swapChainImageCount(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities) {
     // As we may sometimes have to wait on the driver to complete internal operations
     // before we can acquire another image to render to, then we request at least
     // one more image than the minumum.
@@ -255,7 +255,7 @@ SwapChain::initImagesAndViews() {
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     // How the image data should be interpreted.
     createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    createInfo.format = mImageFormat;
+    createInfo.format = (VkFormat)mImageFormat;
     // Allows you to swizzle the color channels around.
     // For example, you can map all of the channels to the red channel
     // for a monocrhome texture. You can also map constant values
@@ -306,14 +306,14 @@ SwapChain::initViewportAndScissorRect() {
 
 void
 SwapChain::initSwapChain() {
-    const VkSurfaceCapabilitiesKHR surfaceCapabilities = 
-        Window::physicalDeviceSurfaceCapabilities(PhysicalDevice::device());
+    const vk::SurfaceCapabilitiesKHR surfaceCapabilities =
+        PhysicalDevice::device().getSurfaceCapabilitiesKHR(Window::surface());
     mExtent = swapChainExtent(surfaceCapabilities, 
                               Window::width(),
                               Window::height());
 
-    const VkSurfaceFormatKHR surfaceFormat =
-        bestFitSurfaceFormat(Window::physicalDeviceSurfaceFormats(PhysicalDevice::device()));
+    const vk::SurfaceFormatKHR surfaceFormat =
+        bestFitSurfaceFormat(PhysicalDevice::device().getSurfaceFormatsKHR(Window::surface()));
     mImageFormat = surfaceFormat.format;
 
     // VkSwapchainCreateInfoKHR:
@@ -393,18 +393,18 @@ SwapChain::initSwapChain() {
     //   acquired from it.
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = Window::vkSurface();
+    createInfo.surface = Window::surface();
     createInfo.minImageCount = swapChainImageCount(surfaceCapabilities);
-    createInfo.imageFormat = mImageFormat;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
+    createInfo.imageFormat = (VkFormat)mImageFormat;
+    createInfo.imageColorSpace = (VkColorSpaceKHR)surfaceFormat.colorSpace;
     createInfo.imageExtent = mExtent;
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    createInfo.preTransform = surfaceCapabilities.currentTransform;
+    createInfo.preTransform = ( VkSurfaceTransformFlagBitsKHR)surfaceCapabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode =
+    createInfo.presentMode = (VkPresentModeKHR)
         bestFitPresentMode(
-            Window::physicalDeviceSurfacePresentModes(PhysicalDevice::device())
+            PhysicalDevice::device().getSurfacePresentModesKHR(Window::surface())
         );
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
