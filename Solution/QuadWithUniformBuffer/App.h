@@ -80,7 +80,7 @@ protected:
     std::unique_ptr<vk2::CommandPool> mTransferCommandPool;
 
     std::unique_ptr<vk2::RenderPass> mRenderPass;
-    std::unique_ptr<vk2::FrameBuffers> mFrameBuffers;
+    std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 
     std::unique_ptr<vk2::CommandBuffers> mCommandBuffers;
     std::unique_ptr<vk2::GraphicsPipeline> mGraphicsPipeline;

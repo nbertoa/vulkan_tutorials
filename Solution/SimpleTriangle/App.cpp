@@ -74,14 +74,14 @@ App::initBuffers() {
 void
 App::recordCommandBuffers() {
     assert(mCommandBuffers != nullptr);
-    assert(mFrameBuffers != nullptr);
+    assert(mFrameBuffers.empty() == false);
     for (uint32_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
         CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(i);
 
         commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
 
         commandBuffer.beginPass(*mRenderPass,
-                                mFrameBuffers->buffer(i),
+                                mFrameBuffers[i].get(),
                                 mSwapChain.imageExtent());
 
         commandBuffer.bindPipeline(*mGraphicsPipeline);
@@ -200,22 +200,39 @@ App::submitCommandBufferAndPresent() {
 
 void
 App::initFrameBuffers() {
-    assert(mFrameBuffers == nullptr);
+    assert(mFrameBuffers.empty());
     assert(mRenderPass != nullptr);
+    assert(mSwapChain.imageViews().empty() == false);
 
-    mFrameBuffers.reset(new FrameBuffers(*mRenderPass,
-                                         mSwapChain.imageViews(),
-                                         mSwapChain.imageWidth(),
-                                         mSwapChain.imageHeight()));
+    vk::FramebufferCreateInfo createInfo =
+    {
+        vk::FramebufferCreateFlags(),
+        vk::RenderPass(mRenderPass->vkRenderPass()),
+        1,
+        nullptr, // This will be updated with each iamge view.
+        mSwapChain.imageWidth(),
+        mSwapChain.imageHeight(),
+        1 // number of layers
+    };
+
+    const std::vector<vk::UniqueImageView>& imageViews = mSwapChain.imageViews();
+    mFrameBuffers.resize(imageViews.size());
+    for (size_t i = 0; i < imageViews.size(); ++i) {
+        assert(imageViews[i].get() != VK_NULL_HANDLE);
+        const vk::ImageView attachments[] = {imageViews[i].get()};
+        createInfo.setPAttachments(&imageViews[i].get());
+
+        mFrameBuffers[i] = LogicalDevice::device().createFramebufferUnique(createInfo);
+    }
 }
 
 void
 App::initCommandBuffers() {
     assert(mCommandBuffers == nullptr);
-    assert(mFrameBuffers != nullptr);
+    assert(mFrameBuffers.empty() == false);
 
     mCommandBuffers.reset(new CommandBuffers(*mGraphicsCommandPool,
-                                             mFrameBuffers->bufferCount(),
+                                             mFrameBuffers.size(),
                                              VK_COMMAND_BUFFER_LEVEL_PRIMARY));
 }
 
@@ -225,9 +242,9 @@ App::initSemaphoresAndFences() {
     assert(mRenderFinishedSemaphores == nullptr);
     assert(mFences == nullptr);
 
-    mImageAvailableSemaphores.reset(new Semaphores(mFrameBuffers->bufferCount()));
-    mRenderFinishedSemaphores.reset(new Semaphores(mFrameBuffers->bufferCount()));
-    mFences.reset(new Fences(mFrameBuffers->bufferCount()));
+    mImageAvailableSemaphores.reset(new Semaphores(mFrameBuffers.size()));
+    mRenderFinishedSemaphores.reset(new Semaphores(mFrameBuffers.size()));
+    mFences.reset(new Fences(mFrameBuffers.size()));
 }
 
 void

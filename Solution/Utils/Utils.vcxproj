@@ -158,7 +158,6 @@
     <ClCompile Include="device\PhysicalDeviceData.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="DebugMessenger.cpp" />
-    <ClCompile Include="FrameBuffers.cpp" />
     <ClCompile Include="pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="pipeline\PipelineLayout.cpp" />
     <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp" />
@@ -210,7 +209,6 @@
     <ClInclude Include="Instance.h" />
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="FrameBuffers.h" />
     <ClInclude Include="pipeline\GraphicsPipeline.h" />
     <ClInclude Include="pipeline\PipelineLayout.h" />
     <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />

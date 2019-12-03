@@ -1,6 +1,8 @@
 #ifndef APP
 #define APP
 
+#include <vulkan/vulkan.hpp>
+
 #include "Utils/FrameBuffers.h"
 #include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
@@ -66,7 +68,7 @@ protected:
     std::unique_ptr<vk2::CommandPool> mTransferCommandPool;
 
     std::unique_ptr<vk2::RenderPass> mRenderPass;
-    std::unique_ptr<vk2::FrameBuffers> mFrameBuffers;
+    std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 
     std::unique_ptr<vk2::CommandBuffers> mCommandBuffers;
 
