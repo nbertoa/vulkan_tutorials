@@ -143,12 +143,19 @@ App::initRenderPass() {
         vk::ImageLayout::ePresentSrcKHR
     });
 
-    std::vector<VkAttachmentReference> colorAttachmentReferences {
-        {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
+    const std::vector<vk::AttachmentReference> colorAttachments {
+        {0, vk::ImageLayout::eColorAttachmentOptimal}
     };
-    std::vector<SubpassDescription> subpassDescriptions;
-    subpassDescriptions.emplace_back(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                     colorAttachmentReferences);
+    std::vector<vk::SubpassDescription> subpassDescriptions;
+    subpassDescriptions.emplace_back(vk::SubpassDescription
+    {
+        vk::SubpassDescriptionFlags(),
+        vk::PipelineBindPoint::eGraphics,
+        0, // input attachment count
+        nullptr, // input attachments
+        static_cast<uint32_t>(colorAttachments.size()),
+        colorAttachments.data(),
+    });
 
     // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
     // depending on whether it is specified in srcSubpass or dstSubpass.

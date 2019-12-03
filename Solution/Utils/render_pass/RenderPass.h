@@ -4,8 +4,6 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-#include "SubpassDescription.h"
-
 namespace vk2 {
 //
 // VkRenderPass wrapper.
@@ -43,7 +41,7 @@ public:
     //
     // Notes: The global logical device is the device that creates the render pass.
     RenderPass(const std::vector<vk::AttachmentDescription>& attachmentDescriptions,
-               const std::vector<SubpassDescription>& subpassDescriptions,
+               const std::vector<vk::SubpassDescription>& subpassDescriptions,
                const std::vector<vk::SubpassDependency>& subpassDependencies);
     ~RenderPass();
     RenderPass(RenderPass&& other) noexcept;
