@@ -6,7 +6,6 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
-#include "../render_pass/RenderPass.h"
 #include "../resource/Buffer.h"
 #include "../resource/Image.h"
 #include "../resource/ImageMemoryBarrier.h"
@@ -57,25 +56,26 @@ CommandBuffer::endRecording() {
 }
 
 void
-CommandBuffer::beginPass(const RenderPass& renderPass,
-                         const VkFramebuffer frameBuffer,
-                         const VkExtent2D& imageExtent,
-                         const std::vector<VkClearValue>& clearValues) {
+CommandBuffer::beginPass(const vk::RenderPass renderPass,
+                         const vk::Framebuffer frameBuffer,
+                         const vk::Extent2D& imageExtent) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    assert(frameBuffer != VK_NULL_HANDLE);     
-    assert(clearValues.empty() == false);
+    assert(frameBuffer != VK_NULL_HANDLE);   
 
-    VkRenderPassBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass = renderPass.vkRenderPass();
-    info.framebuffer = frameBuffer;
-    info.renderArea.offset = {0, 0};
-    info.renderArea.extent = imageExtent;
-    info.clearValueCount = static_cast<uint32_t>(clearValues.size());
-    info.pClearValues = clearValues.data();
+    vk::ClearColorValue colorValue(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
+    vk::ClearValue clearValue(colorValue);
+
+    vk::RenderPassBeginInfo info = 
+    {
+        renderPass,
+        frameBuffer,
+        vk::Rect2D{vk::Offset2D {0, 0}, imageExtent}, // render area
+        1,
+        &clearValue
+    };
 
     vkCmdBeginRenderPass(mCommandBuffer,
-                         &info,
+                         (VkRenderPassBeginInfo*)&info,
                          VK_SUBPASS_CONTENTS_INLINE);
 }
 

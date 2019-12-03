@@ -75,7 +75,7 @@ public:
     GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                      const PipelineStates& pipelineStates,
                      const ShaderStages& shaderStages,
-                     const RenderPass& renderPass,
+                     const vk::RenderPass& renderPass,
                      const uint32_t subPassIndex = 0);
     ~GraphicsPipeline();
     GraphicsPipeline(GraphicsPipeline&& other) noexcept;

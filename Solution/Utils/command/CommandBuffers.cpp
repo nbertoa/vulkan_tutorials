@@ -7,7 +7,6 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
-#include "../render_pass/RenderPass.h"
 
 namespace vk2 {
 CommandBuffers::CommandBuffers(const CommandPool& commandPool,

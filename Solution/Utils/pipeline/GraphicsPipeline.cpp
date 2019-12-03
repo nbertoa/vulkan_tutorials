@@ -5,14 +5,13 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline_stage/PipelineStates.h"
-#include "../render_pass/RenderPass.h"
 #include "../shader/ShaderStages.h"
 
 namespace vk2 {
 GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                                    const PipelineStates& pipelineStates,
                                    const ShaderStages& shaderStages,
-                                   const RenderPass& renderPass,
+                                   const vk::RenderPass& renderPass,
                                    const uint32_t subPassIndex)
     : mPipelineLayout(std::move(pipelineLayout)) {
     vk::GraphicsPipelineCreateInfo createInfo =
@@ -48,7 +47,7 @@ GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
             &pipelineStates.dynamicState()->state() :
             nullptr,
         mPipelineLayout.get(),
-        vk::RenderPass(renderPass.vkRenderPass()),
+        renderPass,
         subPassIndex,
         vk::Pipeline(), // base pipeline handle
         -1 // base pipeline index

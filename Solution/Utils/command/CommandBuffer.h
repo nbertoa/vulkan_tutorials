@@ -111,10 +111,9 @@ public:
     //   Only elements corresponding to cleared attachments are used.
     //   Other elements of clearValues are ignored.
     void 
-    beginPass(const RenderPass& renderPass,
-              const VkFramebuffer frameBuffer,
-              const VkExtent2D& imageExtent,
-              const std::vector<VkClearValue>& clearValues = {VkClearValue{0.0f, 0.0f, 0.0f, 1.0f}});
+    beginPass(const vk::RenderPass renderPass,
+              const vk::Framebuffer frameBuffer,
+              const vk::Extent2D& imageExtent);
     
     void 
     endPass();

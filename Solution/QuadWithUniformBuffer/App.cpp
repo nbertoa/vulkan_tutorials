@@ -10,7 +10,6 @@
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
-#include "Utils/render_pass/RenderPass.h"
 #include "Utils/shader/ShaderModule.h"
 #include "Utils/shader/ShaderModuleSystem.h"
 #include "Utils/shader/ShaderStages.h"
@@ -231,7 +230,7 @@ App::initGraphicsPipeline() {
     mGraphicsPipeline.reset(new GraphicsPipeline(pipelineLayout,
                                                  pipelineStates,
                                                  shaderStages,
-                                                 *mRenderPass));
+                                                 mRenderPass.get()));
 }
 
 void
@@ -273,7 +272,7 @@ App::initShaderStages(ShaderStages& shaderStages) {
 
 void
 App::initRenderPass() {
-    assert(mRenderPass == nullptr);
+    assert(mRenderPass.get() == VK_NULL_HANDLE);
 
     std::vector<vk::AttachmentDescription> attachmentDescriptions;
 
@@ -340,9 +339,18 @@ App::initRenderPass() {
         vk::DependencyFlags()
     });
 
-    mRenderPass.reset(new RenderPass(attachmentDescriptions,
-                                     subpassDescriptions,
-                                     subpassDependencies));
+    vk::RenderPassCreateInfo createInfo =
+    {
+        vk::RenderPassCreateFlags(),
+        static_cast<uint32_t>(attachmentDescriptions.size()),
+        attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data(),
+        static_cast<uint32_t>(subpassDescriptions.size()),
+        subpassDescriptions.empty() ? nullptr : subpassDescriptions.data(),
+        static_cast<uint32_t>(subpassDependencies.size()),
+        subpassDependencies.empty() ? nullptr : subpassDependencies.data()
+    };
+
+    mRenderPass = LogicalDevice::device().createRenderPassUnique(createInfo);
 }
 
 void
@@ -378,13 +386,13 @@ App::submitCommandBufferAndPresent() {
 void
 App::initFrameBuffers() {
     assert(mFrameBuffers.empty());
-    assert(mRenderPass != nullptr);
+    assert(mRenderPass.get() != VK_NULL_HANDLE);
     assert(mSwapChain.imageViews().empty() == false);
 
     vk::FramebufferCreateInfo createInfo =
     {
         vk::FramebufferCreateFlags(),
-        vk::RenderPass(mRenderPass->vkRenderPass()),
+        mRenderPass.get(),
         1,
         nullptr, // This will be updated with each iamge view.
         mSwapChain.imageWidth(),

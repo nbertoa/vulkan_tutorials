@@ -50,9 +50,6 @@
     <ClCompile Include="device\PhysicalDeviceData.cpp">
       <Filter>device</Filter>
     </ClCompile>
-    <ClCompile Include="render_pass\RenderPass.cpp">
-      <Filter>render_pass</Filter>
-    </ClCompile>
     <ClCompile Include="resource\Buffer.cpp">
       <Filter>resource</Filter>
     </ClCompile>
@@ -176,9 +173,6 @@
     <ClInclude Include="device\PhysicalDeviceData.h">
       <Filter>device</Filter>
     </ClInclude>
-    <ClInclude Include="render_pass\RenderPass.h">
-      <Filter>render_pass</Filter>
-    </ClInclude>
     <ClInclude Include="resource\Buffer.h">
       <Filter>resource</Filter>
     </ClInclude>
@@ -259,9 +253,6 @@
     </Filter>
     <Filter Include="device">
       <UniqueIdentifier>{db5a2c64-da4a-4e7f-b71b-da28b37a3bdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="render_pass">
-      <UniqueIdentifier>{b9d99425-7c1b-49a3-8f1c-d86fb22a0256}</UniqueIdentifier>
     </Filter>
     <Filter Include="resource">
       <UniqueIdentifier>{5f27a43c-0c6a-4ae9-9ad7-4cdf9b2d9d93}</UniqueIdentifier>

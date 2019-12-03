@@ -13,7 +13,6 @@
 #include "Utils/descriptor/DescriptorSets.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
-#include "Utils/render_pass/RenderPass.h"
 #include "Utils/resource/Buffers.h"
 #include "Utils/resource/ImageView.h"
 #include "Utils/sync/Fences.h"
@@ -81,7 +80,7 @@ protected:
     std::unique_ptr<vk2::CommandPool> mGraphicsCommandPool;
     std::unique_ptr<vk2::CommandPool> mTransferCommandPool;
 
-    std::unique_ptr<vk2::RenderPass> mRenderPass;
+    vk::UniqueRenderPass mRenderPass;
     std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 
     std::unique_ptr<vk2::CommandBuffers> mCommandBuffers;

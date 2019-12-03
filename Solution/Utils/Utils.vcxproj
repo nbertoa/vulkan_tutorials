@@ -170,7 +170,6 @@
     <ClCompile Include="pipeline_stage\VertexInputState.cpp" />
     <ClCompile Include="pipeline_stage\RasterizationState.cpp" />
     <ClCompile Include="pipeline_stage\ViewportState.cpp" />
-    <ClCompile Include="render_pass\RenderPass.cpp" />
     <ClCompile Include="resource\Buffer.cpp" />
     <ClCompile Include="resource\Buffers.cpp" />
     <ClCompile Include="resource\DeviceMemory.cpp" />
@@ -217,7 +216,6 @@
     <ClInclude Include="pipeline_stage\VertexInputState.h" />
     <ClInclude Include="pipeline_stage\RasterizationState.h" />
     <ClInclude Include="pipeline_stage\ViewportState.h" />
-    <ClInclude Include="render_pass\RenderPass.h" />
     <ClInclude Include="resource\Buffer.h" />
     <ClInclude Include="resource\Buffers.h" />
     <ClInclude Include="resource\DeviceMemory.h" />
