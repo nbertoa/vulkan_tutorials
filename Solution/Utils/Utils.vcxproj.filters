@@ -89,9 +89,6 @@
     <ClCompile Include="pipeline\GraphicsPipeline.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
-    <ClCompile Include="pipeline\PipelineLayout.cpp">
-      <Filter>pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="shader\ShaderModule.cpp">
       <Filter>shader</Filter>
     </ClCompile>
@@ -225,9 +222,6 @@
       <Filter>command</Filter>
     </ClInclude>
     <ClInclude Include="pipeline\GraphicsPipeline.h">
-      <Filter>pipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline\PipelineLayout.h">
       <Filter>pipeline</Filter>
     </ClInclude>
     <ClInclude Include="shader\ShaderModule.h">

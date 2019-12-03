@@ -5,8 +5,6 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-#include "PipelineLayout.h"
-
 namespace vk2 {
 class DynamicState;
 class PipelineStates;
@@ -74,7 +72,7 @@ public:
     // to the application, and VK_ERROR_INVALID_SHADER_NV will be generated.
     //
     // The global logical device is the device that creates the graphics pipeline.
-    GraphicsPipeline(PipelineLayout& pipelineLayout,
+    GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                      const PipelineStates& pipelineStates,
                      const ShaderStages& shaderStages,
                      const RenderPass& renderPass,
@@ -87,12 +85,12 @@ public:
     VkPipeline 
     vkPipeline() const;
 
-    const PipelineLayout&
+    vk::PipelineLayout
     pipelineLayout() const;
 
 private:
     VkPipeline mPipeline = VK_NULL_HANDLE;
-    PipelineLayout mPipelineLayout;
+    vk::UniquePipelineLayout mPipelineLayout;
 };
 }
 

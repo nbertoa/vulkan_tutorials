@@ -5,7 +5,7 @@
 
 namespace vk2 {
 //
-// VkPipelineRasterizationStateCreateInfo wrapper
+// PipelineRasterizationStateCreateInfo wrapper
 //
 // The rasterizer takes the geometry that is shaped by 
 // the vertices from the vertex shader and turns it 
@@ -15,7 +15,7 @@ namespace vk2 {
 // and it can be configured to output fragments that fill entire 
 // polygons or just the edges(wireframe rendering).
 //
-// All this is configured using the VkPipelineRasterizationStateCreateInfo structure.
+// All this is configured using the PipelineRasterizationStateCreateInfo structure.
 //
 // You need this class to:
 // - Create the GraphicsPipeline
@@ -23,11 +23,11 @@ namespace vk2 {
 class RasterizationState {
 public:
     // * depthClampEnable controls whether to clamp the fragment’s depth values. 
-    //   If the pipeline is not created with VkPipelineRasterizationDepthClipStateCreateInfoEXT 
+    //   If the pipeline is not created with PipelineRasterizationDepthClipStateCreateInfoEXT 
     //   present then enabling depth clamp will also disable clipping primitives to the 
     //   z planes of the frustrum. 
     //   Otherwise depth clipping is controlled by the state set in 
-    //   VkPipelineRasterizationDepthClipStateCreateInfoEXT.
+    //   PipelineRasterizationDepthClipStateCreateInfoEXT.
     //
     // * rasterizerDiscardEnable controls whether primitives are discarded immediately 
     //   before the rasterization stage.
@@ -54,22 +54,22 @@ public:
     // * depthBiasClamp is the maximum(or minimum) depth bias of a fragment.
     //
     // * depthBiasSlopeFactor applied to a fragment’s slope in depth bias calculations.
-    RasterizationState(const VkBool32 depthClampEnable = VK_FALSE,
-                       const VkBool32 rasterizerDiscardEnable = VK_FALSE,
-                       const VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL,
+    RasterizationState(const vk::Bool32 depthClampEnable = VK_FALSE,
+                       const vk::Bool32 rasterizerDiscardEnable = VK_FALSE,
+                       const vk::PolygonMode polygonMode = vk::PolygonMode::eFill ,
                        const float lineWidth = 1.0f,
-                       const VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
-                       const VkFrontFace frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-                       const VkBool32 depthBiasEnable = VK_FALSE,
+                       const vk::CullModeFlags cullMode = vk::CullModeFlagBits::eBack,
+                       const vk::FrontFace frontFace = vk::FrontFace::eCounterClockwise,
+                       const vk::Bool32 depthBiasEnable = VK_FALSE,
                        const float depthBiasConstantFactor = 0.0f,
                        const float depthBiasClamp = 0.0f,
                        const float depthBiasSlopeFactor = 0.0f);
 
-    const VkPipelineRasterizationStateCreateInfo&
-    vkState() const;
+    const vk::PipelineRasterizationStateCreateInfo&
+    state() const;
 
 private:
-    VkPipelineRasterizationStateCreateInfo mCreateInfo = {};
+    vk::PipelineRasterizationStateCreateInfo mCreateInfo = {};
 };
 }
 

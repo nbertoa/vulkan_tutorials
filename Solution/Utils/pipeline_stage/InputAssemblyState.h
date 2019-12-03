@@ -5,9 +5,9 @@
 
 namespace vk2 {
 //
-// VkPipelineInputAssemblyStateCreateInfo wrapper
+// PipelineInputAssemblyStateCreateInfo wrapper
 //
-// The VkPipelineInputAssemblyStateCreateInfo struct describes two things: 
+// The PipelineInputAssemblyStateCreateInfo struct describes two things: 
 // - What kind of geometry will be drawn from the vertices
 // - If primitive restart should be enabled.
 //
@@ -29,14 +29,14 @@ public:
     //   vkCmdBindIndexBuffer is equal to VK_INDEX_TYPE_UINT32, 0xFF when indexType is equal to 
     //   VK_INDEX_TYPE_UINT8_EXT, or 0xFFFF when indexType is equal to VK_INDEX_TYPE_UINT16. 
     //   Primitive restart is not allowed for “list” topologies.
-    InputAssemblyState(const VkPrimitiveTopology primitiveTopology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                       const VkBool32 primitiveRestartEnable = false);
+    InputAssemblyState(const vk::PrimitiveTopology primitiveTopology = vk::PrimitiveTopology::eTriangleList ,
+                       const vk::Bool32 primitiveRestartEnable = false);
 
-    const VkPipelineInputAssemblyStateCreateInfo&
-    vkState() const;
+    const vk::PipelineInputAssemblyStateCreateInfo&
+    state() const;
 
 private:
-    VkPipelineInputAssemblyStateCreateInfo mCreateInfo = {};
+    vk::PipelineInputAssemblyStateCreateInfo mCreateInfo = {};
 };
 }
 

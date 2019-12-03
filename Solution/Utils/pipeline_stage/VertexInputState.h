@@ -6,12 +6,12 @@
 
 namespace vk2 {
 //
-// VkPipelineVertexInputStateCreateInfo wrapper
+// PipelineVertexInputStateCreateInfo wrapper
 //
 // Applications specify vertex input attribute and 
 // vertex input binding descriptions as part of graphics pipeline creation.
 //
-// The VkPipelineVertexInputStateCreateInfo structure describes the format of the vertex data 
+// The PipelineVertexInputStateCreateInfo structure describes the format of the vertex data 
 // that will be passed to the vertex shader. It describes this in roughly two ways:
 // - Bindings: spacing between data and whether the data is per-vertex or per-instance
 // - Attribute descriptions: type of the attributes passed to the vertex shader, 
@@ -38,19 +38,19 @@ public:
     //   - format is the size and type of the vertex attribute data.
     //   - offset in bytes of this attribute relative to the start of an 
     //     element in the vertex input binding. 
-    VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = {},
-                     const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = {});
+    VertexInputState(const std::vector<vk::VertexInputBindingDescription>& bindingDescriptions = {},
+                     const std::vector<vk::VertexInputAttributeDescription>& attributeDescriptions = {});
     VertexInputState(const VertexInputState& state);
     const VertexInputState& operator=(const VertexInputState& state);
 
-    const VkPipelineVertexInputStateCreateInfo& 
-    vkState() const;
+    const vk::PipelineVertexInputStateCreateInfo& 
+    state() const;
 
 private:
-    VkPipelineVertexInputStateCreateInfo mCreateInfo = {};
+    vk::PipelineVertexInputStateCreateInfo mCreateInfo = {};
 
-    std::vector<VkVertexInputBindingDescription> mBindingDescriptions;
-    std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
+    std::vector<vk::VertexInputBindingDescription> mBindingDescriptions;
+    std::vector<vk::VertexInputAttributeDescription> mAttributeDescriptions;
 };
 }
 

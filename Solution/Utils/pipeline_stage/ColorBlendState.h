@@ -7,7 +7,7 @@
 
 namespace vk2 {
 //
-// VkPipelineColorBlendStateCreateInfo wrapper
+// PipelineColorBlendStateCreateInfo wrapper
 //
 // After a fragment shader has returned a color, it needs to be combined with 
 // the color that is already in the framebuffer.
@@ -17,9 +17,9 @@ namespace vk2 {
 // - Combine the oldand new value using a bitwise operation
 //
 // There are two types of structs to configure color blending:
-// - VkPipelineColorBlendAttachmentState contains the configuration 
+// - PipelineColorBlendAttachmentState contains the configuration 
 //   per attached framebuffer
-// - VkPipelineColorBlendStateCreateInfo contains the global color blending settings.
+// - PipelineColorBlendStateCreateInfo contains the global color blending settings.
 //
 // You need this class to:
 // - Create the GraphicsPipeline
@@ -33,16 +33,16 @@ public:
     //   - CLEAR, AND, AND_REVERSE, COPY, AND_INVERTED, NO_OP, XOR, OR, NOR, EQUIVALENT, INVERT,
     //     OR_REVERSE, COPY_INVERTED, OR_INVERTED, NAND, SET, MAX_ENUM
     ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState = {},
-                    const VkBool32 logicOpEnable = VK_FALSE,
-                    const VkLogicOp logicalOperation = VK_LOGIC_OP_CLEAR);
+                    const vk::Bool32 logicOpEnable = VK_FALSE,
+                    const vk::LogicOp logicalOperation = vk::LogicOp::eClear);
     ColorBlendState(const ColorBlendState& state);
     const ColorBlendState& operator=(const ColorBlendState& state);
 
-    const VkPipelineColorBlendStateCreateInfo&
-    vkState() const;
+    const vk::PipelineColorBlendStateCreateInfo&
+    state() const;
 
 private:
-    VkPipelineColorBlendStateCreateInfo mCreateInfo = {};
+    vk::PipelineColorBlendStateCreateInfo mCreateInfo = {};
 
     ColorBlendAttachmentState mColorBlendAttachmentState;
 };

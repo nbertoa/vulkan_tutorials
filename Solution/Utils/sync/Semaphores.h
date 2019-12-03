@@ -8,7 +8,7 @@
 namespace vk2 {
 class Semaphores {
 public:
-    Semaphores(const uint32_t semaphoreCount);
+    Semaphores(const size_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
     vk::Semaphore& 

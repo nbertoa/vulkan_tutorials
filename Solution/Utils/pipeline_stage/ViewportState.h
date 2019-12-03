@@ -5,7 +5,7 @@
 
 namespace vk2 {
 //
-// VkPipelineViewportStateCreateInfo wrapper
+// PipelineViewportStateCreateInfo wrapper
 //
 // A viewport basically describes the region of the framebuffer that the output 
 // will be rendered to. 
@@ -30,19 +30,19 @@ public:
     //   - offset of the rectangle.
     //   - extent of the rectangle.
     //    
-    ViewportState(const VkViewport& viewport = {},
-                  const VkRect2D& scissorRectangle = {});
+    ViewportState(const vk::Viewport& viewport = {},
+                  const vk::Rect2D& scissorRectangle = {});
     ViewportState(const ViewportState& state);
     const ViewportState& operator=(const ViewportState& state);
     
-    const VkPipelineViewportStateCreateInfo&
-    vkState() const;
+    const vk::PipelineViewportStateCreateInfo&
+    state() const;
     
 private:
-    VkPipelineViewportStateCreateInfo mCreateInfo = {};
+    vk::PipelineViewportStateCreateInfo mCreateInfo = {};
 
-    VkViewport mViewport;
-    VkRect2D mScissorRectangle;
+    vk::Viewport mViewport;
+    vk::Rect2D mScissorRectangle;
 };
 }
 

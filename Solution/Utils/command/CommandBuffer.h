@@ -131,7 +131,7 @@ public:
     // in the command buffer until a different set is bound to the same set number, 
     // or else until the set is disturbed.
     void
-    bindDescriptorSet(const PipelineLayout& pipelineLayout,
+    bindDescriptorSet(const vk::PipelineLayout pipelineLayout,
                       const VkDescriptorSet descriptorSet);
 
     void 

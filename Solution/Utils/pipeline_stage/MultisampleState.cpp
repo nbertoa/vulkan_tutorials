@@ -1,13 +1,12 @@
 #include "MultisampleState.h"
 
 namespace vk2 {
-MultisampleState::MultisampleState(const VkSampleCountFlagBits rasterizationSamples,
-                                   const VkBool32 sampleShadingEnable,
+MultisampleState::MultisampleState(const vk::SampleCountFlagBits rasterizationSamples,
+                                   const vk::Bool32 sampleShadingEnable,
                                    const float minSampleShading,
-                                   const VkSampleMask* sampleMask,
-                                   const VkBool32 alphaToCoverageEnable,
-                                   const VkBool32 alphaToOneEnable) {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                                   const vk::SampleMask* sampleMask,
+                                   const vk::Bool32 alphaToCoverageEnable,
+                                   const vk::Bool32 alphaToOneEnable) {
     mCreateInfo.rasterizationSamples = rasterizationSamples;
     mCreateInfo.sampleShadingEnable = sampleShadingEnable;
     mCreateInfo.minSampleShading = minSampleShading;
@@ -16,8 +15,8 @@ MultisampleState::MultisampleState(const VkSampleCountFlagBits rasterizationSamp
     mCreateInfo.alphaToOneEnable = alphaToOneEnable;
 }
 
-const VkPipelineMultisampleStateCreateInfo&
-MultisampleState::vkState() const {
+const vk::PipelineMultisampleStateCreateInfo&
+MultisampleState::state() const {
     return mCreateInfo;
 }
 }

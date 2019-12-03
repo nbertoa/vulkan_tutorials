@@ -94,12 +94,13 @@ CommandBuffer::bindPipeline(const GraphicsPipeline& graphicsPipeline) {
 }
 
 void
-CommandBuffer::bindDescriptorSet(const PipelineLayout& pipelineLayout,
+CommandBuffer::bindDescriptorSet(const vk::PipelineLayout pipelineLayout,
                                  const VkDescriptorSet descriptorSet) {
     assert(descriptorSet != VK_NULL_HANDLE);
+    assert(pipelineLayout != VK_NULL_HANDLE);
     vkCmdBindDescriptorSets(mCommandBuffer,
                             VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            pipelineLayout.vkPipelineLayout(),
+                            pipelineLayout,
                             0,
                             1,
                             &descriptorSet,

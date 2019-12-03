@@ -1,16 +1,15 @@
 #include "DepthStencilState.h"
 
 namespace vk2 {
-DepthStencilState::DepthStencilState(const VkBool32 depthTestEnable,
-                                     const VkBool32 depthWriteEnable,
-                                     const VkCompareOp depthCompareOp,
-                                     const VkBool32 depthBoundsTestEnable,
-                                     const VkBool32 stencilTestEnable,
-                                     const VkStencilOpState front,
-                                     const VkStencilOpState back,
+DepthStencilState::DepthStencilState(const vk::Bool32 depthTestEnable,
+                                     const vk::Bool32 depthWriteEnable,
+                                     const vk::CompareOp depthCompareOp,
+                                     const vk::Bool32 depthBoundsTestEnable,
+                                     const vk::Bool32 stencilTestEnable,
+                                     const vk::StencilOpState front,
+                                     const vk::StencilOpState back,
                                      const float minDepthBounds,
                                      const float maxDepthBounds) {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     mCreateInfo.depthTestEnable = depthTestEnable;
     mCreateInfo.depthWriteEnable = depthWriteEnable;
     mCreateInfo.depthCompareOp = depthCompareOp;
@@ -22,8 +21,8 @@ DepthStencilState::DepthStencilState(const VkBool32 depthTestEnable,
     mCreateInfo.maxDepthBounds = maxDepthBounds;
 }
 
-const VkPipelineDepthStencilStateCreateInfo&
-DepthStencilState::vkState() const {
+const vk::PipelineDepthStencilStateCreateInfo&
+DepthStencilState::state() const {
     return mCreateInfo;
 }
 
@@ -31,7 +30,7 @@ void
 DepthStencilState::enableDepthDisableStencil() {
     mCreateInfo.depthTestEnable = VK_TRUE;
     mCreateInfo.depthWriteEnable = VK_TRUE;
-    mCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+    mCreateInfo.depthCompareOp = vk::CompareOp::eLess;
     mCreateInfo.depthBoundsTestEnable = VK_FALSE;
     mCreateInfo.stencilTestEnable = VK_FALSE;
     mCreateInfo.front = {};

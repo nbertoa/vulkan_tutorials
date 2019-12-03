@@ -3,16 +3,15 @@
 #include <cassert>
 
 namespace vk2 {
-DynamicState::DynamicState(const std::vector<VkDynamicState>& dynamicStates) 
+DynamicState::DynamicState(const std::vector<vk::DynamicState>& dynamicStates) 
     : mDynamicStates(dynamicStates)
 {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     mCreateInfo.dynamicStateCount = static_cast<uint32_t>(mDynamicStates.size());
     mCreateInfo.pDynamicStates = mDynamicStates.empty() ? nullptr : mDynamicStates.data();
 }
 
-const VkPipelineDynamicStateCreateInfo&
-DynamicState::vkState() const {
+const vk::PipelineDynamicStateCreateInfo&
+DynamicState::state() const {
     return mCreateInfo;
 }
 

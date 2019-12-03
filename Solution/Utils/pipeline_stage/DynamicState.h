@@ -6,7 +6,7 @@
 
 namespace vk2 {
 //
-// VkPipelineDynamicStateCreateInfo  wrapper
+// PipelineDynamicStateCreateInfo  wrapper
 //
 // A dynamic pipeline state is a state that can be changed by 
 // a command buffer command during the execution of a command buffer. 
@@ -27,17 +27,17 @@ public:
     //     DISCARD_RECTANGLE_EXT, SAMPLE_LOCATIONS_EXT, EXCLUSIVE_SCISSOR_NV, 
     //     VIEWPORT_SHADING_RATE_PALETTE_NV, VIEWPORT_COARSE_SAMPLE_ORDER_NV, 
     //     LINE_STIPPLE_EXT.
-    DynamicState(const std::vector<VkDynamicState>& dynamicStates = {});
+    DynamicState(const std::vector<vk::DynamicState>& dynamicStates = {});
     DynamicState(const DynamicState& state);
     const DynamicState& operator=(const DynamicState& state);
 
-    const VkPipelineDynamicStateCreateInfo&
-    vkState() const;
+    const vk::PipelineDynamicStateCreateInfo&
+    state() const;
 
 private:
-    VkPipelineDynamicStateCreateInfo  mCreateInfo = {};
+    vk::PipelineDynamicStateCreateInfo  mCreateInfo = {};
 
-    std::vector<VkDynamicState> mDynamicStates;
+    std::vector<vk::DynamicState> mDynamicStates;
 };
 }
 

@@ -2,19 +2,18 @@
 
 namespace vk2 {
 ColorBlendState::ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState,
-                                 const VkBool32 logicOpEnable,
-                                 const VkLogicOp logicalOperation) 
+                                 const vk::Bool32 logicOpEnable,
+                                 const vk::LogicOp logicalOperation) 
     : mColorBlendAttachmentState(colorBlendAttachmentState)
 {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     mCreateInfo.attachmentCount = 1;
-    mCreateInfo.pAttachments = &mColorBlendAttachmentState.vkState();
+    mCreateInfo.pAttachments = &mColorBlendAttachmentState.state();
     mCreateInfo.logicOpEnable = logicOpEnable;
     mCreateInfo.logicOp = logicalOperation;
 }
 
-const VkPipelineColorBlendStateCreateInfo&
-ColorBlendState::vkState() const {
+const vk::PipelineColorBlendStateCreateInfo&
+ColorBlendState::state() const {
     return mCreateInfo;
 }
 
@@ -22,7 +21,7 @@ ColorBlendState::ColorBlendState(const ColorBlendState& state)
     : mCreateInfo(state.mCreateInfo)
     , mColorBlendAttachmentState(state.mColorBlendAttachmentState)
 {
-    mCreateInfo.pAttachments = &mColorBlendAttachmentState.vkState();
+    mCreateInfo.pAttachments = &mColorBlendAttachmentState.state();
 }
 
 const ColorBlendState& 
@@ -33,7 +32,7 @@ ColorBlendState::operator=(const ColorBlendState& state) {
 
     mCreateInfo = state.mCreateInfo;
     mColorBlendAttachmentState = state.mColorBlendAttachmentState;
-    mCreateInfo.pAttachments = &mColorBlendAttachmentState.vkState();
+    mCreateInfo.pAttachments = &mColorBlendAttachmentState.state();
 
     return *this;
 }

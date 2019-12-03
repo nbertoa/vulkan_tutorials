@@ -1,14 +1,14 @@
 #include "ColorBlendAttachmentState.h"
 
 namespace vk2 {
-ColorBlendAttachmentState::ColorBlendAttachmentState(const VkBool32 blendEnable,
-                                                     const VkColorComponentFlags colorWriteMask,
-                                                     const VkBlendFactor srcColorBlendFactor,
-                                                     const VkBlendFactor dstColorBlendFactor,
-                                                     const VkBlendOp colorBlendOp,
-                                                     const VkBlendFactor srcAlphaBlendFactor,
-                                                     const VkBlendFactor dstAlphaBlendFactor,
-                                                     const VkBlendOp alphaBlendOp) {
+ColorBlendAttachmentState::ColorBlendAttachmentState(const vk::Bool32 blendEnable,
+                                                     const vk::ColorComponentFlags colorWriteMask,
+                                                     const vk::BlendFactor srcColorBlendFactor,
+                                                     const vk::BlendFactor dstColorBlendFactor,
+                                                     const vk::BlendOp colorBlendOp,
+                                                     const vk::BlendFactor srcAlphaBlendFactor,
+                                                     const vk::BlendFactor dstAlphaBlendFactor,
+                                                     const vk::BlendOp alphaBlendOp) {
     mCreateInfo.blendEnable = blendEnable;
     mCreateInfo.colorWriteMask = colorWriteMask;
     mCreateInfo.srcColorBlendFactor = srcColorBlendFactor;
@@ -19,8 +19,8 @@ ColorBlendAttachmentState::ColorBlendAttachmentState(const VkBool32 blendEnable,
     mCreateInfo.alphaBlendOp = alphaBlendOp;
 }
 
-const VkPipelineColorBlendAttachmentState&
-ColorBlendAttachmentState::vkState() const {
+const vk::PipelineColorBlendAttachmentState&
+ColorBlendAttachmentState::state() const {
     return mCreateInfo;
 }
 
@@ -28,25 +28,25 @@ void
 ColorBlendAttachmentState::disableColorBlending() {
     mCreateInfo.blendEnable = VK_FALSE;
     mCreateInfo.colorWriteMask =
-        VK_COLOR_COMPONENT_R_BIT |
-        VK_COLOR_COMPONENT_G_BIT |
-        VK_COLOR_COMPONENT_B_BIT |
-        VK_COLOR_COMPONENT_A_BIT;
+        vk::ColorComponentFlagBits::eR |
+        vk::ColorComponentFlagBits::eG |
+        vk::ColorComponentFlagBits::eB |
+        vk::ColorComponentFlagBits::eA;
 }
 
 void
 ColorBlendAttachmentState::enableColorBlending() {
     mCreateInfo.colorWriteMask = 
-        VK_COLOR_COMPONENT_R_BIT |
-        VK_COLOR_COMPONENT_G_BIT |
-        VK_COLOR_COMPONENT_B_BIT |
-        VK_COLOR_COMPONENT_A_BIT;
+        vk::ColorComponentFlagBits::eR |
+        vk::ColorComponentFlagBits::eG |
+        vk::ColorComponentFlagBits::eB |
+        vk::ColorComponentFlagBits::eA;
     mCreateInfo.blendEnable = VK_TRUE;
-    mCreateInfo.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    mCreateInfo.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-    mCreateInfo.colorBlendOp = VK_BLEND_OP_ADD;
-    mCreateInfo.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    mCreateInfo.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-    mCreateInfo.alphaBlendOp = VK_BLEND_OP_ADD;
+    mCreateInfo.srcColorBlendFactor = vk::BlendFactor::eOne;
+    mCreateInfo.dstColorBlendFactor = vk::BlendFactor::eZero;
+    mCreateInfo.colorBlendOp = vk::BlendOp::eAdd;
+    mCreateInfo.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+    mCreateInfo.dstAlphaBlendFactor = vk::BlendFactor::eZero;
+    mCreateInfo.alphaBlendOp = vk::BlendOp::eAdd;
 }
 }

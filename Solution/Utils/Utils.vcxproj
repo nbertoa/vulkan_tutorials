@@ -159,7 +159,6 @@
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="DebugMessenger.cpp" />
     <ClCompile Include="pipeline\GraphicsPipeline.cpp" />
-    <ClCompile Include="pipeline\PipelineLayout.cpp" />
     <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp" />
     <ClCompile Include="pipeline_stage\ColorBlendState.cpp" />
     <ClCompile Include="pipeline_stage\DepthStencilState.cpp" />
@@ -210,7 +209,6 @@
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="pipeline\GraphicsPipeline.h" />
-    <ClInclude Include="pipeline\PipelineLayout.h" />
     <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />
     <ClInclude Include="pipeline_stage\ColorBlendState.h" />
     <ClInclude Include="pipeline_stage\DepthStencilState.h" />

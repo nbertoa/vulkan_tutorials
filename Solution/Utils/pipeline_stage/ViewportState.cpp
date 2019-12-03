@@ -1,20 +1,19 @@
 #include "ViewportState.h"
 
 namespace vk2 {
-ViewportState::ViewportState(const VkViewport& viewport,
-                             const VkRect2D& scissorRectangle) 
+ViewportState::ViewportState(const vk::Viewport& viewport,
+                             const vk::Rect2D& scissorRectangle) 
     : mViewport(viewport)
     , mScissorRectangle(scissorRectangle)
 {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     mCreateInfo.viewportCount = 1;
     mCreateInfo.pViewports = &mViewport;
     mCreateInfo.scissorCount = 1;
     mCreateInfo.pScissors = &mScissorRectangle;
 }
 
-const VkPipelineViewportStateCreateInfo&
-ViewportState::vkState() const {
+const vk::PipelineViewportStateCreateInfo&
+ViewportState::state() const {
     return mCreateInfo;
 }
 

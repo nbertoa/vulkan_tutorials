@@ -11,7 +11,7 @@
 
 namespace vk2 {
 CommandBuffers::CommandBuffers(const CommandPool& commandPool,
-                               const uint32_t bufferCount,
+                               const size_t bufferCount,
                                const VkCommandBufferLevel level)
 {
     assert(bufferCount > 0);
@@ -22,7 +22,7 @@ CommandBuffers::CommandBuffers(const CommandPool& commandPool,
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     info.commandPool = commandPool.vkCommandPool();
     info.level = level;
-    info.commandBufferCount = bufferCount;
+    info.commandBufferCount = static_cast<uint32_t>(bufferCount);
 
     vkChecker(vkAllocateCommandBuffers(LogicalDevice::device(),
                                        &info,
@@ -40,14 +40,14 @@ CommandBuffers::CommandBuffers(CommandBuffers&& other) noexcept
 
 }
 
-uint32_t 
+size_t
 CommandBuffers::bufferCount() const {
     assert(mCommandBuffers.empty() == false);
-    return static_cast<uint32_t>(mCommandBuffers.size());
+    return mCommandBuffers.size();
 }
 
 CommandBuffer& 
-CommandBuffers::commandBuffer(const uint32_t bufferIndex) {
+CommandBuffers::commandBuffer(const size_t bufferIndex) {
     assert(bufferIndex < mCommandBuffers.size());
     return mCommandBuffers[bufferIndex];
 }

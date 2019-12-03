@@ -5,7 +5,7 @@
 
 namespace vk2 {
 //
-// VkPipelineColorBlendAttachmentState wrapper
+// PipelineColorBlendAttachmentState wrapper
 //
 // After a fragment shader has returned a color, it needs to be combined with 
 // the color that is already in the framebuffer.
@@ -15,9 +15,9 @@ namespace vk2 {
 // - Combine the oldand new value using a bitwise operation
 //
 // There are two types of structs to configure color blending:
-// - VkPipelineColorBlendAttachmentState contains the configuration 
+// - vk::PipelineColorBlendAttachmentState contains the configuration 
 //   per attached framebuffer
-// - VkPipelineColorBlendStateCreateInfo contains the global color blending settings.
+// - vk::PipelineColorBlendStateCreateInfo contains the global color blending settings.
 //
 // You need this class to:
 // - Create the ColorBlendState
@@ -25,20 +25,21 @@ namespace vk2 {
 class ColorBlendAttachmentState {
 public:
     // The default constructor values disable color blending for the attachment.
-    ColorBlendAttachmentState(const VkBool32 blendEnable = VK_FALSE,
-                              const VkColorComponentFlags colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                                                           VK_COLOR_COMPONENT_G_BIT |
-                                                                           VK_COLOR_COMPONENT_B_BIT |
-                                                                           VK_COLOR_COMPONENT_A_BIT,
-                              const VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_ZERO,
-                              const VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
-                              const VkBlendOp colorBlendOp = VK_BLEND_OP_ADD,
-                              const VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-                              const VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-                              const VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD);
+    ColorBlendAttachmentState(const vk::Bool32 blendEnable = VK_FALSE,
+                              const vk::ColorComponentFlags colorWriteMask =
+                              vk::ColorComponentFlagBits::eR |
+                              vk::ColorComponentFlagBits::eG |
+                              vk::ColorComponentFlagBits::eB |
+                              vk::ColorComponentFlagBits::eA,
+                              const vk::BlendFactor srcColorBlendFactor = vk::BlendFactor::eZero,
+                              const vk::BlendFactor dstColorBlendFactor = vk::BlendFactor::eZero,
+                              const vk::BlendOp colorBlendOp = vk::BlendOp::eAdd,
+                              const vk::BlendFactor srcAlphaBlendFactor = vk::BlendFactor::eZero,
+                              const vk::BlendFactor dstAlphaBlendFactor = vk::BlendFactor::eZero,
+                              const vk::BlendOp alphaBlendOp = vk::BlendOp::eAdd);
 
-    const VkPipelineColorBlendAttachmentState&
-    vkState() const;
+    const vk::PipelineColorBlendAttachmentState&
+    state() const;
 
     void
     disableColorBlending();
@@ -47,7 +48,7 @@ public:
     enableColorBlending();
 
 private:
-    VkPipelineColorBlendAttachmentState mCreateInfo = {};
+    vk::PipelineColorBlendAttachmentState mCreateInfo = {};
 };
 }
 

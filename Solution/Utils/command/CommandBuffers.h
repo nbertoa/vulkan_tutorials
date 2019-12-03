@@ -15,17 +15,17 @@ class CommandBuffers {
 public:
     // Read CommandBuffer to understand this
     CommandBuffers(const CommandPool& commandPool,
-                   const uint32_t bufferCount,
+                   const size_t bufferCount,
                    const VkCommandBufferLevel level);
     CommandBuffers(CommandBuffers&& other) noexcept;
     CommandBuffers(const CommandBuffers&) = delete;
     const CommandBuffers& operator=(const CommandBuffers&) = delete;
 
-    uint32_t 
+    size_t
     bufferCount() const;
 
     CommandBuffer& 
-    commandBuffer(const uint32_t bufferIndex);
+    commandBuffer(const size_t bufferIndex);
 
 private:
     std::vector<CommandBuffer> mCommandBuffers;

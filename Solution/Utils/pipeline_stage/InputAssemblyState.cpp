@@ -1,15 +1,14 @@
 #include "InputAssemblyState.h"
 
 namespace vk2 {
-InputAssemblyState::InputAssemblyState(const VkPrimitiveTopology primitiveTopology,
-                                       const VkBool32 primitiveRestartEnable) {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+InputAssemblyState::InputAssemblyState(const vk::PrimitiveTopology primitiveTopology,
+                                       const vk::Bool32 primitiveRestartEnable) {
     mCreateInfo.topology = primitiveTopology;
     mCreateInfo.primitiveRestartEnable = primitiveRestartEnable;
 }
 
-const VkPipelineInputAssemblyStateCreateInfo&
-InputAssemblyState::vkState() const {
+const vk::PipelineInputAssemblyStateCreateInfo&
+InputAssemblyState::state() const {
     return mCreateInfo;
 }
 }

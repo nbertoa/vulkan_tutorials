@@ -5,7 +5,7 @@
 
 namespace vk2 {
 //
-// VkPipelineTessellationStateCreateInfo wrapper
+// PipelineTessellationStateCreateInfo wrapper
 //
 // Tessellation involves three pipeline stages:
 //
@@ -29,11 +29,11 @@ public:
     // * patchControlPoints count per patch.
     TessellationState(const uint32_t patchControlPoints = 1);
     
-    const VkPipelineTessellationStateCreateInfo&
-    vkState() const;
+    const vk::PipelineTessellationStateCreateInfo&
+    state() const;
     
 private:
-    VkPipelineTessellationStateCreateInfo mCreateInfo = {};
+    vk::PipelineTessellationStateCreateInfo mCreateInfo = {};
 };
 }
 

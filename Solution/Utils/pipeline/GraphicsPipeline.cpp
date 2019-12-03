@@ -9,72 +9,55 @@
 #include "../shader/ShaderStages.h"
 
 namespace vk2 {
-GraphicsPipeline::GraphicsPipeline(PipelineLayout& pipelineLayout,
+GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                                    const PipelineStates& pipelineStates,
                                    const ShaderStages& shaderStages,
                                    const RenderPass& renderPass,
                                    const uint32_t subPassIndex)
-    : mPipelineLayout(std::move(pipelineLayout))
-{
-    VkGraphicsPipelineCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    createInfo.stageCount = static_cast<uint32_t>(shaderStages.stages().size());
-    createInfo.pStages = 
-        shaderStages.stages().empty() ? nullptr : ( VkPipelineShaderStageCreateInfo*)shaderStages.stages().data();
-    createInfo.pVertexInputState = 
-        pipelineStates.vertexInputState() != nullptr ? 
-        &pipelineStates.vertexInputState()->vkState() : 
-        nullptr;
-    createInfo.pInputAssemblyState = 
-        pipelineStates.inputAssemblyState() != nullptr ? 
-        &pipelineStates.inputAssemblyState()->vkState() : 
-        nullptr;
-    createInfo.pViewportState = 
-        pipelineStates.viewportState() != nullptr ? 
-        &pipelineStates.viewportState()->vkState() : 
-        nullptr;
-    createInfo.pRasterizationState = 
-        pipelineStates.rasterizationState() != nullptr ? 
-        &pipelineStates.rasterizationState()->vkState() : 
-        nullptr;
-    createInfo.pMultisampleState = 
-        pipelineStates.multisampleState() != nullptr ? 
-        &pipelineStates.multisampleState()->vkState() : 
-        nullptr;
-    createInfo.pDepthStencilState = 
-        pipelineStates.depthStencilState() != nullptr ? 
-        &pipelineStates.depthStencilState()->vkState() : 
-        nullptr;
-    createInfo.pColorBlendState = 
-        pipelineStates.colorBlendState() != nullptr ? 
-        &pipelineStates.colorBlendState()->vkState() : 
-        nullptr;
-    createInfo.pDynamicState = 
-        pipelineStates.dynamicState() != nullptr ? 
-        &pipelineStates.dynamicState()->vkState() : 
-        nullptr;
-    createInfo.pTessellationState = 
-        pipelineStates.tessellationState() != nullptr ? 
-        &pipelineStates.tessellationState()->vkState() : 
-        nullptr;
-    createInfo.layout = mPipelineLayout.vkPipelineLayout();
-    createInfo.renderPass = renderPass.vkRenderPass();
-    createInfo.subpass = subPassIndex;
-
-    // Vulkan allows you to create a new graphics pipeline by
-    // deriving from an existing pipeline. The idea of pipeline
-    // derivatives is that it is less expensive to set up pipelines
-    // when they have much functionality in common with an existing
-    // pipeline and switching between pipelines from the same
-    // parent can also be done quicker.
-    // We disable this.
-    createInfo.basePipelineHandle = VK_NULL_HANDLE;
-    createInfo.basePipelineIndex = -1;
+    : mPipelineLayout(std::move(pipelineLayout)) {
+    vk::GraphicsPipelineCreateInfo createInfo =
+    {
+        vk::PipelineCreateFlags(),
+        static_cast<uint32_t>(shaderStages.stages().size()),
+        shaderStages.stages().empty() ? nullptr : shaderStages.stages().data(),
+        pipelineStates.vertexInputState() != nullptr ?
+            &pipelineStates.vertexInputState()->state() :
+            nullptr,
+        pipelineStates.inputAssemblyState() != nullptr ?
+            &pipelineStates.inputAssemblyState()->state() :
+            nullptr,
+        pipelineStates.tessellationState() != nullptr ?
+            &pipelineStates.tessellationState()->state() :
+            nullptr,
+        pipelineStates.viewportState() != nullptr ?
+            &pipelineStates.viewportState()->state() :
+            nullptr,
+        pipelineStates.rasterizationState() != nullptr ?
+            &pipelineStates.rasterizationState()->state() :
+            nullptr,
+        pipelineStates.multisampleState() != nullptr ?
+            &pipelineStates.multisampleState()->state() :
+            nullptr,
+        pipelineStates.depthStencilState() != nullptr ?
+            &pipelineStates.depthStencilState()->state() :
+            nullptr,
+        pipelineStates.colorBlendState() != nullptr ?
+            &pipelineStates.colorBlendState()->state() :
+            nullptr,
+        pipelineStates.dynamicState() != nullptr ?
+            &pipelineStates.dynamicState()->state() :
+            nullptr,
+        mPipelineLayout.get(),
+        vk::RenderPass(renderPass.vkRenderPass()),
+        subPassIndex,
+        vk::Pipeline(), // base pipeline handle
+        -1 // base pipeline index
+    };
 
     vkChecker(vkCreateGraphicsPipelines(LogicalDevice::device(),
                                         VK_NULL_HANDLE,
                                         1,
-                                        &createInfo,
+                                        (VkGraphicsPipelineCreateInfo*)&createInfo,
                                         nullptr,
                                         &mPipeline));
     assert(mPipeline != VK_NULL_HANDLE);
@@ -100,10 +83,10 @@ GraphicsPipeline::vkPipeline() const {
     return mPipeline;
 }
 
-const PipelineLayout&
+vk::PipelineLayout
 GraphicsPipeline::pipelineLayout() const {
     assert(mPipeline != VK_NULL_HANDLE);
-    return mPipelineLayout;
+    return mPipelineLayout.get();
 }
 
 }

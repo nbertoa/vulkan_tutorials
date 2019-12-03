@@ -1,17 +1,16 @@
 #include "RasterizationState.h"
 
 namespace vk2 {
-RasterizationState::RasterizationState(const VkBool32 depthClampEnable,
-                                       const VkBool32 rasterizerDiscardEnable,
-                                       const VkPolygonMode polygonMode,
+RasterizationState::RasterizationState(const vk::Bool32 depthClampEnable,
+                                       const vk::Bool32 rasterizerDiscardEnable,
+                                       const vk::PolygonMode polygonMode,
                                        const float lineWidth,
-                                       const VkCullModeFlags cullMode,
-                                       const VkFrontFace frontFace,
-                                       const VkBool32 depthBiasEnable,
+                                       const vk::CullModeFlags cullMode,
+                                       const vk::FrontFace frontFace,
+                                       const vk::Bool32 depthBiasEnable,
                                        const float depthBiasConstantFactor,
                                        const float depthBiasClamp,
                                        const float depthBiasSlopeFactor) {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     mCreateInfo.depthClampEnable = depthClampEnable;
     mCreateInfo.rasterizerDiscardEnable = rasterizerDiscardEnable;
     mCreateInfo.polygonMode = polygonMode;
@@ -24,8 +23,8 @@ RasterizationState::RasterizationState(const VkBool32 depthClampEnable,
     mCreateInfo.depthBiasSlopeFactor = depthBiasSlopeFactor;
 }
 
-const VkPipelineRasterizationStateCreateInfo&
-RasterizationState::vkState() const {
+const vk::PipelineRasterizationStateCreateInfo&
+RasterizationState::state() const {
     return mCreateInfo;
 }
 }

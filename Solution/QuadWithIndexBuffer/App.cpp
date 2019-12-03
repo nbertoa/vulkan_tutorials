@@ -7,7 +7,6 @@
 #include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
-#include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/render_pass/RenderPass.h"
 #include "Utils/shader/ShaderModule.h"
@@ -138,7 +137,8 @@ App::initGraphicsPipeline()  {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    PipelineLayout pipelineLayout;
+    vk::UniquePipelineLayout pipelineLayout = 
+        LogicalDevice::device().createPipelineLayoutUnique({});
 
     mGraphicsPipeline.reset(new GraphicsPipeline(pipelineLayout,
                                                  pipelineStates,
@@ -281,16 +281,16 @@ App::initSemaphoresAndFences() {
 
 void 
 App::initPipelineStates(PipelineStates& pipelineStates) const {
-    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
+    std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions;
     PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
 
-    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+    std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions;
     PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
 
     pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
                                         vertexInputAttributeDescriptions});
 
-    pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+    pipelineStates.setInputAssemblyState({vk::PrimitiveTopology::eTriangleList,
                                          VK_FALSE});
 
     pipelineStates.setViewportState({mSwapChain.viewport(),

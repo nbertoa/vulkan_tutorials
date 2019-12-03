@@ -1,12 +1,11 @@
 #include "VertexInputState.h"
 
 namespace vk2 {
-VertexInputState::VertexInputState(const std::vector<VkVertexInputBindingDescription>& bindingDescriptions,
-                                   const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions) 
+VertexInputState::VertexInputState(const std::vector<vk::VertexInputBindingDescription>& bindingDescriptions,
+                                   const std::vector<vk::VertexInputAttributeDescription>& attributeDescriptions) 
     : mBindingDescriptions(bindingDescriptions)
     , mAttributeDescriptions(attributeDescriptions)
 {
-    mCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     mCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(mBindingDescriptions.size());
     mCreateInfo.pVertexBindingDescriptions = 
         mBindingDescriptions.empty() ? nullptr : mBindingDescriptions.data();
@@ -16,8 +15,8 @@ VertexInputState::VertexInputState(const std::vector<VkVertexInputBindingDescrip
         mAttributeDescriptions.empty() ? nullptr : mAttributeDescriptions.data();
 }
 
-const VkPipelineVertexInputStateCreateInfo& 
-VertexInputState::vkState() const {
+const vk::PipelineVertexInputStateCreateInfo& 
+VertexInputState::state() const {
     return mCreateInfo;
 }
 

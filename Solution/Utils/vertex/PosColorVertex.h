@@ -16,11 +16,11 @@ struct PosColorVertex {
     // It specifies the number of bytes between data entries and whether
     // to move to the next data entry after each vertex or after each instance.
     static void 
-    vertexInputBindingDescriptions(std::vector<VkVertexInputBindingDescription>& descriptions);
+    vertexInputBindingDescriptions(std::vector<vk::VertexInputBindingDescription>& descriptions);
 
     // A vertex attribute binding describes how to handle vertex input.
     static void 
-    vertexInputAttributeDescriptions(std::vector<VkVertexInputAttributeDescription>& descriptions);
+    vertexInputAttributeDescriptions(std::vector<vk::VertexInputAttributeDescription>& descriptions);
 };
 }
 

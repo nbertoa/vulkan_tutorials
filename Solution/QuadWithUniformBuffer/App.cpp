@@ -9,7 +9,6 @@
 #include "Utils/descriptor/WriteDescriptorSet.h"
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
-#include "Utils/pipeline/PipelineLayout.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/render_pass/RenderPass.h"
 #include "Utils/shader/ShaderModule.h"
@@ -216,7 +215,18 @@ App::initGraphicsPipeline() {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    PipelineLayout pipelineLayout(mDescriptorSetLayout.get());
+    vk::DescriptorSetLayout descSetLayout(mDescriptorSetLayout->vkDescriptorSetLayout());
+    vk::PipelineLayoutCreateInfo createInfo
+    {
+        vk::PipelineLayoutCreateFlags(),
+        1, // layout count
+        &descSetLayout,
+        0, // push contant range count
+        nullptr, // push contant ranges
+    };
+    
+    vk::UniquePipelineLayout pipelineLayout = 
+        LogicalDevice::device().createPipelineLayoutUnique(createInfo);
 
     mGraphicsPipeline.reset(new GraphicsPipeline(pipelineLayout,
                                                  pipelineStates,
@@ -226,16 +236,16 @@ App::initGraphicsPipeline() {
 
 void
 App::initPipelineStates(PipelineStates& pipelineStates) const {
-    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
+    std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions;
     PosColorVertex::vertexInputBindingDescriptions(vertexInputBindingDescriptions);
 
-    std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+    std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions;
     PosColorVertex::vertexInputAttributeDescriptions(vertexInputAttributeDescriptions);
 
     pipelineStates.setVertexInputState({vertexInputBindingDescriptions,
-                                       vertexInputAttributeDescriptions});
+                                        vertexInputAttributeDescriptions});
 
-    pipelineStates.setInputAssemblyState({VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+    pipelineStates.setInputAssemblyState({vk::PrimitiveTopology::eTriangleList,
                                          VK_FALSE});
 
     pipelineStates.setViewportState({mSwapChain.viewport(),

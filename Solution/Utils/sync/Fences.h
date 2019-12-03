@@ -9,7 +9,7 @@ namespace vk2 {
 class Fences {
 public:
     // Read Fence to understand this
-    Fences(const uint32_t fenceCount,
+    Fences(const size_t fenceCount,
            const vk::FenceCreateFlagBits flags = vk::FenceCreateFlagBits::eSignaled);
     Fences(Fences&& other) noexcept;
                

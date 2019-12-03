@@ -5,14 +5,14 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk2 {
-Fences::Fences(const uint32_t fenceCount,
+Fences::Fences(const size_t fenceCount,
                const vk::FenceCreateFlagBits flags) {
     assert(fenceCount > 0);
 
     vk::Device device(LogicalDevice::device());
 
     mFences.reserve(fenceCount);
-    for (uint32_t i = 0; i < fenceCount; ++i) {
+    for (size_t i = 0; i < fenceCount; ++i) {
         mFences.emplace_back(device.createFenceUnique({flags}));
     }
 }

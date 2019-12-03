@@ -5,9 +5,9 @@
 
 namespace vk2 {
 //
-// VkPipelineMultisampleStateCreateInfo wrapper
+// PipelineMultisampleStateCreateInfo wrapper
 //
-// The VkPipelineMultisampleStateCreateInfo struct configures multisampling, 
+// The PipelineMultisampleStateCreateInfo struct configures multisampling, 
 // which is one of the ways to perform anti-aliasing.
 //
 // It works by combining the fragment shader results of multiple polygons that 
@@ -46,18 +46,18 @@ public:
     //   output is replaced with one.
     //
     // The default constructor values disable multisampling.
-    MultisampleState(const VkSampleCountFlagBits rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
-                     const VkBool32 sampleShadingEnable = VK_FALSE,
+    MultisampleState(const vk::SampleCountFlagBits rasterizationSamples = vk::SampleCountFlagBits::e1,
+                     const vk::Bool32 sampleShadingEnable = VK_FALSE,
                      const float minSampleShading = 1.0f,
-                     const VkSampleMask* sampleMask = nullptr,
-                     const VkBool32 alphaToCoverageEnable = VK_FALSE,
-                     const VkBool32 alphaToOneEnable = VK_FALSE);
+                     const vk::SampleMask* sampleMask = nullptr,
+                     const vk::Bool32 alphaToCoverageEnable = VK_FALSE,
+                     const vk::Bool32 alphaToOneEnable = VK_FALSE);
 
-    const VkPipelineMultisampleStateCreateInfo&
-    vkState() const;
+    const vk::PipelineMultisampleStateCreateInfo&
+    state() const;
 
 private:
-    VkPipelineMultisampleStateCreateInfo mCreateInfo = {};
+    vk::PipelineMultisampleStateCreateInfo mCreateInfo = {};
 };
 }
 
