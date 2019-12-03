@@ -307,23 +307,30 @@ void
 App::initRenderPass() {
     assert(mRenderPass == nullptr);
 
-    std::vector<AttachmentDescription> attachmentDescriptions;
+    std::vector<vk::AttachmentDescription> attachmentDescriptions;
 
     // The format of the color attachment should match the format 
     // of the swap chain images.
     //
     // No multisampling
     //
-    // Using VK_IMAGE_LAYOUT_UNDEFINED for initial layout means
+    // Using ImageLayout::eUndefined for initial layout means
     // that we do not care what previous layout the image was in.
     // We want the image to be ready for presentation using the swap chain 
-    // after rendering, which is why we use VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    // after rendering, which is why we use ImageLayout::ePresentSrcKHR
     // for the final layout.
-    attachmentDescriptions.emplace_back((VkFormat)mSwapChain.imageFormat(),
-                                        VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                        VK_ATTACHMENT_STORE_OP_STORE,
-                                        VK_IMAGE_LAYOUT_UNDEFINED,
-                                        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    attachmentDescriptions.emplace_back(vk::AttachmentDescription
+    {
+        vk::AttachmentDescriptionFlags(),
+        mSwapChain.imageFormat(),
+        vk::SampleCountFlagBits::e1, // sample count
+        vk::AttachmentLoadOp::eClear,
+        vk::AttachmentStoreOp::eStore,
+        vk::AttachmentLoadOp::eDontCare, // depth/stencil buffer
+        vk::AttachmentStoreOp::eDontCare, // depth/stencil buffer
+        vk::ImageLayout::eUndefined,
+        vk::ImageLayout::ePresentSrcKHR
+    });
 
     std::vector<VkAttachmentReference> colorAttachmentReferences {
         {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
@@ -345,14 +352,18 @@ App::initRenderPass() {
     // These settings will prevent the transition from happening until it is
     // actually necessary (and allowed): when we want to start writing colors
     // to it.
-    std::vector<SubpassDependency> subpassDependencies;
-    subpassDependencies.emplace_back(VK_SUBPASS_EXTERNAL,
-                                     0,
-                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                     0,
-                                     VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                     VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                                     VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+    std::vector<vk::SubpassDependency> subpassDependencies;
+    subpassDependencies.emplace_back(vk::SubpassDependency
+    {
+        VK_SUBPASS_EXTERNAL, // source subpass
+        0, // dest subpass
+        vk::PipelineStageFlagBits::eColorAttachmentOutput, // src stage mask
+        vk::PipelineStageFlagBits::eColorAttachmentOutput, // dest stage mask
+        vk::AccessFlags(), // src access flags
+        vk::AccessFlagBits::eColorAttachmentRead |
+        vk::AccessFlagBits::eColorAttachmentWrite, // dest access flags
+        vk::DependencyFlags()
+    });
 
     mRenderPass.reset(new RenderPass(attachmentDescriptions,
                                      subpassDescriptions,

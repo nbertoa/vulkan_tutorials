@@ -53,12 +53,6 @@
     <ClCompile Include="render_pass\RenderPass.cpp">
       <Filter>render_pass</Filter>
     </ClCompile>
-    <ClCompile Include="render_pass\AttachmentDescription.cpp">
-      <Filter>render_pass</Filter>
-    </ClCompile>
-    <ClCompile Include="render_pass\SubpassDependency.cpp">
-      <Filter>render_pass</Filter>
-    </ClCompile>
     <ClCompile Include="render_pass\SubpassDescription.cpp">
       <Filter>render_pass</Filter>
     </ClCompile>
@@ -186,12 +180,6 @@
       <Filter>device</Filter>
     </ClInclude>
     <ClInclude Include="render_pass\RenderPass.h">
-      <Filter>render_pass</Filter>
-    </ClInclude>
-    <ClInclude Include="render_pass\AttachmentDescription.h">
-      <Filter>render_pass</Filter>
-    </ClInclude>
-    <ClInclude Include="render_pass\SubpassDependency.h">
       <Filter>render_pass</Filter>
     </ClInclude>
     <ClInclude Include="render_pass\SubpassDescription.h">

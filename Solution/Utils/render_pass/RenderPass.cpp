@@ -6,9 +6,9 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk2 {
-RenderPass::RenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions,
+RenderPass::RenderPass(const std::vector<vk::AttachmentDescription>& attachmentDescriptions,
                        const std::vector<SubpassDescription>& subpassDescriptions,
-                       const std::vector<SubpassDependency>& subpassDependencies) {
+                       const std::vector<vk::SubpassDependency>& subpassDependencies) {
     VkRenderPassCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     createInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
