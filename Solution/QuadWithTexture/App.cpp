@@ -5,7 +5,6 @@
 #include "Utils/DebugUtils.h"
 #include "Utils/SwapChain.h"
 #include "Utils/Window.h"
-#include "Utils/descriptor/WriteDescriptorSet.h"
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
@@ -69,14 +68,22 @@ App::updateUniformBuffers() {
 
 void
 App::initDescriptorSets() {
+    assert(mDescriptorPool.get() == VK_NULL_HANDLE);
+
     const uint32_t imageViewCount = mSwapChain.imageViewCount();
 
-    assert(mDescriptorPool == nullptr);
-    mDescriptorPool.reset(new DescriptorPool({VkDescriptorPoolSize{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                                                   imageViewCount},
-                                              VkDescriptorPoolSize{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                                                   imageViewCount}},
-                                             imageViewCount));
+    vk::DescriptorPoolSize descPoolSizes[2];
+    descPoolSizes[0].setDescriptorCount(imageViewCount);
+    descPoolSizes[0].setType(vk::DescriptorType::eUniformBuffer);
+    descPoolSizes[1].setDescriptorCount(imageViewCount);
+    descPoolSizes[1].setType(vk::DescriptorType::eCombinedImageSampler);
+
+    vk::DescriptorPoolCreateInfo descPoolInfo;
+    descPoolInfo.setMaxSets(imageViewCount);
+    descPoolInfo.setPoolSizeCount(2);
+    descPoolInfo.setPPoolSizes(descPoolSizes);
+
+    mDescriptorPool = LogicalDevice::device().createDescriptorPoolUnique(descPoolInfo);
 
     assert(mDescriptorSetLayout == nullptr);
     mDescriptorSetLayout.reset(new DescriptorSetLayout(
@@ -94,37 +101,51 @@ App::initDescriptorSets() {
     ));
 
     // Create a descriptor set for each swap chain image, all with the same layout.
-    mDescriptorSets.reset(new DescriptorSets(*mDescriptorPool,
+    mDescriptorSets.reset(new DescriptorSets(mDescriptorPool.get(),
                                              {imageViewCount,
                                               mDescriptorSetLayout->vkDescriptorSetLayout()}));
 
     // The descriptor sets have been allocated now, but the descriptors within still
     // need to be configured.
-    std::vector<VkDescriptorBufferInfo> bufferInfos;
-    bufferInfos.emplace_back(VkDescriptorBufferInfo{VK_NULL_HANDLE,
-                                                    0,
-                                                    sizeof(MatrixUBO)});
+    vk::DescriptorBufferInfo bufferInfo;
+    bufferInfo.setRange(sizeof(MatrixUBO));
 
     assert(mImageView != nullptr);
-    std::vector<VkDescriptorImageInfo> imageInfos;
-    imageInfos.emplace_back(VkDescriptorImageInfo{mTextureSampler.get(),
-                                                  mImageView->vkImageView(),
-                                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    vk::DescriptorImageInfo imageInfo
+    {
+        mTextureSampler.get(),
+        vk::ImageView(mImageView->vkImageView()),
+        vk::ImageLayout::eShaderReadOnlyOptimal
+    };
                                                   
     for (uint32_t i = 0; i < imageViewCount; ++i) {
-        bufferInfos.back().buffer = mUniformBuffers->buffer(i).vkBuffer();
-        WriteDescriptorSet bufferWriteDescriptorSet(bufferInfos,
-                                                    (*mDescriptorSets)[i],
-                                                    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                                    0);
+        bufferInfo.setBuffer(mUniformBuffers->buffer(i).vkBuffer());
+        vk::WriteDescriptorSet bufferWrite
+        {
+            vk::DescriptorSet((*mDescriptorSets)[i]),
+            0, // dest binding
+            0, // dest array element
+            1, // descriptor count
+            vk::DescriptorType::eUniformBuffer,
+            nullptr, // image info
+            &bufferInfo,
+            nullptr // buffer view
+        };
 
-        WriteDescriptorSet imageWriteDescriptorSet(imageInfos,
-                                                   (*mDescriptorSets)[i],
-                                                   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                                   1);
+        vk::WriteDescriptorSet imageWrite
+        {
+            vk::DescriptorSet((*mDescriptorSets)[i]),
+            1, // dest binding
+            0, // dest array element
+            1, // descriptor count
+            vk::DescriptorType::eCombinedImageSampler,
+            &imageInfo, // image info
+            nullptr,
+            nullptr // buffer view
+        };
 
-        mDescriptorSets->updateDescriptorSet({bufferWriteDescriptorSet,
-                                             imageWriteDescriptorSet});
+        mDescriptorSets->updateDescriptorSet({bufferWrite,
+                                              imageWrite});
     }
 }
 

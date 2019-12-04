@@ -86,9 +86,6 @@
     <ClCompile Include="shader\ShaderStages.cpp">
       <Filter>shader</Filter>
     </ClCompile>
-    <ClCompile Include="descriptor\DescriptorPool.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
     <ClCompile Include="descriptor\DescriptorSetLayout.cpp">
       <Filter>descriptor</Filter>
     </ClCompile>
@@ -96,12 +93,6 @@
       <Filter>descriptor</Filter>
     </ClCompile>
     <ClCompile Include="descriptor\DescriptorSets.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="descriptor\WriteDescriptorSet.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="descriptor\CopyDescriptorSet.cpp">
       <Filter>descriptor</Filter>
     </ClCompile>
     <ClCompile Include="resource\Image.cpp">
@@ -209,9 +200,6 @@
     <ClInclude Include="shader\ShaderStages.h">
       <Filter>shader</Filter>
     </ClInclude>
-    <ClInclude Include="descriptor\DescriptorPool.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
     <ClInclude Include="descriptor\DescriptorSetLayout.h">
       <Filter>descriptor</Filter>
     </ClInclude>
@@ -219,12 +207,6 @@
       <Filter>descriptor</Filter>
     </ClInclude>
     <ClInclude Include="descriptor\DescriptorSets.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="descriptor\WriteDescriptorSet.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="descriptor\CopyDescriptorSet.h">
       <Filter>descriptor</Filter>
     </ClInclude>
     <ClInclude Include="resource\Image.h">

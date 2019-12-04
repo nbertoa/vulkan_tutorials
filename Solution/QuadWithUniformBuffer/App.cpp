@@ -6,7 +6,6 @@
 #include "Utils/DebugUtils.h"
 #include "Utils/SwapChain.h"
 #include "Utils/Window.h"
-#include "Utils/descriptor/WriteDescriptorSet.h"
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
@@ -65,16 +64,21 @@ App::processCurrentFrame() {
 
 void
 App::initDescriptorSets() {
-    assert(mDescriptorPool == nullptr);
+    assert(mDescriptorPool.get() == VK_NULL_HANDLE);
     const uint32_t imageViewCount = mSwapChain.imageViewCount();
-    mDescriptorPool.reset(new DescriptorPool
-    (
-        {
-            VkDescriptorPoolSize {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, imageViewCount},
-            VkDescriptorPoolSize {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, imageViewCount}
-        },
-        imageViewCount
-    ));
+
+    vk::DescriptorPoolSize descPoolSizes[2];
+    descPoolSizes[0].setDescriptorCount(imageViewCount);
+    descPoolSizes[0].setType(vk::DescriptorType::eUniformBuffer);
+    descPoolSizes[1].setDescriptorCount(imageViewCount);
+    descPoolSizes[1].setType(vk::DescriptorType::eCombinedImageSampler);
+
+    vk::DescriptorPoolCreateInfo descPoolInfo;
+    descPoolInfo.setMaxSets(imageViewCount);
+    descPoolInfo.setPoolSizeCount(2);
+    descPoolInfo.setPPoolSizes(descPoolSizes);
+
+    mDescriptorPool = LogicalDevice::device().createDescriptorPoolUnique(descPoolInfo);
 
     assert(mDescriptorSetLayout == nullptr);
     mDescriptorSetLayout.reset(new DescriptorSetLayout(
@@ -93,16 +97,15 @@ App::initDescriptorSets() {
 
     // The descriptor sets have been allocated now, but the descriptors within still
     // need to be configured.
-    std::vector<VkDescriptorBufferInfo> bufferInfos;
-    bufferInfos.emplace_back(VkDescriptorBufferInfo{VK_NULL_HANDLE,
-                                                    0,
-                                                    sizeof(MatrixUBO)});
+    vk::DescriptorBufferInfo bufferInfo;
+    bufferInfo.setRange(sizeof(MatrixUBO));
     for (uint32_t i = 0; i < imageViewCount; ++i) {
-        bufferInfos.back().buffer = mUniformBuffers->buffer(i).vkBuffer();
-        WriteDescriptorSet writeDescriptorSet(bufferInfos,
-                                              VK_NULL_HANDLE,
-                                              VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                              0);
+        bufferInfo.buffer = mUniformBuffers->buffer(i).vkBuffer();
+        vk::WriteDescriptorSet writeDescriptorSet;
+        writeDescriptorSet.setDstBinding(0);
+        writeDescriptorSet.setDescriptorCount(1);
+        writeDescriptorSet.setDescriptorType(vk::DescriptorType::eUniformBuffer);
+        writeDescriptorSet.setPBufferInfo(&bufferInfo);        
         mDescriptorSets->updateDescriptorSet(i,
                                              writeDescriptorSet);
     }

@@ -6,7 +6,6 @@
 #include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
 #include "Utils/command/CommandPool.h"
-#include "Utils/descriptor/DescriptorPool.h"
 #include "Utils/descriptor/DescriptorSetLayout.h"
 #include "Utils/descriptor/DescriptorSets.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
@@ -93,7 +92,7 @@ protected:
     std::unique_ptr<vk2::Buffer> mGpuIndexBuffer;
 
     std::unique_ptr<vk2::Buffers> mUniformBuffers;
-    std::unique_ptr<vk2::DescriptorPool> mDescriptorPool;
+    vk::UniqueDescriptorPool mDescriptorPool;
     MatrixUBO mMatrixUBO;
     std::unique_ptr<vk2::DescriptorSetLayout> mDescriptorSetLayout;
     std::unique_ptr<vk2::DescriptorSets> mDescriptorSets;

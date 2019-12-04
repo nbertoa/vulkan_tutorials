@@ -147,12 +147,9 @@
     <ClCompile Include="command\CommandBuffers.cpp" />
     <ClCompile Include="command\CommandPool.cpp" />
     <ClCompile Include="DebugUtils.cpp" />
-    <ClCompile Include="descriptor\CopyDescriptorSet.cpp" />
-    <ClCompile Include="descriptor\DescriptorPool.cpp" />
     <ClCompile Include="descriptor\DescriptorSetLayout.cpp" />
     <ClCompile Include="descriptor\DescriptorSetLayoutBinding.cpp" />
     <ClCompile Include="descriptor\DescriptorSets.cpp" />
-    <ClCompile Include="descriptor\WriteDescriptorSet.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDeviceData.cpp" />
@@ -192,12 +189,9 @@
     <ClInclude Include="command\CommandBuffer.h" />
     <ClInclude Include="command\CommandBuffers.h" />
     <ClInclude Include="command\CommandPool.h" />
-    <ClInclude Include="descriptor\CopyDescriptorSet.h" />
-    <ClInclude Include="descriptor\DescriptorPool.h" />
     <ClInclude Include="descriptor\DescriptorSetLayout.h" />
     <ClInclude Include="descriptor\DescriptorSetLayoutBinding.h" />
     <ClInclude Include="descriptor\DescriptorSets.h" />
-    <ClInclude Include="descriptor\WriteDescriptorSet.h" />
     <ClInclude Include="device\LogicalDevice.h" />
     <ClInclude Include="device\PhysicalDevice.h" />
     <ClInclude Include="device\PhysicalDeviceData.h" />

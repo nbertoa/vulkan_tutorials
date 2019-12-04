@@ -46,7 +46,7 @@ public:
     //   descriptor set is allocated.
     //
     // Notes: The global logical device is the device that owns the descriptor pool
-    DescriptorSets(const DescriptorPool& descriptorPool,
+    DescriptorSets(const vk::DescriptorPool& descriptorPool,
                    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
     DescriptorSets(DescriptorSets&& other) noexcept;
     DescriptorSets(const DescriptorSets&) = delete;
@@ -79,24 +79,24 @@ public:
     // The methods that do not take a descriptorSetIndex must refer to a
     // descriptor set that belongs to this instance of DescriptorSets.
     void 
-    updateDescriptorSet(const WriteDescriptorSet& writeDescriptorSet);
+    updateDescriptorSet(const vk::WriteDescriptorSet& writeDescriptorSet);
 
     void
     updateDescriptorSet(const uint32_t descriptorSetIndex,
-                        WriteDescriptorSet& writeDescriptorSet);
+                        vk::WriteDescriptorSet& writeDescriptorSet);
     
     void 
-    updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets);
+    updateDescriptorSet(const std::vector<vk::WriteDescriptorSet>& writeDescriptorSets);
 
     void 
-    updateDescriptorSet(const CopyDescriptorSet& copyDescriptorSet);
+    updateDescriptorSet(const vk::CopyDescriptorSet& copyDescriptorSet);
     
     void 
-    updateDescriptorSet(const std::vector<CopyDescriptorSet>& copyDescriptorSets);
+    updateDescriptorSet(const std::vector<vk::CopyDescriptorSet>& copyDescriptorSets);
 
     void 
-    updateDescriptorSet(const std::vector<WriteDescriptorSet>& writeDescriptorSets,
-                        const std::vector<CopyDescriptorSet>& copyDescriptorSets);
+    updateDescriptorSet(const std::vector<vk::WriteDescriptorSet>& writeDescriptorSets,
+                        const std::vector<vk::CopyDescriptorSet>& copyDescriptorSets);
 
 private:                              
     std::vector<VkDescriptorSet> mDescriptorSets;
