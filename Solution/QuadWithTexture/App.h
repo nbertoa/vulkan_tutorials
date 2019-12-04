@@ -8,8 +8,6 @@
 #include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
 #include "Utils/command/CommandPool.h"
-#include "Utils/descriptor/DescriptorSetLayout.h"
-#include "Utils/descriptor/DescriptorSets.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
 #include "Utils/resource/Buffers.h"
@@ -97,8 +95,8 @@ protected:
     std::unique_ptr<vk2::Buffers> mUniformBuffers;
     vk::UniqueDescriptorPool mDescriptorPool;
     MatrixUBO mMatrixUBO;
-    std::unique_ptr<vk2::DescriptorSetLayout> mDescriptorSetLayout;
-    std::unique_ptr<vk2::DescriptorSets> mDescriptorSets;
+    vk::UniqueDescriptorSetLayout mDescriptorSetLayout;
+    std::vector<vk::DescriptorSet> mDescriptorSets;
 
     vk::UniqueSampler mTextureSampler;
     std::unique_ptr<vk2::ImageView> mImageView;

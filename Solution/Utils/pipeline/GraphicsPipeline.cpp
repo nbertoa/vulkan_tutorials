@@ -14,7 +14,7 @@ GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                                    const vk::RenderPass& renderPass,
                                    const uint32_t subPassIndex)
     : mPipelineLayout(std::move(pipelineLayout)) {
-    vk::GraphicsPipelineCreateInfo createInfo =
+    vk::GraphicsPipelineCreateInfo createInfo
     {
         vk::PipelineCreateFlags(),
         static_cast<uint32_t>(shaderStages.stages().size()),
@@ -53,38 +53,19 @@ GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
         -1 // base pipeline index
     };
 
-    vkChecker(vkCreateGraphicsPipelines(LogicalDevice::device(),
-                                        VK_NULL_HANDLE,
-                                        1,
-                                        (VkGraphicsPipelineCreateInfo*)&createInfo,
-                                        nullptr,
-                                        &mPipeline));
-    assert(mPipeline != VK_NULL_HANDLE);
+    mPipeline = LogicalDevice::device().createGraphicsPipelineUnique(vk::PipelineCache(),
+                                                                     createInfo);
 }
 
-GraphicsPipeline::~GraphicsPipeline() {
-    assert(mPipeline != VK_NULL_HANDLE);
-    vkDestroyPipeline(LogicalDevice::device(),
-                      mPipeline,
-                      nullptr);
-}
-
-GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
-    : mPipeline(other.mPipeline)
-    , mPipelineLayout(std::move(other.mPipelineLayout))
-{
-    other.mPipeline = VK_NULL_HANDLE;
-}
-
-VkPipeline 
-GraphicsPipeline::vkPipeline() const {
-    assert(mPipeline != VK_NULL_HANDLE);
-    return mPipeline;
+vk::Pipeline 
+GraphicsPipeline::pipeline() const {
+    assert(mPipeline.get() != VK_NULL_HANDLE);
+    return mPipeline.get();
 }
 
 vk::PipelineLayout
 GraphicsPipeline::pipelineLayout() const {
-    assert(mPipeline != VK_NULL_HANDLE);
+    assert(mPipelineLayout.get() != VK_NULL_HANDLE);
     return mPipelineLayout.get();
 }
 

@@ -12,7 +12,7 @@ class RenderPass;
 class ShaderStages;
 
 //
-// Graphics VkPipeline wrapper.
+// Graphics Pipeline wrapper.
 //
 // The pipeline is the big object which composes most of the objects 
 // listed in the other classes of this project.
@@ -77,19 +77,17 @@ public:
                      const ShaderStages& shaderStages,
                      const vk::RenderPass& renderPass,
                      const uint32_t subPassIndex = 0);
-    ~GraphicsPipeline();
-    GraphicsPipeline(GraphicsPipeline&& other) noexcept;
     GraphicsPipeline(const GraphicsPipeline&) = delete;
     const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
 
-    VkPipeline 
-    vkPipeline() const;
+    vk::Pipeline 
+    pipeline() const;
 
     vk::PipelineLayout
     pipelineLayout() const;
 
 private:
-    VkPipeline mPipeline = VK_NULL_HANDLE;
+    vk::UniquePipeline mPipeline;
     vk::UniquePipelineLayout mPipelineLayout;
 };
 }

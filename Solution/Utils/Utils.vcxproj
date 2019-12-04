@@ -147,8 +147,6 @@
     <ClCompile Include="command\CommandBuffers.cpp" />
     <ClCompile Include="command\CommandPool.cpp" />
     <ClCompile Include="DebugUtils.cpp" />
-    <ClCompile Include="descriptor\DescriptorSetLayout.cpp" />
-    <ClCompile Include="descriptor\DescriptorSets.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDeviceData.cpp" />
@@ -188,8 +186,6 @@
     <ClInclude Include="command\CommandBuffer.h" />
     <ClInclude Include="command\CommandBuffers.h" />
     <ClInclude Include="command\CommandPool.h" />
-    <ClInclude Include="descriptor\DescriptorSetLayout.h" />
-    <ClInclude Include="descriptor\DescriptorSets.h" />
     <ClInclude Include="device\LogicalDevice.h" />
     <ClInclude Include="device\PhysicalDevice.h" />
     <ClInclude Include="device\PhysicalDeviceData.h" />

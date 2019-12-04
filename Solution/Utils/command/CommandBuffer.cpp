@@ -90,7 +90,7 @@ CommandBuffer::bindPipeline(const GraphicsPipeline& graphicsPipeline) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     vkCmdBindPipeline(mCommandBuffer,
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      graphicsPipeline.vkPipeline());
+                      graphicsPipeline.pipeline());
 }
 
 void

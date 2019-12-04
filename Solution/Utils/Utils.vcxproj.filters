@@ -86,12 +86,6 @@
     <ClCompile Include="shader\ShaderStages.cpp">
       <Filter>shader</Filter>
     </ClCompile>
-    <ClCompile Include="descriptor\DescriptorSetLayout.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="descriptor\DescriptorSets.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
     <ClCompile Include="resource\Image.cpp">
       <Filter>resource</Filter>
     </ClCompile>
@@ -197,12 +191,6 @@
     <ClInclude Include="shader\ShaderStages.h">
       <Filter>shader</Filter>
     </ClInclude>
-    <ClInclude Include="descriptor\DescriptorSetLayout.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="descriptor\DescriptorSets.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
     <ClInclude Include="resource\Image.h">
       <Filter>resource</Filter>
     </ClInclude>
@@ -244,9 +232,6 @@
     </Filter>
     <Filter Include="shader">
       <UniqueIdentifier>{ad34e20b-2438-4b7b-9d30-adfedbaef52c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="descriptor">
-      <UniqueIdentifier>{bec30087-1a97-4937-b5a4-bbdb16eaf623}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

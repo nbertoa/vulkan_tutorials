@@ -80,20 +80,31 @@ App::initDescriptorSets() {
 
     mDescriptorPool = LogicalDevice::device().createDescriptorPoolUnique(descPoolInfo);
 
-    assert(mDescriptorSetLayout == nullptr);
-    mDescriptorSetLayout.reset(new DescriptorSetLayout(
-    {
-        vk::DescriptorSetLayoutBinding(0,
-        vk::DescriptorType::eUniformBuffer,
-        1,
-        vk::ShaderStageFlagBits::eVertex),
+    assert(mDescriptorSetLayout.get() == VK_NULL_HANDLE);
 
-    }));
+    vk::DescriptorSetLayoutBinding descSetLayoutBinding;
+    descSetLayoutBinding.setBinding(0);
+    descSetLayoutBinding.setDescriptorType(vk::DescriptorType::eUniformBuffer);
+    descSetLayoutBinding.setDescriptorCount(1);
+    descSetLayoutBinding.setStageFlags(vk::ShaderStageFlagBits::eVertex);
+
+    vk::DescriptorSetLayoutCreateInfo descSetLayoutInfo;
+    descSetLayoutInfo.setBindingCount(1);
+    descSetLayoutInfo.setPBindings(&descSetLayoutBinding);
+
+    mDescriptorSetLayout = 
+        LogicalDevice::device().createDescriptorSetLayoutUnique(descSetLayoutInfo);
+
+    const std::vector<vk::DescriptorSetLayout> descSetLayouts(imageViewCount, 
+                                                              mDescriptorSetLayout.get());
+
+    vk::DescriptorSetAllocateInfo allocateInfo;
+    allocateInfo.setDescriptorPool(mDescriptorPool.get());
+    allocateInfo.setDescriptorSetCount(imageViewCount);
+    allocateInfo.setPSetLayouts(descSetLayouts.data());
 
     // Create a descriptor set for each swap chain image, all with the same layout.
-    mDescriptorSets.reset(new DescriptorSets(*mDescriptorPool,
-                                             {imageViewCount,
-                                              mDescriptorSetLayout->vkDescriptorSetLayout()}));
+    mDescriptorSets = LogicalDevice::device().allocateDescriptorSets(allocateInfo);
 
     // The descriptor sets have been allocated now, but the descriptors within still
     // need to be configured.
@@ -105,9 +116,11 @@ App::initDescriptorSets() {
         writeDescriptorSet.setDstBinding(0);
         writeDescriptorSet.setDescriptorCount(1);
         writeDescriptorSet.setDescriptorType(vk::DescriptorType::eUniformBuffer);
-        writeDescriptorSet.setPBufferInfo(&bufferInfo);        
-        mDescriptorSets->updateDescriptorSet(i,
-                                             writeDescriptorSet);
+        writeDescriptorSet.setPBufferInfo(&bufferInfo);
+        writeDescriptorSet.setDstSet(mDescriptorSets[i]);
+
+        LogicalDevice::device().updateDescriptorSets({writeDescriptorSet},
+                                                     {});
     }
 }
 
@@ -196,7 +209,7 @@ App::recordCommandBuffers() {
                                       VK_INDEX_TYPE_UINT32);
 
         commandBuffer.bindDescriptorSet(mGraphicsPipeline->pipelineLayout(),
-                                        (*mDescriptorSets)[i]);
+                                        mDescriptorSets[i]);
 
         commandBuffer.drawIndexed(static_cast<uint32_t>(mGpuIndexBuffer->size() / sizeof(uint32_t)));
 
@@ -209,7 +222,7 @@ App::recordCommandBuffers() {
 void
 App::initGraphicsPipeline() {
     assert(mGraphicsPipeline == nullptr);
-    assert(mDescriptorSetLayout != nullptr);
+    assert(mDescriptorSetLayout.get() != VK_NULL_HANDLE);
 
     PipelineStates pipelineStates;
     initPipelineStates(pipelineStates);
@@ -217,7 +230,7 @@ App::initGraphicsPipeline() {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    vk::DescriptorSetLayout descSetLayout(mDescriptorSetLayout->vkDescriptorSetLayout());
+    vk::DescriptorSetLayout descSetLayout(mDescriptorSetLayout.get());
     vk::PipelineLayoutCreateInfo createInfo
     {
         vk::PipelineLayoutCreateFlags(),
