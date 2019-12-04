@@ -83,12 +83,12 @@ App::initDescriptorSets() {
     assert(mDescriptorSetLayout == nullptr);
     mDescriptorSetLayout.reset(new DescriptorSetLayout(
     {
-            DescriptorSetLayoutBinding(0,
-                                       VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                       1,
-                                       VK_SHADER_STAGE_VERTEX_BIT)
-        }
-    ));
+        vk::DescriptorSetLayoutBinding(0,
+        vk::DescriptorType::eUniformBuffer,
+        1,
+        vk::ShaderStageFlagBits::eVertex),
+
+    }));
 
     // Create a descriptor set for each swap chain image, all with the same layout.
     mDescriptorSets.reset(new DescriptorSets(*mDescriptorPool,

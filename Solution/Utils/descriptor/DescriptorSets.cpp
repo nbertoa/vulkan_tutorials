@@ -40,7 +40,7 @@ DescriptorSets::updateDescriptorSet(const vk::WriteDescriptorSet& writeDescripto
 
     vkUpdateDescriptorSets(LogicalDevice::device(),
                            1, // descriptor set count
-                           (VkWriteDescriptorSet*)&writeDescriptorSet.dstSet,
+                           (VkWriteDescriptorSet*)&writeDescriptorSet,
                            0, // descriptor copy count
                            nullptr);
 }

@@ -6,13 +6,13 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk2 {
-DescriptorSetLayout::DescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings) {
+DescriptorSetLayout::DescriptorSetLayout(const std::vector<vk::DescriptorSetLayoutBinding>& descriptorSetLayoutBindings) {
     assert(descriptorSetLayoutBindings.empty() == false);
 
     VkDescriptorSetLayoutCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     createInfo.bindingCount = static_cast<uint32_t>(descriptorSetLayoutBindings.size());
-    createInfo.pBindings = reinterpret_cast<const VkDescriptorSetLayoutBinding*>(descriptorSetLayoutBindings.data());
+    createInfo.pBindings = (VkDescriptorSetLayoutBinding*)descriptorSetLayoutBindings.data();
 
     vkChecker(vkCreateDescriptorSetLayout(LogicalDevice::device(),
                                           &createInfo,

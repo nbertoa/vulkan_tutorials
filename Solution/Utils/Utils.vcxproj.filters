@@ -89,9 +89,6 @@
     <ClCompile Include="descriptor\DescriptorSetLayout.cpp">
       <Filter>descriptor</Filter>
     </ClCompile>
-    <ClCompile Include="descriptor\DescriptorSetLayoutBinding.cpp">
-      <Filter>descriptor</Filter>
-    </ClCompile>
     <ClCompile Include="descriptor\DescriptorSets.cpp">
       <Filter>descriptor</Filter>
     </ClCompile>
@@ -201,9 +198,6 @@
       <Filter>shader</Filter>
     </ClInclude>
     <ClInclude Include="descriptor\DescriptorSetLayout.h">
-      <Filter>descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="descriptor\DescriptorSetLayoutBinding.h">
       <Filter>descriptor</Filter>
     </ClInclude>
     <ClInclude Include="descriptor\DescriptorSets.h">

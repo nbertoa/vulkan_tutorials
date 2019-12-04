@@ -4,8 +4,6 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-#include "DescriptorSetLayoutBinding.h"
-
 namespace vk2 {
 //
 // VkDescriptorSetLayout wrapper.
@@ -50,7 +48,7 @@ public:
     //
     // Notes: The global logical device is the device that 
     //        creates the descriptor set layout
-    DescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& descriptorSetLayoutBindings);
+    DescriptorSetLayout(const std::vector<vk::DescriptorSetLayoutBinding>& descriptorSetLayoutBindings);
     ~DescriptorSetLayout();
     DescriptorSetLayout(DescriptorSetLayout&& other) noexcept;
     DescriptorSetLayout(const DescriptorSetLayout&) = delete;
