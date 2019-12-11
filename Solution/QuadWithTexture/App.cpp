@@ -18,9 +18,14 @@
 using namespace vk2;
 
 App::App() {
-    mGraphicsCommandPool.reset(new CommandPool(PhysicalDevice::graphicsQueueFamilyIndex()));
-    mTransferCommandPool.reset(new CommandPool(PhysicalDevice::transferQueueFamilyIndex(),
-                                               VK_COMMAND_POOL_CREATE_TRANSIENT_BIT));
+    // Init command pools
+    vk::CommandPoolCreateInfo info;
+    info.setQueueFamilyIndex(PhysicalDevice::graphicsQueueFamilyIndex());
+    mGraphicsCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
+
+    info.setQueueFamilyIndex(PhysicalDevice::transferQueueFamilyIndex());
+    info.setFlags(vk::CommandPoolCreateFlagBits::eTransient);
+    mTransferCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
 
     initUniformBuffers();
     initVertexBuffer();

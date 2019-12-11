@@ -6,7 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class CommandPool;
 class DeviceMemory;
 class Fence;
 
@@ -151,11 +150,11 @@ public:
     // Notes: The global physical device is used to create the staging buffer
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const CommandPool& transferCommandPool);
+                                 const vk::CommandPool transferCommandPool);
     void
     copyFromDataToDeviceMemory(void* sourceData,
                                const VkDeviceSize size,
-                               const CommandPool& transferCommandPool);
+                               const vk::CommandPool transferCommandPool);
 
     // Creates a staging buffer with flags:
     // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT,

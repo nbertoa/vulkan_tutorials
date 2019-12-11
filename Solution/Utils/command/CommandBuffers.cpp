@@ -3,13 +3,12 @@
 #include <cassert>
 
 #include "CommandBuffer.h"
-#include "CommandPool.h"
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
 
 namespace vk2 {
-CommandBuffers::CommandBuffers(const CommandPool& commandPool,
+CommandBuffers::CommandBuffers(const vk::CommandPool commandPool,
                                const size_t bufferCount,
                                const VkCommandBufferLevel level)
 {
@@ -19,7 +18,7 @@ CommandBuffers::CommandBuffers(const CommandPool& commandPool,
 
     VkCommandBufferAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    info.commandPool = commandPool.vkCommandPool();
+    info.commandPool = commandPool;
     info.level = level;
     info.commandBufferCount = static_cast<uint32_t>(bufferCount);
 

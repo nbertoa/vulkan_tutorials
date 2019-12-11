@@ -3,7 +3,6 @@
 
 #include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
-#include "Utils/command/CommandPool.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h" 
 #include "Utils/resource/Buffer.h"
@@ -50,8 +49,8 @@ protected:
 
     vk2::SwapChain mSwapChain;
 
-    std::unique_ptr<vk2::CommandPool> mGraphicsCommandPool;
-    std::unique_ptr<vk2::CommandPool> mTransferCommandPool;
+    vk::UniqueCommandPool mGraphicsCommandPool;
+    vk::UniqueCommandPool mTransferCommandPool;
 
     vk::UniqueRenderPass mRenderPass;
     std::vector<vk::UniqueFramebuffer> mFrameBuffers;

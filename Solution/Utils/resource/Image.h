@@ -6,7 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class CommandPool;
 class DeviceMemory;
 
 //
@@ -152,13 +151,13 @@ public:
     void
     copyFromDataToDeviceMemory(void* sourceData,
                                const VkDeviceSize size,
-                               const CommandPool& transferCommandPool);
+                               const vk::CommandPool transferCommandPool);
 
     // * transitionCommandPool that will be used to create 
     //  the CommandBuffer which will do the transition operation.
     void
     transitionImageLayout(const VkImageLayout newImageLayout,
-                          const CommandPool& transitionCommandPool);
+                          const vk::CommandPool transitionCommandPool);
 
 private:
     // Return the image memory requirements. This is used to create

@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClCompile Include="command\CommandBuffer.cpp" />
     <ClCompile Include="command\CommandBuffers.cpp" />
-    <ClCompile Include="command\CommandPool.cpp" />
     <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
@@ -185,7 +184,6 @@
   <ItemGroup>
     <ClInclude Include="command\CommandBuffer.h" />
     <ClInclude Include="command\CommandBuffers.h" />
-    <ClInclude Include="command\CommandPool.h" />
     <ClInclude Include="device\LogicalDevice.h" />
     <ClInclude Include="device\PhysicalDevice.h" />
     <ClInclude Include="device\PhysicalDeviceData.h" />

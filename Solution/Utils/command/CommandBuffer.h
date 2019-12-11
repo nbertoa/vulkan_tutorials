@@ -7,13 +7,9 @@
 
 namespace vk2 {
 class Buffer;
-class CommandPool;
-class Fence;
 class GraphicsPipeline;
 class Image;
 class ImageMemoryBarrier;
-class PipelineLayout;
-class RenderPass;
 
 //
 // VkCommandBuffer wrapper.
@@ -78,7 +74,7 @@ public:
     // * level for command buffer (VK_COMMAND_BUFFER_):
     // 
     //   - LEVEL_PRIMARY, LEVEL_SECONDARY
-    CommandBuffer(const CommandPool& commandPool,
+    CommandBuffer(const vk::CommandPool commandPool,
                   const VkCommandBufferLevel level);
     CommandBuffer(const VkCommandBuffer commandBuffer);
     CommandBuffer(CommandBuffer&& other) noexcept;

@@ -5,7 +5,6 @@
 #include "DeviceMemory.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
-#include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -129,7 +128,7 @@ Buffer::copyToHostMemory(void* sourceData,
 
 void
 Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const CommandPool& transferCommandPool) {
+                                     const vk::CommandPool transferCommandPool) {
 
     // Fence to be signaled once
     // the copy operation is complete. 
@@ -139,8 +138,10 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                    VK_TRUE,
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence.get()});
-
-    CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
+    
+    CommandBuffer commandBuffer(transferCommandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();
@@ -164,7 +165,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 void
 Buffer::copyFromDataToDeviceMemory(void* sourceData,
                                    const VkDeviceSize size,
-                                   const CommandPool& transferCommandPool) {
+                                   const vk::CommandPool transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
 

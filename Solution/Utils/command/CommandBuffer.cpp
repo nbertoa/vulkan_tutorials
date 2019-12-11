@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "CommandPool.h"
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
@@ -11,11 +10,11 @@
 #include "../resource/ImageMemoryBarrier.h"
 
 namespace vk2 {
-CommandBuffer::CommandBuffer(const CommandPool& commandPool,
+CommandBuffer::CommandBuffer(const vk::CommandPool commandPool,
                              const VkCommandBufferLevel level) {
     VkCommandBufferAllocateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    info.commandPool = commandPool.vkCommandPool();
+    info.commandPool = commandPool;
     info.commandBufferCount = 1;
     info.level = level;   
 

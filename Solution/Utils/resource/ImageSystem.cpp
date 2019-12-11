@@ -13,7 +13,7 @@ ImageSystem::mImageByPath = {};
 
 Image&
 ImageSystem::getOrLoadImage(const std::string& imageFilePath,
-                            const CommandPool& transferCommandPool) {
+                            const vk::CommandPool transferCommandPool) {
     Image* image = nullptr;
 
     // Check if the image was already loaded.

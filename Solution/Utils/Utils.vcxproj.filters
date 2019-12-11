@@ -71,9 +71,6 @@
     <ClCompile Include="command\CommandBuffers.cpp">
       <Filter>command</Filter>
     </ClCompile>
-    <ClCompile Include="command\CommandPool.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
     <ClCompile Include="pipeline\GraphicsPipeline.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>command</Filter>
     </ClInclude>
     <ClInclude Include="command\CommandBuffers.h">
-      <Filter>command</Filter>
-    </ClInclude>
-    <ClInclude Include="command\CommandPool.h">
       <Filter>command</Filter>
     </ClInclude>
     <ClInclude Include="pipeline\GraphicsPipeline.h">

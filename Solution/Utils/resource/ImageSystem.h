@@ -3,9 +3,9 @@
 
 #include <string>
 #include <unordered_map>
+#include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class CommandPool;
 class Image;
 
 class ImageSystem {
@@ -18,7 +18,7 @@ public:
 
     static Image&
     getOrLoadImage(const std::string& imageFilePath,
-                   const CommandPool& transferCommandPool);
+                   const vk::CommandPool transferCommandPool);
 
     static void
     eraseImage(const std::string& imageFilePath);
