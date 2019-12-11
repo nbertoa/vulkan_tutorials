@@ -140,8 +140,8 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     device.resetFences({fence.get()});
     
     CommandBuffer commandBuffer(transferCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+                                vk::CommandBufferLevel::ePrimary);
+    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();
@@ -155,7 +155,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                          nullptr,
                          nullptr,
                          fence.get(),
-                         VK_PIPELINE_STAGE_TRANSFER_BIT);
+                         vk::PipelineStageFlagBits::eTransfer);
 
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,

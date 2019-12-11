@@ -11,47 +11,43 @@
 
 namespace vk2 {
 CommandBuffer::CommandBuffer(const vk::CommandPool commandPool,
-                             const VkCommandBufferLevel level) {
-    VkCommandBufferAllocateInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    info.commandPool = commandPool;
-    info.commandBufferCount = 1;
-    info.level = level;   
+                             const vk::CommandBufferLevel level) {
 
-    vkChecker(vkAllocateCommandBuffers(LogicalDevice::device(),
-                                       &info,
-                                       &mCommandBuffer));
-}
+    vk::CommandBufferAllocateInfo info;
+    info.setCommandBufferCount(1);
+    info.setCommandPool(commandPool);
+    info.setLevel(level);
 
-CommandBuffer::CommandBuffer(const VkCommandBuffer commandBuffer) 
-    : mCommandBuffer(commandBuffer)
-{
-    assert(mCommandBuffer != VK_NULL_HANDLE);
+    std::vector<vk::CommandBuffer> buffers = LogicalDevice::device().allocateCommandBuffers(info);
+    assert(buffers.size() == 1);
+    mCommandBuffer = buffers.front();
 }
 
 CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept 
     : mCommandBuffer(other.mCommandBuffer)
 {
-    other.mCommandBuffer = VK_NULL_HANDLE;
+    other.mCommandBuffer = vk::CommandBuffer();
+}
+
+CommandBuffer::CommandBuffer(const vk::CommandBuffer commandBuffer) 
+    : mCommandBuffer(commandBuffer)
+{
+    assert(commandBuffer != VK_NULL_HANDLE);
 }
 
 void
-CommandBuffer::beginRecording(const VkCommandBufferUsageFlags usageFlags) {
+CommandBuffer::beginRecording(const vk::CommandBufferUsageFlagBits usageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     
-    VkCommandBufferBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    info.flags = usageFlags;
-    info.pInheritanceInfo = nullptr;
-
-    vkChecker(vkBeginCommandBuffer(mCommandBuffer,
-                                   &info));
+    vk::CommandBufferBeginInfo info;
+    info.setFlags(usageFlags);
+    vkChecker(mCommandBuffer.begin(&info));
 }
 
 void
 CommandBuffer::endRecording() {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkChecker(vkEndCommandBuffer(mCommandBuffer));
+    mCommandBuffer.end();
 }
 
 void
@@ -61,121 +57,98 @@ CommandBuffer::beginPass(const vk::RenderPass renderPass,
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(frameBuffer != VK_NULL_HANDLE);   
 
-    vk::ClearColorValue colorValue(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
-    vk::ClearValue clearValue(colorValue);
+    const vk::ClearColorValue colorValue(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
+    const vk::ClearValue clearValue(colorValue);
 
-    vk::RenderPassBeginInfo info = 
-    {
-        renderPass,
-        frameBuffer,
-        vk::Rect2D{vk::Offset2D {0, 0}, imageExtent}, // render area
-        1,
-        &clearValue
-    };
+    vk::RenderPassBeginInfo info;
+    info.setRenderArea(vk::Rect2D {vk::Offset2D {0, 0}, imageExtent});
+    info.setFramebuffer(frameBuffer);
+    info.setClearValueCount(1);
+    info.setPClearValues(&clearValue);
+    info.setRenderPass(renderPass);
 
-    vkCmdBeginRenderPass(mCommandBuffer,
-                         (VkRenderPassBeginInfo*)&info,
-                         VK_SUBPASS_CONTENTS_INLINE);
+    mCommandBuffer.beginRenderPass(info,
+                                   vk::SubpassContents::eInline);
 }
 
 void
 CommandBuffer::endPass() {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkCmdEndRenderPass(mCommandBuffer);
+    mCommandBuffer.endRenderPass();
 }
 
 void
 CommandBuffer::bindPipeline(const GraphicsPipeline& graphicsPipeline) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkCmdBindPipeline(mCommandBuffer,
-                      VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      graphicsPipeline.pipeline());
+    mCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics,
+                                graphicsPipeline.pipeline());
 }
 
 void
 CommandBuffer::bindDescriptorSet(const vk::PipelineLayout pipelineLayout,
-                                 const VkDescriptorSet descriptorSet) {
+                                 const vk::DescriptorSet descriptorSet) {
+    assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(descriptorSet != VK_NULL_HANDLE);
     assert(pipelineLayout != VK_NULL_HANDLE);
-    vkCmdBindDescriptorSets(mCommandBuffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            pipelineLayout,
-                            0,
-                            1,
-                            &descriptorSet,
-                            0,
-                            nullptr);
+
+    mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
+                                      pipelineLayout,
+                                      0, // first descriptor set
+                                      {descriptorSet},
+                                      {}); // dynamic arrays
 }
 
 void 
 CommandBuffer::bindVertexBuffer(const Buffer& buffer) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-
-    VkBuffer buffers[] = { buffer.vkBuffer() };
-    VkDeviceSize offsets[] = {0};
-
-    vkCmdBindVertexBuffers(mCommandBuffer,
-                           0, // first vertex buffer to bind
-                           1, // number of vertex buffers to bind
-                           buffers,
-                           offsets); // Byte offsets to start reading vertex data from
+    mCommandBuffer.bindVertexBuffers(0, // first vertex buffer to bind
+                                     {buffer.vkBuffer()},
+                                     {0}); // offsets 
 }
 
 void
 CommandBuffer::bindIndexBuffer(const Buffer& buffer,
-                               const VkIndexType indexType) {
+                               const vk::IndexType indexType) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-
-    vkCmdBindIndexBuffer(mCommandBuffer,
-                         buffer.vkBuffer(),
-                         0, // Byte offset to start reading index data from
-                         indexType);
+    mCommandBuffer.bindIndexBuffer(buffer.vkBuffer(),
+                                   0, // offset
+                                   indexType);
 }
 
 void 
 CommandBuffer::copyBuffer(const Buffer& sourceBuffer,
                           const Buffer& destinationBuffer,
-                          const VkBufferCopy& regionToCopy) {
+                          const vk::BufferCopy& regionToCopy) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-
-    vkCmdCopyBuffer(mCommandBuffer,
-                    sourceBuffer.vkBuffer(),
-                    destinationBuffer.vkBuffer(),
-                    1,
-                    &regionToCopy);
+    mCommandBuffer.copyBuffer(sourceBuffer.vkBuffer(),
+                              destinationBuffer.vkBuffer(),
+                              {regionToCopy});
 }
 
 void
 CommandBuffer::copyBufferToImage(const Buffer& sourceBuffer,
                                  const Image& destinationImage,
-                                 const VkBufferImageCopy& regionToCopy,
-                                 const VkImageLayout destImageLayout) {
+                                 const vk::BufferImageCopy& regionToCopy,
+                                 const vk::ImageLayout destImageLayout) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-
-    vkCmdCopyBufferToImage(mCommandBuffer,
-                           sourceBuffer.vkBuffer(),
-                           destinationImage.vkImage(),
-                           destImageLayout,
-                           1, // number of regions to copy
-                           &regionToCopy);
+    mCommandBuffer.copyBufferToImage(sourceBuffer.vkBuffer(),
+                                     destinationImage.vkImage(),
+                                     destImageLayout,
+                                     {regionToCopy});
 }
 
 void
 CommandBuffer::imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
-                                    const VkPipelineStageFlags sourceStageMask,
-                                    const VkPipelineStageFlags destStageMask,
-                                    const VkDependencyFlags dependencyFlags) {
+                                    const vk::PipelineStageFlagBits sourceStageMask,
+                                    const vk::PipelineStageFlagBits destStageMask,
+                                    const vk::DependencyFlagBits dependencyFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkCmdPipelineBarrier(mCommandBuffer,
-                         sourceStageMask,
-                         destStageMask,
-                         dependencyFlags,
-                         0,
-                         nullptr,
-                         0,
-                         nullptr,
-                         1,
-                         &imageMemoryBarrier.vkMemoryBarrier());
+    mCommandBuffer.pipelineBarrier(sourceStageMask,
+                                   destStageMask,
+                                   dependencyFlags,
+                                   {}, // memory barriers
+                                   {}, // buffer memory barriers
+                                   {imageMemoryBarrier.vkMemoryBarrier()});
 }
 
 void
@@ -184,11 +157,10 @@ CommandBuffer::draw(const uint32_t vertexCount,
                     const uint32_t firstVertex,
                     const uint32_t firstInstance) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkCmdDraw(mCommandBuffer,
-              vertexCount,
-              instanceCount,
-              firstVertex,
-              firstInstance);
+    mCommandBuffer.draw(vertexCount,
+                        instanceCount,
+                        firstVertex,
+                        firstInstance);
 }
 
 void
@@ -198,51 +170,33 @@ CommandBuffer::drawIndexed(const uint32_t indexCount,
                            const uint32_t vertexOffset,
                            const uint32_t firstInstance) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    vkCmdDrawIndexed(mCommandBuffer,
-                     indexCount,
-                     instanceCount,
-                     firstIndex,
-                     vertexOffset,
-                     firstInstance);
+    mCommandBuffer.drawIndexed(indexCount,
+                               instanceCount,
+                               firstIndex,
+                               vertexOffset,
+                               firstInstance);
 }
 
 void 
-CommandBuffer::submit(const VkQueue queue, 
+CommandBuffer::submit(const vk::Queue queue, 
                       const vk::Semaphore* waitSemaphore,
                       const vk::Semaphore* signalSemaphore,
                       const vk::Fence& executionCompletedFence,
-                      const VkPipelineStageFlags waitStageFlags) {
+                      const vk::PipelineStageFlagBits waitStageFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(queue != VK_NULL_HANDLE);
     
-    // VkSubmitInfo:
-    // - waitSemaphoreCount upon which to wait 
-    //   before executing the command buffers for the batch.
-    // - pWaitSemaphores upon which to wait before the command buffers for 
-    //   this batch begin execution.
-    //   If semaphores to wait on are provided, they define a semaphore wait operation.
-    // - pWaitDstStageMask array at which each corresponding semaphore wait will occur.
-    // - commandBufferCount to execute in the batch.
-    // - pCommandBuffers to execute in the batch.
-    // - signalSemaphoreCount to be signaled once the 
-    //   commands specified in pCommandBuffers have completed execution.
-    // - pSignalSemaphores which will be signaled when the command buffers 
-    //   for this batch have completed execution.
-    //   If semaphores to be signaled are provided, they define a semaphore signal operation.
-    VkSubmitInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    info.waitSemaphoreCount = waitSemaphore != nullptr ? 1 : 0;
-    info.pWaitSemaphores = waitSemaphore != nullptr ? (VkSemaphore*)waitSemaphore : nullptr;
-    info.pWaitDstStageMask = &waitStageFlags;
-    info.commandBufferCount = 1;
-    info.pCommandBuffers = &mCommandBuffer;
-    info.signalSemaphoreCount = signalSemaphore != nullptr ? 1 : 0;
-    info.pSignalSemaphores = signalSemaphore != nullptr ? (VkSemaphore*)signalSemaphore : nullptr;
-
-    vk::Queue queueToSubmit(queue);
-    vkChecker(vkQueueSubmit(queueToSubmit,
-                            1,
-                            &info,
-                            executionCompletedFence));
+    vk::SubmitInfo info;
+    info.setWaitSemaphoreCount(waitSemaphore != nullptr ? 1 : 0);
+    info.setPWaitSemaphores(waitSemaphore);
+    info.setSignalSemaphoreCount(signalSemaphore != nullptr ? 1 : 0);
+    info.setPSignalSemaphores(signalSemaphore);
+    info.setCommandBufferCount(1);
+    info.setPCommandBuffers(&mCommandBuffer);
+    const vk::PipelineStageFlags flags(waitStageFlags);
+    info.setPWaitDstStageMask(&flags);
+    
+    queue.submit({info},
+                 executionCompletedFence);
 }
 }

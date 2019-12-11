@@ -110,7 +110,7 @@ App::recordCommandBuffers() {
     for (uint32_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
         CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(i);
 
-        commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
+        commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
 
         commandBuffer.beginPass(*mRenderPass,
                                 mFrameBuffers[i].get(),
@@ -121,7 +121,7 @@ App::recordCommandBuffers() {
         commandBuffer.bindVertexBuffer(*mGpuVertexBuffer);
 
         commandBuffer.bindIndexBuffer(*mGpuIndexBuffer,
-                                      VK_INDEX_TYPE_UINT32);
+                                      vk::IndexType::eUint32);
 
         commandBuffer.drawIndexed(static_cast<uint32_t>(mGpuIndexBuffer->size() / sizeof(uint32_t)));
 
@@ -255,7 +255,7 @@ App::submitCommandBufferAndPresent() {
                          &imageAvailableSemaphore,
                          &renderFinishedSemaphore,
                          fence,
-                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+                         vk::PipelineStageFlagBits::eColorAttachmentOutput);
 
     mSwapChain.present(renderFinishedSemaphore,
                        swapChainImageIndex);
@@ -294,9 +294,9 @@ App::initCommandBuffers() {
     assert(mCommandBuffers == nullptr);
     assert(mFrameBuffers.empty() == false);
 
-    mCommandBuffers.reset(new CommandBuffers(*mGraphicsCommandPool,
+    mCommandBuffers.reset(new CommandBuffers(mGraphicsCommandPool.get(),
                                              (uint32_t)mFrameBuffers.size(),
-                                             VK_COMMAND_BUFFER_LEVEL_PRIMARY));
+                                             vk::CommandBufferLevel::ePrimary));
 }
 
 void

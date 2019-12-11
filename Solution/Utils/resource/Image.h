@@ -112,7 +112,7 @@ public:
           const VkImageUsageFlags imageUsageFlags,
           const VkMemoryPropertyFlags memoryPropertyFlags,
           const uint32_t mipLevelCount = 1,
-          const VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+          const vk::ImageLayout initialImageLayout = vk::ImageLayout::eUndefined,
           const VkImageType imageType = VK_IMAGE_TYPE_2D,
           const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
           const uint32_t imageDepth = 1,
@@ -135,7 +135,7 @@ public:
     uint32_t
     height() const;
 
-    VkImageLayout
+    vk::ImageLayout
     lastImageLayout() const;
 
     // this method assumes the image was created with
@@ -150,13 +150,13 @@ public:
     // Notes: The global physical device is used to create the staging buffer
     void
     copyFromDataToDeviceMemory(void* sourceData,
-                               const VkDeviceSize size,
+                               const vk::DeviceSize size,
                                const vk::CommandPool transferCommandPool);
 
     // * transitionCommandPool that will be used to create 
     //  the CommandBuffer which will do the transition operation.
     void
-    transitionImageLayout(const VkImageLayout newImageLayout,
+    transitionImageLayout(const vk::ImageLayout newImageLayout,
                           const vk::CommandPool transitionCommandPool);
 
 private:
@@ -187,10 +187,10 @@ private:
                 const VkImageCreateFlags flags,
                 const std::vector<uint32_t>& queueFamilyIndices);
                 
-    VkExtent3D mExtent = {};
-    VkImageLayout mLastLayout;
-    VkAccessFlags mLastAccessType = 0;
-    VkPipelineStageFlags mLastPipelineStages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    vk::Extent3D mExtent;
+    vk::ImageLayout mLastLayout;
+    vk::AccessFlagBits mLastAccessType;
+    vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
     VkImage mImage = VK_NULL_HANDLE;    
 

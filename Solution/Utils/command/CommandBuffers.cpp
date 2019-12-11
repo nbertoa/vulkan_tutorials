@@ -10,32 +10,20 @@
 namespace vk2 {
 CommandBuffers::CommandBuffers(const vk::CommandPool commandPool,
                                const size_t bufferCount,
-                               const VkCommandBufferLevel level)
+                               const vk::CommandBufferLevel level)
 {
     assert(bufferCount > 0);
-    mCommandBuffers.reserve(bufferCount);
-    std::vector<VkCommandBuffer> commandBuffers(bufferCount);
 
-    VkCommandBufferAllocateInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    info.commandPool = commandPool;
-    info.level = level;
-    info.commandBufferCount = static_cast<uint32_t>(bufferCount);
-
-    vkChecker(vkAllocateCommandBuffers(LogicalDevice::device(),
-                                       &info,
-                                       commandBuffers.data()));
-
-    for (const VkCommandBuffer commandBuffer : commandBuffers) {
-       assert(commandBuffer != VK_NULL_HANDLE);
+    vk::CommandBufferAllocateInfo info;
+    info.setCommandBufferCount(static_cast<uint32_t>(bufferCount));
+    info.setLevel(level);
+    info.setCommandPool(commandPool);
+    
+    std::vector<vk::CommandBuffer> commandBuffers = LogicalDevice::device().allocateCommandBuffers(info);
+    
+    for (const vk::CommandBuffer commandBuffer : commandBuffers) {
        mCommandBuffers.emplace_back(std::move(CommandBuffer(commandBuffer)));
     }
-}
-
-CommandBuffers::CommandBuffers(CommandBuffers&& other) noexcept 
-    : mCommandBuffers(std::move(other.mCommandBuffers))
-{
-
 }
 
 size_t

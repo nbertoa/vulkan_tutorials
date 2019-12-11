@@ -7,16 +7,13 @@
 #include "CommandBuffer.h"
 
 namespace vk2 {
-class GraphicsPipeline;
-class RenderPass;
 
 class CommandBuffers {
 public:
     // Read CommandBuffer to understand this
     CommandBuffers(const vk::CommandPool commandPool,
                    const size_t bufferCount,
-                   const VkCommandBufferLevel level);
-    CommandBuffers(CommandBuffers&& other) noexcept;
+                   const vk::CommandBufferLevel level);
     CommandBuffers(const CommandBuffers&) = delete;
     const CommandBuffers& operator=(const CommandBuffers&) = delete;
 

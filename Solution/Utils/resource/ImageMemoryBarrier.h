@@ -101,9 +101,9 @@ public:
     //
     // * destQueueFamilyIndex for a queue family ownership transfer.
     ImageMemoryBarrier(const Image& image,
-                       const VkImageLayout newImageLayout,
-                       const VkAccessFlags sourceAccessType,
-                       const VkAccessFlags destAccessType,
+                       const vk::ImageLayout newImageLayout,
+                       const vk::AccessFlagBits sourceAccessType,
+                       const vk::AccessFlagBits destAccessType,
                        const VkImageSubresourceRange imageSubresourceRange = VkImageSubresourceRange{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
                        const uint32_t sourceQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
                        const uint32_t destQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED);

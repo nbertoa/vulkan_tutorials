@@ -12,7 +12,7 @@ class Image;
 class ImageMemoryBarrier;
 
 //
-// VkCommandBuffer wrapper.
+// CommandBuffer wrapper.
 //
 // Command buffers are objects used to record commands 
 // which can be subsequently submitted to a device queue for execution.  
@@ -75,8 +75,8 @@ public:
     // 
     //   - LEVEL_PRIMARY, LEVEL_SECONDARY
     CommandBuffer(const vk::CommandPool commandPool,
-                  const VkCommandBufferLevel level);
-    CommandBuffer(const VkCommandBuffer commandBuffer);
+                  const vk::CommandBufferLevel level);
+    CommandBuffer(const vk::CommandBuffer commandBuffer);
     CommandBuffer(CommandBuffer&& other) noexcept;
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;    
@@ -86,7 +86,7 @@ public:
     //
     //   - ONE_TIME_SUBMIT_BIT, SIMULTANEOUS_USE_BIT
     void 
-    beginRecording(const VkCommandBufferUsageFlags usageFlags);
+    beginRecording(const vk::CommandBufferUsageFlagBits usageFlags);
     
     void 
     endRecording();
@@ -98,14 +98,6 @@ public:
     //
     // * imageExtent of the render area 
     //   that is affected by the render pass.
-    //
-    // * clearValues contains clear values for each attachment, if the attachment 
-    //   uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or 
-    //   if the attachment has a depth/stencil format and uses a stencilLoadOp value 
-    //   of VK_ATTACHMENT_LOAD_OP_CLEAR.
-    //   The array is indexed by attachment number.
-    //   Only elements corresponding to cleared attachments are used.
-    //   Other elements of clearValues are ignored.
     void 
     beginPass(const vk::RenderPass renderPass,
               const vk::Framebuffer frameBuffer,
@@ -127,14 +119,14 @@ public:
     // or else until the set is disturbed.
     void
     bindDescriptorSet(const vk::PipelineLayout pipelineLayout,
-                      const VkDescriptorSet descriptorSet);
+                      const vk::DescriptorSet descriptorSet);
 
     void 
     bindVertexBuffer(const Buffer& buffer);
 
     void 
     bindIndexBuffer(const Buffer& buffer,
-                    const VkIndexType indexType);
+                    const vk::IndexType indexType);
 
     // * regionToCopy:
     //
@@ -144,13 +136,13 @@ public:
     void 
     copyBuffer(const Buffer& sourceBuffer,
                const Buffer& destinationBuffer,
-               const VkBufferCopy& regionToCopy);
+               const vk::BufferCopy& regionToCopy);
 
     void
     copyBufferToImage(const Buffer& sourceBuffer,
                       const Image& destinationImage,
-                      const VkBufferImageCopy& regionToCopy,
-                      const VkImageLayout destImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                      const vk::BufferImageCopy& regionToCopy,
+                      const vk::ImageLayout destImageLayout = vk::ImageLayout::eTransferDstOptimal);
 
     // When vkCmdPipelineBarrier (by calling this method) is submitted to a queue, it defines 
     // a memory dependency between commands that were submitted before it, 
@@ -198,9 +190,9 @@ public:
     //   then the dependency is by-region.
     void
     imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
-                         const VkPipelineStageFlags sourceStageMask,
-                         const VkPipelineStageFlags destStageMask,
-                         const VkDependencyFlags dependencyFlags = 0);
+                         const vk::PipelineStageFlagBits sourceStageMask,
+                         const vk::PipelineStageFlagBits destStageMask,
+                         const vk::DependencyFlagBits dependencyFlags = vk::DependencyFlagBits::eByRegion);
 
     void 
     draw(const uint32_t vertexCount,
@@ -238,14 +230,14 @@ public:
     //     TRANSFORM_FEEDBACK_BIT_EXT, COMMAND_PROCESS_BIT_NVX, SHADING_RATE_IMAGE_BIT_NV,
     //     FRAGMENT_DENSITY_PROCESS_BIT_EXT
     void 
-    submit(const VkQueue queue,
+    submit(const vk::Queue queue,
            const vk::Semaphore* waitSemaphore,
            const vk::Semaphore* signalSemaphore,
            const vk::Fence& executionCompletedFence,
-           const VkPipelineStageFlags waitStageFlags);
+           const vk::PipelineStageFlagBits waitStageFlags);
 
 private:
-    VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
+    vk::CommandBuffer mCommandBuffer;
 };
 }
 

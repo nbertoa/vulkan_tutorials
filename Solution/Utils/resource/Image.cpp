@@ -14,7 +14,7 @@ Image::Image(const uint32_t imageWidth,
              const VkImageUsageFlags imageUsageFlags,
              const VkMemoryPropertyFlags memoryPropertyFlags,
              const uint32_t mipLevelCount,
-             const VkImageLayout initialImageLayout,
+             const vk::ImageLayout initialImageLayout,
              const VkImageType imageType,
              const VkSampleCountFlagBits sampleCount,
              const uint32_t imageDepth,
@@ -89,7 +89,7 @@ Image::height() const {
     return mExtent.height;
 }
 
-VkImageLayout
+vk::ImageLayout
 Image::lastImageLayout() const {
     assert(mImage != VK_NULL_HANDLE);
     return mLastLayout;
@@ -97,12 +97,12 @@ Image::lastImageLayout() const {
 
 void
 Image::copyFromDataToDeviceMemory(void* sourceData,
-                                  const VkDeviceSize size,
+                                  const vk::DeviceSize size,
                                   const vk::CommandPool transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
 
-    transitionImageLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+    transitionImageLayout(vk::ImageLayout::eTransferDstOptimal,
                           transferCommandPool);
 
     Buffer stagingBuffer = Buffer::createAndFillStagingBuffer(sourceData,
@@ -118,8 +118,8 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer(transferCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+                                vk::CommandBufferLevel::ePrimary);
+    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
     VkBufferImageCopy bufferImageCopy = {};
     bufferImageCopy.bufferOffset = 0;
@@ -141,7 +141,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                          nullptr,
                          nullptr,
                          fence.get(),
-                         VK_PIPELINE_STAGE_TRANSFER_BIT);
+                         vk::PipelineStageFlagBits::eTransfer);
 
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,
@@ -149,7 +149,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
 }
 
 void
-Image::transitionImageLayout(const VkImageLayout newImageLayout,
+Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
                              const vk::CommandPool transitionCommandPool) {
     assert(mImage != VK_NULL_HANDLE);
     assert(mLastLayout != newImageLayout);
@@ -164,11 +164,12 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer(transitionCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+                                vk::CommandBufferLevel::ePrimary);
+    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
-    VkAccessFlags destAccessType = 0;
-    VkPipelineStageFlags destPipelineStages = 0;
+    // Initialize to the first value in the enum
+    vk::AccessFlagBits destAccessType = vk::AccessFlagBits::eIndirectCommandRead;
+    vk::PipelineStageFlagBits destPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
     // Transfer writes must occur in the pipeline transfer stage. 
     // Since the writes do not have to wait on anything,
@@ -178,24 +179,23 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
     // It should be noted that VK_PIPELINE_STAGE_TRANSFER_BIT is not 
     // a real stage within the graphics and compute pipelines.
     // It is more of a pseudo-stage where transfers happen.
-    if (mLastLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-        newImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-        assert(mLastAccessType == 0);
-        destAccessType = VK_ACCESS_TRANSFER_WRITE_BIT;
+    if (mLastLayout == vk::ImageLayout::eUndefined &&
+        newImageLayout == vk::ImageLayout::eTransferDstOptimal) {
+        destAccessType = vk::AccessFlagBits::eTransferWrite;
 
-        assert(mLastPipelineStages == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
-        destPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (mLastLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-               newImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+        assert(mLastPipelineStages == vk::PipelineStageFlagBits::eTopOfPipe);
+        destPipelineStages = vk::PipelineStageFlagBits::eTransfer;
+    } else if (mLastLayout == vk::ImageLayout::eTransferDstOptimal &&
+               newImageLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
         // The image will be written in the same pipeline stage and
         // subsequently read by a shader, which is why 
         // we specify shader reading access in the shader
         // pipeline stage.
-        assert(mLastAccessType == VK_ACCESS_TRANSFER_WRITE_BIT);
-        destAccessType = VK_ACCESS_SHADER_READ_BIT;
+        assert(mLastAccessType == vk::AccessFlagBits::eTransferWrite);
+        destAccessType = vk::AccessFlagBits::eShaderRead;
 
-        assert(mLastPipelineStages == VK_PIPELINE_STAGE_TRANSFER_BIT);
-        destPipelineStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+        assert(mLastPipelineStages == vk::PipelineStageFlagBits::eTransfer);
+        destPipelineStages = vk::PipelineStageFlagBits::eFragmentShader;
     } else {
         assert(false && "Unsupported image layout transition");
     }
@@ -215,7 +215,7 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
                          nullptr,
                          nullptr,
                          fence.get(),
-                         VK_PIPELINE_STAGE_TRANSFER_BIT);
+                         vk::PipelineStageFlagBits::eTransfer);
 
     vkChecker(device.waitForFences({fence.get()},
                                    VK_TRUE,
@@ -256,7 +256,7 @@ Image::createImage(const VkFormat format,
     createInfo.format = format;
     createInfo.usage = imageUsageFlags;
     createInfo.mipLevels = mipLevelCount;
-    createInfo.initialLayout = mLastLayout;
+    createInfo.initialLayout = (VkImageLayout)mLastLayout;
     createInfo.samples = sampleCount;
     createInfo.tiling = imageTiling;
     createInfo.arrayLayers = arrayLayerCount;
