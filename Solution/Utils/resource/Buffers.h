@@ -13,7 +13,7 @@ public:
     Buffers(const uint32_t bufferCount,
             const VkDeviceSize size,
             const VkBufferUsageFlags usageFlags,            
-            const VkMemoryPropertyFlags memoryPropertyFlags,
+            const vk::MemoryPropertyFlags deviceMemoryProperties,
             const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
             const std::vector<uint32_t>& queueFamilyIndices = {});
 
@@ -21,7 +21,7 @@ public:
     Buffers(const uint32_t bufferCount,
             const VkDeviceSize size,
             const VkBufferUsageFlags usageFlags,
-            const DeviceMemory& deviceMemory,
+            const vk::DeviceMemory deviceMemory,
             const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
             const std::vector<uint32_t>& queueFamilyIndices = {});
 

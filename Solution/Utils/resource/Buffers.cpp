@@ -6,7 +6,7 @@ namespace vk2 {
 Buffers::Buffers(const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
-                 const VkMemoryPropertyFlags memoryPropertyFlags,
+                 const vk::MemoryPropertyFlags deviceMemoryProperties,
                  const VkSharingMode sharingMode,
                  const std::vector<uint32_t>& queueFamilyIndices) {
     assert(bufferCount > 0);
@@ -15,7 +15,7 @@ Buffers::Buffers(const uint32_t bufferCount,
     for (uint32_t i = 0; i < bufferCount; ++i) {
         Buffer buffer(size,
                       usageFlags,
-                      memoryPropertyFlags,
+                      deviceMemoryProperties,
                       sharingMode,
                       queueFamilyIndices);
 
@@ -26,7 +26,7 @@ Buffers::Buffers(const uint32_t bufferCount,
 Buffers::Buffers(const uint32_t bufferCount,
                  const VkDeviceSize size,
                  const VkBufferUsageFlags usageFlags,
-                 const DeviceMemory& deviceMemory,
+                 const vk::DeviceMemory deviceMemory,
                  const VkSharingMode sharingMode,
                  const std::vector<uint32_t>& queueFamilyIndices) {
     assert(bufferCount > 0);

@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "DeviceMemory.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
@@ -11,7 +10,7 @@
 namespace vk2 {
 Buffer::Buffer(const VkDeviceSize bufferSize,
                const VkBufferUsageFlags bufferUsage,
-               const VkMemoryPropertyFlags deviceMemoryProperties,
+               const vk::MemoryPropertyFlags deviceMemoryProperties,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
     : mBuffer(createBuffer(bufferSize,
@@ -20,21 +19,27 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
                            queueFamilyIndices))
     , mSizeInBytes(bufferSize)
     , mHasDeviceMemoryOwnership(true)
-    , mDeviceMemory(new DeviceMemory(bufferMemoryRequirements(),
-                                     deviceMemoryProperties))
 {
+    const vk::MemoryRequirements memoryRequirements = LogicalDevice::device().getBufferMemoryRequirements(mBuffer);
+    vk::MemoryAllocateInfo info;
+    info.setAllocationSize(memoryRequirements.size);
+    info.setMemoryTypeIndex(PhysicalDevice::memoryTypeIndex(memoryRequirements.memoryTypeBits,
+                                                            deviceMemoryProperties));
+
+    mDeviceMemory = LogicalDevice::device().allocateMemory(info);
+
     assert(mSizeInBytes > 0);
 
     // Binds device memory to this buffer
     vkChecker(vkBindBufferMemory(LogicalDevice::device(),
                                  mBuffer,
-                                 mDeviceMemory->vkDeviceMemory(),
+                                 mDeviceMemory,
                                  0));
 }
 
 Buffer::Buffer(const VkDeviceSize bufferSize,
                const VkBufferUsageFlags bufferUsage,
-               const DeviceMemory& deviceMemory,
+               const vk::DeviceMemory deviceMemory,
                const VkSharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
     : mBuffer(createBuffer(bufferSize,
@@ -43,13 +48,13 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
                            queueFamilyIndices))
     , mSizeInBytes(bufferSize)
     , mHasDeviceMemoryOwnership(false)
-    , mDeviceMemory(&deviceMemory) {
+    , mDeviceMemory(deviceMemory) {
     assert(mSizeInBytes > 0);
 
     // Binds device memory to this buffer
     vkChecker(vkBindBufferMemory(LogicalDevice::device(),
                                  mBuffer,
-                                 mDeviceMemory->vkDeviceMemory(),
+                                 mDeviceMemory,
                                  0));
 }
 
@@ -59,7 +64,7 @@ Buffer::~Buffer() {
                     nullptr);
 
     if (mHasDeviceMemoryOwnership) {
-        delete mDeviceMemory;
+        LogicalDevice::device().freeMemory(mDeviceMemory);
     }
 }
 
@@ -102,7 +107,7 @@ Buffer::copyToHostMemory(void* sourceData,
     //   This pointer minus offset must be aligned to at least 
     //   VkPhysicalDeviceLimits::minMemoryMapAlignment.
     vkChecker(vkMapMemory(LogicalDevice::device(),
-                          mDeviceMemory->vkDeviceMemory(),
+                          mDeviceMemory,
                           offset,
                           size,
                           0,
@@ -115,7 +120,7 @@ Buffer::copyToHostMemory(void* sourceData,
     // - device is the logical device that owns the memory.
     // - memory to be unmapped.
     vkUnmapMemory(LogicalDevice::device(),
-                  mDeviceMemory->vkDeviceMemory());
+                  mDeviceMemory);
 }
 
 void
@@ -184,26 +189,14 @@ Buffer::createAndFillStagingBuffer(void* sourceData,
 
     Buffer buffer(size,
                   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+                  vk::MemoryPropertyFlagBits::eHostVisible |
+                  vk::MemoryPropertyFlagBits::eHostCoherent);
 
     buffer.copyToHostMemory(sourceData,
                             size,
                             0);
 
     return buffer;
-}
-
-VkMemoryRequirements 
-Buffer::bufferMemoryRequirements() const {
-    assert(mBuffer != VK_NULL_HANDLE);
-
-    VkMemoryRequirements memoryRequirements;
-    vkGetBufferMemoryRequirements(LogicalDevice::device(),
-                                  mBuffer,
-                                  &memoryRequirements);
-
-    return memoryRequirements;
 }
 
 VkBuffer

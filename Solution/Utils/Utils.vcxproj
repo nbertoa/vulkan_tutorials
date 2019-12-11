@@ -165,7 +165,6 @@
     <ClCompile Include="pipeline_stage\ViewportState.cpp" />
     <ClCompile Include="resource\Buffer.cpp" />
     <ClCompile Include="resource\Buffers.cpp" />
-    <ClCompile Include="resource\DeviceMemory.cpp" />
     <ClCompile Include="resource\Image.cpp" />
     <ClCompile Include="resource\ImageMemoryBarrier.cpp" />
     <ClCompile Include="resource\ImageSystem.cpp" />
@@ -204,7 +203,6 @@
     <ClInclude Include="pipeline_stage\ViewportState.h" />
     <ClInclude Include="resource\Buffer.h" />
     <ClInclude Include="resource\Buffers.h" />
-    <ClInclude Include="resource\DeviceMemory.h" />
     <ClInclude Include="resource\Image.h" />
     <ClInclude Include="resource\ImageMemoryBarrier.h" />
     <ClInclude Include="resource\ImageSystem.h" />

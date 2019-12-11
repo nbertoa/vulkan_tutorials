@@ -74,7 +74,7 @@ App::initVertexBuffer() {
     mGpuVertexBuffer.reset(new Buffer(verticesSize,
                                       VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
                                                  verticesSize,
@@ -96,7 +96,7 @@ App::initIndexBuffer() {
     mGpuIndexBuffer.reset(new Buffer(indicesSize,
                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
                                      VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+                                     vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
                                                 indicesSize,

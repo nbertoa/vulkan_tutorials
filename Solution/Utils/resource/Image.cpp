@@ -1,18 +1,18 @@
 #include "Image.h"
 
 #include "Buffer.h"
-#include "DeviceMemory.h"
 #include "ImageMemoryBarrier.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
+#include "../device/PhysicalDevice.h"
 
 namespace vk2 {
 Image::Image(const uint32_t imageWidth,
              const uint32_t imageHeight,
              const VkFormat format,
              const VkImageUsageFlags imageUsageFlags,
-             const VkMemoryPropertyFlags memoryPropertyFlags,
+             const vk::MemoryPropertyFlags deviceMemoryProperties,
              const uint32_t mipLevelCount,
              const vk::ImageLayout initialImageLayout,
              const VkImageType imageType,
@@ -22,7 +22,7 @@ Image::Image(const uint32_t imageWidth,
              const uint32_t arrayLayerCount,
              const VkSharingMode sharingMode,
              const VkImageCreateFlags flags,
-             const std::vector<uint32_t> & queueFamilyIndices)
+             const std::vector<uint32_t>& queueFamilyIndices)
     : mExtent {imageWidth, imageHeight, imageDepth}
     , mLastLayout(initialImageLayout)
     , mImage(createImage(format,
@@ -36,21 +36,18 @@ Image::Image(const uint32_t imageWidth,
                          flags,
                          queueFamilyIndices))
     , mHasDeviceMemoryOwnership(true)
-    , mDeviceMemory(new DeviceMemory(imageMemoryRequirements(),
-                                     memoryPropertyFlags))
 {
-    // - device is the logical device that owns the buffer and memory.
-    // - buffer to be attached to memory.
-    // - memory is the device memory to attach.
-    // - memoryOffset is the start offset of the region of memory which is to 
-    //   be bound to the buffer.
-    //   The number of bytes returned in the VkMemoryRequirements::size member in memory, 
-    //   starting from memoryOffset bytes, will be bound to the specified buffer.
-    //   If the offset is non-zero, then it is required to be divisible by memory requirements
-    //   aligment field.
+    const vk::MemoryRequirements memoryRequirements = LogicalDevice::device().getImageMemoryRequirements(mImage);
+    vk::MemoryAllocateInfo info;
+    info.setAllocationSize(memoryRequirements.size);
+    info.setMemoryTypeIndex(PhysicalDevice::memoryTypeIndex(memoryRequirements.memoryTypeBits,
+                                                            deviceMemoryProperties));
+
+    mDeviceMemory = LogicalDevice::device().allocateMemory(info);
+
     vkChecker(vkBindImageMemory(LogicalDevice::device(),
                                 mImage,
-                                mDeviceMemory->vkDeviceMemory(),
+                                mDeviceMemory,
                                 0));
 }
 
@@ -60,7 +57,7 @@ Image::~Image() {
                    nullptr);
 
     if (mHasDeviceMemoryOwnership) {
-        delete mDeviceMemory;
+        LogicalDevice::device().freeMemory(mDeviceMemory);
     }
 }
 

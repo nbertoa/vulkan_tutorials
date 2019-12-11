@@ -6,7 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class DeviceMemory;
 class Fence;
 
 //
@@ -71,7 +70,7 @@ public:
     //   - The global physical device is used to create the device memory
     Buffer(const VkDeviceSize bufferSize,
            const VkBufferUsageFlags bufferUsage,
-           const VkMemoryPropertyFlags deviceMemoryProperties,
+           const vk::MemoryPropertyFlags deviceMemoryProperties,
            const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});
 
@@ -82,7 +81,7 @@ public:
     //   - The global logical device owns the buffer and the device memory
     Buffer(const VkDeviceSize bufferSize,
            const VkBufferUsageFlags bufferUsage,
-           const DeviceMemory& deviceMemory,
+           const vk::DeviceMemory deviceMemory,
            const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
            const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Buffer();
@@ -166,20 +165,6 @@ public:
                                const VkDeviceSize size);
 
 private:
-    // Return the buffer memory requirements. This is used to create
-    // the DeviceMemory (if needed).
-    //
-    // Memory requirements:
-    // - size in bytes, of the memory allocation required for the resource.
-    // - alignment in bytes, of the offset within the 
-    //   allocation required for the resource.
-    // - memoryTypeBits is a bitmask and contains one bit set for every supported 
-    //   memory type for the resource. Bit i is set if and only if the memory type i in 
-    //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
-    //   is supported for the resource.
-    VkMemoryRequirements 
-    bufferMemoryRequirements() const;
-
     // Read Buffer() constructor to understand the parameters.
     static VkBuffer 
     createBuffer(const VkDeviceSize sizeInBytes,
@@ -196,7 +181,7 @@ private:
     // Otherwise, we will use the DeviceMemory provided
     // by the second constructor.
     const bool mHasDeviceMemoryOwnership = true;
-    const DeviceMemory* mDeviceMemory = nullptr;
+    vk::DeviceMemory mDeviceMemory;
 };
 }
 

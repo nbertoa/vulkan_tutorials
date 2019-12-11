@@ -6,8 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class DeviceMemory;
-
 //
 // VkImage wrapper
 //
@@ -110,7 +108,7 @@ public:
           const uint32_t imageHeight,
           const VkFormat format,
           const VkImageUsageFlags imageUsageFlags,
-          const VkMemoryPropertyFlags memoryPropertyFlags,
+          const vk::MemoryPropertyFlags deviceMemoryProperties,
           const uint32_t mipLevelCount = 1,
           const vk::ImageLayout initialImageLayout = vk::ImageLayout::eUndefined,
           const VkImageType imageType = VK_IMAGE_TYPE_2D,
@@ -200,7 +198,7 @@ private:
     // Otherwise, we will use the DeviceMemory provided
     // by the second constructor.
     const bool mHasDeviceMemoryOwnership = true;
-    const DeviceMemory* mDeviceMemory = nullptr;
+    vk::DeviceMemory mDeviceMemory;
 };
 }
 
