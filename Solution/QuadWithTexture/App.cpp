@@ -15,7 +15,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosTexCoordVertex.h"
 
-using namespace vk2;
+using namespace vulkan;
 
 App::App() {
     // Init command pools
@@ -45,7 +45,7 @@ App::run() {
     while (Window::shouldCloseWindow() == false) {
         glfwPollEvents();
 
-        vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+        vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
         mSwapChain.acquireNextImage(imageAvailableSemaphore);
 
         updateUniformBuffers();
@@ -125,39 +125,28 @@ App::initDescriptorSets() {
     vk::DescriptorBufferInfo bufferInfo;
     bufferInfo.setRange(sizeof(MatrixUBO));
 
-    assert(mImageView != nullptr);
-    vk::DescriptorImageInfo imageInfo
-    {
-        mTextureSampler.get(),
-        vk::ImageView(mImageView->vkImageView()),
-        vk::ImageLayout::eShaderReadOnlyOptimal
-    };
+    assert(mImageView.get() != VK_NULL_HANDLE);
+    vk::DescriptorImageInfo imageInfo;
+    imageInfo.setImageView(mImageView.get());
+    imageInfo.setSampler(mTextureSampler.get());
+    imageInfo.setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
                                                   
     for (uint32_t i = 0; i < imageViewCount; ++i) {
         bufferInfo.setBuffer(mUniformBuffers[i].vkBuffer());
-        vk::WriteDescriptorSet bufferWrite
-        {
-            mDescriptorSets[i],
-            0, // dest binding
-            0, // dest array element
-            1, // descriptor count
-            vk::DescriptorType::eUniformBuffer,
-            nullptr, // image info
-            &bufferInfo,
-            nullptr // buffer view
-        };
 
-        vk::WriteDescriptorSet imageWrite
-        {
-            mDescriptorSets[i],
-            1, // dest binding
-            0, // dest array element
-            1, // descriptor count
-            vk::DescriptorType::eCombinedImageSampler,
-            &imageInfo, // image info
-            nullptr,
-            nullptr // buffer view
-        };
+        vk::WriteDescriptorSet bufferWrite;
+        bufferWrite.setDescriptorCount(1);
+        bufferWrite.setDstSet(mDescriptorSets[i]);
+        bufferWrite.setDescriptorType(vk::DescriptorType::eUniformBuffer);
+        bufferWrite.setPBufferInfo(&bufferInfo);
+        bufferWrite.setDstBinding(0);
+
+        vk::WriteDescriptorSet imageWrite;
+        imageWrite.setDescriptorCount(1);
+        imageWrite.setDstSet(mDescriptorSets[i]);
+        imageWrite.setDescriptorType(vk::DescriptorType::eCombinedImageSampler);
+        imageWrite.setPImageInfo(&imageInfo);
+        imageWrite.setDstBinding(1);
 
         LogicalDevice::device().updateDescriptorSets({bufferWrite,
                                                       imageWrite},
@@ -167,11 +156,10 @@ App::initDescriptorSets() {
 
 void
 App::initImages() {
-    assert(mImageView == nullptr);
-    assert(!mTextureSampler);
+    assert(mImageView.get() == VK_NULL_HANDLE);
+    assert(mTextureSampler.get() == VK_NULL_HANDLE);
 
-    vk::Device device(LogicalDevice::device());
-    mTextureSampler = device.createSamplerUnique({});
+    mTextureSampler = LogicalDevice::device().createSamplerUnique({});
 
     const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
     Image& image = ImageSystem::getOrLoadImage(path,
@@ -180,8 +168,12 @@ App::initImages() {
     image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal,
                                 *mTransferCommandPool);
 
-    mImageView.reset(new ImageView(vk::Format::eR8G8B8A8Unorm,
-                                   image));
+    vk::ImageViewCreateInfo info;
+    info.setImage(image.vkImage());
+    info.setFormat(vk::Format::eR8G8B8A8Unorm);
+    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+    info.setViewType(vk::ImageViewType::e2D);
+    mImageView = LogicalDevice::device().createImageViewUnique(info);
 }
 
 void 
@@ -437,9 +429,9 @@ App::submitCommandBufferAndPresent() {
     device.resetFences({fence});
 
     // This semaphore was already obtained in run()
-    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
+    vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
 
-    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     // The next image was already obtained in run()
     const uint32_t swapChainImageIndex = mSwapChain.currentImageIndex();

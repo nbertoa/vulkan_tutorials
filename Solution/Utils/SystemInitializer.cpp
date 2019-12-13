@@ -62,7 +62,7 @@ getInstanceExtensionNames() {
 }
 }
 
-namespace vk2 {
+namespace vulkan {
 namespace system_initializer {
 void
 initialize() {

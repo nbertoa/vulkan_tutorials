@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace vk2 {
+namespace vulkan {
 DynamicState::DynamicState(const std::vector<vk::DynamicState>& dynamicStates) 
     : mDynamicStates(dynamicStates)
 {

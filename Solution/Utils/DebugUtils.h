@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 #ifdef _DEBUG
 inline void glfwChecker(const int returnCode) {
     assert(returnCode == GLFW_TRUE);

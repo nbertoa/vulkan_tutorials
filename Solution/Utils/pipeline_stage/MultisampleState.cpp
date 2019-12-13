@@ -1,6 +1,6 @@
 #include "MultisampleState.h"
 
-namespace vk2 {
+namespace vulkan {
 MultisampleState::MultisampleState(const vk::SampleCountFlagBits rasterizationSamples,
                                    const vk::Bool32 sampleShadingEnable,
                                    const float minSampleShading,

@@ -4,7 +4,7 @@
 
 #include "PhysicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 vk::Device 
 LogicalDevice::mLogicalDevice;
 

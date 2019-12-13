@@ -42,12 +42,12 @@ protected:
     initSemaphoresAndFences();
 
     void
-    initPipelineStates(vk2::PipelineStates& pipelineStates) const;
+    initPipelineStates(vulkan::PipelineStates& pipelineStates) const;
 
     void
-    initShaderStages(vk2::ShaderStages& shaderStages);
+    initShaderStages(vulkan::ShaderStages& shaderStages);
 
-    vk2::SwapChain mSwapChain;
+    vulkan::SwapChain mSwapChain;
 
     vk::UniqueCommandPool mGraphicsCommandPool;
     vk::UniqueCommandPool mTransferCommandPool;
@@ -55,16 +55,16 @@ protected:
     vk::UniqueRenderPass mRenderPass;
     std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 
-    std::unique_ptr<vk2::CommandBuffers> mCommandBuffers;
+    std::unique_ptr<vulkan::CommandBuffers> mCommandBuffers;
 
-    std::unique_ptr<vk2::GraphicsPipeline> mGraphicsPipeline;
-    vk2::PipelineStates mPipelineStates;
+    std::unique_ptr<vulkan::GraphicsPipeline> mGraphicsPipeline;
+    vulkan::PipelineStates mPipelineStates;
 
-    std::unique_ptr<vk2::Semaphores> mImageAvailableSemaphores;
-    std::unique_ptr<vk2::Semaphores> mRenderFinishedSemaphores;
-    std::unique_ptr<vk2::Fences> mFences;
+    std::unique_ptr<vulkan::Semaphores> mImageAvailableSemaphores;
+    std::unique_ptr<vulkan::Semaphores> mRenderFinishedSemaphores;
+    std::unique_ptr<vulkan::Fences> mFences;
 
-    std::unique_ptr<vk2::Buffer> mGpuVertexBuffer;
+    std::unique_ptr<vulkan::Buffer> mGpuVertexBuffer;
 };
 
 #endif 

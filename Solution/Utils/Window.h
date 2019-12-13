@@ -6,7 +6,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // GLFWwindow & SurfaceKHR wrapper.
 //

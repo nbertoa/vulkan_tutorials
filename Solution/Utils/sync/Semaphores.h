@@ -5,16 +5,16 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 class Semaphores {
 public:
     Semaphores(const size_t semaphoreCount);
     Semaphores(Semaphores&& other) noexcept;
                
-    vk::Semaphore& 
+    vk::Semaphore 
     nextAvailableSemaphore();
 
-    vk::Semaphore& 
+    vk::Semaphore 
     currentSemaphore();
 private:
     std::vector<vk::UniqueSemaphore> mSemaphores;

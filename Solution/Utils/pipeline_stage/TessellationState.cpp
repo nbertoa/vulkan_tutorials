@@ -1,6 +1,6 @@
 #include "TessellationState.h"
 
-namespace vk2 {
+namespace vulkan {
 TessellationState::TessellationState(const uint32_t patchControlPoints) {
     mCreateInfo.patchControlPoints = patchControlPoints;
 }

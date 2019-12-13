@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 class Fences {
 public:
     // Read Fence to understand this
@@ -13,10 +13,10 @@ public:
            const vk::FenceCreateFlagBits flags = vk::FenceCreateFlagBits::eSignaled);
     Fences(Fences&& other) noexcept;
                
-    vk::Fence& 
+    vk::Fence 
     nextAvailableFence();
 
-    vk::Fence& 
+    vk::Fence 
     currentFence();
 
 private:

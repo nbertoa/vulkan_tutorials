@@ -8,7 +8,7 @@
 #include "../resource/Buffer.h"
 #include "../resource/Image.h"
 
-namespace vk2 {
+namespace vulkan {
 CommandBuffer::CommandBuffer(const vk::CommandPool commandPool,
                              const vk::CommandBufferLevel level) {
 
@@ -137,7 +137,7 @@ CommandBuffer::copyBufferToImage(const Buffer& sourceBuffer,
 }
 
 void
-CommandBuffer::imagePipelineBarrier(const vk::ImageMemoryBarrier& imageMemoryBarrier,
+CommandBuffer::imagePipelineBarrier(const vk::ImageMemoryBarrier imageMemoryBarrier,
                                     const vk::PipelineStageFlagBits sourceStageMask,
                                     const vk::PipelineStageFlagBits destStageMask,
                                     const vk::DependencyFlagBits dependencyFlags) {
@@ -180,8 +180,9 @@ void
 CommandBuffer::submit(const vk::Queue queue, 
                       const vk::Semaphore* waitSemaphore,
                       const vk::Semaphore* signalSemaphore,
-                      const vk::Fence& executionCompletedFence,
+                      const vk::Fence executionCompletedFence,
                       const vk::PipelineStageFlagBits waitStageFlags) {
+    assert(executionCompletedFence != VK_NULL_HANDLE);
     assert(mCommandBuffer != VK_NULL_HANDLE);
     assert(queue != VK_NULL_HANDLE);
     

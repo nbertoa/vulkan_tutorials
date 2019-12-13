@@ -7,7 +7,7 @@
 
 #include "Image.h"
 
-namespace vk2 {
+namespace vulkan {
 ImageSystem::ImageByPath 
 ImageSystem::mImageByPath = {};
 

@@ -6,7 +6,7 @@
 
 #include "PhysicalDeviceData.h"
 
-namespace vk2 {
+namespace vulkan {
 //
 // PhysicalDevice wrapper.
 //

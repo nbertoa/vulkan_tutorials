@@ -4,7 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // Useful data for the PhysicalDevice which includes
 // the vulkan device and queue family indices.

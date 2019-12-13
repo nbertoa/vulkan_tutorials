@@ -7,11 +7,11 @@
 #include "../pipeline_stage/PipelineStates.h"
 #include "../shader/ShaderStages.h"
 
-namespace vk2 {
+namespace vulkan {
 GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                                    const PipelineStates& pipelineStates,
                                    const ShaderStages& shaderStages,
-                                   const vk::RenderPass& renderPass,
+                                   const vk::RenderPass renderPass,
                                    const uint32_t subPassIndex)
     : mPipelineLayout(std::move(pipelineLayout)) {
     vk::GraphicsPipelineCreateInfo createInfo

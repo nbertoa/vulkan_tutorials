@@ -5,7 +5,7 @@
 #include "../DebugUtils.h"
 #include "../Instance.h"
 
-namespace vk2 {
+namespace vulkan {
 vk::PhysicalDevice 
 PhysicalDevice::mPhysicalDevice;
 

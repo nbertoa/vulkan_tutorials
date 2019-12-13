@@ -8,7 +8,7 @@
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 SwapChain::SwapChain() {       
     initSwapChain();
     initImagesAndViews();
@@ -16,7 +16,8 @@ SwapChain::SwapChain() {
 }
 
 uint32_t 
-SwapChain::acquireNextImage(const vk::Semaphore& semaphore) {
+SwapChain::acquireNextImage(const vk::Semaphore semaphore) {
+    assert(semaphore != VK_NULL_HANDLE);
     assert(mSwapChain.get() != VK_NULL_HANDLE);
 
     vkChecker(LogicalDevice::device().acquireNextImageKHR(mSwapChain.get(),
@@ -35,8 +36,9 @@ SwapChain::currentImageIndex() const {
 }
 
 void
-SwapChain::present(const vk::Semaphore& waitSemaphore,
+SwapChain::present(const vk::Semaphore waitSemaphore,
                    const uint32_t imageIndex) {
+    assert(waitSemaphore != VK_NULL_HANDLE);
     assert(mSwapChain.get() != VK_NULL_HANDLE);
 
     vk::PresentInfoKHR info = 
@@ -109,7 +111,7 @@ vk::SurfaceFormatKHR
 SwapChain::bestFitSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& surfaceFormats) {
     assert(surfaceFormats.empty() == false);
 
-    for (const vk::SurfaceFormatKHR& surfaceFormat : surfaceFormats) {
+    for (const vk::SurfaceFormatKHR surfaceFormat : surfaceFormats) {
         // For the color space we will use SRGB if it is available,
         // because it results in more accurate perceived colors.
         // For the format, we will use the standard RGB.

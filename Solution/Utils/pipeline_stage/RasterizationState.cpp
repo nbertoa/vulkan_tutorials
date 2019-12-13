@@ -1,6 +1,6 @@
 #include "RasterizationState.h"
 
-namespace vk2 {
+namespace vulkan {
 RasterizationState::RasterizationState(const vk::Bool32 depthClampEnable,
                                        const vk::Bool32 rasterizerDiscardEnable,
                                        const vk::PolygonMode polygonMode,

@@ -4,7 +4,7 @@
 
 #include "DebugMessenger.h"
 
-namespace vk2 {
+namespace vulkan {
 vk::Instance 
 Instance::mInstance;
 

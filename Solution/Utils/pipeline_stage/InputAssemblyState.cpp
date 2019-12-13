@@ -1,6 +1,6 @@
 #include "InputAssemblyState.h"
 
-namespace vk2 {
+namespace vulkan {
 InputAssemblyState::InputAssemblyState(const vk::PrimitiveTopology primitiveTopology,
                                        const vk::Bool32 primitiveRestartEnable) {
     mCreateInfo.topology = primitiveTopology;

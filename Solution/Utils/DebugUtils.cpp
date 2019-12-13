@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace vk2 {
+namespace vulkan {
 #ifdef _DEBUG
 void vkChecker(const VkResult result) {
     std::string errorMsg;

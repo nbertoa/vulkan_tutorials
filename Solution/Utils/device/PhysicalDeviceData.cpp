@@ -7,7 +7,7 @@
 #include "../DebugUtils.h"
 #include "../Window.h"
 
-namespace vk2 {
+namespace vulkan {
 PhysicalDeviceData::PhysicalDeviceData(const vk::PhysicalDevice physicalDevice,
                                        const std::vector<const char*>& deviceExtensions)
     : mPhysicalDevice(physicalDevice)

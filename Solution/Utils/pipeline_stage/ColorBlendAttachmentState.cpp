@@ -1,6 +1,6 @@
 #include "ColorBlendAttachmentState.h"
 
-namespace vk2 {
+namespace vulkan {
 ColorBlendAttachmentState::ColorBlendAttachmentState(const vk::Bool32 blendEnable,
                                                      const vk::ColorComponentFlags colorWriteMask,
                                                      const vk::BlendFactor srcColorBlendFactor,

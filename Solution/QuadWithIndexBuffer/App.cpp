@@ -13,7 +13,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
-using namespace vk2;
+using namespace vulkan;
 
 App::App() {
     // Init command pools
@@ -244,8 +244,8 @@ App::submitCommandBufferAndPresent() {
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence});
 
-    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
-    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+    vk::Semaphore renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     const uint32_t swapChainImageIndex = mSwapChain.acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < mCommandBuffers->bufferCount());

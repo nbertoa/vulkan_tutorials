@@ -6,7 +6,7 @@
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 Image::Image(const uint32_t imageWidth,
              const uint32_t imageHeight,
              const vk::Format format,

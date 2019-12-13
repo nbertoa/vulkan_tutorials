@@ -6,7 +6,7 @@
 
 #include "device/PhysicalDeviceData.h"
 
-namespace vk2 {
+namespace vulkan {
 #ifdef _DEBUG
 class DebugMessenger;
 #endif

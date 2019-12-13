@@ -7,7 +7,7 @@
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
 
-namespace vk2 {
+namespace vulkan {
 CommandBuffers::CommandBuffers(const vk::CommandPool commandPool,
                                const size_t bufferCount,
                                const vk::CommandBufferLevel level)

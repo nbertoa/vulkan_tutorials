@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // Image wrapper
 //

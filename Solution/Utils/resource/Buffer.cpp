@@ -7,7 +7,7 @@
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 Buffer::Buffer(const vk::DeviceSize bufferSize,
                const vk::BufferUsageFlags bufferUsage,
                const vk::MemoryPropertyFlags deviceMemoryProperties,

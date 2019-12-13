@@ -14,7 +14,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
-using namespace vk2;
+using namespace vulkan;
 
 App::App() {
     // Init command pools
@@ -41,7 +41,7 @@ App::run() {
     while (Window::shouldCloseWindow() == false) {
         glfwPollEvents();
 
-        vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+        vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
         mSwapChain.acquireNextImage(imageAvailableSemaphore);
 
         processCurrentFrame();
@@ -389,8 +389,8 @@ App::submitCommandBufferAndPresent() {
     device.resetFences({fence});
 
     // This semaphore was already obtained in run()
-    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
-    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->currentSemaphore();
+    vk::Semaphore renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     // The next image was already obtained in run()
     const uint32_t swapChainImageIndex = mSwapChain.currentImageIndex();

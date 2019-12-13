@@ -1,6 +1,6 @@
 #include "PosColorVertex.h"
 
-namespace vk2 {
+namespace vulkan {
 void
 PosColorVertex::vertexInputBindingDescriptions(std::vector<vk::VertexInputBindingDescription>& descriptions) {
     descriptions.resize(1);

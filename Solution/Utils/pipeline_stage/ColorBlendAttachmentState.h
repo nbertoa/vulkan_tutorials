@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // PipelineColorBlendAttachmentState wrapper
 //

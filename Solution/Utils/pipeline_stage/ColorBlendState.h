@@ -5,7 +5,7 @@
 
 #include "ColorBlendAttachmentState.h"
 
-namespace vk2 {
+namespace vulkan {
 //
 // PipelineColorBlendStateCreateInfo wrapper
 //

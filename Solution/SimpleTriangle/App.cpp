@@ -13,7 +13,7 @@
 #include "Utils/shader/ShaderStages.h"
 #include "Utils/vertex/PosColorVertex.h"
 
-using namespace vk2;
+using namespace vulkan;
 
 App::App() {
     // Init command pools
@@ -55,7 +55,7 @@ App::initBuffers() {
     assert(mGpuVertexBuffer == nullptr);
 
     // The vertex position is in screen space.
-    std::vector<vk2::PosColorVertex> screenSpaceVertices
+    std::vector<vulkan::PosColorVertex> screenSpaceVertices
     {
         {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
         {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
@@ -212,8 +212,8 @@ App::submitCommandBufferAndPresent() {
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence});
 
-    vk::Semaphore& imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
-    vk::Semaphore& renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
+    vk::Semaphore imageAvailableSemaphore = mImageAvailableSemaphores->nextAvailableSemaphore();
+    vk::Semaphore renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     const uint32_t swapChainImageIndex = mSwapChain.acquireNextImage(imageAvailableSemaphore);
     assert(swapChainImageIndex < mCommandBuffers->bufferCount());

@@ -5,11 +5,10 @@
 #include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 class Buffer;
 class GraphicsPipeline;
 class Image;
-class ImageMemoryBarrier;
 
 //
 // CommandBuffer wrapper.
@@ -189,7 +188,7 @@ public:
     // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, 
     //   then the dependency is by-region.
     void
-    imagePipelineBarrier(const vk::ImageMemoryBarrier& imageMemoryBarrier,
+    imagePipelineBarrier(const vk::ImageMemoryBarrier imageMemoryBarrier,
                          const vk::PipelineStageFlagBits sourceStageMask,
                          const vk::PipelineStageFlagBits destStageMask,
                          const vk::DependencyFlagBits dependencyFlags = vk::DependencyFlagBits::eByRegion);
@@ -233,7 +232,7 @@ public:
     submit(const vk::Queue queue,
            const vk::Semaphore* waitSemaphore,
            const vk::Semaphore* signalSemaphore,
-           const vk::Fence& executionCompletedFence,
+           const vk::Fence executionCompletedFence,
            const vk::PipelineStageFlagBits waitStageFlags);
 
 private:

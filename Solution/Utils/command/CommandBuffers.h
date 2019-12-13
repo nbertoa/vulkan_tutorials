@@ -6,7 +6,7 @@
 
 #include "CommandBuffer.h"
 
-namespace vk2 {
+namespace vulkan {
 
 class CommandBuffers {
 public:

@@ -6,7 +6,7 @@
 #include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
                            const vk::ShaderStageFlagBits shaderStageFlag,
                            const char* entryPointName)

@@ -2,7 +2,7 @@
 
 #include "ShaderModule.h"
 
-namespace vk2 {
+namespace vulkan {
 void
 ShaderStages::addShaderModule(const ShaderModule& shaderModule) {
     vk::PipelineShaderStageCreateInfo createInfo = 

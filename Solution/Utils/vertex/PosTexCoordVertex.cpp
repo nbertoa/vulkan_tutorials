@@ -1,6 +1,6 @@
 #include "PosTexCoordVertex.h"
 
-namespace vk2 {
+namespace vulkan {
 void
 PosTexCoordVertex::vertexInputBindingDescriptions(std::vector<vk::VertexInputBindingDescription>& descriptions) {
     descriptions.resize(1);
