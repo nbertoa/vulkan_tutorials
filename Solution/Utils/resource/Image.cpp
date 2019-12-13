@@ -1,7 +1,6 @@
 #include "Image.h"
 
 #include "Buffer.h"
-#include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
@@ -105,9 +104,9 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     // the copy operation is complete. 
     vk::Device device(LogicalDevice::device());
     vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    device.waitForFences({fence.get()},
+                         VK_TRUE,
+                         std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer(transferCommandPool,
@@ -132,9 +131,9 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                          fence.get(),
                          vk::PipelineStageFlagBits::eTransfer);
 
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    device.waitForFences({fence.get()},
+                         VK_TRUE,
+                         std::numeric_limits<uint64_t>::max());
 }
 
 void
@@ -147,9 +146,9 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
     // the transition operation is complete. 
     vk::Device device(LogicalDevice::device());
     vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    device.waitForFences({fence.get()},
+                         VK_TRUE,
+                         std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
     CommandBuffer commandBuffer(transitionCommandPool,
@@ -213,9 +212,9 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
                          fence.get(),
                          vk::PipelineStageFlagBits::eTransfer);
 
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    device.waitForFences({fence.get()},
+                         VK_TRUE,
+                         std::numeric_limits<uint64_t>::max());
 
     mLastLayout = newImageLayout;
     mLastAccessType = destAccessType;

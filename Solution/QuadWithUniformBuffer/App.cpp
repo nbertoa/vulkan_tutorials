@@ -3,7 +3,6 @@
 #include <cassert>
 #include <memory>
 
-#include "Utils/DebugUtils.h"
 #include "Utils/SwapChain.h"
 #include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
@@ -54,7 +53,7 @@ App::run() {
     // vkDeviceWaitIdle is equivalent to submitting fences to all
     // the queues owned yb the device a and waiting with an infinite 
     // timeout for these fences to signal.
-    vkChecker(vkDeviceWaitIdle(LogicalDevice::device()));
+    LogicalDevice::device().waitIdle();
 }
 
 void
@@ -238,18 +237,12 @@ App::initGraphicsPipeline() {
     ShaderStages shaderStages;
     initShaderStages(shaderStages);
 
-    vk::DescriptorSetLayout descSetLayout(mDescriptorSetLayout.get());
-    vk::PipelineLayoutCreateInfo createInfo
-    {
-        vk::PipelineLayoutCreateFlags(),
-        1, // layout count
-        &descSetLayout,
-        0, // push contant range count
-        nullptr, // push contant ranges
-    };
+    vk::PipelineLayoutCreateInfo info;
+    info.setSetLayoutCount(1);
+    info.setPSetLayouts(&mDescriptorSetLayout.get());
     
     vk::UniquePipelineLayout pipelineLayout = 
-        LogicalDevice::device().createPipelineLayoutUnique(createInfo);
+        LogicalDevice::device().createPipelineLayoutUnique(info);
 
     mGraphicsPipeline.reset(new GraphicsPipeline(pipelineLayout,
                                                  pipelineStates,
@@ -350,31 +343,24 @@ App::initRenderPass() {
     // These settings will prevent the transition from happening until it is
     // actually necessary (and allowed): when we want to start writing colors
     // to it.
-    std::vector<vk::SubpassDependency> subpassDependencies;
-    subpassDependencies.emplace_back(vk::SubpassDependency
-    {
-        VK_SUBPASS_EXTERNAL, // source subpass
-        0, // dest subpass
-        vk::PipelineStageFlagBits::eColorAttachmentOutput, // src stage mask
-        vk::PipelineStageFlagBits::eColorAttachmentOutput, // dest stage mask
-        vk::AccessFlags(), // src access flags
-        vk::AccessFlagBits::eColorAttachmentRead |
-        vk::AccessFlagBits::eColorAttachmentWrite, // dest access flags
-        vk::DependencyFlags()
-    });
+    vk::SubpassDependency subpassDependency;
+    subpassDependency.setSrcSubpass(VK_SUBPASS_EXTERNAL);
+    subpassDependency.setDstSubpass(0);
+    subpassDependency.setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
+    subpassDependency.setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
+    subpassDependency.setSrcAccessMask(vk::AccessFlags());
+    subpassDependency.setDstAccessMask(vk::AccessFlagBits::eColorAttachmentRead |
+                                       vk::AccessFlagBits::eColorAttachmentWrite);
+    std::vector<vk::SubpassDependency> subpassDependencies{subpassDependency};
 
-    vk::RenderPassCreateInfo createInfo =
-    {
-        vk::RenderPassCreateFlags(),
-        static_cast<uint32_t>(attachmentDescriptions.size()),
-        attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data(),
-        static_cast<uint32_t>(subpassDescriptions.size()),
-        subpassDescriptions.empty() ? nullptr : subpassDescriptions.data(),
-        static_cast<uint32_t>(subpassDependencies.size()),
-        subpassDependencies.empty() ? nullptr : subpassDependencies.data()
-    };
-
-    mRenderPass = LogicalDevice::device().createRenderPassUnique(createInfo);
+    vk::RenderPassCreateInfo info;
+    info.setAttachmentCount(static_cast<uint32_t>(attachmentDescriptions.size()));
+    info.setPAttachments(attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data());
+    info.setSubpassCount(static_cast<uint32_t>(subpassDescriptions.size()));
+    info.setPSubpasses(subpassDescriptions.empty() ? nullptr : subpassDescriptions.data());
+    info.setDependencyCount(static_cast<uint32_t>(subpassDependencies.size()));
+    info.setPDependencies(subpassDependencies.empty() ? nullptr : subpassDependencies.data());
+    mRenderPass = LogicalDevice::device().createRenderPassUnique(info);
 }
 
 void
@@ -383,9 +369,9 @@ App::submitCommandBufferAndPresent() {
 
     const vk::Fence& fence = mFences->nextAvailableFence();
     vk::Device device(LogicalDevice::device());
-    vkChecker(device.waitForFences({fence},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    device.waitForFences({fence},
+                         VK_TRUE,
+                         std::numeric_limits<uint64_t>::max());
     device.resetFences({fence});
 
     // This semaphore was already obtained in run()
@@ -413,25 +399,21 @@ App::initFrameBuffers() {
     assert(mRenderPass.get() != VK_NULL_HANDLE);
     assert(mSwapChain.imageViews().empty() == false);
 
-    vk::FramebufferCreateInfo createInfo =
-    {
-        vk::FramebufferCreateFlags(),
-        mRenderPass.get(),
-        1,
-        nullptr, // This will be updated with each iamge view.
-        mSwapChain.imageWidth(),
-        mSwapChain.imageHeight(),
-        1 // number of layers
-    };
+    vk::FramebufferCreateInfo info;
+    info.setRenderPass(mRenderPass.get());
+    info.setAttachmentCount(1);
+    info.setWidth(mSwapChain.imageWidth());
+    info.setHeight(mSwapChain.imageHeight());
+    info.setLayers(1);
 
     const std::vector<vk::UniqueImageView>& imageViews = mSwapChain.imageViews();
     mFrameBuffers.resize(imageViews.size());
     for (size_t i = 0; i < imageViews.size(); ++i) {
         assert(imageViews[i].get() != VK_NULL_HANDLE);
         const vk::ImageView attachments[] = {imageViews[i].get()};
-        createInfo.setPAttachments(&imageViews[i].get());
+        info.setPAttachments(&imageViews[i].get());
 
-        mFrameBuffers[i] = LogicalDevice::device().createFramebufferUnique(createInfo);
+        mFrameBuffers[i] = LogicalDevice::device().createFramebufferUnique(info);
     }
 }
 

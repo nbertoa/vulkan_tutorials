@@ -69,10 +69,6 @@ class CommandBuffer {
 public:
     // * commandPool from which the command buffer is allocated.
     //   The global logical device owns the command pool
-    //
-    // * level for command buffer (VK_COMMAND_BUFFER_):
-    // 
-    //   - LEVEL_PRIMARY, LEVEL_SECONDARY
     CommandBuffer(const vk::CommandPool commandPool,
                   const vk::CommandBufferLevel level);
     CommandBuffer(const vk::CommandBuffer commandBuffer);
@@ -80,10 +76,6 @@ public:
     CommandBuffer(const CommandBuffer&) = delete;
     const CommandBuffer& operator=(const CommandBuffer&) = delete;    
 
-    // * usageFlags bitmask specifying usage behavior 
-    //   for the command buffer (VK_COMMAND_BUFFER_USAGE_):
-    //
-    //   - ONE_TIME_SUBMIT_BIT, SIMULTANEOUS_USE_BIT
     void 
     beginRecording(const vk::CommandBufferUsageFlagBits usageFlags);
     
@@ -127,11 +119,6 @@ public:
     bindIndexBuffer(const Buffer& buffer,
                     const vk::IndexType indexType);
 
-    // * regionToCopy:
-    //
-    //   - srcOffset is the starting offset in bytes from the start of sourceBuffer.
-    //   - dstOffset is the starting offset in bytes from the start of destinationBuffer.
-    //   - size in bytes to copy.
     void 
     copyBuffer(const Buffer& sourceBuffer,
                const Buffer& destinationBuffer,
@@ -168,12 +155,12 @@ public:
     // In either case, the second synchronization scope is limited to 
     // operations on the pipeline stages determined by the destStageMask.
     //
-    // * sourceStageMask specifying a set of source pipeline stages.
+    // * sourcePipelineStages.
     //   The first access scope is limited to access in the pipeline stages determined by
     //   the sourceStageMask.
     //   Within that, the first access scope only includes the first access scopes 
     //   defined by imageMemoryBarrier.
-    // * destStageMask specifying a set of destination pipeline stages.
+    // * destPipelineStages.
     //   The second access scope is limited to access in the pipeline stages 
     //   determined by the destStageMask.
     //   Within that, the second access scope only includes the second access scopes 
@@ -184,13 +171,10 @@ public:
     //     commands completes before any work performed by the set of pipeline stages 
     //     included in destStageMask of the second set of commands begins.
     //     Read submit() comments to check the possible values of these parameters.
-    //
-    // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, 
-    //   then the dependency is by-region.
     void
     imagePipelineBarrier(const vk::ImageMemoryBarrier imageMemoryBarrier,
-                         const vk::PipelineStageFlagBits sourceStageMask,
-                         const vk::PipelineStageFlagBits destStageMask,
+                         const vk::PipelineStageFlagBits sourcePipelineStages,
+                         const vk::PipelineStageFlagBits destPipelineStages,
                          const vk::DependencyFlagBits dependencyFlags = vk::DependencyFlagBits::eByRegion);
 
     void 
@@ -217,17 +201,7 @@ public:
     //   command buffer has completed execution. 
     //
     // * waitStageFlags is a pipeline stage at which 
-    //   the waitSemaphore wait will occur (VK_PIPELINE_STAGE_):
-    //
-    //   - TOP_OF_PIPE_BIT, DRAW_INDIRECT_BIT, TASK_SHADER_BIT_NV,
-    //     MESH_SHADER_BIT_NV, VERTEX_INPUT_BIT, VERTEX_SHADER_BIT,
-    //     TESSELLATION_CONTROL_SHADER_BIT, TESSELLATION_EVALUATION_SHADER_BIT,
-    //     GEOMETRY_SHADER_BIT, FRAGMENT_SHADER_BIT, EARLY_FRAGMENT_TESTS_BIT, 
-    //     LATE_FRAGMENT_TESTS_BIT, COLOR_ATTACHMENT_OUTPUT_BIT, COMPUTE_SHADER_BIT,
-    //     TRANSFER_BIT, BOTTOM_OF_PIPE_BIT, HOST_BIT, RAY_TRACING_SHADER_BIT_NV,
-    //     ALL_GRAPHICS_BIT, ALL_COMMANDS_BIT, CONDITIONAL_RENDERING_BIT_EXT,
-    //     TRANSFORM_FEEDBACK_BIT_EXT, COMMAND_PROCESS_BIT_NVX, SHADING_RATE_IMAGE_BIT_NV,
-    //     FRAGMENT_DENSITY_PROCESS_BIT_EXT
+    //   the waitSemaphore wait will occur
     void 
     submit(const vk::Queue queue,
            const vk::Semaphore* waitSemaphore,

@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
 namespace vulkan {

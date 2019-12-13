@@ -57,15 +57,11 @@ public:
     //
     // * imageUsageFlags describing the intended usage of the image.
     //
-    // * memoryPropertyFlags is used to create the DeviceMemory (VK_MEMORY_PROPERTY_):
-    //
-    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
-    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
-    //     DEVICE_UNCACHED_BIT_AMD
+    // * memoryPropertyFlags is used to create the DeviceMemory
     //
     // * mipLevelCount of detail available for minified sampling of the image.
     //
-    // * initialImageLayout of all image subresources of the image (VK_IMAGE_LAYOUT_)
+    // * initialImageLayout of all image subresources of the image
     //   Images are stored in implementation-dependent opaque layouts in memory.
     //   Each layout has limitations on what kinds of operations are supported for 
     //   image subresources using the layout.
@@ -74,16 +70,6 @@ public:
     //   that was performed on that image subresource.Applications have control over which 
     //   layout each image subresource uses, and can transition an image subresource from 
     //   one layout to another. Transitions can happen with an image memory barrier
-    //
-    //   - UNDEFINED, PREINITIALIZED, GENERAL, COLOR_ATTACHMENT_OPTIMAL, 
-    //     DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    //     DEPTH_STENCIL_READ_ONLY_OPTIMAL, DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL, 
-    //     DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL, DEPTH_ATTACHMENT_OPTIMAL_KHR, 
-    //     DEPTH_READ_ONLY_OPTIMAL_KHR,
-    //     STENCIL_ATTACHMENT_OPTIMAL_KHR, STENCIL_READ_ONLY_OPTIMAL_KHR, SHADER_READ_ONLY_OPTIMAL, 
-    //     TRANSFER_SRC_OPTIMAL, TRANSFER_DST_OPTIMAL, PRESENT_SRC_KHR, SHARED_PRESENT_KHR, 
-    //     SHADING_RATE_OPTIMAL_NV,
-    //     SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_OPTIMAL_EXT
     //
     // * imageType specifying the basic dimensionality of the image.
     //   Layers in array textures do not count as a dimension for the purposes of the image type.

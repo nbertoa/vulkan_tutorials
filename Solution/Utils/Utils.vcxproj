@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClCompile Include="command\CommandBuffer.cpp" />
     <ClCompile Include="command\CommandBuffers.cpp" />
-    <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDeviceData.cpp" />
@@ -185,7 +184,6 @@
     <ClInclude Include="device\PhysicalDeviceData.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="DebugMessenger.h" />
-    <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="pipeline\GraphicsPipeline.h" />
     <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />
     <ClInclude Include="pipeline_stage\ColorBlendState.h" />

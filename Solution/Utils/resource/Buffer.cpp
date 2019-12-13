@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
@@ -119,9 +118,9 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     // Fence to be signaled once
     // the copy operation is complete. 
     vk::UniqueFence fence = LogicalDevice::device().createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    vkChecker(LogicalDevice::device().waitForFences({fence.get()},
-                                                    VK_TRUE,
-                                                    std::numeric_limits<uint64_t>::max()));
+    LogicalDevice::device().waitForFences({fence.get()},
+                                          VK_TRUE,
+                                          std::numeric_limits<uint64_t>::max());
     LogicalDevice::device().resetFences({fence.get()});
     
     CommandBuffer commandBuffer(transferCommandPool,
@@ -142,9 +141,9 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                          fence.get(),
                          vk::PipelineStageFlagBits::eTransfer);
 
-    vkChecker(LogicalDevice::device().waitForFences({fence.get()},
-                                                    VK_TRUE,
-                                                    std::numeric_limits<uint64_t>::max()));
+    LogicalDevice::device().waitForFences({fence.get()},
+                                          VK_TRUE,
+                                          std::numeric_limits<uint64_t>::max());
 }
 
 void

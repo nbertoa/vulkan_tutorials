@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "CommandBuffer.h"
-#include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
 

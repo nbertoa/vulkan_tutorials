@@ -20,13 +20,7 @@ namespace vulkan {
 class DynamicState {
 public:
     // * dynamicStates Indicate which dynamic state is taken 
-    //   from dynamic state commands (VK_DYNAMIC_STATE_):
-    //
-    //   - VIEWPORT, SCISSOR, LINE_WIDTH, DEPTH_BIAS, BLEND_CONSTANTS, DEPTH_BOUNDS, 
-    //     STENCIL_COMPARE_MASK, STENCIL_WRITE_MASK, STENCIL_REFERENCE, VIEWPORT_W_SCALING_NV,
-    //     DISCARD_RECTANGLE_EXT, SAMPLE_LOCATIONS_EXT, EXCLUSIVE_SCISSOR_NV, 
-    //     VIEWPORT_SHADING_RATE_PALETTE_NV, VIEWPORT_COARSE_SAMPLE_ORDER_NV, 
-    //     LINE_STIPPLE_EXT.
+    //   from dynamic state commands
     DynamicState(const std::vector<vk::DynamicState>& dynamicStates = {});
     DynamicState(const DynamicState& state);
     const DynamicState& operator=(const DynamicState& state);

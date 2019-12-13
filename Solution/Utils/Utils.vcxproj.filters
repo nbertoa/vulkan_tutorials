@@ -83,7 +83,6 @@
     <ClCompile Include="resource\ImageSystem.cpp">
       <Filter>resource</Filter>
     </ClCompile>
-    <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="vertex\PosTexCoordVertex.cpp">
       <Filter>vertex</Filter>
     </ClCompile>
@@ -91,7 +90,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
-    <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="vertex\PosColorVertex.h">

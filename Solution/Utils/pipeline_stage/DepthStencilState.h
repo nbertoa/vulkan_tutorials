@@ -21,9 +21,7 @@ public:
     //   when depthTestEnable is VK_TRUE.
     //   Depth writes are always disabled when depthTestEnable is VK_FALSE.
     //
-    // * depthCompareOp is the comparison operator used in the depth test (VK_COMPARE_OP_):
-    //
-    //   - NEVER, LESS, EQUAL, LESS_OR_EQUAL, GREATER, NOT_EQUAL, GREATER_OR_EQUAL, ALWAYS
+    // * depthCompareOp is the comparison operator used in the depth test
     //
     // * depthBoundsTestEnable controls whether depth bounds testing is enabled.
     //

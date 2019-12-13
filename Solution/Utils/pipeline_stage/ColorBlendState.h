@@ -28,10 +28,7 @@ class ColorBlendState {
 public:
     // * enableLogicalOperation controls whether to apply logical operation.
     //
-    // * logicalOperation selects which logical operation to apply (VK_LOGIC_OP_):
-    //
-    //   - CLEAR, AND, AND_REVERSE, COPY, AND_INVERTED, NO_OP, XOR, OR, NOR, EQUIVALENT, INVERT,
-    //     OR_REVERSE, COPY_INVERTED, OR_INVERTED, NAND, SET, MAX_ENUM
+    // * logicalOperation selects which logical operation to apply
     ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState = {},
                     const vk::Bool32 logicOpEnable = VK_FALSE,
                     const vk::LogicOp logicalOperation = vk::LogicOp::eClear);

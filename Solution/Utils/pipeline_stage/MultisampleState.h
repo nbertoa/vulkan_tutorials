@@ -28,9 +28,7 @@ namespace vulkan {
 class MultisampleState {
 public:
     // * rasterizationSamples specifies the number of samples per 
-    //   pixel used in rasterization (VK_SAMPLE_COUNT_):
-    //
-    //   . 1_BIT, 2_BIT, 4_BIT, 8_BIT, 16_BIT, 32_BIT, 64_BIT
+    //   pixel used in rasterization
     //
     // * sampleShadingEnable
     //

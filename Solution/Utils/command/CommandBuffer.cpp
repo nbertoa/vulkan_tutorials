@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 #include "../pipeline/GraphicsPipeline.h"
 #include "../resource/Buffer.h"
@@ -40,7 +39,7 @@ CommandBuffer::beginRecording(const vk::CommandBufferUsageFlagBits usageFlags) {
     
     vk::CommandBufferBeginInfo info;
     info.setFlags(usageFlags);
-    vkChecker(mCommandBuffer.begin(&info));
+    mCommandBuffer.begin(&info);
 }
 
 void
@@ -138,12 +137,12 @@ CommandBuffer::copyBufferToImage(const Buffer& sourceBuffer,
 
 void
 CommandBuffer::imagePipelineBarrier(const vk::ImageMemoryBarrier imageMemoryBarrier,
-                                    const vk::PipelineStageFlagBits sourceStageMask,
-                                    const vk::PipelineStageFlagBits destStageMask,
+                                    const vk::PipelineStageFlagBits sourcePipelineStages,
+                                    const vk::PipelineStageFlagBits destPipelineStages,
                                     const vk::DependencyFlagBits dependencyFlags) {
     assert(mCommandBuffer != VK_NULL_HANDLE);
-    mCommandBuffer.pipelineBarrier(sourceStageMask,
-                                   destStageMask,
+    mCommandBuffer.pipelineBarrier(sourcePipelineStages,
+                                   destPipelineStages,
                                    dependencyFlags,
                                    {}, // memory barriers
                                    {}, // buffer memory barriers

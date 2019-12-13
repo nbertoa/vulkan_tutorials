@@ -3,7 +3,6 @@
 #include <cassert>
 #include <fstream> 
 
-#include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
 namespace vulkan {
@@ -19,14 +18,10 @@ ShaderModule::ShaderModule(const std::string& shaderByteCodePath,
 
     const std::vector<char> shaderByteCode = readFile(mShaderByteCodePath);
 
-    vk::ShaderModuleCreateInfo createInfo = 
-    {
-        vk::ShaderModuleCreateFlags(),
-        shaderByteCode.size(),
-        reinterpret_cast<const uint32_t*>(shaderByteCode.data())
-    };
-
-    mShaderModule = LogicalDevice::device().createShaderModuleUnique(createInfo);
+    vk::ShaderModuleCreateInfo info;
+    info.setCodeSize(shaderByteCode.size());
+    info.setPCode(reinterpret_cast<const uint32_t*>(shaderByteCode.data()));
+    mShaderModule = LogicalDevice::device().createShaderModuleUnique(info);
 }
 
 const std::string& 

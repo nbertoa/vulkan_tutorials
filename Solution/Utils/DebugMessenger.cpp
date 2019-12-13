@@ -3,7 +3,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "DebugUtils.h"
 #include "Instance.h"
 
 namespace {
@@ -30,11 +29,11 @@ DebugMessenger::DebugMessenger() {
             vkGetInstanceProcAddr(Instance::instance(),
                                   "vkCreateDebugUtilsMessengerEXT"));
     assert(function);
-    const vk::DebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
-    vkChecker(function(Instance::instance(),
-                       (VkDebugUtilsMessengerCreateInfoEXT*)&createInfo,
-                       nullptr, 
-                       (VkDebugUtilsMessengerEXT*)&mMessenger));
+    const vk::DebugUtilsMessengerCreateInfoEXT info = messengerCreateInfo();
+    function(Instance::instance(),
+            reinterpret_cast<const VkDebugUtilsMessengerCreateInfoEXT*>(&info),
+            nullptr, 
+            reinterpret_cast<VkDebugUtilsMessengerEXT*>(&mMessenger));
 }
 
 DebugMessenger::~DebugMessenger() {

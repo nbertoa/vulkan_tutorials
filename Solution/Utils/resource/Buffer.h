@@ -41,24 +41,9 @@ public:
     //
     // * bufferSize in bytes.
     //
-    // * bufferUsage (VK_BUFFER_USAGE_):
+    // * deviceMemoryProperties to create the DeviceMemory
     //
-    //   - TRANSFER_SRC_BIT, TRANSFER_DST_BIT, UNIFORM_TEXEL_BUFFER_BIT, STORAGE_TEXEL_BUFFER_BIT,
-    //     UNIFORM_BUFFER_BIT, STORAGE_BUFFER_BIT, INDEX_BUFFER_BIT, VERTEX_BUFFER_BIT,
-    //     INDIRECT_BUFFER_BIT, CONDITIONAL_RENDERING_BIT_EXT, TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
-    //     TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT, RAY_TRACING_BIT_NV, 
-    //     SHADER_DEVICE_ADDRESS_BIT_EXT
-    //
-    // * deviceMemoryProperties to create the DeviceMemory (VK_MEMORY_PROPERTY_):
-    //
-    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
-    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
-    //     DEVICE_UNCACHED_BIT_AMD
-    //
-    // * sharingMode of the buffer when it will be accessed by multiple queue families 
-    //   (VK_SHARING_MODE_):
-    //
-    //   - EXCLUSIVE, CONCURRENT
+    // * sharingMode of the buffer when it will be accessed by multiple queue families
     //
     // * queueFamilyIndices that will access this buffer
     //   (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).

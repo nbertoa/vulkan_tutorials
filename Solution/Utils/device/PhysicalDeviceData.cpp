@@ -4,7 +4,6 @@
 #include <iostream>
 #include <unordered_set>
 
-#include "../DebugUtils.h"
 #include "../Window.h"
 
 namespace vulkan {
