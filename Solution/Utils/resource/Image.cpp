@@ -1,7 +1,6 @@
 #include "Image.h"
 
 #include "Buffer.h"
-#include "ImageMemoryBarrier.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
@@ -10,18 +9,17 @@
 namespace vk2 {
 Image::Image(const uint32_t imageWidth,
              const uint32_t imageHeight,
-             const VkFormat format,
-             const VkImageUsageFlags imageUsageFlags,
+             const vk::Format format,
+             const vk::ImageUsageFlags imageUsageFlags,
              const vk::MemoryPropertyFlags deviceMemoryProperties,
              const uint32_t mipLevelCount,
              const vk::ImageLayout initialImageLayout,
-             const VkImageType imageType,
-             const VkSampleCountFlagBits sampleCount,
+             const vk::ImageType imageType,
+             const vk::SampleCountFlagBits sampleCount,
              const uint32_t imageDepth,
-             const VkImageTiling imageTiling,
+             const vk::ImageTiling imageTiling,
              const uint32_t arrayLayerCount,
-             const VkSharingMode sharingMode,
-             const VkImageCreateFlags flags,
+             const vk::SharingMode sharingMode,
              const std::vector<uint32_t>& queueFamilyIndices)
     : mExtent {imageWidth, imageHeight, imageDepth}
     , mLastLayout(initialImageLayout)
@@ -33,7 +31,6 @@ Image::Image(const uint32_t imageWidth,
                          imageTiling,
                          arrayLayerCount,
                          sharingMode,
-                         flags,
                          queueFamilyIndices))
     , mHasDeviceMemoryOwnership(true)
 {
@@ -45,10 +42,9 @@ Image::Image(const uint32_t imageWidth,
 
     mDeviceMemory = LogicalDevice::device().allocateMemory(info);
 
-    vkChecker(vkBindImageMemory(LogicalDevice::device(),
-                                mImage,
-                                mDeviceMemory,
-                                0));
+    LogicalDevice::device().bindImageMemory(mImage,
+                                            mDeviceMemory,
+                                            0);
 }
 
 Image::~Image() {
@@ -64,13 +60,13 @@ Image::~Image() {
 Image::Image(Image&& other) noexcept
     : mImage(other.mImage)
     , mDeviceMemory(other.mDeviceMemory) {
-    other.mImage = VK_NULL_HANDLE;
+    other.mImage = vk::Image();
     other.mDeviceMemory = nullptr;
 }
 
-VkImage
+vk::Image
 Image::vkImage() const {
-    assert(mImage != nullptr);
+    assert(mImage != VK_NULL_HANDLE);
     return mImage;
 }
 
@@ -118,16 +114,12 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                                 vk::CommandBufferLevel::ePrimary);
     commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
-    VkBufferImageCopy bufferImageCopy = {};
-    bufferImageCopy.bufferOffset = 0;
-    bufferImageCopy.bufferRowLength = 0;
-    bufferImageCopy.bufferImageHeight = 0;
-    bufferImageCopy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    bufferImageCopy.imageSubresource.mipLevel = 0;
-    bufferImageCopy.imageSubresource.baseArrayLayer = 0;
-    bufferImageCopy.imageSubresource.layerCount = 1;
-    bufferImageCopy.imageOffset = {0, 0, 0};
-    bufferImageCopy.imageExtent = mExtent;
+    vk::BufferImageCopy bufferImageCopy;
+    vk::ImageSubresourceLayers imageSubresource;
+    imageSubresource.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    imageSubresource.setLayerCount(1);
+    bufferImageCopy.setImageSubresource(imageSubresource);
+    bufferImageCopy.setImageExtent(mExtent);
     commandBuffer.copyBufferToImage(stagingBuffer,
                                     *this,
                                     bufferImageCopy);
@@ -197,10 +189,17 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
         assert(false && "Unsupported image layout transition");
     }
 
-    ImageMemoryBarrier barrier(*this,
-                               newImageLayout,
-                               mLastAccessType,
-                               destAccessType);
+    vk::ImageMemoryBarrier barrier;
+    barrier.setImage(mImage);
+    barrier.setOldLayout(mLastLayout);
+    barrier.setNewLayout(newImageLayout);
+    vk::ImageSubresourceRange imageSubresourceRange;
+    imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    imageSubresourceRange.setLevelCount(1);
+    imageSubresourceRange.setLayerCount(1);
+    barrier.setSubresourceRange(imageSubresourceRange);
+    barrier.setSrcAccessMask(mLastAccessType);
+    barrier.setDstAccessMask(destAccessType);
 
     commandBuffer.imagePipelineBarrier(barrier,
                                        mLastPipelineStages,
@@ -223,54 +222,33 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
     mLastPipelineStages = destPipelineStages;
 }
 
-VkMemoryRequirements
-Image::imageMemoryRequirements() const {
-    assert(mImage != VK_NULL_HANDLE);
-
-    VkMemoryRequirements memoryRequirements;
-    vkGetImageMemoryRequirements(LogicalDevice::device(),
-                                 mImage,
-                                 &memoryRequirements);
-
-    return memoryRequirements;
-}
-
-VkImage
-Image::createImage(const VkFormat format,
-                   const VkImageUsageFlags imageUsageFlags,
+vk::Image
+Image::createImage(const vk::Format format,
+                   const vk::ImageUsageFlags imageUsageFlags,
                    const uint32_t mipLevelCount,
-                   const VkImageType imageType,
-                   const VkSampleCountFlagBits sampleCount,
-                   const VkImageTiling imageTiling,
+                   const vk::ImageType imageType,
+                   const vk::SampleCountFlagBits sampleCount,
+                   const vk::ImageTiling imageTiling,
                    const uint32_t arrayLayerCount,
-                   const VkSharingMode sharingMode,
-                   const VkImageCreateFlags flags,
+                   const vk::SharingMode sharingMode,
                    const std::vector<uint32_t>& queueFamilyIndices) {
-    VkImageCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    createInfo.imageType = imageType;
-    createInfo.extent = mExtent;
-    createInfo.format = format;
-    createInfo.usage = imageUsageFlags;
-    createInfo.mipLevels = mipLevelCount;
-    createInfo.initialLayout = (VkImageLayout)mLastLayout;
-    createInfo.samples = sampleCount;
-    createInfo.tiling = imageTiling;
-    createInfo.arrayLayers = arrayLayerCount;
-    createInfo.sharingMode = sharingMode;
-    createInfo.flags = flags;
-    createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? 
-        nullptr : 
-        queueFamilyIndices.data();
-
-    VkImage image;
-    vkChecker(vkCreateImage(LogicalDevice::device(),
-                            &createInfo,
-                            nullptr,
-                            &image));
-
-    return image;
+    vk::ImageCreateInfo info = {};
+    info.setImageType(imageType);
+    info.setExtent(mExtent);
+    info.setFormat(format);
+    info.setUsage(imageUsageFlags);
+    info.setMipLevels(mipLevelCount);
+    info.setInitialLayout(mLastLayout);
+    info.setSamples(sampleCount);
+    info.setTiling(imageTiling);
+    info.setArrayLayers(arrayLayerCount);
+    info.setSharingMode(sharingMode);
+    info.setQueueFamilyIndexCount(static_cast<uint32_t>(queueFamilyIndices.size()));
+    info.setPQueueFamilyIndices(queueFamilyIndices.empty() ?
+                                nullptr :
+                                queueFamilyIndices.data());
+                                
+    return LogicalDevice::device().createImage(info);
 }
 
 }

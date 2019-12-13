@@ -7,7 +7,6 @@
 #include "../pipeline/GraphicsPipeline.h"
 #include "../resource/Buffer.h"
 #include "../resource/Image.h"
-#include "../resource/ImageMemoryBarrier.h"
 
 namespace vk2 {
 CommandBuffer::CommandBuffer(const vk::CommandPool commandPool,
@@ -138,7 +137,7 @@ CommandBuffer::copyBufferToImage(const Buffer& sourceBuffer,
 }
 
 void
-CommandBuffer::imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
+CommandBuffer::imagePipelineBarrier(const vk::ImageMemoryBarrier& imageMemoryBarrier,
                                     const vk::PipelineStageFlagBits sourceStageMask,
                                     const vk::PipelineStageFlagBits destStageMask,
                                     const vk::DependencyFlagBits dependencyFlags) {
@@ -148,7 +147,7 @@ CommandBuffer::imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier
                                    dependencyFlags,
                                    {}, // memory barriers
                                    {}, // buffer memory barriers
-                                   {imageMemoryBarrier.vkMemoryBarrier()});
+                                   {imageMemoryBarrier});
 }
 
 void

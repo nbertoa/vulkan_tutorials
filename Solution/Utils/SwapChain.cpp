@@ -155,7 +155,7 @@ SwapChain::swapChainExtent(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities
     if (surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
         return surfaceCapabilities.currentExtent;
     } else {
-        VkExtent2D actualExtent = {windowWidth, windowHeight};
+        vk::Extent2D actualExtent = {windowWidth, windowHeight};
 
         actualExtent.width = std::max(surfaceCapabilities.minImageExtent.width, 
                                       std::min(surfaceCapabilities.maxImageExtent.width, 
@@ -252,7 +252,7 @@ SwapChain::initSwapChain() {
         bestFitSurfaceFormat(PhysicalDevice::device().getSurfaceFormatsKHR(Window::surface()));
     mImageFormat = surfaceFormat.format;
 
-    // VkSwapchainCreateInfoKHR:
+    // vk::SwapchainCreateInfoKHR:
     // - flags bitmask indicating parameters of the swapchain creation (VK_SWAPCHAIN_CREATE_):
     //    . SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR, PROTECTED_BIT_KHR, MUTABLE_FORMAT_BIT_KHR
     //

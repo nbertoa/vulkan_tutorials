@@ -65,8 +65,8 @@ App::initBuffers() {
     const uint32_t verticesSize = static_cast<uint32_t>(sizeof(PosColorVertex) * screenSpaceVertices.size());
 
     mGpuVertexBuffer.reset(new Buffer(verticesSize,
-                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                      vk::BufferUsageFlagBits::eTransferDst |
+                                      vk::BufferUsageFlagBits::eVertexBuffer,
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),

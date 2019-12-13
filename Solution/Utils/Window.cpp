@@ -38,7 +38,7 @@ Window::initialize(const uint32_t width,
     vkChecker(glfwCreateWindowSurface(Instance::instance(),
                                       mWindow,
                                       nullptr,
-                                      (VkSurfaceKHR*)&mSurface));
+                                      reinterpret_cast<VkSurfaceKHR*>(&mSurface)));
 }
 
 void

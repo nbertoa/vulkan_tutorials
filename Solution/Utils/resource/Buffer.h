@@ -6,10 +6,9 @@
 #include <vulkan/vulkan.hpp>
 
 namespace vk2 {
-class Fence;
 
 //
-// VkBuffer wrapper.
+// Buffer wrapper.
 //
 // Buffers represent linear arrays of data which are used for various 
 // purposes by binding them to a graphics or compute pipeline via 
@@ -68,10 +67,10 @@ public:
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
     //   - The global physical device is used to create the device memory
-    Buffer(const VkDeviceSize bufferSize,
-           const VkBufferUsageFlags bufferUsage,
+    Buffer(const vk::DeviceSize bufferSize,
+           const vk::BufferUsageFlags bufferUsage,
            const vk::MemoryPropertyFlags deviceMemoryProperties,
-           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+           const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
            const std::vector<uint32_t>& queueFamilyIndices = {});
 
     // This constructor must be used if you want to provide
@@ -79,20 +78,20 @@ public:
     // Check the first constructor for an explanation of each parameter.
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
-    Buffer(const VkDeviceSize bufferSize,
-           const VkBufferUsageFlags bufferUsage,
+    Buffer(const vk::DeviceSize bufferSize,
+           const vk::BufferUsageFlags bufferUsage,
            const vk::DeviceMemory deviceMemory,
-           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+           const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
            const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Buffer();
     Buffer(Buffer&& other) noexcept;
     Buffer(const Buffer&) = delete;
     const Buffer& operator=(const Buffer&) = delete;  
     
-    VkBuffer 
+    vk::Buffer 
     vkBuffer() const;
 
-    VkDeviceSize 
+    vk::DeviceSize 
     size() const;
     
     // The driver may not immediately copy the data
@@ -128,13 +127,13 @@ public:
     // You should use methods like copyFromBufferToDeviceMemory instead.
     void 
     copyToHostMemory(void* sourceData, 
-                     const VkDeviceSize size,
-                     const VkDeviceSize offset);
+                     const vk::DeviceSize size,
+                     const vk::DeviceSize offset);
 
     // This method will use as "size" the entire buffer size. 
     void 
     copyToHostMemory(void* sourceData,
-                     const VkDeviceSize offset = 0);
+                     const vk::DeviceSize offset = 0);
 
     // These methods assumes the buffer was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
@@ -152,7 +151,7 @@ public:
                                  const vk::CommandPool transferCommandPool);
     void
     copyFromDataToDeviceMemory(void* sourceData,
-                               const VkDeviceSize size,
+                               const vk::DeviceSize size,
                                const vk::CommandPool transferCommandPool);
 
     // Creates a staging buffer with flags:
@@ -162,18 +161,18 @@ public:
     // and copies "size" bytes from the sourceData to it
     static Buffer
     createAndFillStagingBuffer(void* sourceData,
-                               const VkDeviceSize size);
+                               const vk::DeviceSize size);
 
 private:
     // Read Buffer() constructor to understand the parameters.
-    static VkBuffer 
-    createBuffer(const VkDeviceSize sizeInBytes,
-                 const VkBufferUsageFlags usageFlags,
-                 const VkSharingMode sharingMode,
+    static vk::Buffer 
+    createBuffer(const vk::DeviceSize sizeInBytes,
+                 const vk::BufferUsageFlags usageFlags,
+                 const vk::SharingMode sharingMode,
                  const std::vector<uint32_t>& queueFamilyIndices);
   
-    VkBuffer mBuffer = VK_NULL_HANDLE;
-    const VkDeviceSize mSizeInBytes = 0;
+    vk::Buffer mBuffer;
+    const vk::DeviceSize mSizeInBytes = 0;
 
     // This is only used if the Buffer is created
     // with the constructor that includes the data needed

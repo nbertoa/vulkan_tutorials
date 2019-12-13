@@ -9,7 +9,7 @@
 #include "Utils/command/CommandBuffers.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h"
-#include "Utils/resource/Buffers.h"
+#include "Utils/resource/Buffer.h"
 #include "Utils/resource/ImageView.h"
 #include "Utils/sync/Fences.h"
 #include "Utils/sync/Semaphores.h"
@@ -91,7 +91,7 @@ protected:
     std::unique_ptr<vk2::Buffer> mGpuVertexBuffer;
     std::unique_ptr<vk2::Buffer> mGpuIndexBuffer;
 
-    std::unique_ptr<vk2::Buffers> mUniformBuffers;
+    std::vector<vk2::Buffer> mUniformBuffers;
     vk::UniqueDescriptorPool mDescriptorPool;
     MatrixUBO mMatrixUBO;
     vk::UniqueDescriptorSetLayout mDescriptorSetLayout;

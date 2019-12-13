@@ -5,47 +5,30 @@
 #include "../device/LogicalDevice.h"
 
 namespace vk2 {
-ImageView::ImageView(const VkFormat format,
+ImageView::ImageView(const vk::Format format,
                      const Image& image,
-                     const VkImageViewType viewType,
-                     const VkComponentMapping& componentsMapping,
-                     const VkImageViewCreateFlags flags)
+                     const vk::ImageViewType viewType,
+                     const vk::ComponentMapping& componentsMapping)
 {
-    VkImageViewCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    createInfo.image = image.vkImage();
-    createInfo.format = format;
-    createInfo.flags = flags;
-    createInfo.components = componentsMapping;
-    createInfo.viewType = viewType;
-    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    createInfo.subresourceRange.baseMipLevel = 0;
-    createInfo.subresourceRange.levelCount = 1;
-    createInfo.subresourceRange.baseArrayLayer = 0;
-    createInfo.subresourceRange.layerCount = 1;
+    vk::ImageViewCreateInfo info;
+    info.setComponents(componentsMapping);
+    info.setImage(image.vkImage());
+    info.setFormat(format);
+    info.setSubresourceRange(vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+    info.setViewType(viewType);
 
-    vkChecker(vkCreateImageView(LogicalDevice::device(),
-                                &createInfo,
-                                nullptr,
-                                &mImageView));
-}
-
-ImageView::~ImageView() {
-    vkDestroyImageView(LogicalDevice::device(),
-                       mImageView,
-                       nullptr);
+    mImageView = LogicalDevice::device().createImageViewUnique(info);
 }
 
 ImageView::ImageView(ImageView&& other) noexcept
-    : mImageView(other.mImageView)
+    : mImageView(std::move(other.mImageView))
 {
-    other.mImageView = VK_NULL_HANDLE;
 }
 
-VkImageView
+vk::ImageView
 ImageView::vkImageView() const {
-    assert(mImageView != VK_NULL_HANDLE);
-    return mImageView;
+    assert(mImageView.get() != VK_NULL_HANDLE);
+    return mImageView.get();
 }
 
 }

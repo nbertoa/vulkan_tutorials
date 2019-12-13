@@ -72,8 +72,8 @@ App::initVertexBuffer() {
     const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
     mGpuVertexBuffer.reset(new Buffer(verticesSize,
-                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                      vk::BufferUsageFlagBits::eTransferDst |
+                                      vk::BufferUsageFlagBits::eVertexBuffer,
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
@@ -94,8 +94,8 @@ App::initIndexBuffer() {
     const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
     mGpuIndexBuffer.reset(new Buffer(indicesSize,
-                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                     VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                     vk::BufferUsageFlagBits::eTransferDst |
+                                     vk::BufferUsageFlagBits::eIndexBuffer,
                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),

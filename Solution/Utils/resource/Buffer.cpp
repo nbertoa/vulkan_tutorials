@@ -8,10 +8,10 @@
 #include "../device/PhysicalDevice.h"
 
 namespace vk2 {
-Buffer::Buffer(const VkDeviceSize bufferSize,
-               const VkBufferUsageFlags bufferUsage,
+Buffer::Buffer(const vk::DeviceSize bufferSize,
+               const vk::BufferUsageFlags bufferUsage,
                const vk::MemoryPropertyFlags deviceMemoryProperties,
-               const VkSharingMode sharingMode,
+               const vk::SharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
     : mBuffer(createBuffer(bufferSize,
                            bufferUsage,
@@ -30,17 +30,15 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
 
     assert(mSizeInBytes > 0);
 
-    // Binds device memory to this buffer
-    vkChecker(vkBindBufferMemory(LogicalDevice::device(),
-                                 mBuffer,
-                                 mDeviceMemory,
-                                 0));
+    LogicalDevice::device().bindBufferMemory(mBuffer,
+                                             mDeviceMemory,
+                                             0); // offset
 }
 
-Buffer::Buffer(const VkDeviceSize bufferSize,
-               const VkBufferUsageFlags bufferUsage,
+Buffer::Buffer(const vk::DeviceSize bufferSize,
+               const vk::BufferUsageFlags bufferUsage,
                const vk::DeviceMemory deviceMemory,
-               const VkSharingMode sharingMode,
+               const vk::SharingMode sharingMode,
                const std::vector<uint32_t>& queueFamilyIndices)
     : mBuffer(createBuffer(bufferSize,
                            bufferUsage,
@@ -51,11 +49,9 @@ Buffer::Buffer(const VkDeviceSize bufferSize,
     , mDeviceMemory(deviceMemory) {
     assert(mSizeInBytes > 0);
 
-    // Binds device memory to this buffer
-    vkChecker(vkBindBufferMemory(LogicalDevice::device(),
-                                 mBuffer,
-                                 mDeviceMemory,
-                                 0));
+    LogicalDevice::device().bindBufferMemory(mBuffer,
+                                             mDeviceMemory,
+                                             0); // offset
 }
 
 Buffer::~Buffer() {
@@ -68,13 +64,13 @@ Buffer::~Buffer() {
     }
 }
 
-VkBuffer 
+vk::Buffer 
 Buffer::vkBuffer() const {
     assert(mBuffer != VK_NULL_HANDLE);
     return mBuffer;
 }
 
-VkDeviceSize 
+vk::DeviceSize 
 Buffer::size() const {
     assert(mBuffer != VK_NULL_HANDLE);
     return mSizeInBytes;
@@ -85,47 +81,32 @@ Buffer::Buffer(Buffer&& other) noexcept
     , mSizeInBytes(other.mSizeInBytes)
     , mDeviceMemory(other.mDeviceMemory)
 {
-    other.mBuffer = VK_NULL_HANDLE;
+    other.mBuffer = vk::Buffer();
     other.mDeviceMemory = nullptr;
 }
 
 void 
 Buffer::copyToHostMemory(void* sourceData,                         
-                         const VkDeviceSize size,
-                         const VkDeviceSize offset) {
+                         const vk::DeviceSize size,
+                         const vk::DeviceSize offset) {
     assert(mBuffer != VK_NULL_HANDLE);
     assert(sourceData != nullptr);
     assert(size > 0);
 
-    void* destinationData;
-    // - device is the logical device that owns the memory.
-    // - memory to be mapped.
-    // - offset (zero-based byte) from the beginning of the memory object.
-    // - size of the memory range to map, or VK_WHOLE_SIZE to map from 
-    //   offset to the end of the allocation.
-    // - ppData will contain a host-accessible pointer to the beginning of the mapped range.
-    //   This pointer minus offset must be aligned to at least 
-    //   VkPhysicalDeviceLimits::minMemoryMapAlignment.
-    vkChecker(vkMapMemory(LogicalDevice::device(),
-                          mDeviceMemory,
-                          offset,
-                          size,
-                          0,
-                          &destinationData));
+    void* destinationData = LogicalDevice::device().mapMemory(mDeviceMemory,
+                                                              offset,
+                                                              size);
 
     memcpy(destinationData,
            sourceData,
            static_cast<size_t>(size));
 
-    // - device is the logical device that owns the memory.
-    // - memory to be unmapped.
-    vkUnmapMemory(LogicalDevice::device(),
-                  mDeviceMemory);
+    LogicalDevice::device().unmapMemory(mDeviceMemory);
 }
 
 void
 Buffer::copyToHostMemory(void* sourceData,
-                         const VkDeviceSize offset) {
+                         const vk::DeviceSize offset) {
     copyToHostMemory(sourceData,                     
                      mSizeInBytes,
                      offset);
@@ -137,18 +118,17 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
     // Fence to be signaled once
     // the copy operation is complete. 
-    vk::Device device(LogicalDevice::device());
-    vk::UniqueFence fence = device.createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
-    device.resetFences({fence.get()});
+    vk::UniqueFence fence = LogicalDevice::device().createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
+    vkChecker(LogicalDevice::device().waitForFences({fence.get()},
+                                                    VK_TRUE,
+                                                    std::numeric_limits<uint64_t>::max()));
+    LogicalDevice::device().resetFences({fence.get()});
     
     CommandBuffer commandBuffer(transferCommandPool,
                                 vk::CommandBufferLevel::ePrimary);
     commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
-    VkBufferCopy bufferCopy = {};
+    vk::BufferCopy bufferCopy;
     bufferCopy.size = sourceBuffer.size();
     commandBuffer.copyBuffer(sourceBuffer,
                              *this,
@@ -162,14 +142,14 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                          fence.get(),
                          vk::PipelineStageFlagBits::eTransfer);
 
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
+    vkChecker(LogicalDevice::device().waitForFences({fence.get()},
+                                                    VK_TRUE,
+                                                    std::numeric_limits<uint64_t>::max()));
 }
 
 void
 Buffer::copyFromDataToDeviceMemory(void* sourceData,
-                                   const VkDeviceSize size,
+                                   const vk::DeviceSize size,
                                    const vk::CommandPool transferCommandPool) {
     assert(sourceData != nullptr);
     assert(size > 0);
@@ -183,12 +163,12 @@ Buffer::copyFromDataToDeviceMemory(void* sourceData,
 
 Buffer
 Buffer::createAndFillStagingBuffer(void* sourceData,
-                                   const VkDeviceSize size) {
+                                   const vk::DeviceSize size) {
     assert(sourceData != nullptr);
     assert(size > 0);
 
     Buffer buffer(size,
-                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                  vk::BufferUsageFlagBits::eTransferSrc,
                   vk::MemoryPropertyFlagBits::eHostVisible |
                   vk::MemoryPropertyFlagBits::eHostCoherent);
 
@@ -199,32 +179,22 @@ Buffer::createAndFillStagingBuffer(void* sourceData,
     return buffer;
 }
 
-VkBuffer
-Buffer::createBuffer(const VkDeviceSize size,
-                     const VkBufferUsageFlags usageFlags,
-                     const VkSharingMode sharingMode,
+vk::Buffer
+Buffer::createBuffer(const vk::DeviceSize size,
+                     const vk::BufferUsageFlags usageFlags,
+                     const vk::SharingMode sharingMode,
                      const std::vector<uint32_t>& queueFamilyIndices) {
-    VkBuffer buffer;
 
-    VkBufferCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    createInfo.size = size;
-    createInfo.usage = usageFlags;
-    createInfo.sharingMode = sharingMode;
-    createInfo.flags = 0;
-    createInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamilyIndices.size());
-    createInfo.pQueueFamilyIndices = queueFamilyIndices.empty() ? 
-        nullptr : 
-        queueFamilyIndices.data();
-    
-    vkChecker(vkCreateBuffer(LogicalDevice::device(),
-                             &createInfo,
-                             nullptr,
-                             &buffer));
+    vk::BufferCreateInfo info;
+    info.setSize(size);
+    info.setUsage(usageFlags);
+    info.setSharingMode(sharingMode);
+    info.setQueueFamilyIndexCount(static_cast<uint32_t>(queueFamilyIndices.size()));
+    info.setPQueueFamilyIndices(queueFamilyIndices.empty() ?
+                                nullptr :
+                                queueFamilyIndices.data());
 
-    assert(buffer != VK_NULL_HANDLE);
-
-    return buffer;
+    return LogicalDevice::device().createBuffer(info);
 }
 
 }

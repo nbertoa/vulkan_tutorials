@@ -189,7 +189,7 @@ public:
     // * dependencyFlags. If it contains VK_DEPENDENCY_BY_REGION_BIT, 
     //   then the dependency is by-region.
     void
-    imagePipelineBarrier(const ImageMemoryBarrier& imageMemoryBarrier,
+    imagePipelineBarrier(const vk::ImageMemoryBarrier& imageMemoryBarrier,
                          const vk::PipelineStageFlagBits sourceStageMask,
                          const vk::PipelineStageFlagBits destStageMask,
                          const vk::DependencyFlagBits dependencyFlags = vk::DependencyFlagBits::eByRegion);

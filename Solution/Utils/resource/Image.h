@@ -7,7 +7,7 @@
 
 namespace vk2 {
 //
-// VkImage wrapper
+// Image wrapper
 //
 // Images (also known as textures) represent multidimensional(up to 3) 
 // arrays of data which can be used 
@@ -106,25 +106,24 @@ public:
     // Notes: The global logical device owns the image and memory.
     Image(const uint32_t imageWidth,
           const uint32_t imageHeight,
-          const VkFormat format,
-          const VkImageUsageFlags imageUsageFlags,
+          const vk::Format format,
+          const vk::ImageUsageFlags imageUsageFlags,
           const vk::MemoryPropertyFlags deviceMemoryProperties,
           const uint32_t mipLevelCount = 1,
           const vk::ImageLayout initialImageLayout = vk::ImageLayout::eUndefined,
-          const VkImageType imageType = VK_IMAGE_TYPE_2D,
-          const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
+          const vk::ImageType imageType = vk::ImageType::e2D,
+          const vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1,
           const uint32_t imageDepth = 1,
-          const VkImageTiling imageTiling = VK_IMAGE_TILING_OPTIMAL,
+          const vk::ImageTiling imageTiling = vk::ImageTiling::eOptimal,
           const uint32_t arrayLayerCount = 1,
-          const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-          const VkImageCreateFlags flags = 0,
+          const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
           const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Image();
     Image(Image&&) noexcept;
     Image(const Image&) = delete;
     const Image& operator=(const Image&) = delete;
 
-    VkImage
+    vk::Image
     vkImage() const;
 
     uint32_t 
@@ -158,31 +157,16 @@ public:
                           const vk::CommandPool transitionCommandPool);
 
 private:
-    // Return the image memory requirements. This is used to create
-    // the DeviceMemory (if needed).
-    //
-    // Memory requirements:
-    // - size in bytes, of the memory allocation required for the resource.
-    // - alignment in bytes, of the offset within the 
-    //   allocation required for the resource.
-    // - memoryTypeBits is a bitmask and contains one bit set for every supported 
-    //   memory type for the resource. Bit i is set if and only if the memory type i in 
-    //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
-    //   is supported for the resource.
-    VkMemoryRequirements
-    imageMemoryRequirements() const;
-
     // Read Image() constructor to understand the parameters.
-    VkImage
-    createImage(const VkFormat format,
-                const VkImageUsageFlags imageUsageFlags,
+    vk::Image
+    createImage(const vk::Format format,
+                const vk::ImageUsageFlags imageUsageFlags,
                 const uint32_t mipLevelCount,
-                const VkImageType imageType,
-                const VkSampleCountFlagBits sampleCount,
-                const VkImageTiling imageTiling,
+                const vk::ImageType imageType,
+                const vk::SampleCountFlagBits sampleCount,
+                const vk::ImageTiling imageTiling,
                 const uint32_t arrayLayerCount,
-                const VkSharingMode sharingMode,
-                const VkImageCreateFlags flags,
+                const vk::SharingMode sharingMode,
                 const std::vector<uint32_t>& queueFamilyIndices);
                 
     vk::Extent3D mExtent;
@@ -190,7 +174,7 @@ private:
     vk::AccessFlagBits mLastAccessType;
     vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
-    VkImage mImage = VK_NULL_HANDLE;    
+    vk::Image mImage;    
 
     // This is only used if the Image is created
     // with the constructor that includes the data needed

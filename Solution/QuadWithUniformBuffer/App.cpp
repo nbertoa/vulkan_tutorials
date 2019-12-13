@@ -63,7 +63,7 @@ App::processCurrentFrame() {
     const uint32_t currentSwapChainImageIndex = mSwapChain.currentImageIndex();
     mMatrixUBO.update(currentSwapChainImageIndex, 
                       mSwapChain.imageAspectRatio());
-    Buffer& uniformBuffer = mUniformBuffers->buffer(currentSwapChainImageIndex);
+    Buffer& uniformBuffer = mUniformBuffers[currentSwapChainImageIndex];
     uniformBuffer.copyToHostMemory(&mMatrixUBO);
 }
 
@@ -116,7 +116,7 @@ App::initDescriptorSets() {
     vk::DescriptorBufferInfo bufferInfo;
     bufferInfo.setRange(sizeof(MatrixUBO));
     for (uint32_t i = 0; i < imageViewCount; ++i) {
-        bufferInfo.buffer = mUniformBuffers->buffer(i).vkBuffer();
+        bufferInfo.buffer = mUniformBuffers[i].vkBuffer();
         vk::WriteDescriptorSet writeDescriptorSet;
         writeDescriptorSet.setDstBinding(0);
         writeDescriptorSet.setDescriptorCount(1);
@@ -151,8 +151,8 @@ App::initVertexBuffer() {
     const size_t verticesSize = sizeof(PosColorVertex) * screenSpaceVertices.size();
 
     mGpuVertexBuffer.reset(new Buffer(verticesSize,
-                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                      vk::BufferUsageFlagBits::eTransferDst |
+                                      vk::BufferUsageFlagBits::eVertexBuffer,
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
@@ -173,8 +173,8 @@ App::initIndexBuffer() {
     const size_t indicesSize = sizeof(uint32_t) * indices.size();
 
     mGpuIndexBuffer.reset(new Buffer(indicesSize,
-                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-                                     VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                     vk::BufferUsageFlagBits::eTransferDst |
+                                     vk::BufferUsageFlagBits::eIndexBuffer,
                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
@@ -184,13 +184,16 @@ App::initIndexBuffer() {
 
 void
 App::initUniformBuffers() {
-    assert(mUniformBuffers == nullptr);
+    assert(mUniformBuffers.empty());
 
-    mUniformBuffers.reset(new Buffers(mSwapChain.imageViewCount(),
-                                      sizeof(MatrixUBO),
-                                      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                      vk::MemoryPropertyFlagBits::eHostVisible |
-                                      vk::MemoryPropertyFlagBits::eHostCoherent));
+    for (uint32_t i = 0; i < mSwapChain.imageViewCount(); ++i) {
+        Buffer buffer(sizeof(MatrixUBO),
+                      vk::BufferUsageFlagBits::eUniformBuffer,
+                      vk::MemoryPropertyFlagBits::eHostVisible |
+                      vk::MemoryPropertyFlagBits::eHostCoherent);
+
+        mUniformBuffers.emplace_back(std::move(buffer));
+    }
 }
 
 void

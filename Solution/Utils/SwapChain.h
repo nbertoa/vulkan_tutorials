@@ -14,7 +14,7 @@ class Semaphore;
 // The swapchain provides the ability to present rendering results
 // to a surface. A swapchain is an abstraction for an array of
 // presentable images that are associated with a surface.
-// The swapchain images are represented by VkImage objects.
+// The swapchain images are represented by vk::Image objects.
 //
 // One exception to the obligation to allocate and bind DeviceMemory 
 // for every Image is the creation of a SwapChain. 
@@ -30,7 +30,7 @@ class Semaphore;
 // From it you can create SwapchainKHR.
 // This object requires a LogicalDevice. It represents a set of images that can be presented on 
 // the Surface, e.g. using double-or triple-buffering.
-// From the SwapChain you can query it for the VkImages it contains.
+// From the SwapChain you can query it for the vk::Images it contains.
 // These images already have their backing memory allocated by the system.
 //
 // You need the SwapChain to:
@@ -91,7 +91,7 @@ public:
     // and containing additional metadata are used for that purpose. 
     // Views must be created on images of compatible types, and must represent 
     // a valid subset of image subresources.
-    // VkImageView is a set of parameters referring to a specific image.
+    // vk::ImageView is a set of parameters referring to a specific image.
     // There you can interpret pixels as having some other(compatible) format, 
     // swizzle any components, 
     // and limit the view to a specific range of MIP levels or array layers.

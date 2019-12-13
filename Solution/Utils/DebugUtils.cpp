@@ -93,7 +93,7 @@ void vkChecker(const VkResult result) {
                     application’s control";
         break;
     default:
-    // If we reached this point, that is because the VkResult is a success code.
+    // If we reached this point, that is because the vk::Result is a success code.
         return;
     }
 
@@ -189,7 +189,7 @@ void vkChecker(const vk::Result result) {
                     application’s control";
         break;
     default:
-        // If we reached this point, that is because the VkResult is a success code.
+        // If we reached this point, that is because the vk::Result is a success code.
         return;
     }
 
@@ -197,7 +197,7 @@ void vkChecker(const vk::Result result) {
 }
 
 #else
-void vkChecker(const VkResult) {}
+void vkChecker(const vk::Result) {}
 void vkChecker(const vk::Result) {}
 #endif
 }

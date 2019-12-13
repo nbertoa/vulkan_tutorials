@@ -53,9 +53,6 @@
     <ClCompile Include="resource\Buffer.cpp">
       <Filter>resource</Filter>
     </ClCompile>
-    <ClCompile Include="resource\Buffers.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
     <ClCompile Include="sync\Fences.cpp">
       <Filter>sync</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
       <Filter>shader</Filter>
     </ClCompile>
     <ClCompile Include="resource\Image.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
-    <ClCompile Include="resource\ImageMemoryBarrier.cpp">
       <Filter>resource</Filter>
     </ClCompile>
     <ClCompile Include="resource\ImageSystem.cpp">
@@ -152,9 +146,6 @@
     <ClInclude Include="resource\Buffer.h">
       <Filter>resource</Filter>
     </ClInclude>
-    <ClInclude Include="resource\Buffers.h">
-      <Filter>resource</Filter>
-    </ClInclude>
     <ClInclude Include="sync\Fences.h">
       <Filter>sync</Filter>
     </ClInclude>
@@ -180,9 +171,6 @@
       <Filter>shader</Filter>
     </ClInclude>
     <ClInclude Include="resource\Image.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\ImageMemoryBarrier.h">
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="resource\ImageSystem.h">

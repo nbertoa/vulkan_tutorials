@@ -164,9 +164,7 @@
     <ClCompile Include="pipeline_stage\RasterizationState.cpp" />
     <ClCompile Include="pipeline_stage\ViewportState.cpp" />
     <ClCompile Include="resource\Buffer.cpp" />
-    <ClCompile Include="resource\Buffers.cpp" />
     <ClCompile Include="resource\Image.cpp" />
-    <ClCompile Include="resource\ImageMemoryBarrier.cpp" />
     <ClCompile Include="resource\ImageSystem.cpp" />
     <ClCompile Include="resource\ImageView.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp" />
@@ -202,9 +200,7 @@
     <ClInclude Include="pipeline_stage\RasterizationState.h" />
     <ClInclude Include="pipeline_stage\ViewportState.h" />
     <ClInclude Include="resource\Buffer.h" />
-    <ClInclude Include="resource\Buffers.h" />
     <ClInclude Include="resource\Image.h" />
-    <ClInclude Include="resource\ImageMemoryBarrier.h" />
     <ClInclude Include="resource\ImageSystem.h" />
     <ClInclude Include="resource\ImageView.h" />
     <ClInclude Include="shader\ShaderModule.h" />

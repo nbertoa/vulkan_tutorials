@@ -57,18 +57,15 @@ DebugMessenger::~DebugMessenger() {
 
 vk::DebugUtilsMessengerCreateInfoEXT
 DebugMessenger::messengerCreateInfo() {
-    vk::DebugUtilsMessengerCreateInfoEXT createInfo = 
-    {
-        vk::DebugUtilsMessengerCreateFlagsEXT(),
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
-        vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
-        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
-        debugCallback
-    };
+    vk::DebugUtilsMessengerCreateInfoEXT info; 
+    info.setMessageSeverity(vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning);
+    info.setMessageType(vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+                        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation);
+    info.setPfnUserCallback(debugCallback);
 
-    return createInfo;
+    return info;
 }
 }

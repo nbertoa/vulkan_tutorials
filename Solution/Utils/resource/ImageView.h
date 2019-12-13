@@ -11,7 +11,7 @@ class DeviceMemory;
 class Image;
 
 //
-// VkImageView wrapper
+// vk::ImageView wrapper
 //
 // Image objects are not directly accessed by pipeline shaders 
 // for reading or writing image data.
@@ -41,24 +41,19 @@ public:
     // * flags describing additional parameters of the image view.
     //
     // Notes: The global logical devices creates the image view.
-    ImageView(const VkFormat format,
+    ImageView(const vk::Format format,
               const Image& image,
-              const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
-              const VkComponentMapping& componentMapping = VkComponentMapping{VK_COMPONENT_SWIZZLE_IDENTITY, 
-                                                                              VK_COMPONENT_SWIZZLE_IDENTITY, 
-                                                                              VK_COMPONENT_SWIZZLE_IDENTITY, 
-                                                                              VK_COMPONENT_SWIZZLE_IDENTITY},
-              const VkImageViewCreateFlags flags = 0);
-    ~ImageView();
+              const vk::ImageViewType viewType = vk::ImageViewType::e2D,
+              const vk::ComponentMapping& componentMapping = vk::ComponentMapping());
     ImageView(ImageView&&) noexcept;
     ImageView(const ImageView&) = delete;
     const ImageView& operator=(const ImageView&) = delete;
 
-    VkImageView
+    vk::ImageView
     vkImageView() const;
 
 private:    
-    VkImageView mImageView = VK_NULL_HANDLE; 
+    vk::UniqueImageView mImageView; 
 };
 }
 

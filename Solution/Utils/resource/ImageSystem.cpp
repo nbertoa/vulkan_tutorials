@@ -33,13 +33,13 @@ ImageSystem::getOrLoadImage(const std::string& imageFilePath,
 
         assert(imageData != nullptr);
 
-        const VkDeviceSize imageSize = static_cast<VkDeviceSize>(textureWidth) * textureHeight * 4;
+        const vk::DeviceSize imageSize = static_cast<vk::DeviceSize>(textureWidth) * textureHeight * 4;
 
         image = new Image(textureWidth,
                           textureHeight,
-                          VK_FORMAT_R8G8B8A8_UNORM,
-                          VK_IMAGE_USAGE_TRANSFER_DST_BIT | 
-                          VK_IMAGE_USAGE_SAMPLED_BIT,
+                          vk::Format::eR8G8B8A8Unorm,
+                          vk::ImageUsageFlagBits::eTransferDst | 
+                          vk::ImageUsageFlagBits::eSampled,
                           vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         image->copyFromDataToDeviceMemory(imageData,

@@ -7,7 +7,7 @@ namespace vk2 {
 //
 // DebugUtilsMessengerEXT wrapper.
 //
-// A VkDebugUtilsMessengerEXT is a messenger object which handles passing 
+// A vk::DebugUtilsMessengerEXT is a messenger object which handles passing 
 // along debug messages to a provided debug callback.
 //
 class DebugMessenger {
