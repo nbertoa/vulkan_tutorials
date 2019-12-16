@@ -6,7 +6,7 @@
 #include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
 #include "Utils/device/PhysicalDevice.h"
-#include "Utils/pipeline_stage/PipelineStates.h"
+#include "Utils/pipeline/PipelineStates.h"
 #include "Utils/shader/ShaderModule.h"
 #include "Utils/shader/ShaderModuleSystem.h"
 #include "Utils/shader/ShaderStages.h"
@@ -75,26 +75,36 @@ App::initBuffers() {
 
 void
 App::recordCommandBuffers() {
-    assert(mCommandBuffers != nullptr);
+    assert(mCommandBuffers.empty() == false);
     assert(mFrameBuffers.empty() == false);
-    for (uint32_t i = 0; i < mCommandBuffers->bufferCount(); ++i) {
-        CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(i);
+    for (size_t i = 0; i < mCommandBuffers.size(); ++i) {
+        vk::CommandBuffer& commandBuffer = mCommandBuffers[i].get();
 
-        commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
+        commandBuffer.begin(vk::CommandBufferBeginInfo {vk::CommandBufferUsageFlagBits::eSimultaneousUse});
 
-        commandBuffer.beginPass(*mRenderPass,
-                                mFrameBuffers[i].get(),
-                                mSwapChain.imageExtent());
+        const vk::ClearColorValue colorValue(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
+        const vk::ClearValue clearValue(colorValue);
+        vk::RenderPassBeginInfo info;
+        info.setRenderArea(vk::Rect2D(vk::Offset2D {0, 0}, mSwapChain.imageExtent()));
+        info.setFramebuffer(mFrameBuffers[i].get());
+        info.setClearValueCount(1);
+        info.setPClearValues(&clearValue);
+        info.setRenderPass(mRenderPass.get());
+        commandBuffer.beginRenderPass(info,
+                                      vk::SubpassContents::eInline);
+                                                        
+        commandBuffer.bindVertexBuffers(0, // first vertex buffer to bind
+                                        {mGpuVertexBuffer->vkBuffer()},
+                                        {0}); // offsets 
 
-        commandBuffer.bindPipeline(*mGraphicsPipeline);
+        commandBuffer.draw(static_cast<uint32_t>(mGpuVertexBuffer->size() / sizeof(PosColorVertex)),
+                           1,
+                           0,
+                           0);
 
-        commandBuffer.bindVertexBuffer(*mGpuVertexBuffer);
+        commandBuffer.endRenderPass();;
 
-        commandBuffer.draw(static_cast<uint32_t>(mGpuVertexBuffer->size() / sizeof(PosColorVertex)));
-
-        commandBuffer.endPass();
-
-        commandBuffer.endRecording();
+        commandBuffer.end();
     }
 }
 
@@ -121,44 +131,29 @@ void
 App::initRenderPass() {
     assert(mRenderPass.get() == VK_NULL_HANDLE);
 
-    std::vector<vk::AttachmentDescription> attachmentDescriptions;
+    vk::RenderPassCreateInfo info;
 
-    // The format of the color attachment should match the format 
-    // of the swap chain images.
-    //
-    // No multisampling
-    //
-    // Using vk::ImageLayout::eUndefined for initial layout means
-    // that we do not care what previous layout the image was in.
-    // We want the image to be ready for presentation using the swap chain 
-    // after rendering, which is why we use ImageLayout::PresentSrcKHR
-    // for the final layout.
-    attachmentDescriptions.emplace_back(vk::AttachmentDescription 
-    {
-        vk::AttachmentDescriptionFlags(),
-        mSwapChain.imageFormat(),
-        vk::SampleCountFlagBits::e1, // sample count
-        vk::AttachmentLoadOp::eClear,
-        vk::AttachmentStoreOp::eStore,
-        vk::AttachmentLoadOp::eDontCare, // depth/stencil buffer
-        vk::AttachmentStoreOp::eDontCare, // depth/stencil buffer
-        vk::ImageLayout::eUndefined,
-        vk::ImageLayout::ePresentSrcKHR
-    });
+    vk::AttachmentDescription attachmentDescription;
+    attachmentDescription.setFormat(mSwapChain.imageFormat());
+    attachmentDescription.setSamples(vk::SampleCountFlagBits::e1);
+    attachmentDescription.setLoadOp(vk::AttachmentLoadOp::eClear);
+    attachmentDescription.setStoreOp(vk::AttachmentStoreOp::eStore);
+    attachmentDescription.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
+    attachmentDescription.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
+    attachmentDescription.setInitialLayout(vk::ImageLayout::eUndefined);
+    attachmentDescription.setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
+    info.setAttachmentCount(1);
+    info.setPAttachments(&attachmentDescription);
 
-    const std::vector<vk::AttachmentReference> colorAttachments {
-        {0, vk::ImageLayout::eColorAttachmentOptimal}
-    };
-    std::vector<vk::SubpassDescription> subpassDescriptions;
-    subpassDescriptions.emplace_back(vk::SubpassDescription
-    {
-        vk::SubpassDescriptionFlags(),
-        vk::PipelineBindPoint::eGraphics,
-        0, // input attachment count
-        nullptr, // input attachments
-        static_cast<uint32_t>(colorAttachments.size()),
-        colorAttachments.data(),
-    });
+    vk::AttachmentReference colorAttachment;
+    colorAttachment.setAttachment(0);
+    colorAttachment.setLayout(vk::ImageLayout::eColorAttachmentOptimal);
+    vk::SubpassDescription subpassDescription;
+    subpassDescription.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
+    subpassDescription.setColorAttachmentCount(1);
+    subpassDescription.setPColorAttachments(&colorAttachment);
+    info.setSubpassCount(1);
+    info.setPSubpasses(&subpassDescription);
 
     // VK_SUBPASS_EXTERNAL: Implicit subpass before or after the render pass 
     // depending on whether it is specified in srcSubpass or dstSubpass.
@@ -181,21 +176,15 @@ App::initRenderPass() {
     subpassDependency.setSrcAccessMask(vk::AccessFlags());
     subpassDependency.setDstAccessMask(vk::AccessFlagBits::eColorAttachmentRead |
                                        vk::AccessFlagBits::eColorAttachmentWrite);
-    std::vector<vk::SubpassDependency> subpassDependencies {subpassDependency};
+    info.setDependencyCount(1);
+    info.setPDependencies(&subpassDependency);
 
-    vk::RenderPassCreateInfo info;
-    info.setAttachmentCount(static_cast<uint32_t>(attachmentDescriptions.size()));
-    info.setPAttachments(attachmentDescriptions.empty() ? nullptr : attachmentDescriptions.data());
-    info.setSubpassCount(static_cast<uint32_t>(subpassDescriptions.size()));
-    info.setPSubpasses(subpassDescriptions.empty() ? nullptr : subpassDescriptions.data());
-    info.setDependencyCount(static_cast<uint32_t>(subpassDependencies.size()));
-    info.setPDependencies(subpassDependencies.empty() ? nullptr : subpassDependencies.data());
     mRenderPass = LogicalDevice::device().createRenderPassUnique(info);
 }
 
 void
 App::submitCommandBufferAndPresent() {
-    assert(mCommandBuffers != nullptr);
+    assert(mCommandBuffers.empty() == false);
 
     const vk::Fence& fence = mFences->nextAvailableFence();
     vk::Device device(LogicalDevice::device());
@@ -208,14 +197,20 @@ App::submitCommandBufferAndPresent() {
     vk::Semaphore renderFinishedSemaphore = mRenderFinishedSemaphores->nextAvailableSemaphore();
 
     const uint32_t swapChainImageIndex = mSwapChain.acquireNextImage(imageAvailableSemaphore);
-    assert(swapChainImageIndex < mCommandBuffers->bufferCount());
+    assert(swapChainImageIndex < static_cast<uint32_t>(mCommandBuffers.size()));
 
-    CommandBuffer& commandBuffer = mCommandBuffers->commandBuffer(swapChainImageIndex);
-    commandBuffer.submit(LogicalDevice::graphicsQueue(),
-                         &imageAvailableSemaphore,
-                         &renderFinishedSemaphore,
-                         fence,
-                         vk::PipelineStageFlagBits::eColorAttachmentOutput);
+    vk::CommandBuffer& commandBuffer = mCommandBuffers[swapChainImageIndex].get();
+    vk::SubmitInfo info;
+    info.setWaitSemaphoreCount(1);
+    info.setPWaitSemaphores(&imageAvailableSemaphore);
+    info.setSignalSemaphoreCount(1);
+    info.setPSignalSemaphores(&renderFinishedSemaphore);
+    info.setCommandBufferCount(1);
+    info.setPCommandBuffers(&commandBuffer);
+    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eColorAttachmentOutput);
+    info.setPWaitDstStageMask(&flags);
+    LogicalDevice::graphicsQueue().submit({info},
+                                          fence);
 
     mSwapChain.present(renderFinishedSemaphore,
                        swapChainImageIndex);
@@ -247,12 +242,14 @@ App::initFrameBuffers() {
 
 void
 App::initCommandBuffers() {
-    assert(mCommandBuffers == nullptr);
+    assert(mCommandBuffers.empty());
     assert(mFrameBuffers.empty() == false);
 
-    mCommandBuffers.reset(new CommandBuffers(mGraphicsCommandPool.get(),
-                                             mFrameBuffers.size(),
-                                             vk::CommandBufferLevel::ePrimary));
+    vk::CommandBufferAllocateInfo info;
+    info.setCommandBufferCount(static_cast<uint32_t>(mFrameBuffers.size()));
+    info.setLevel(vk::CommandBufferLevel::ePrimary);
+    info.setCommandPool(mGraphicsCommandPool.get());
+    mCommandBuffers = LogicalDevice::device().allocateCommandBuffersUnique(info);
 }
 
 void

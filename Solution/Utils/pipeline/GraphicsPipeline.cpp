@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include "../device/LogicalDevice.h"
-#include "../pipeline_stage/PipelineStates.h"
+#include "../pipeline/PipelineStates.h"
 #include "../shader/ShaderStages.h"
 
 namespace vulkan {

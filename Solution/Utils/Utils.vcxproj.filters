@@ -8,39 +8,6 @@
       <Filter>vertex</Filter>
     </ClCompile>
     <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="pipeline_stage\VertexInputState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\InputAssemblyState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\RasterizationState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\MultisampleState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\ColorBlendState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\DepthStencilState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\TessellationState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\DynamicState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\ViewportState.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline_stage\PipelineStates.cpp">
-      <Filter>pipeline_stage</Filter>
-    </ClCompile>
     <ClCompile Include="device\LogicalDevice.cpp">
       <Filter>device</Filter>
     </ClCompile>
@@ -58,15 +25,6 @@
     </ClCompile>
     <ClCompile Include="sync\Semaphores.cpp">
       <Filter>sync</Filter>
-    </ClCompile>
-    <ClCompile Include="command\CommandBuffer.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
-    <ClCompile Include="command\CommandBuffers.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
-      <Filter>pipeline</Filter>
     </ClCompile>
     <ClCompile Include="shader\ShaderModule.cpp">
       <Filter>shader</Filter>
@@ -87,6 +45,42 @@
       <Filter>vertex</Filter>
     </ClCompile>
     <ClCompile Include="SystemInitializer.cpp" />
+    <ClCompile Include="pipeline\ColorBlendState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\DepthStencilState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\DynamicState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\InputAssemblyState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\MultisampleState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\PipelineStates.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\RasterizationState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\TessellationState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\VertexInputState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\ViewportState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline\ColorBlendAttachmentState.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
@@ -96,39 +90,6 @@
       <Filter>vertex</Filter>
     </ClInclude>
     <ClInclude Include="Instance.h" />
-    <ClInclude Include="pipeline_stage\VertexInputState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\InputAssemblyState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\RasterizationState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\MultisampleState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\ColorBlendState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\DepthStencilState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\TessellationState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\DynamicState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\ViewportState.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline_stage\PipelineStates.h">
-      <Filter>pipeline_stage</Filter>
-    </ClInclude>
     <ClInclude Include="device\LogicalDevice.h">
       <Filter>device</Filter>
     </ClInclude>
@@ -146,15 +107,6 @@
     </ClInclude>
     <ClInclude Include="sync\Semaphores.h">
       <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="command\CommandBuffer.h">
-      <Filter>command</Filter>
-    </ClInclude>
-    <ClInclude Include="command\CommandBuffers.h">
-      <Filter>command</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline\GraphicsPipeline.h">
-      <Filter>pipeline</Filter>
     </ClInclude>
     <ClInclude Include="shader\ShaderModule.h">
       <Filter>shader</Filter>
@@ -175,13 +127,46 @@
       <Filter>vertex</Filter>
     </ClInclude>
     <ClInclude Include="SystemInitializer.h" />
+    <ClInclude Include="pipeline\ColorBlendAttachmentState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\ColorBlendState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\DepthStencilState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\DynamicState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\GraphicsPipeline.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\InputAssemblyState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\MultisampleState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\PipelineStates.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\RasterizationState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\TessellationState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\VertexInputState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline\ViewportState.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
       <UniqueIdentifier>{607ff5e5-1de1-411c-830d-51e93f91f22f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="pipeline_stage">
-      <UniqueIdentifier>{41d2809e-7e83-4cb5-bec5-3437e46d83de}</UniqueIdentifier>
     </Filter>
     <Filter Include="device">
       <UniqueIdentifier>{db5a2c64-da4a-4e7f-b71b-da28b37a3bdb}</UniqueIdentifier>
@@ -192,14 +177,11 @@
     <Filter Include="sync">
       <UniqueIdentifier>{0877aaff-82c1-4d43-9600-09c1b6c032bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="pipeline">
-      <UniqueIdentifier>{8c89773a-a00c-474d-8a96-0a3bd99189e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="command">
-      <UniqueIdentifier>{5c4d4d16-fadd-4c97-b80a-fcc715d3d3c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="shader">
       <UniqueIdentifier>{ad34e20b-2438-4b7b-9d30-adfedbaef52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{3fa089e4-78be-458d-a1e0-0ba0e8c5e262}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

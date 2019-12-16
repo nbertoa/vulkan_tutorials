@@ -6,9 +6,8 @@
 #include "MatrixUBO.h"
 
 #include "Utils/SwapChain.h"
-#include "Utils/command/CommandBuffers.h"
 #include "Utils/pipeline/GraphicsPipeline.h"
-#include "Utils/pipeline_stage/PipelineStates.h"
+#include "Utils/pipeline/PipelineStates.h"
 #include "Utils/resource/Buffer.h"
 #include "Utils/sync/Fences.h"
 #include "Utils/sync/Semaphores.h"
@@ -78,7 +77,7 @@ protected:
     vk::UniqueRenderPass mRenderPass;
     std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 
-    std::unique_ptr<vulkan::CommandBuffers> mCommandBuffers;
+    std::vector<vk::UniqueCommandBuffer> mCommandBuffers;
 
     std::unique_ptr<vulkan::GraphicsPipeline> mGraphicsPipeline;
     vulkan::PipelineStates mPipelineStates;

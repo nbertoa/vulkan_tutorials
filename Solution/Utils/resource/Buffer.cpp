@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -123,23 +122,29 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                           std::numeric_limits<uint64_t>::max());
     LogicalDevice::device().resetFences({fence.get()});
     
-    CommandBuffer commandBuffer(transferCommandPool,
-                                vk::CommandBufferLevel::ePrimary);
-    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    vk::CommandBufferAllocateInfo allocInfo;
+    allocInfo.setCommandBufferCount(1);
+    allocInfo.setCommandPool(transferCommandPool);
+    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+    vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
+
+    commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
     vk::BufferCopy bufferCopy;
     bufferCopy.size = sourceBuffer.size();
-    commandBuffer.copyBuffer(sourceBuffer,
-                             *this,
-                             bufferCopy);
+    commandBuffer->copyBuffer(sourceBuffer.vkBuffer(),
+                              mBuffer,
+                              {bufferCopy});
 
-    commandBuffer.endRecording();
-
-    commandBuffer.submit(LogicalDevice::transferQueue(),
-                         nullptr,
-                         nullptr,
-                         fence.get(),
-                         vk::PipelineStageFlagBits::eTransfer);
+    commandBuffer->end();
+    
+    vk::SubmitInfo info;
+    info.setCommandBufferCount(1);
+    info.setPCommandBuffers(&commandBuffer.get());
+    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
+    info.setPWaitDstStageMask(&flags);
+    LogicalDevice::transferQueue().submit({info},
+                                          fence.get());
 
     LogicalDevice::device().waitForFences({fence.get()},
                                           VK_TRUE,

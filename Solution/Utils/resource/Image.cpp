@@ -1,7 +1,6 @@
 #include "Image.h"
 
 #include "Buffer.h"
-#include "../command/CommandBuffer.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -109,9 +108,13 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                          std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
-    CommandBuffer commandBuffer(transferCommandPool,
-                                vk::CommandBufferLevel::ePrimary);
-    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    vk::CommandBufferAllocateInfo allocInfo;
+    allocInfo.setCommandBufferCount(1);
+    allocInfo.setCommandPool(transferCommandPool);
+    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+    vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
+
+    commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
     vk::BufferImageCopy bufferImageCopy;
     vk::ImageSubresourceLayers imageSubresource;
@@ -119,17 +122,20 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     imageSubresource.setLayerCount(1);
     bufferImageCopy.setImageSubresource(imageSubresource);
     bufferImageCopy.setImageExtent(mExtent);
-    commandBuffer.copyBufferToImage(stagingBuffer,
-                                    *this,
-                                    bufferImageCopy);
+    commandBuffer->copyBufferToImage(stagingBuffer.vkBuffer(),
+                                     mImage,
+                                     vk::ImageLayout::eTransferDstOptimal,
+                                     {bufferImageCopy});
 
-    commandBuffer.endRecording();
-
-    commandBuffer.submit(LogicalDevice::transferQueue(),
-                         nullptr,
-                         nullptr,
-                         fence.get(),
-                         vk::PipelineStageFlagBits::eTransfer);
+    commandBuffer->end();
+    
+    vk::SubmitInfo info;
+    info.setCommandBufferCount(1);
+    info.setPCommandBuffers(&commandBuffer.get());
+    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
+    info.setPWaitDstStageMask(&flags);
+    LogicalDevice::transferQueue().submit({info},
+                                          fence.get());
 
     device.waitForFences({fence.get()},
                          VK_TRUE,
@@ -151,9 +157,13 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
                          std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
-    CommandBuffer commandBuffer(transitionCommandPool,
-                                vk::CommandBufferLevel::ePrimary);
-    commandBuffer.beginRecording(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    vk::CommandBufferAllocateInfo allocInfo;
+    allocInfo.setCommandBufferCount(1);
+    allocInfo.setCommandPool(transitionCommandPool);
+    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+    vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
+
+    commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
     // Initialize to the first value in the enum
     vk::AccessFlagBits destAccessType = vk::AccessFlagBits::eIndirectCommandRead;
@@ -200,17 +210,22 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
     barrier.setSrcAccessMask(mLastAccessType);
     barrier.setDstAccessMask(destAccessType);
 
-    commandBuffer.imagePipelineBarrier(barrier,
-                                       mLastPipelineStages,
-                                       destPipelineStages);
+    commandBuffer->pipelineBarrier(mLastPipelineStages,
+                                   destPipelineStages,
+                                   vk::DependencyFlagBits::eByRegion,
+                                   {}, // memory barriers
+                                   {}, // buffer memory barriers
+                                   {barrier});
 
-    commandBuffer.endRecording();
+    commandBuffer->end();
 
-    commandBuffer.submit(LogicalDevice::transferQueue(),
-                         nullptr,
-                         nullptr,
-                         fence.get(),
-                         vk::PipelineStageFlagBits::eTransfer);
+    vk::SubmitInfo info;
+    info.setCommandBufferCount(1);
+    info.setPCommandBuffers(&commandBuffer.get());
+    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
+    info.setPWaitDstStageMask(&flags);
+    LogicalDevice::transferQueue().submit({info},
+                                          fence.get());
 
     device.waitForFences({fence.get()},
                          VK_TRUE,
