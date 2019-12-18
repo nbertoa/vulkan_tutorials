@@ -157,7 +157,7 @@ private:
                 
     vk::Extent3D mExtent;
     vk::ImageLayout mLastLayout;
-    vk::AccessFlagBits mLastAccessType;
+    vk::AccessFlags mLastAccessType;
     vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
     vk::Image mImage;    

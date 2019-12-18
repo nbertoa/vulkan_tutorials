@@ -311,17 +311,17 @@ App::initRenderPass() {
 
     vk::RenderPassCreateInfo info;
 
-    vk::AttachmentDescription attachmentDescription;
-    attachmentDescription.setFormat(mSwapChain.imageFormat());
-    attachmentDescription.setSamples(vk::SampleCountFlagBits::e1);
-    attachmentDescription.setLoadOp(vk::AttachmentLoadOp::eClear);
-    attachmentDescription.setStoreOp(vk::AttachmentStoreOp::eStore);
-    attachmentDescription.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
-    attachmentDescription.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
-    attachmentDescription.setInitialLayout(vk::ImageLayout::eUndefined);
-    attachmentDescription.setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
+    vk::AttachmentDescription attachmentDesc;
+    attachmentDesc.setFormat(mSwapChain.imageFormat());
+    attachmentDesc.setSamples(vk::SampleCountFlagBits::e1);
+    attachmentDesc.setLoadOp(vk::AttachmentLoadOp::eClear);
+    attachmentDesc.setStoreOp(vk::AttachmentStoreOp::eStore);
+    attachmentDesc.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
+    attachmentDesc.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
+    attachmentDesc.setInitialLayout(vk::ImageLayout::eUndefined);
+    attachmentDesc.setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
     info.setAttachmentCount(1);
-    info.setPAttachments(&attachmentDescription);
+    info.setPAttachments(&attachmentDesc);
 
     vk::AttachmentReference colorAttachment;
     colorAttachment.setAttachment(0);

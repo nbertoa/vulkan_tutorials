@@ -157,16 +157,16 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
                          std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
+    // Command buffer for the transition
     vk::CommandBufferAllocateInfo allocInfo;
     allocInfo.setCommandBufferCount(1);
     allocInfo.setCommandPool(transitionCommandPool);
     allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
     vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
-
     commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
     // Initialize to the first value in the enum
-    vk::AccessFlagBits destAccessType = vk::AccessFlagBits::eIndirectCommandRead;
+    vk::AccessFlags destAccessType;
     vk::PipelineStageFlagBits destPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
     // Transfer writes must occur in the pipeline transfer stage. 
@@ -194,6 +194,12 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
 
         assert(mLastPipelineStages == vk::PipelineStageFlagBits::eTransfer);
         destPipelineStages = vk::PipelineStageFlagBits::eFragmentShader;
+    } else if (mLastLayout == vk::ImageLayout::eUndefined &&
+               newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+        destAccessType = vk::AccessFlagBits::eDepthStencilAttachmentRead |
+                         vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+
+        destPipelineStages = vk::PipelineStageFlagBits::eEarlyFragmentTests;
     } else {
         assert(false && "Unsupported image layout transition");
     }
@@ -203,7 +209,11 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
     barrier.setOldLayout(mLastLayout);
     barrier.setNewLayout(newImageLayout);
     vk::ImageSubresourceRange imageSubresourceRange;
-    imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    if (newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+        imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eDepth);
+    } else {
+        imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    }    
     imageSubresourceRange.setLevelCount(1);
     imageSubresourceRange.setLayerCount(1);
     barrier.setSubresourceRange(imageSubresourceRange);
