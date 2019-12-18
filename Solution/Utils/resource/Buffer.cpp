@@ -2,12 +2,6 @@
 
 #include <cassert>
 
-<<<<<<< HEAD
-#include "DeviceMemory.h"
-#include "../DebugUtils.h"
-#include "../command/CommandBuffer.h"
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -134,14 +128,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
     vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
 
-<<<<<<< HEAD
-    CommandBuffer commandBuffer(transferCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-=======
     commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
 
     vk::BufferCopy bufferCopy;
     bufferCopy.size = sourceBuffer.size();

@@ -18,6 +18,71 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DebugMessenger.cpp" />
+    <ClCompile Include="device\LogicalDevice.cpp" />
+    <ClCompile Include="device\PhysicalDevice.cpp" />
+    <ClCompile Include="device\PhysicalDeviceData.cpp" />
+    <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="pipeline\ColorBlendAttachmentState.cpp" />
+    <ClCompile Include="pipeline\ColorBlendState.cpp" />
+    <ClCompile Include="pipeline\DepthStencilState.cpp" />
+    <ClCompile Include="pipeline\DynamicState.cpp" />
+    <ClCompile Include="pipeline\GraphicsPipeline.cpp" />
+    <ClCompile Include="pipeline\InputAssemblyState.cpp" />
+    <ClCompile Include="pipeline\MultisampleState.cpp" />
+    <ClCompile Include="pipeline\PipelineStates.cpp" />
+    <ClCompile Include="pipeline\RasterizationState.cpp" />
+    <ClCompile Include="pipeline\TessellationState.cpp" />
+    <ClCompile Include="pipeline\VertexInputState.cpp" />
+    <ClCompile Include="pipeline\ViewportState.cpp" />
+    <ClCompile Include="resource\Buffer.cpp" />
+    <ClCompile Include="resource\Image.cpp" />
+    <ClCompile Include="resource\ImageSystem.cpp" />
+    <ClCompile Include="shader\ShaderModule.cpp" />
+    <ClCompile Include="shader\ShaderModuleSystem.cpp" />
+    <ClCompile Include="shader\ShaderStages.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="sync\Fences.cpp" />
+    <ClCompile Include="sync\Semaphores.cpp" />
+    <ClCompile Include="SystemInitializer.cpp" />
+    <ClCompile Include="vertex\PosColorVertex.cpp" />
+    <ClCompile Include="vertex\PosTexCoordVertex.cpp" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DebugMessenger.h" />
+    <ClInclude Include="device\LogicalDevice.h" />
+    <ClInclude Include="device\PhysicalDevice.h" />
+    <ClInclude Include="device\PhysicalDeviceData.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="pipeline\ColorBlendAttachmentState.h" />
+    <ClInclude Include="pipeline\ColorBlendState.h" />
+    <ClInclude Include="pipeline\DepthStencilState.h" />
+    <ClInclude Include="pipeline\DynamicState.h" />
+    <ClInclude Include="pipeline\GraphicsPipeline.h" />
+    <ClInclude Include="pipeline\InputAssemblyState.h" />
+    <ClInclude Include="pipeline\MultisampleState.h" />
+    <ClInclude Include="pipeline\PipelineStates.h" />
+    <ClInclude Include="pipeline\RasterizationState.h" />
+    <ClInclude Include="pipeline\TessellationState.h" />
+    <ClInclude Include="pipeline\VertexInputState.h" />
+    <ClInclude Include="pipeline\ViewportState.h" />
+    <ClInclude Include="resource\Buffer.h" />
+    <ClInclude Include="resource\Image.h" />
+    <ClInclude Include="resource\ImageSystem.h" />
+    <ClInclude Include="shader\ShaderModule.h" />
+    <ClInclude Include="shader\ShaderModuleSystem.h" />
+    <ClInclude Include="shader\ShaderStages.h" />
+    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="sync\Fences.h" />
+    <ClInclude Include="sync\Semaphores.h" />
+    <ClInclude Include="SystemInitializer.h" />
+    <ClInclude Include="vertex\PosColorVertex.h" />
+    <ClInclude Include="vertex\PosTexCoord.h" />
+    <ClInclude Include="vertex\PosTexCoordVertex.h" />
+    <ClInclude Include="Window.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{CC976F5E-7334-41AE-BAD7-3DFD623784B1}</ProjectGuid>
@@ -142,112 +207,6 @@
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="command\CommandBuffer.cpp" />
-    <ClCompile Include="command\CommandBuffers.cpp" />
-    <ClCompile Include="DebugUtils.cpp" />
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClCompile Include="device\LogicalDevice.cpp" />
-    <ClCompile Include="device\PhysicalDevice.cpp" />
-    <ClCompile Include="device\PhysicalDeviceData.cpp" />
-    <ClCompile Include="GraphicsPipeline.cpp" />
-    <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="DebugMessenger.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp" />
-    <ClCompile Include="pipeline_stage\ColorBlendState.cpp" />
-    <ClCompile Include="pipeline_stage\DepthStencilState.cpp" />
-    <ClCompile Include="pipeline_stage\DynamicState.cpp" />
-    <ClCompile Include="pipeline_stage\InputAssemblyState.cpp" />
-    <ClCompile Include="pipeline_stage\MultisampleState.cpp" />
-    <ClCompile Include="pipeline_stage\PipelineStates.cpp" />
-    <ClCompile Include="pipeline_stage\TessellationState.cpp" />
-    <ClCompile Include="pipeline_stage\VertexInputState.cpp" />
-    <ClCompile Include="pipeline_stage\RasterizationState.cpp" />
-    <ClCompile Include="pipeline_stage\ViewportState.cpp" />
-=======
-    <ClCompile Include="pipeline\ColorBlendAttachmentState.cpp" />
-    <ClCompile Include="pipeline\ColorBlendState.cpp" />
-    <ClCompile Include="pipeline\DepthStencilState.cpp" />
-    <ClCompile Include="pipeline\DynamicState.cpp" />
-    <ClCompile Include="pipeline\GraphicsPipeline.cpp" />
-    <ClCompile Include="pipeline\InputAssemblyState.cpp" />
-    <ClCompile Include="pipeline\MultisampleState.cpp" />
-    <ClCompile Include="pipeline\PipelineStates.cpp" />
-    <ClCompile Include="pipeline\RasterizationState.cpp" />
-    <ClCompile Include="pipeline\TessellationState.cpp" />
-    <ClCompile Include="pipeline\VertexInputState.cpp" />
-    <ClCompile Include="pipeline\ViewportState.cpp" />
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClCompile Include="resource\Buffer.cpp" />
-    <ClCompile Include="resource\Image.cpp" />
-    <ClCompile Include="resource\ImageSystem.cpp" />
-    <ClCompile Include="shader\ShaderModule.cpp" />
-    <ClCompile Include="shader\ShaderModuleSystem.cpp" />
-    <ClCompile Include="shader\ShaderStages.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="sync\Fences.cpp" />
-    <ClCompile Include="sync\Semaphores.cpp" />
-    <ClCompile Include="SystemInitializer.cpp" />
-    <ClCompile Include="vertex\PosColorVertex.cpp" />
-    <ClCompile Include="vertex\PosTexCoordVertex.cpp" />
-    <ClCompile Include="Window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-<<<<<<< HEAD
-    <ClInclude Include="command\CommandBuffer.h" />
-    <ClInclude Include="command\CommandBuffers.h" />
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClInclude Include="device\LogicalDevice.h" />
-    <ClInclude Include="device\PhysicalDevice.h" />
-    <ClInclude Include="device\PhysicalDeviceData.h" />
-    <ClInclude Include="GraphicsPipeline.h" />
-    <ClInclude Include="Instance.h" />
-    <ClInclude Include="DebugMessenger.h" />
-<<<<<<< HEAD
-    <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />
-    <ClInclude Include="pipeline_stage\ColorBlendState.h" />
-    <ClInclude Include="pipeline_stage\DepthStencilState.h" />
-    <ClInclude Include="pipeline_stage\DynamicState.h" />
-    <ClInclude Include="pipeline_stage\InputAssemblyState.h" />
-    <ClInclude Include="pipeline_stage\MultisampleState.h" />
-    <ClInclude Include="pipeline_stage\PipelineStates.h" />
-    <ClInclude Include="pipeline_stage\TessellationState.h" />
-    <ClInclude Include="pipeline_stage\VertexInputState.h" />
-    <ClInclude Include="pipeline_stage\RasterizationState.h" />
-    <ClInclude Include="pipeline_stage\ViewportState.h" />
-=======
-    <ClInclude Include="pipeline\ColorBlendAttachmentState.h" />
-    <ClInclude Include="pipeline\ColorBlendState.h" />
-    <ClInclude Include="pipeline\DepthStencilState.h" />
-    <ClInclude Include="pipeline\DynamicState.h" />
-    <ClInclude Include="pipeline\GraphicsPipeline.h" />
-    <ClInclude Include="pipeline\InputAssemblyState.h" />
-    <ClInclude Include="pipeline\MultisampleState.h" />
-    <ClInclude Include="pipeline\PipelineStates.h" />
-    <ClInclude Include="pipeline\RasterizationState.h" />
-    <ClInclude Include="pipeline\TessellationState.h" />
-    <ClInclude Include="pipeline\VertexInputState.h" />
-    <ClInclude Include="pipeline\ViewportState.h" />
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClInclude Include="resource\Buffer.h" />
-    <ClInclude Include="resource\Image.h" />
-    <ClInclude Include="resource\ImageSystem.h" />
-    <ClInclude Include="shader\ShaderModule.h" />
-    <ClInclude Include="shader\ShaderModuleSystem.h" />
-    <ClInclude Include="shader\ShaderStages.h" />
-    <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="sync\Fences.h" />
-    <ClInclude Include="sync\Semaphores.h" />
-    <ClInclude Include="SystemInitializer.h" />
-    <ClInclude Include="vertex\PosColorVertex.h" />
-    <ClInclude Include="vertex\PosTexCoordVertex.h" />
-    <ClInclude Include="Window.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

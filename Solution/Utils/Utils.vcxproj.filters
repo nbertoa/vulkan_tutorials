@@ -1,13 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="DebugMessenger.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="vertex\PosColorVertex.cpp">
-      <Filter>vertex</Filter>
-    </ClCompile>
-    <ClCompile Include="Instance.cpp" />
+    <Filter Include="device">
+      <UniqueIdentifier>{9a2ce4ef-f2b9-4796-9cd0-d99b2675fd0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{2c430cf1-3dea-4277-b6b0-f60454b1e2e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{af020856-4bba-4ba2-b079-65815101df67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{bd00c7f9-1504-4fa1-b59f-9ec3f9169d99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sync">
+      <UniqueIdentifier>{570039db-9f8a-426c-b7b4-7e880cfea6b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vertex">
+      <UniqueIdentifier>{f3d62d02-27f0-4947-b987-6f8859ab4fac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="device\LogicalDevice.cpp">
       <Filter>device</Filter>
     </ClCompile>
@@ -17,46 +30,9 @@
     <ClCompile Include="device\PhysicalDeviceData.cpp">
       <Filter>device</Filter>
     </ClCompile>
-    <ClCompile Include="resource\Buffer.cpp">
-      <Filter>resource</Filter>
+    <ClCompile Include="pipeline\ColorBlendAttachmentState.cpp">
+      <Filter>pipeline</Filter>
     </ClCompile>
-    <ClCompile Include="sync\Fences.cpp">
-      <Filter>sync</Filter>
-    </ClCompile>
-    <ClCompile Include="sync\Semaphores.cpp">
-      <Filter>sync</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="command\CommandBuffer.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
-    <ClCompile Include="command\CommandBuffers.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClCompile Include="shader\ShaderModule.cpp">
-      <Filter>shader</Filter>
-    </ClCompile>
-    <ClCompile Include="shader\ShaderModuleSystem.cpp">
-      <Filter>shader</Filter>
-    </ClCompile>
-    <ClCompile Include="shader\ShaderStages.cpp">
-      <Filter>shader</Filter>
-    </ClCompile>
-    <ClCompile Include="resource\Image.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
-    <ClCompile Include="resource\ImageSystem.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
-    <ClCompile Include="vertex\PosTexCoordVertex.cpp">
-      <Filter>vertex</Filter>
-    </ClCompile>
-    <ClCompile Include="SystemInitializer.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="GraphicsPipeline.cpp" />
-=======
     <ClCompile Include="pipeline\ColorBlendState.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
@@ -64,9 +40,6 @@
       <Filter>pipeline</Filter>
     </ClCompile>
     <ClCompile Include="pipeline\DynamicState.cpp">
-      <Filter>pipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
     <ClCompile Include="pipeline\InputAssemblyState.cpp">
@@ -90,19 +63,46 @@
     <ClCompile Include="pipeline\ViewportState.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
-    <ClCompile Include="pipeline\ColorBlendAttachmentState.cpp">
+    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
       <Filter>pipeline</Filter>
     </ClCompile>
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
+    <ClCompile Include="resource\Buffer.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\Image.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource\ImageSystem.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="shader\ShaderModule.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="shader\ShaderModuleSystem.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="shader\ShaderStages.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Fences.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="sync\Semaphores.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
+    <ClCompile Include="vertex\PosColorVertex.cpp">
+      <Filter>vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="vertex\PosTexCoordVertex.cpp">
+      <Filter>vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMessenger.cpp" />
+    <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="SystemInitializer.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugMessenger.h" />
-    <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="vertex\PosColorVertex.h">
-      <Filter>vertex</Filter>
-    </ClInclude>
-    <ClInclude Include="Instance.h" />
     <ClInclude Include="device\LogicalDevice.h">
       <Filter>device</Filter>
     </ClInclude>
@@ -112,46 +112,6 @@
     <ClInclude Include="device\PhysicalDeviceData.h">
       <Filter>device</Filter>
     </ClInclude>
-    <ClInclude Include="resource\Buffer.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\Fences.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\Semaphores.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="command\CommandBuffer.h">
-      <Filter>command</Filter>
-    </ClInclude>
-    <ClInclude Include="command\CommandBuffers.h">
-      <Filter>command</Filter>
-    </ClInclude>
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <ClInclude Include="shader\ShaderModule.h">
-      <Filter>shader</Filter>
-    </ClInclude>
-    <ClInclude Include="shader\ShaderModuleSystem.h">
-      <Filter>shader</Filter>
-    </ClInclude>
-    <ClInclude Include="shader\ShaderStages.h">
-      <Filter>shader</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\Image.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\ImageSystem.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="vertex\PosTexCoordVertex.h">
-      <Filter>vertex</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemInitializer.h" />
-<<<<<<< HEAD
-    <ClInclude Include="GraphicsPipeline.h" />
-=======
     <ClInclude Include="pipeline\ColorBlendAttachmentState.h">
       <Filter>pipeline</Filter>
     </ClInclude>
@@ -162,9 +122,6 @@
       <Filter>pipeline</Filter>
     </ClInclude>
     <ClInclude Include="pipeline\DynamicState.h">
-      <Filter>pipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline\GraphicsPipeline.h">
       <Filter>pipeline</Filter>
     </ClInclude>
     <ClInclude Include="pipeline\InputAssemblyState.h">
@@ -188,32 +145,46 @@
     <ClInclude Include="pipeline\ViewportState.h">
       <Filter>pipeline</Filter>
     </ClInclude>
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="vertex">
-      <UniqueIdentifier>{607ff5e5-1de1-411c-830d-51e93f91f22f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="device">
-      <UniqueIdentifier>{db5a2c64-da4a-4e7f-b71b-da28b37a3bdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resource">
-      <UniqueIdentifier>{5f27a43c-0c6a-4ae9-9ad7-4cdf9b2d9d93}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sync">
-      <UniqueIdentifier>{0877aaff-82c1-4d43-9600-09c1b6c032bc}</UniqueIdentifier>
-    </Filter>
-<<<<<<< HEAD
-    <Filter Include="command">
-      <UniqueIdentifier>{5c4d4d16-fadd-4c97-b80a-fcc715d3d3c3}</UniqueIdentifier>
-    </Filter>
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
-    <Filter Include="shader">
-      <UniqueIdentifier>{ad34e20b-2438-4b7b-9d30-adfedbaef52c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="pipeline">
-      <UniqueIdentifier>{3fa089e4-78be-458d-a1e0-0ba0e8c5e262}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="pipeline\GraphicsPipeline.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\Buffer.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\Image.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ImageSystem.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\ShaderModule.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\ShaderModuleSystem.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\ShaderStages.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Fences.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Semaphores.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex\PosColorVertex.h">
+      <Filter>vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex\PosTexCoord.h">
+      <Filter>vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex\PosTexCoordVertex.h">
+      <Filter>vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMessenger.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="SystemInitializer.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
 </Project>

@@ -2,16 +2,9 @@
 
 #include <cassert>
 
-<<<<<<< HEAD:Solution/Utils/GraphicsPipeline.cpp
-#include "DebugUtils.h"
-#include "device/LogicalDevice.h"
-#include "pipeline_stage/PipelineStates.h"
-#include "shader/ShaderStages.h"
-=======
 #include "../device/LogicalDevice.h"
 #include "../pipeline/PipelineStates.h"
 #include "../shader/ShaderStages.h"
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293:Solution/Utils/pipeline/GraphicsPipeline.cpp
 
 namespace vulkan {
 GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,

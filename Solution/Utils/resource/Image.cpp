@@ -1,13 +1,6 @@
 #include "Image.h"
 
 #include "Buffer.h"
-<<<<<<< HEAD
-#include "DeviceMemory.h"
-#include "ImageMemoryBarrier.h"
-#include "../DebugUtils.h"
-#include "../command/CommandBuffer.h"
-=======
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -115,38 +108,6 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                          std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
-<<<<<<< HEAD
-    CommandBuffer commandBuffer(transferCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-    VkBufferImageCopy bufferImageCopy = {};
-    bufferImageCopy.bufferOffset = 0;
-    bufferImageCopy.bufferRowLength = 0;
-    bufferImageCopy.bufferImageHeight = 0;
-    bufferImageCopy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    bufferImageCopy.imageSubresource.mipLevel = 0;
-    bufferImageCopy.imageSubresource.baseArrayLayer = 0;
-    bufferImageCopy.imageSubresource.layerCount = 1;
-    bufferImageCopy.imageOffset = {0, 0, 0};
-    bufferImageCopy.imageExtent = mExtent;
-    commandBuffer.copyBufferToImage(stagingBuffer,
-                                    *this,
-                                    bufferImageCopy);
-
-    commandBuffer.endRecording();
-
-    commandBuffer.submit(LogicalDevice::transferQueue(),
-                         nullptr,
-                         nullptr,
-                         fence.get(),
-                         VK_PIPELINE_STAGE_TRANSFER_BIT);
-
-    vkChecker(device.waitForFences({fence.get()},
-                                   VK_TRUE,
-                                   std::numeric_limits<uint64_t>::max()));
-=======
     vk::CommandBufferAllocateInfo allocInfo;
     allocInfo.setCommandBufferCount(1);
     allocInfo.setCommandPool(transferCommandPool);
@@ -179,7 +140,6 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     device.waitForFences({fence.get()},
                          VK_TRUE,
                          std::numeric_limits<uint64_t>::max());
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
 }
 
 void
@@ -197,12 +157,6 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
                          std::numeric_limits<uint64_t>::max());
     device.resetFences({fence.get()});
 
-<<<<<<< HEAD
-    CommandBuffer commandBuffer(transitionCommandPool,
-                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-=======
     vk::CommandBufferAllocateInfo allocInfo;
     allocInfo.setCommandBufferCount(1);
     allocInfo.setCommandPool(transitionCommandPool);
@@ -210,7 +164,6 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout,
     vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
 
     commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
->>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293
 
     // Initialize to the first value in the enum
     vk::AccessFlagBits destAccessType = vk::AccessFlagBits::eIndirectCommandRead;
