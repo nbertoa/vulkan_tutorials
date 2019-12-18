@@ -3,10 +3,9 @@
 #include <cassert>
 
 #include "CommandBuffer.h"
-#include "CommandPool.h"
 #include "../DebugUtils.h"
+#include "../GraphicsPipeline.h"
 #include "../device/LogicalDevice.h"
-#include "../pipeline/GraphicsPipeline.h"
 
 namespace vk2 {
 CommandBuffers::CommandBuffers(const CommandPool& commandPool,

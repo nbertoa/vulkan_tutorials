@@ -71,12 +71,6 @@
     <ClCompile Include="command\CommandBuffers.cpp">
       <Filter>command</Filter>
     </ClCompile>
-    <ClCompile Include="command\CommandPool.cpp">
-      <Filter>command</Filter>
-    </ClCompile>
-    <ClCompile Include="pipeline\GraphicsPipeline.cpp">
-      <Filter>pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="shader\ShaderModule.cpp">
       <Filter>shader</Filter>
     </ClCompile>
@@ -103,6 +97,7 @@
       <Filter>vertex</Filter>
     </ClCompile>
     <ClCompile Include="SystemInitializer.cpp" />
+    <ClCompile Include="GraphicsPipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMessenger.h" />
@@ -176,12 +171,6 @@
     <ClInclude Include="command\CommandBuffers.h">
       <Filter>command</Filter>
     </ClInclude>
-    <ClInclude Include="command\CommandPool.h">
-      <Filter>command</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline\GraphicsPipeline.h">
-      <Filter>pipeline</Filter>
-    </ClInclude>
     <ClInclude Include="shader\ShaderModule.h">
       <Filter>shader</Filter>
     </ClInclude>
@@ -207,6 +196,7 @@
       <Filter>vertex</Filter>
     </ClInclude>
     <ClInclude Include="SystemInitializer.h" />
+    <ClInclude Include="GraphicsPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vertex">
@@ -223,9 +213,6 @@
     </Filter>
     <Filter Include="sync">
       <UniqueIdentifier>{0877aaff-82c1-4d43-9600-09c1b6c032bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="pipeline">
-      <UniqueIdentifier>{8c89773a-a00c-474d-8a96-0a3bd99189e5}</UniqueIdentifier>
     </Filter>
     <Filter Include="command">
       <UniqueIdentifier>{5c4d4d16-fadd-4c97-b80a-fcc715d3d3c3}</UniqueIdentifier>

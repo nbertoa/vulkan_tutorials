@@ -5,7 +5,6 @@
 #include "ImageMemoryBarrier.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
-#include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 
 namespace vk2 {
@@ -118,7 +117,10 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence.get()});
 
-    CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
+    CommandBuffer commandBuffer(transferCommandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     VkBufferImageCopy bufferImageCopy = {};
     bufferImageCopy.bufferOffset = 0;
@@ -162,7 +164,10 @@ Image::transitionImageLayout(const VkImageLayout newImageLayout,
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence.get()});
 
-    CommandBuffer commandBuffer = transitionCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
+    CommandBuffer commandBuffer(transitionCommandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     VkAccessFlags destAccessType = 0;
     VkPipelineStageFlags destPipelineStages = 0;

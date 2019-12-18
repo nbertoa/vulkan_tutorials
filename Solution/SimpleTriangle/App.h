@@ -1,10 +1,9 @@
 #ifndef APP
 #define APP
 
+#include "Utils/GraphicsPipeline.h"
 #include "Utils/SwapChain.h"
 #include "Utils/command/CommandBuffers.h"
-#include "Utils/command/CommandPool.h"
-#include "Utils/pipeline/GraphicsPipeline.h"
 #include "Utils/pipeline_stage/PipelineStates.h" 
 #include "Utils/resource/Buffer.h"
 #include "Utils/sync/Fences.h"

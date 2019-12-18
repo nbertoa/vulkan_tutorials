@@ -2,10 +2,10 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
-#include "../device/LogicalDevice.h"
-#include "../pipeline_stage/PipelineStates.h"
-#include "../shader/ShaderStages.h"
+#include "DebugUtils.h"
+#include "device/LogicalDevice.h"
+#include "pipeline_stage/PipelineStates.h"
+#include "shader/ShaderStages.h"
 
 namespace vk2 {
 GraphicsPipeline::GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,

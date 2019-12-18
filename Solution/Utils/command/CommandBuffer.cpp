@@ -2,10 +2,9 @@
 
 #include <cassert>
 
-#include "CommandPool.h"
 #include "../DebugUtils.h"
+#include "../GraphicsPipeline.h"
 #include "../device/LogicalDevice.h"
-#include "../pipeline/GraphicsPipeline.h"
 #include "../resource/Buffer.h"
 #include "../resource/Image.h"
 #include "../resource/ImageMemoryBarrier.h"

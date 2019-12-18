@@ -5,7 +5,6 @@
 #include "DeviceMemory.h"
 #include "../DebugUtils.h"
 #include "../command/CommandBuffer.h"
-#include "../command/CommandPool.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -140,7 +139,10 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                    std::numeric_limits<uint64_t>::max()));
     device.resetFences({fence.get()});
 
-    CommandBuffer commandBuffer = transferCommandPool.createAndBeginOneTimeSubmitCommandBuffer();
+    CommandBuffer commandBuffer(transferCommandPool,
+                                VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+    commandBuffer.beginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = sourceBuffer.size();

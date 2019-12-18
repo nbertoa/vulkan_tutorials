@@ -145,14 +145,13 @@
   <ItemGroup>
     <ClCompile Include="command\CommandBuffer.cpp" />
     <ClCompile Include="command\CommandBuffers.cpp" />
-    <ClCompile Include="command\CommandPool.cpp" />
     <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDeviceData.cpp" />
+    <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="DebugMessenger.cpp" />
-    <ClCompile Include="pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="pipeline_stage\ColorBlendAttachmentState.cpp" />
     <ClCompile Include="pipeline_stage\ColorBlendState.cpp" />
     <ClCompile Include="pipeline_stage\DepthStencilState.cpp" />
@@ -185,14 +184,13 @@
   <ItemGroup>
     <ClInclude Include="command\CommandBuffer.h" />
     <ClInclude Include="command\CommandBuffers.h" />
-    <ClInclude Include="command\CommandPool.h" />
     <ClInclude Include="device\LogicalDevice.h" />
     <ClInclude Include="device\PhysicalDevice.h" />
     <ClInclude Include="device\PhysicalDeviceData.h" />
+    <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="pipeline\GraphicsPipeline.h" />
     <ClInclude Include="pipeline_stage\ColorBlendAttachmentState.h" />
     <ClInclude Include="pipeline_stage\ColorBlendState.h" />
     <ClInclude Include="pipeline_stage\DepthStencilState.h" />
