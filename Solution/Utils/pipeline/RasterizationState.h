@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // PipelineRasterizationStateCreateInfo wrapper
 //
@@ -32,20 +32,14 @@ public:
     // * rasterizerDiscardEnable controls whether primitives are discarded immediately 
     //   before the rasterization stage.
     //
-    // * polygonMode is the triangle rendering mode (VK_POLYGON_MODE_):
-    //
-    //   - POINT, LINE, FILL, FILL_RECTANGLE_NV
+    // * polygonMode is the triangle rendering mode
     //
     // * lineWidth of rasterized line segments.
     //
-    // * cullMode is the triangle facing direction used for primitive culling (VK_CULL_MODE_):
-    //
-    //   - NONE, FRONT_BIT, BACK_BIT, FRONT_AND_BACK
+    // * cullMode is the triangle facing direction used for primitive culling
     //
     // * frontFace that specifies the front-facing triangle 
-    //   orientation to be used for culling (VK_FRONT_FACE_):
-    //
-    //   - COUNTER_CLOCKWISE, CLOCKWISE
+    //   orientation to be used for culling
     //
     // * depthBiasEnable controls whether to bias fragment depth values.
     //

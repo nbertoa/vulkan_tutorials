@@ -3,7 +3,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "DebugUtils.h"
 #include "Instance.h"
 
 namespace {
@@ -20,7 +19,7 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
 }
 }
 
-namespace vk2 {
+namespace vulkan {
 DebugMessenger::DebugMessenger() {
     // The function to create a debug utils messenger is an extension function, 
     // so it is not automatically loaded. We need to look up its address
@@ -30,11 +29,11 @@ DebugMessenger::DebugMessenger() {
             vkGetInstanceProcAddr(Instance::instance(),
                                   "vkCreateDebugUtilsMessengerEXT"));
     assert(function);
-    const vk::DebugUtilsMessengerCreateInfoEXT createInfo = messengerCreateInfo();
-    vkChecker(function(Instance::instance(),
-                       (VkDebugUtilsMessengerCreateInfoEXT*)&createInfo,
-                       nullptr, 
-                       (VkDebugUtilsMessengerEXT*)&mMessenger));
+    const vk::DebugUtilsMessengerCreateInfoEXT info = messengerCreateInfo();
+    function(Instance::instance(),
+            reinterpret_cast<const VkDebugUtilsMessengerCreateInfoEXT*>(&info),
+            nullptr, 
+            reinterpret_cast<VkDebugUtilsMessengerEXT*>(&mMessenger));
 }
 
 DebugMessenger::~DebugMessenger() {
@@ -57,18 +56,15 @@ DebugMessenger::~DebugMessenger() {
 
 vk::DebugUtilsMessengerCreateInfoEXT
 DebugMessenger::messengerCreateInfo() {
-    vk::DebugUtilsMessengerCreateInfoEXT createInfo = 
-    {
-        vk::DebugUtilsMessengerCreateFlagsEXT(),
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
-        vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
-        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
-        debugCallback
-    };
+    vk::DebugUtilsMessengerCreateInfoEXT info; 
+    info.setMessageSeverity(vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning);
+    info.setMessageType(vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+                        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation);
+    info.setPfnUserCallback(debugCallback);
 
-    return createInfo;
+    return info;
 }
 }

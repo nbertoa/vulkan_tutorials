@@ -893,6 +893,12 @@
 /Solution/QuadWithTexture/x64/Debug/QuadWithTexture.tlog/unsuccessfulbuild
 /Solution/.vs/Solution/v16/ipch/AutoPCH/71a21bf299f1a136/SEMAPHORES.ipch
 /Solution/.vs/Solution/v16/ipch/AutoPCH/983f36ba989d424e/WRITEDESCRIPTORSET.ipch
+<<<<<<< HEAD
 /Solution/QuadWithIndexBuffer/x64/Debug/QuadWith.CA1645F4.tlog/unsuccessfulbuild
 /Solution/QuadWithUniformBuffer/x64/Debug/QuadWith.37EEA976.tlog/unsuccessfulbuild
 /Solution/Utils/x64/Debug/Utils.tlog/unsuccessfulbuild
+=======
+/Solution/.vs/Solution/v16/ipch/AutoPCH/8efe1a6b1ce253b/SYSTEMINITIALIZER.ipch
+/Solution/.vs/Solution/v16/ipch/AutoPCH/5f45f2c63417d858/COLORBLENDATTACHMENTSTATE.ipch
+/Solution/.vs/Solution/v16/ipch/AutoPCH/a46dd3b757257c50/COLORBLENDATTACHMENTSTATE .ipch
+>>>>>>> 677cea1a73754f3e5e00c5d3f9cda5f558daf293

@@ -1,6 +1,6 @@
 #include "ColorBlendState.h"
 
-namespace vk2 {
+namespace vulkan {
 ColorBlendState::ColorBlendState(const ColorBlendAttachmentState& colorBlendAttachmentState,
                                  const vk::Bool32 logicOpEnable,
                                  const vk::LogicOp logicalOperation) 

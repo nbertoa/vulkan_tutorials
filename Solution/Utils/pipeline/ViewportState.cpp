@@ -1,6 +1,6 @@
 #include "ViewportState.h"
 
-namespace vk2 {
+namespace vulkan {
 ViewportState::ViewportState(const vk::Viewport& viewport,
                              const vk::Rect2D& scissorRectangle) 
     : mViewport(viewport)

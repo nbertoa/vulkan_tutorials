@@ -1,6 +1,6 @@
 #include "DepthStencilState.h"
 
-namespace vk2 {
+namespace vulkan {
 DepthStencilState::DepthStencilState(const vk::Bool32 depthTestEnable,
                                      const vk::Bool32 depthWriteEnable,
                                      const vk::CompareOp depthCompareOp,

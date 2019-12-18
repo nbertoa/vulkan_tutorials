@@ -2,10 +2,9 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "../Instance.h"
 
-namespace vk2 {
+namespace vulkan {
 vk::PhysicalDevice 
 PhysicalDevice::mPhysicalDevice;
 
@@ -26,6 +25,8 @@ PhysicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames)
 
     const std::vector<PhysicalDeviceData> candidatePhysicalDevices = 
         Instance::getCandidatePhysicalDevices(deviceExtensionNames);
+
+    assert(candidatePhysicalDevices.empty() == false);
 
     const PhysicalDeviceData* chosenDeviceData = &candidatePhysicalDevices.front();
 

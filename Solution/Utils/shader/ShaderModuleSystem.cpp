@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace vk2 {
+namespace vulkan {
 ShaderModuleSystem::ShaderModuleByPath 
 ShaderModuleSystem::mShaderModuleByPath = {};
 

@@ -2,10 +2,9 @@
 
 #include <cassert>
 
-#include "../DebugUtils.h"
 #include "../device/LogicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 Semaphores::Semaphores(const size_t semaphoreCount) {
     assert(semaphoreCount > 0);
     
@@ -23,7 +22,7 @@ Semaphores::Semaphores(Semaphores&& other) noexcept
 
 }
 
-vk::Semaphore& 
+vk::Semaphore 
 Semaphores::nextAvailableSemaphore() {
     assert(mSemaphores.empty() == false);
     
@@ -33,7 +32,7 @@ Semaphores::nextAvailableSemaphore() {
     return semaphore.get();
 }
 
-vk::Semaphore&
+vk::Semaphore
 Semaphores::currentSemaphore() {
     assert(mCurrentSemaphore < mSemaphores.size());
     return mSemaphores[mCurrentSemaphore].get();

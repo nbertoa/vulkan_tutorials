@@ -11,7 +11,7 @@
 #include "VertexInputState.h"
 #include "ViewportState.h"
 
-namespace vk2 {
+namespace vulkan {
 //
 // This class is used to initialize all the needed pipeline states.
 //

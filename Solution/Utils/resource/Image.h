@@ -5,12 +5,9 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
-class CommandPool;
-class DeviceMemory;
-
+namespace vulkan {
 //
-// VkImage wrapper
+// Image wrapper
 //
 // Images (also known as textures) represent multidimensional(up to 3) 
 // arrays of data which can be used 
@@ -60,15 +57,11 @@ public:
     //
     // * imageUsageFlags describing the intended usage of the image.
     //
-    // * memoryPropertyFlags is used to create the DeviceMemory (VK_MEMORY_PROPERTY_):
-    //
-    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
-    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
-    //     DEVICE_UNCACHED_BIT_AMD
+    // * memoryPropertyFlags is used to create the DeviceMemory
     //
     // * mipLevelCount of detail available for minified sampling of the image.
     //
-    // * initialImageLayout of all image subresources of the image (VK_IMAGE_LAYOUT_)
+    // * initialImageLayout of all image subresources of the image
     //   Images are stored in implementation-dependent opaque layouts in memory.
     //   Each layout has limitations on what kinds of operations are supported for 
     //   image subresources using the layout.
@@ -77,16 +70,6 @@ public:
     //   that was performed on that image subresource.Applications have control over which 
     //   layout each image subresource uses, and can transition an image subresource from 
     //   one layout to another. Transitions can happen with an image memory barrier
-    //
-    //   - UNDEFINED, PREINITIALIZED, GENERAL, COLOR_ATTACHMENT_OPTIMAL, 
-    //     DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    //     DEPTH_STENCIL_READ_ONLY_OPTIMAL, DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL, 
-    //     DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL, DEPTH_ATTACHMENT_OPTIMAL_KHR, 
-    //     DEPTH_READ_ONLY_OPTIMAL_KHR,
-    //     STENCIL_ATTACHMENT_OPTIMAL_KHR, STENCIL_READ_ONLY_OPTIMAL_KHR, SHADER_READ_ONLY_OPTIMAL, 
-    //     TRANSFER_SRC_OPTIMAL, TRANSFER_DST_OPTIMAL, PRESENT_SRC_KHR, SHARED_PRESENT_KHR, 
-    //     SHADING_RATE_OPTIMAL_NV,
-    //     SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_OPTIMAL_EXT
     //
     // * imageType specifying the basic dimensionality of the image.
     //   Layers in array textures do not count as a dimension for the purposes of the image type.
@@ -109,25 +92,24 @@ public:
     // Notes: The global logical device owns the image and memory.
     Image(const uint32_t imageWidth,
           const uint32_t imageHeight,
-          const VkFormat format,
-          const VkImageUsageFlags imageUsageFlags,
-          const VkMemoryPropertyFlags memoryPropertyFlags,
+          const vk::Format format,
+          const vk::ImageUsageFlags imageUsageFlags,
+          const vk::MemoryPropertyFlags deviceMemoryProperties,
           const uint32_t mipLevelCount = 1,
-          const VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-          const VkImageType imageType = VK_IMAGE_TYPE_2D,
-          const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
+          const vk::ImageLayout initialImageLayout = vk::ImageLayout::eUndefined,
+          const vk::ImageType imageType = vk::ImageType::e2D,
+          const vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1,
           const uint32_t imageDepth = 1,
-          const VkImageTiling imageTiling = VK_IMAGE_TILING_OPTIMAL,
+          const vk::ImageTiling imageTiling = vk::ImageTiling::eOptimal,
           const uint32_t arrayLayerCount = 1,
-          const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-          const VkImageCreateFlags flags = 0,
+          const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
           const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Image();
     Image(Image&&) noexcept;
     Image(const Image&) = delete;
     const Image& operator=(const Image&) = delete;
 
-    VkImage
+    vk::Image
     vkImage() const;
 
     uint32_t 
@@ -136,7 +118,7 @@ public:
     uint32_t
     height() const;
 
-    VkImageLayout
+    vk::ImageLayout
     lastImageLayout() const;
 
     // this method assumes the image was created with
@@ -151,49 +133,34 @@ public:
     // Notes: The global physical device is used to create the staging buffer
     void
     copyFromDataToDeviceMemory(void* sourceData,
-                               const VkDeviceSize size,
-                               const CommandPool& transferCommandPool);
+                               const vk::DeviceSize size,
+                               const vk::CommandPool transferCommandPool);
 
     // * transitionCommandPool that will be used to create 
     //  the CommandBuffer which will do the transition operation.
     void
-    transitionImageLayout(const VkImageLayout newImageLayout,
-                          const CommandPool& transitionCommandPool);
+    transitionImageLayout(const vk::ImageLayout newImageLayout,
+                          const vk::CommandPool transitionCommandPool);
 
 private:
-    // Return the image memory requirements. This is used to create
-    // the DeviceMemory (if needed).
-    //
-    // Memory requirements:
-    // - size in bytes, of the memory allocation required for the resource.
-    // - alignment in bytes, of the offset within the 
-    //   allocation required for the resource.
-    // - memoryTypeBits is a bitmask and contains one bit set for every supported 
-    //   memory type for the resource. Bit i is set if and only if the memory type i in 
-    //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
-    //   is supported for the resource.
-    VkMemoryRequirements
-    imageMemoryRequirements() const;
-
     // Read Image() constructor to understand the parameters.
-    VkImage
-    createImage(const VkFormat format,
-                const VkImageUsageFlags imageUsageFlags,
+    vk::Image
+    createImage(const vk::Format format,
+                const vk::ImageUsageFlags imageUsageFlags,
                 const uint32_t mipLevelCount,
-                const VkImageType imageType,
-                const VkSampleCountFlagBits sampleCount,
-                const VkImageTiling imageTiling,
+                const vk::ImageType imageType,
+                const vk::SampleCountFlagBits sampleCount,
+                const vk::ImageTiling imageTiling,
                 const uint32_t arrayLayerCount,
-                const VkSharingMode sharingMode,
-                const VkImageCreateFlags flags,
+                const vk::SharingMode sharingMode,
                 const std::vector<uint32_t>& queueFamilyIndices);
                 
-    VkExtent3D mExtent = {};
-    VkImageLayout mLastLayout;
-    VkAccessFlags mLastAccessType = 0;
-    VkPipelineStageFlags mLastPipelineStages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    vk::Extent3D mExtent;
+    vk::ImageLayout mLastLayout;
+    vk::AccessFlagBits mLastAccessType;
+    vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
-    VkImage mImage = VK_NULL_HANDLE;    
+    vk::Image mImage;    
 
     // This is only used if the Image is created
     // with the constructor that includes the data needed
@@ -201,7 +168,7 @@ private:
     // Otherwise, we will use the DeviceMemory provided
     // by the second constructor.
     const bool mHasDeviceMemoryOwnership = true;
-    const DeviceMemory* mDeviceMemory = nullptr;
+    vk::DeviceMemory mDeviceMemory;
 };
 }
 

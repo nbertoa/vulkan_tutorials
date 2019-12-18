@@ -1,6 +1,6 @@
 #include "VertexInputState.h"
 
-namespace vk2 {
+namespace vulkan {
 VertexInputState::VertexInputState(const std::vector<vk::VertexInputBindingDescription>& bindingDescriptions,
                                    const std::vector<vk::VertexInputAttributeDescription>& attributeDescriptions) 
     : mBindingDescriptions(bindingDescriptions)

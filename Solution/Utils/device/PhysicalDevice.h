@@ -6,7 +6,7 @@
 
 #include "PhysicalDeviceData.h"
 
-namespace vk2 {
+namespace vulkan {
 //
 // PhysicalDevice wrapper.
 //
@@ -83,11 +83,7 @@ public:
     // 
     // * memoryPropertyFlags is used to check if there is a memory type in the physical device
     //   that is suitable for the buffer that also 
-    //   has all of the properties we need (VK_MEMORY_PROPERTY_):
-    //
-    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
-    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
-    //     DEVICE_UNCACHED_BIT_AMD
+    //   has all of the properties we need
     static uint32_t
     memoryTypeIndex(const uint32_t memoryTypeFilter,
                     const vk::MemoryPropertyFlags memoryPropertyFlags);

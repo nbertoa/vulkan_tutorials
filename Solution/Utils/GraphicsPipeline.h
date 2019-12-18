@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 class DynamicState;
 class PipelineStates;
 class ShaderStages;
@@ -74,7 +74,7 @@ public:
     GraphicsPipeline(vk::UniquePipelineLayout& pipelineLayout,
                      const PipelineStates& pipelineStates,
                      const ShaderStages& shaderStages,
-                     const vk::RenderPass& renderPass,
+                     const vk::RenderPass renderPass,
                      const uint32_t subPassIndex = 0);
     GraphicsPipeline(const GraphicsPipeline&) = delete;
     const GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;

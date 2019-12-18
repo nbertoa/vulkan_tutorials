@@ -6,7 +6,7 @@
 
 #include "device/PhysicalDeviceData.h"
 
-namespace vk2 {
+namespace vulkan {
 #ifdef _DEBUG
 class DebugMessenger;
 #endif
@@ -18,7 +18,7 @@ class DebugMessenger;
 // In our case, we have a single and global Instance.
 // 
 // There is no global state in Vulkan and all per-application 
-// state is stored in a VkInstance object. 
+// state is stored in a vk::Instance object. 
 //
 // Creating a Instance object initializes the Vulkan library 
 // and allows the application to pass information about itself 

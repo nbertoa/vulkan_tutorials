@@ -6,7 +6,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // GLFWwindow & SurfaceKHR wrapper.
 //
@@ -24,11 +24,11 @@ namespace vk2 {
 // A SurfaceKHR object abstracts a native platform surface or window object for use 
 // with Vulkan. 
 //
-// The VK_KHR_surface extension declares the VkSurfaceKHR object, and provides a function 
-// for destroying VkSurfaceKHR objects. 
+// The VK_KHR_surface extension declares the vk::SurfaceKHR object, and provides a function 
+// for destroying vk::SurfaceKHR objects. 
 //
 // Separate platform-specific extensions each provide a function for creating a 
-// VkSurfaceKHR object for the respective platform.
+// vk::SurfaceKHR object for the respective platform.
 //
 // You need the Window to:
 // - Create the surface

@@ -1,9 +1,8 @@
 #include "Window.h"
 
-#include "DebugUtils.h"
 #include "Instance.h"
 
-namespace vk2 {
+namespace vulkan {
 GLFWwindow* 
 Window::mWindow = nullptr;
 
@@ -35,10 +34,10 @@ Window::initialize(const uint32_t width,
                                nullptr);
     assert(mWindow != nullptr && "Window creation failed");
 
-    vkChecker(glfwCreateWindowSurface(Instance::instance(),
-                                      mWindow,
-                                      nullptr,
-                                      (VkSurfaceKHR*)&mSurface));
+    assert(glfwCreateWindowSurface(Instance::instance(),
+                                   mWindow,
+                                   nullptr,
+                                   reinterpret_cast<VkSurfaceKHR*>(&mSurface)) == VK_SUCCESS);
 }
 
 void

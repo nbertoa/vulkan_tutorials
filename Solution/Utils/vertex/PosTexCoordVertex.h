@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 // Vertex with position and texture coordinates in that order.
 struct PosTexCoordVertex {
     glm::vec3 mPosition = {0.0f, 0.0f, 0.0f};

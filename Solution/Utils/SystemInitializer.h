@@ -1,7 +1,7 @@
 #ifndef UTILS_SYSTEM_INITIALIZER
 #define UTILS_SYSTEM_INITIALIZER
 
-namespace vk2 {
+namespace vulkan {
 namespace system_initializer {
 void 
 initialize();

@@ -4,7 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 class PhysicalDevice;
 
 //
@@ -25,7 +25,7 @@ class PhysicalDevice;
 // You need the LogicalDevice to:
 // - Creation of queues.
 //   When retrieving a handle to the queue via vkGetDeviceQueue, 
-//   the queue family index is used to select which queue family to retrieve the VkQueue 
+//   the queue family index is used to select which queue family to retrieve the vk::Queue 
 //
 // - Creation and tracking of various synchronization constructs.
 //

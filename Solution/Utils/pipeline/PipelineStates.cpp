@@ -1,6 +1,6 @@
 #include "PipelineStates.h"
 
-namespace vk2 {
+namespace vulkan {
 void
 PipelineStates::setColorBlendState(const ColorBlendState& colorBlendState) {
     mUseColorBlendState = true;

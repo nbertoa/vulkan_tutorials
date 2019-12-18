@@ -4,7 +4,7 @@
 
 #include "DebugMessenger.h"
 
-namespace vk2 {
+namespace vulkan {
 vk::Instance 
 Instance::mInstance;
 
@@ -23,17 +23,12 @@ Instance::initialize(const std::vector<const char*>& instanceExtensionNames,
 
     assert(areInstanceLayersSupported(instanceLayerNames));
 
-    const vk::InstanceCreateInfo instanceInfo = 
-    {
-        vk::InstanceCreateFlags(),
-        nullptr, // application info
-        static_cast<uint32_t>(instanceLayerNames.size()),
-        instanceLayerNames.empty() ? nullptr : instanceLayerNames.data(),
-        static_cast<uint32_t>(instanceExtensionNames.size()),
-        instanceExtensionNames.empty() ? nullptr : instanceExtensionNames.data()
-    };
-
-    mInstance = vk::createInstance(instanceInfo);
+    vk::InstanceCreateInfo info;
+    info.setEnabledExtensionCount(static_cast<uint32_t>(instanceExtensionNames.size()));
+    info.setPpEnabledExtensionNames(instanceExtensionNames.empty() ? nullptr : instanceExtensionNames.data());
+    info.setEnabledLayerCount(static_cast<uint32_t>(instanceLayerNames.size()));
+    info.setPpEnabledLayerNames(instanceLayerNames.empty() ? nullptr : instanceLayerNames.data());
+    mInstance = vk::createInstance(info);
 
 #ifdef _DEBUG
     mMessenger = new DebugMessenger();
@@ -60,7 +55,7 @@ Instance::getCandidatePhysicalDevices(const std::vector<const char*>& deviceExte
     assert(mInstance != VK_NULL_HANDLE);
 
     std::vector<PhysicalDeviceData> supportedPhysicalDevices;
-    for (const vk::PhysicalDevice& device : mInstance.enumeratePhysicalDevices()) {
+    for (const vk::PhysicalDevice device : mInstance.enumeratePhysicalDevices()) {
         assert(device != VK_NULL_HANDLE);
 
         PhysicalDeviceData deviceData(device,

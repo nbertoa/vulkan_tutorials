@@ -3,12 +3,11 @@
 #include <algorithm>
 #include <cassert>
 
-#include "DebugUtils.h"
 #include "Window.h"
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 SwapChain::SwapChain() {       
     initSwapChain();
     initImagesAndViews();
@@ -16,14 +15,15 @@ SwapChain::SwapChain() {
 }
 
 uint32_t 
-SwapChain::acquireNextImage(const vk::Semaphore& semaphore) {
+SwapChain::acquireNextImage(const vk::Semaphore semaphore) {
+    assert(semaphore != VK_NULL_HANDLE);
     assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    vkChecker(LogicalDevice::device().acquireNextImageKHR(mSwapChain.get(),
-                                                          std::numeric_limits<uint64_t>::max(),
-                                                          semaphore,
-                                                          vk::Fence {},
-                                                          &mCurrentImageIndex));
+    LogicalDevice::device().acquireNextImageKHR(mSwapChain.get(),
+                                                std::numeric_limits<uint64_t>::max(),
+                                                semaphore,
+                                                vk::Fence(),
+                                                & mCurrentImageIndex);
 
     return mCurrentImageIndex;
 }
@@ -35,20 +35,18 @@ SwapChain::currentImageIndex() const {
 }
 
 void
-SwapChain::present(const vk::Semaphore& waitSemaphore,
+SwapChain::present(const vk::Semaphore waitSemaphore,
                    const uint32_t imageIndex) {
+    assert(waitSemaphore != VK_NULL_HANDLE);
     assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    vk::PresentInfoKHR info = 
-    {
-        1,
-        &waitSemaphore,
-        1,
-        &mSwapChain.get(),
-        &imageIndex
-    };
-
-    vkChecker(LogicalDevice::presentationQueue().presentKHR(info));
+    vk::PresentInfoKHR info;
+    info.setSwapchainCount(1);
+    info.setPSwapchains(&mSwapChain.get());
+    info.setWaitSemaphoreCount(1);
+    info.setPWaitSemaphores(&waitSemaphore);
+    info.setPImageIndices(&imageIndex);
+    LogicalDevice::presentationQueue().presentKHR(info);
 }
 
 const vk::Viewport& 
@@ -155,7 +153,7 @@ SwapChain::swapChainExtent(const vk::SurfaceCapabilitiesKHR& surfaceCapabilities
     if (surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
         return surfaceCapabilities.currentExtent;
     } else {
-        VkExtent2D actualExtent = {windowWidth, windowHeight};
+        vk::Extent2D actualExtent = {windowWidth, windowHeight};
 
         actualExtent.width = std::max(surfaceCapabilities.minImageExtent.width, 
                                       std::min(surfaceCapabilities.maxImageExtent.width, 
@@ -192,26 +190,20 @@ SwapChain::initImagesAndViews() {
 
     mSwapChainImages = LogicalDevice::device().getSwapchainImagesKHR(mSwapChain.get());
 
-    // Image views
-    vk::ImageViewCreateInfo createInfo = 
-    {
-        vk::ImageViewCreateFlags(),
-        vk::Image(), // This will be set later.
-        vk::ImageViewType::e2D,
-        mImageFormat,
-        vk::ComponentMapping(),
-        vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor,
-                                  0, // base mip level,
-                                  1, // level count
-                                  0, // base array layer
-                                  1} // layer count
-    };
+    vk::ImageViewCreateInfo info;
+    info.setViewType(vk::ImageViewType::e2D);
+    info.setFormat(mImageFormat);
+    vk::ImageSubresourceRange subresourceRange;
+    subresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    subresourceRange.setLayerCount(1);
+    subresourceRange.setLevelCount(1);
+    info.setSubresourceRange(subresourceRange);
 
     const uint32_t swapChainImageCount = static_cast<uint32_t>(mSwapChainImages.size());
     mSwapChainImageViews.resize(swapChainImageCount);
     for (uint32_t i = 0; i < swapChainImageCount; ++i) {
-        createInfo.setImage(mSwapChainImages[i]);
-        mSwapChainImageViews[i] = LogicalDevice::device().createImageViewUnique(createInfo);
+        info.setImage(mSwapChainImages[i]);
+        mSwapChainImageViews[i] = LogicalDevice::device().createImageViewUnique(info);
     }
 }
 
@@ -219,24 +211,14 @@ void
 SwapChain::initViewportAndScissorRect() {
     assert(mSwapChain.get() != VK_NULL_HANDLE);
 
-    // This will almost always be (0, 0) and width and height.
-    mViewport = 
-    {
-        0.0f, // x 
-        0.0f, // y
-        static_cast<float>(mExtent.width),
-        static_cast<float>(mExtent.height),
-        0.0f, // min depth
-        1.0f // max depth
-    };
+    mViewport.setWidth(static_cast<float>(mExtent.width));
+    mViewport.setHeight(static_cast<float>(mExtent.height));
+    mViewport.setMinDepth(0.0f);
+    mViewport.setMaxDepth(1.0f);
 
-    // We want to drwa to the entire framebuffer, so we 
+    // We want to draw to the entire framebuffer, so we 
     // will specify a scissor rectangle that covers it entirely.
-    mScissorRect = 
-    {
-        {0, 0}, // offset
-        mExtent
-    };
+    mScissorRect.setExtent(mExtent);
 }
 
 void
@@ -251,101 +233,18 @@ SwapChain::initSwapChain() {
     const vk::SurfaceFormatKHR surfaceFormat =
         bestFitSurfaceFormat(PhysicalDevice::device().getSurfaceFormatsKHR(Window::surface()));
     mImageFormat = surfaceFormat.format;
-
-    // VkSwapchainCreateInfoKHR:
-    // - flags bitmask indicating parameters of the swapchain creation (VK_SWAPCHAIN_CREATE_):
-    //    . SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR, PROTECTED_BIT_KHR, MUTABLE_FORMAT_BIT_KHR
-    //
-    // - surface onto which the swapchain will present images.
-    //   If the creation succeeds, the swapchain becomes associated with surface.
-    //
-    // - minImageCount of presentable images that the application needs.
-    //   The implementation will either create the swapchain with at least that many images, 
-    //   or it will fail to create the swapchain.
-    //
-    // - imageFormat the swapchain image(s) will be created with.
-    //
-    // - imageColorSpace specifying the way the swapchain interprets image data.
-    //
-    // - imageExtent is the size(in pixels) of the swapchain image(s).
-    //   The behavior is platform-dependent if the image extent does not match the surface’s currentExtent as 
-    //   returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR.
-    //
-    // - imageArrayLayers in a multiview/stereo surface.
-    //   For non-stereoscopic-3D applications, this value is 1.
-    //
-    // - imageUsage bitmask describing the intended usage of 
-    //   the(acquired) swapchain images (VK_IMAGE_USAGE_):
-    //    . TRANSFER_SRC_BIT, TRANSFER_DST_BIT, SAMPLED_BIT, STORAGE_BIT, COLOR_ATTACHMENT_BIT, 
-    //      DEPTH_STENCIL_ATTACHMENT_BIT, TRANSIENT_ATTACHMENT_BIT, INPUT_ATTACHMENT_BIT, 
-    //      SHADING_RATE_IMAGE_BIT_NV, FRAGMENT_DENSITY_MAP_BIT_EXT
-    //
-    // - imageSharingMode for the image(s) of the swapchain.
-    //
-    // - queueFamilyIndexCount having access to the image(s) of the swapchain when 
-    //   imageSharingMode is VK_SHARING_MODE_CONCURRENT.
-    //
-    // - pQueueFamilyIndices having access to the images(s) 
-    //   of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
-    //
-    // - preTransform relative to the presentation engine’s natural orientation, 
-    //   applied to the image content prior to presentation.
-    //   If it does not match the currentTransform value returned by 
-    //   vkGetPhysicalDeviceSurfaceCapabilitiesKHR, the presentation engine will transform 
-    //   the image content as part of the presentation operation (VK_SURFACE_TRANSFORM_):
-    //   . IDENTITY_BIT_KHR, ROTATE_90_BIT_KHR, ROTATE_180_BIT_KHR, ROTATE_270_BIT_KHR, 
-    //     HORIZONTAL_MIRROR_BIT_KHR, HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR, 
-    //     HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR, HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR, 
-    //     INHERIT_BIT_KHR specifies
-    //
-    // - compositeAlpha indicating the alpha compositing mode to use when this 
-    //   surface is composited together with other surfaces 
-    //   on certain window systems (VK_COMPOSITE_ALPHA_):
-    //   . OPAQUE_BIT_KHR, PRE_MULTIPLIED_BIT_KHR, POST_MULTIPLIED_BIT_KHR, INHERIT_BIT_KHR
-    //
-    // - presentMode the swapchain will use.
-    //   A swapchain’s present mode determines how incoming present requests will be processed 
-    //  and queued internally.
-    //
-    // - clipped specifies whether the Vulkan implementation is allowed to discard rendering 
-    //   operations that  affect regions of the surface that are not visible.
-    //   . If set to VK_TRUE, the presentable images associated with the swapchain may not own 
-    //     all of their pixels.
-    //     Pixels in the presentable images that correspond to regions of the target 
-    //     surface obscured by another window 
-    //     on the desktop, or subject to some other clipping mechanism will have undefined 
-    //     content when read back.
-    //     Pixel shaders may not execute for these pixels, and thus any side effects 
-    //     they would have had will not occur.
-    //     VK_TRUE value does not guarantee any clipping will occur, but allows 
-    //     more optimal presentation methods to be used on some platforms.
-    //   . If set to VK_FALSE, presentable images associated with the swapchain will own 
-    //     all of the pixels they contain.
-    //
-    // - oldSwapchain is VK_NULL_HANDLE, or the existing non-retired swapchain 
-    //   currently associated with surface.
-    //   Providing a valid oldSwapchain may aid in the resource reuse, 
-    //   and also allows the application to still present any images that are already 
-    //   acquired from it.
-    vk::SwapchainCreateInfoKHR createInfo = 
-    {
-        vk::SwapchainCreateFlagsKHR(),
-        Window::surface(),
-        swapChainImageCount(surfaceCapabilities),
-        mImageFormat,
-        surfaceFormat.colorSpace,
-        mExtent,
-        1, // image array layers
-        vk::ImageUsageFlagBits::eColorAttachment,
-        vk::SharingMode::eExclusive,
-        0, // queue family index count
-        nullptr, // queue family indices
-        vk::SurfaceTransformFlagBitsKHR::eIdentity,
-        vk::CompositeAlphaFlagBitsKHR::eOpaque,
-        bestFitPresentMode(PhysicalDevice::device().getSurfacePresentModesKHR(Window::surface())),
-        VK_TRUE, // clipped
-        nullptr, // old swap chain
-    };
+    
+    vk::SwapchainCreateInfoKHR info;
+    info.setSurface(Window::surface());
+    info.setMinImageCount(swapChainImageCount(surfaceCapabilities));
+    info.setImageFormat(mImageFormat);
+    info.setImageColorSpace(surfaceFormat.colorSpace);
+    info.setImageExtent(mExtent);
+    info.setImageArrayLayers(1);
+    info.setImageUsage(vk::ImageUsageFlagBits::eColorAttachment);
+    info.setImageSharingMode(vk::SharingMode::eExclusive);
+    info.setPresentMode(bestFitPresentMode(PhysicalDevice::device().getSurfacePresentModesKHR(Window::surface())));
+    info.setClipped(VK_TRUE);
 
     const uint32_t graphicsQueueFamilyIndex = PhysicalDevice::graphicsQueueFamilyIndex();
     const uint32_t presentationQueueFamilyIndex = PhysicalDevice::presentationQueueFamilyIndex();
@@ -355,41 +254,41 @@ SwapChain::initSwapChain() {
     if (graphicsQueueFamilyIndex == presentationQueueFamilyIndex) {
         if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
             // Single queue family
-            createInfo.setImageSharingMode(vk::SharingMode::eExclusive);
-            createInfo.setQueueFamilyIndexCount(0);
-            createInfo.setPQueueFamilyIndices(nullptr);
+            info.setImageSharingMode(vk::SharingMode::eExclusive);
+            info.setQueueFamilyIndexCount(0);
+            info.setPQueueFamilyIndices(nullptr);
         } else {
             // Graphics and presentation queue family + transfer queue family
             queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
             queueFamilyIndices.push_back(transferQueueFamilyIndex);
-            createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
-            createInfo.setQueueFamilyIndexCount(2);
-            createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
+            info.setImageSharingMode(vk::SharingMode::eConcurrent);
+            info.setQueueFamilyIndexCount(2);
+            info.setPQueueFamilyIndices(queueFamilyIndices.data());
         }
     } else if (presentationQueueFamilyIndex == transferQueueFamilyIndex) {
         // Presentation and transfer queue family + graphics queue family
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(transferQueueFamilyIndex);
-        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
-        createInfo.setQueueFamilyIndexCount(2);
-        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
+        info.setImageSharingMode(vk::SharingMode::eConcurrent);
+        info.setQueueFamilyIndexCount(2);
+        info.setPQueueFamilyIndices(queueFamilyIndices.data());
     } else if (graphicsQueueFamilyIndex == transferQueueFamilyIndex) {
         // Graphics and transfer queue family + presentation queue family
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(presentationQueueFamilyIndex);
-        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
-        createInfo.setQueueFamilyIndexCount(2);
-        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
+        info.setImageSharingMode(vk::SharingMode::eConcurrent);
+        info.setQueueFamilyIndexCount(2);
+        info.setPQueueFamilyIndices(queueFamilyIndices.data());
     } else {
         // One queue family for each.
         queueFamilyIndices.push_back(graphicsQueueFamilyIndex);
         queueFamilyIndices.push_back(presentationQueueFamilyIndex);
         queueFamilyIndices.push_back(transferQueueFamilyIndex);
-        createInfo.setImageSharingMode(vk::SharingMode::eConcurrent);
-        createInfo.setQueueFamilyIndexCount(3);
-        createInfo.setPQueueFamilyIndices(queueFamilyIndices.data());
+        info.setImageSharingMode(vk::SharingMode::eConcurrent);
+        info.setQueueFamilyIndexCount(3);
+        info.setPQueueFamilyIndices(queueFamilyIndices.data());
     }
 
-    mSwapChain = LogicalDevice::device().createSwapchainKHRUnique(createInfo);
+    mSwapChain = LogicalDevice::device().createSwapchainKHRUnique(info);
 }
 }

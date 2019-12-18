@@ -4,7 +4,7 @@
 
 #include "../device/LogicalDevice.h"
 
-namespace vk2 {
+namespace vulkan {
 Fences::Fences(const size_t fenceCount,
                const vk::FenceCreateFlagBits flags) {
     assert(fenceCount > 0);
@@ -24,7 +24,7 @@ Fences::Fences(Fences&& other) noexcept
 
 }
 
-vk::Fence&
+vk::Fence
 Fences::nextAvailableFence() {
     assert(mFences.empty() == false);
 
@@ -34,7 +34,7 @@ Fences::nextAvailableFence() {
     return fence.get();
 }
 
-vk::Fence& 
+vk::Fence
 Fences::currentFence() {
     assert(mCurrentFence < mFences.size());
     return mFences[mCurrentFence].get();

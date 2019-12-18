@@ -5,13 +5,9 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
-class CommandPool;
-class DeviceMemory;
-class Fence;
-
+namespace vulkan {
 //
-// VkBuffer wrapper.
+// Buffer wrapper.
 //
 // Buffers represent linear arrays of data which are used for various 
 // purposes by binding them to a graphics or compute pipeline via 
@@ -45,24 +41,9 @@ public:
     //
     // * bufferSize in bytes.
     //
-    // * bufferUsage (VK_BUFFER_USAGE_):
+    // * deviceMemoryProperties to create the DeviceMemory
     //
-    //   - TRANSFER_SRC_BIT, TRANSFER_DST_BIT, UNIFORM_TEXEL_BUFFER_BIT, STORAGE_TEXEL_BUFFER_BIT,
-    //     UNIFORM_BUFFER_BIT, STORAGE_BUFFER_BIT, INDEX_BUFFER_BIT, VERTEX_BUFFER_BIT,
-    //     INDIRECT_BUFFER_BIT, CONDITIONAL_RENDERING_BIT_EXT, TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
-    //     TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT, RAY_TRACING_BIT_NV, 
-    //     SHADER_DEVICE_ADDRESS_BIT_EXT
-    //
-    // * deviceMemoryProperties to create the DeviceMemory (VK_MEMORY_PROPERTY_):
-    //
-    //   - DEVICE_LOCAL_BIT, HOST_VISIBLE_BIT, HOST_COHERENT_BIT, HOST_CACHED_BIT,
-    //     LAZILY_ALLOCATED_BIT, PROTECTED_BIT, HOST_VISIBLE_BIT, DEVICE_COHERENT_BIT_AMD,
-    //     DEVICE_UNCACHED_BIT_AMD
-    //
-    // * sharingMode of the buffer when it will be accessed by multiple queue families 
-    //   (VK_SHARING_MODE_):
-    //
-    //   - EXCLUSIVE, CONCURRENT
+    // * sharingMode of the buffer when it will be accessed by multiple queue families
     //
     // * queueFamilyIndices that will access this buffer
     //   (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
@@ -70,10 +51,10 @@ public:
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
     //   - The global physical device is used to create the device memory
-    Buffer(const VkDeviceSize bufferSize,
-           const VkBufferUsageFlags bufferUsage,
-           const VkMemoryPropertyFlags deviceMemoryProperties,
-           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+    Buffer(const vk::DeviceSize bufferSize,
+           const vk::BufferUsageFlags bufferUsage,
+           const vk::MemoryPropertyFlags deviceMemoryProperties,
+           const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
            const std::vector<uint32_t>& queueFamilyIndices = {});
 
     // This constructor must be used if you want to provide
@@ -81,20 +62,20 @@ public:
     // Check the first constructor for an explanation of each parameter.
     // Notes:     
     //   - The global logical device owns the buffer and the device memory
-    Buffer(const VkDeviceSize bufferSize,
-           const VkBufferUsageFlags bufferUsage,
-           const DeviceMemory& deviceMemory,
-           const VkSharingMode sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+    Buffer(const vk::DeviceSize bufferSize,
+           const vk::BufferUsageFlags bufferUsage,
+           const vk::DeviceMemory deviceMemory,
+           const vk::SharingMode sharingMode = vk::SharingMode::eExclusive,
            const std::vector<uint32_t>& queueFamilyIndices = {});
     ~Buffer();
     Buffer(Buffer&& other) noexcept;
     Buffer(const Buffer&) = delete;
     const Buffer& operator=(const Buffer&) = delete;  
     
-    VkBuffer 
+    vk::Buffer 
     vkBuffer() const;
 
-    VkDeviceSize 
+    vk::DeviceSize 
     size() const;
     
     // The driver may not immediately copy the data
@@ -130,13 +111,13 @@ public:
     // You should use methods like copyFromBufferToDeviceMemory instead.
     void 
     copyToHostMemory(void* sourceData, 
-                     const VkDeviceSize size,
-                     const VkDeviceSize offset);
+                     const vk::DeviceSize size,
+                     const vk::DeviceSize offset);
 
     // This method will use as "size" the entire buffer size. 
     void 
     copyToHostMemory(void* sourceData,
-                     const VkDeviceSize offset = 0);
+                     const vk::DeviceSize offset = 0);
 
     // These methods assumes the buffer was created with
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
@@ -151,11 +132,11 @@ public:
     // Notes: The global physical device is used to create the staging buffer
     void 
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const CommandPool& transferCommandPool);
+                                 const vk::CommandPool transferCommandPool);
     void
     copyFromDataToDeviceMemory(void* sourceData,
-                               const VkDeviceSize size,
-                               const CommandPool& transferCommandPool);
+                               const vk::DeviceSize size,
+                               const vk::CommandPool transferCommandPool);
 
     // Creates a staging buffer with flags:
     // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -164,32 +145,18 @@ public:
     // and copies "size" bytes from the sourceData to it
     static Buffer
     createAndFillStagingBuffer(void* sourceData,
-                               const VkDeviceSize size);
+                               const vk::DeviceSize size);
 
 private:
-    // Return the buffer memory requirements. This is used to create
-    // the DeviceMemory (if needed).
-    //
-    // Memory requirements:
-    // - size in bytes, of the memory allocation required for the resource.
-    // - alignment in bytes, of the offset within the 
-    //   allocation required for the resource.
-    // - memoryTypeBits is a bitmask and contains one bit set for every supported 
-    //   memory type for the resource. Bit i is set if and only if the memory type i in 
-    //   the VkPhysicalDeviceMemoryProperties structure for the physical device 
-    //   is supported for the resource.
-    VkMemoryRequirements 
-    bufferMemoryRequirements() const;
-
     // Read Buffer() constructor to understand the parameters.
-    static VkBuffer 
-    createBuffer(const VkDeviceSize sizeInBytes,
-                 const VkBufferUsageFlags usageFlags,
-                 const VkSharingMode sharingMode,
+    static vk::Buffer 
+    createBuffer(const vk::DeviceSize sizeInBytes,
+                 const vk::BufferUsageFlags usageFlags,
+                 const vk::SharingMode sharingMode,
                  const std::vector<uint32_t>& queueFamilyIndices);
   
-    VkBuffer mBuffer = VK_NULL_HANDLE;
-    const VkDeviceSize mSizeInBytes = 0;
+    vk::Buffer mBuffer;
+    const vk::DeviceSize mSizeInBytes = 0;
 
     // This is only used if the Buffer is created
     // with the constructor that includes the data needed
@@ -197,7 +164,7 @@ private:
     // Otherwise, we will use the DeviceMemory provided
     // by the second constructor.
     const bool mHasDeviceMemoryOwnership = true;
-    const DeviceMemory* mDeviceMemory = nullptr;
+    vk::DeviceMemory mDeviceMemory;
 };
 }
 

@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-#include "DebugUtils.h"
 #include "Instance.h"
 #include "Window.h"
 #include "device/LogicalDevice.h"
@@ -62,11 +61,15 @@ getInstanceExtensionNames() {
 }
 }
 
-namespace vk2 {
+namespace vulkan {
 namespace system_initializer {
 void
 initialize() {
-    glfwChecker(glfwInit());
+#ifdef _DEBUG
+    assert(glfwInit() == GLFW_TRUE);
+#else
+    glfwInit();
+#endif
 
     Instance::initialize(getInstanceExtensionNames(),
                          getInstanceLayerNames());
@@ -77,8 +80,7 @@ initialize() {
     
     PhysicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 
-    LogicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
-   
+    LogicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});   
 }
 
 void

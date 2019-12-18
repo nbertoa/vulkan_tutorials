@@ -5,7 +5,7 @@
 
 #include "ShaderModule.h"
 
-namespace vk2 {
+namespace vulkan {
 
 class ShaderModuleSystem {
 public:

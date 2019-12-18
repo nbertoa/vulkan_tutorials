@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace vk2 {
+namespace vulkan {
 //
 // PipelineInputAssemblyStateCreateInfo wrapper
 //
@@ -16,12 +16,6 @@ namespace vk2 {
 //
 class InputAssemblyState {
 public:
-    // * primitiveTopology (VK_PRIMITIVE_TOPOLOGY_):
-    //
-    //   - POINT_LIST, LINE_LIST, LINE_STRIP, TRIANGLE_LIST, TRIANGLE_STRIP, TRIANGLE_FAN, 
-    //     LINE_LIST_WITH_ADJACENCY, LINE_STRIP_WITH_ADJACENCY, TRIANGLE_LIST_WITH_ADJACENCY, 
-    //     TRIANGLE_STRIP_WITH_ADJACENCY, PATCH_LIST.
-    //
     // * primitiveRestartEnable controls whether a special vertex index value is 
     //   treated as restarting the assembly of primitives. 
     //   This enable only applies to indexed draws (vkCmdDrawIndexed and vkCmdDrawIndexedIndirect), 
