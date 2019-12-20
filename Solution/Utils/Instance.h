@@ -14,11 +14,11 @@ class DebugMessenger;
 //
 // Instance wrapper.
 //
-// Instance is the first object you create.
-// In our case, we have a single and global Instance.
-// 
 // There is no global state in Vulkan and all per-application 
 // state is stored in a vk::Instance object. 
+//
+// Instance is the first object you create.
+// In our case, we have a single and global Instance.
 //
 // Creating a Instance object initializes the Vulkan library 
 // and allows the application to pass information about itself 

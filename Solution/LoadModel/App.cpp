@@ -365,11 +365,11 @@ App::initPipelineStates(PipelineStates& pipelineStates) const {
 void
 App::initShaderStages(ShaderStages& shaderStages) {
     shaderStages.addShaderModule(
-        ShaderModuleSystem::getOrLoadShaderModule("../../DepthBuffer/resources/shaders/vert.spv",
+        ShaderModuleSystem::getOrLoadShaderModule("../../LoadModel/resources/shaders/vert.spv",
                                                   vk::ShaderStageFlagBits::eVertex)
     );
     shaderStages.addShaderModule(
-        ShaderModuleSystem::getOrLoadShaderModule("../../DepthBuffer/resources/shaders/frag.spv",
+        ShaderModuleSystem::getOrLoadShaderModule("../../LoadModel/resources/shaders/frag.spv",
                                                   vk::ShaderStageFlagBits::eFragment)
     );
 }

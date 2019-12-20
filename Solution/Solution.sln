@@ -31,6 +31,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadWithTexture", "QuadWith
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DepthBuffer", "DepthBuffer\DepthBuffer.vcxproj", "{7CFA05D6-1EE9-4BFF-8857-3AAB28A21FD0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC976F5E-7334-41AE-BAD7-3DFD623784B1} = {CC976F5E-7334-41AE-BAD7-3DFD623784B1}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoadModel", "LoadModel\LoadModel.vcxproj", "{86CEEC42-9AB6-4562-933A-FAD6553F5E04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC976F5E-7334-41AE-BAD7-3DFD623784B1} = {CC976F5E-7334-41AE-BAD7-3DFD623784B1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +104,14 @@ Global
 		{7CFA05D6-1EE9-4BFF-8857-3AAB28A21FD0}.Release|x64.Build.0 = Release|x64
 		{7CFA05D6-1EE9-4BFF-8857-3AAB28A21FD0}.Release|x86.ActiveCfg = Release|Win32
 		{7CFA05D6-1EE9-4BFF-8857-3AAB28A21FD0}.Release|x86.Build.0 = Release|Win32
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Debug|x64.ActiveCfg = Debug|x64
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Debug|x64.Build.0 = Debug|x64
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Debug|x86.ActiveCfg = Debug|Win32
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Debug|x86.Build.0 = Debug|Win32
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Release|x64.ActiveCfg = Release|x64
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Release|x64.Build.0 = Release|x64
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Release|x86.ActiveCfg = Release|Win32
+		{86CEEC42-9AB6-4562-933A-FAD6553F5E04}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
