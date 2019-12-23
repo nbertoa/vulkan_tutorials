@@ -18,9 +18,9 @@ MatrixUBO::update(const uint32_t swapChainImageIndex,
     const float timeInSeconds = duration<float, seconds::period>(currentTime - startTime).count();
 
     // Model rotation will be a simple rotation around the
-    // Z-axis using the timeInSeconds variable (to rotate 90 degrees per second).
+    // Z-axis using the timeInSeconds variable (to rotate 45 degrees per second).
     const mat4 identityMat4 = mat4(1.0f);
-    const float angle = timeInSeconds * radians(90.0f);
+    const float angle = timeInSeconds * radians(45.0f);
     const vec3 axis(0.0f, 0.0f, 1.0f);
     mModelMatrix = rotate(identityMat4,
                           angle,

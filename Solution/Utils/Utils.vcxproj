@@ -39,6 +39,7 @@
     <ClCompile Include="resource\Buffer.cpp" />
     <ClCompile Include="resource\Image.cpp" />
     <ClCompile Include="resource\ImageSystem.cpp" />
+    <ClCompile Include="resource\ModelSystem.cpp" />
     <ClCompile Include="shader\ShaderModule.cpp" />
     <ClCompile Include="shader\ShaderModuleSystem.cpp" />
     <ClCompile Include="shader\ShaderStages.cpp" />
@@ -71,6 +72,8 @@
     <ClInclude Include="resource\Buffer.h" />
     <ClInclude Include="resource\Image.h" />
     <ClInclude Include="resource\ImageSystem.h" />
+    <ClInclude Include="resource\Model.h" />
+    <ClInclude Include="resource\ModelSystem.h" />
     <ClInclude Include="shader\ShaderModule.h" />
     <ClInclude Include="shader\ShaderModuleSystem.h" />
     <ClInclude Include="shader\ShaderStages.h" />
@@ -79,7 +82,6 @@
     <ClInclude Include="sync\Semaphores.h" />
     <ClInclude Include="SystemInitializer.h" />
     <ClInclude Include="vertex\PosColorVertex.h" />
-    <ClInclude Include="vertex\PosTexCoord.h" />
     <ClInclude Include="vertex\PosTexCoordVertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -147,8 +149,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\tinyobjloader-master;$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -193,8 +195,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\tinyobjloader-master;$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

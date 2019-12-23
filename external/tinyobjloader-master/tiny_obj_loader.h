@@ -57,6 +57,8 @@ THE SOFTWARE.
 #ifndef TINY_OBJ_LOADER_H_
 #define TINY_OBJ_LOADER_H_
 
+#pragma warning(push, 0)
+
 #include <map>
 #include <string>
 #include <vector>
@@ -2978,5 +2980,8 @@ bool ObjReader::ParseFromString(const std::string &obj_text,
 #pragma clang diagnostic pop
 #endif
 }  // namespace tinyobj
+
+#pragma warning(pop)
+
 
 #endif

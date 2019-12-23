@@ -34,5 +34,11 @@ PosColorVertex::vertexInputAttributeDescriptions(std::vector<vk::VertexInputAttr
     descriptions[1].offset = offsetof(PosColorVertex, 
                                       mColor);
 }
+
+bool
+PosColorVertex::operator==(const PosColorVertex& other) const {
+    return mPosition == other.mPosition &&
+           mColor == other.mColor;
+}
 }
 

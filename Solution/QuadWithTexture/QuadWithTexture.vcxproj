@@ -78,7 +78,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\tinyobjloader-master;$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../external\tinyobjloader-master;$(SolutionDir)../external\stb-master;$(SolutionDir);$(SolutionDir)../;$(SolutionDir)../external\glfw-3.3.bin.WIN64\include;$(SolutionDir)../external\glm;C:\VulkanSDK\1.1.108.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

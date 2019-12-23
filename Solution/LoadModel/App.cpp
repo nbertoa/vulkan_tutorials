@@ -9,6 +9,7 @@
 #include "Utils/pipeline/PipelineStates.h"
 #include "Utils/resource/Image.h"
 #include "Utils/resource/ImageSystem.h"
+#include "Utils/resource/ModelSystem.h"
 #include "Utils/shader/ShaderModule.h"
 #include "Utils/shader/ShaderModuleSystem.h"
 #include "Utils/shader/ShaderStages.h"
@@ -157,7 +158,7 @@ App::initImages() {
 
     mTextureSampler = LogicalDevice::device().createSamplerUnique({});
 
-    const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
+    const std::string path = "../../../external/resources/textures/chalet.jpg";
     Image& image = ImageSystem::getOrLoadImage(path,
                                                *mTransferCommandPool);
 
@@ -196,27 +197,16 @@ void
 App::initVertexBuffer() {
     assert(mGpuVertexBuffer == nullptr);
 
-    std::vector<PosTexCoordVertex> screenSpaceVertices
-    {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}},
-
-        {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-        {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-        {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
-    };
-
-    const size_t verticesSize = sizeof(PosTexCoordVertex) * screenSpaceVertices.size();
+    const vulkan::Model<PosTexCoordVertex>& model = ModelSystem::getOrLoadModelWithPosTexCoordVertex("../../../external/resources/models/chalet.obj");
+    
+    const size_t verticesSize = sizeof(PosTexCoordVertex) * model.mVertices.size();
 
     mGpuVertexBuffer.reset(new Buffer(verticesSize,
                                       vk::BufferUsageFlagBits::eTransferDst |
                                       vk::BufferUsageFlagBits::eVertexBuffer,
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
-    mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
+    mGpuVertexBuffer->copyFromDataToDeviceMemory(model.mVertices.data(),
                                                  verticesSize,
                                                  *mTransferCommandPool);
 }
@@ -225,22 +215,16 @@ void
 App::initIndexBuffer() {
     assert(mGpuIndexBuffer == nullptr);
 
-    std::vector<uint32_t> indices
-    {
-        0, 1, 2, // upper-right triangle
-        2, 3, 0, // bottom-left triangle
-        4, 5, 6, // upper-right triangle
-        6, 7, 4, // bottom-left triangle
-    };
-
-    const size_t indicesSize = sizeof(uint32_t) * indices.size();
+    const vulkan::Model<PosTexCoordVertex>& model = ModelSystem::getOrLoadModelWithPosTexCoordVertex("../../../external/resources/models/chalet.obj");
+    
+    const size_t indicesSize = sizeof(uint32_t) * model.mIndices.size();
 
     mGpuIndexBuffer.reset(new Buffer(indicesSize,
                                      vk::BufferUsageFlagBits::eTransferDst |
                                      vk::BufferUsageFlagBits::eIndexBuffer,
                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
-    mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
+    mGpuIndexBuffer->copyFromDataToDeviceMemory(model.mIndices.data(),
                                                 indicesSize,
                                                 *mTransferCommandPool);
 }

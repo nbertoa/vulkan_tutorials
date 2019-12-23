@@ -34,5 +34,11 @@ PosTexCoordVertex::vertexInputAttributeDescriptions(std::vector<vk::VertexInputA
     descriptions[1].offset = offsetof(PosTexCoordVertex, 
                                       mTexCoord);
 }
+
+bool
+PosTexCoordVertex::operator==(const PosTexCoordVertex& other) const {
+    return mPosition == other.mPosition &&
+           mTexCoord == other.mTexCoord;
+}
 }
 

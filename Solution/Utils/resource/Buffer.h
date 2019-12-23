@@ -110,13 +110,13 @@ public:
     // VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT or VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
     // You should use methods like copyFromBufferToDeviceMemory instead.
     void 
-    copyToHostMemory(void* sourceData, 
+    copyToHostMemory(const void* sourceData, 
                      const vk::DeviceSize size,
                      const vk::DeviceSize offset);
 
     // This method will use as "size" the entire buffer size. 
     void 
-    copyToHostMemory(void* sourceData,
+    copyToHostMemory(const void* sourceData,
                      const vk::DeviceSize offset = 0);
 
     // These methods assumes the buffer was created with
@@ -134,7 +134,7 @@ public:
     copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
                                  const vk::CommandPool transferCommandPool);
     void
-    copyFromDataToDeviceMemory(void* sourceData,
+    copyFromDataToDeviceMemory(const void* sourceData,
                                const vk::DeviceSize size,
                                const vk::CommandPool transferCommandPool);
 
@@ -144,7 +144,7 @@ public:
     // - VK_SHARING_MODE_EXCLUSIVE
     // and copies "size" bytes from the sourceData to it
     static Buffer
-    createAndFillStagingBuffer(void* sourceData,
+    createAndFillStagingBuffer(const void* sourceData,
                                const vk::DeviceSize size);
 
 private:

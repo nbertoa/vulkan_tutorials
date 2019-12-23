@@ -101,6 +101,9 @@
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="SystemInitializer.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="resource\ModelSystem.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="device\LogicalDevice.h">
@@ -175,9 +178,6 @@
     <ClInclude Include="vertex\PosColorVertex.h">
       <Filter>vertex</Filter>
     </ClInclude>
-    <ClInclude Include="vertex\PosTexCoord.h">
-      <Filter>vertex</Filter>
-    </ClInclude>
     <ClInclude Include="vertex\PosTexCoordVertex.h">
       <Filter>vertex</Filter>
     </ClInclude>
@@ -186,5 +186,11 @@
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemInitializer.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="resource\Model.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ModelSystem.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

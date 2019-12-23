@@ -84,7 +84,7 @@ Buffer::Buffer(Buffer&& other) noexcept
 }
 
 void 
-Buffer::copyToHostMemory(void* sourceData,                         
+Buffer::copyToHostMemory(const void* sourceData,                         
                          const vk::DeviceSize size,
                          const vk::DeviceSize offset) {
     assert(mBuffer != VK_NULL_HANDLE);
@@ -103,7 +103,7 @@ Buffer::copyToHostMemory(void* sourceData,
 }
 
 void
-Buffer::copyToHostMemory(void* sourceData,
+Buffer::copyToHostMemory(const void* sourceData,
                          const vk::DeviceSize offset) {
     copyToHostMemory(sourceData,                     
                      mSizeInBytes,
@@ -152,7 +152,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 }
 
 void
-Buffer::copyFromDataToDeviceMemory(void* sourceData,
+Buffer::copyFromDataToDeviceMemory(const void* sourceData,
                                    const vk::DeviceSize size,
                                    const vk::CommandPool transferCommandPool) {
     assert(sourceData != nullptr);
@@ -166,7 +166,7 @@ Buffer::copyFromDataToDeviceMemory(void* sourceData,
 }
 
 Buffer
-Buffer::createAndFillStagingBuffer(void* sourceData,
+Buffer::createAndFillStagingBuffer(const void* sourceData,
                                    const vk::DeviceSize size) {
     assert(sourceData != nullptr);
     assert(size > 0);

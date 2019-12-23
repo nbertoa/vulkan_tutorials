@@ -9,6 +9,7 @@
 #include "device/LogicalDevice.h"
 #include "device/PhysicalDevice.h"
 #include "resource/ImageSystem.h"
+#include "resource/ModelSystem.h"
 #include "shader/ShaderModuleSystem.h"
 
 namespace {
@@ -74,8 +75,8 @@ initialize() {
     Instance::initialize(getInstanceExtensionNames(),
                          getInstanceLayerNames());
 
-    Window::initialize(800,
-                       600,
+    Window::initialize(1024,
+                       768,
                        "Vulkan App");
     
     PhysicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
@@ -85,6 +86,8 @@ initialize() {
 
 void
 finalize() {
+    ModelSystem::clear();
+
     ImageSystem::clear();
 
     ShaderModuleSystem::clear();
