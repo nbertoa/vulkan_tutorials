@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+#include "CommandPools.h"
 #include "Instance.h"
 #include "Window.h"
 #include "device/LogicalDevice.h"
@@ -82,6 +83,8 @@ initialize() {
     PhysicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 
     LogicalDevice::initialize({VK_KHR_SWAPCHAIN_EXTENSION_NAME});   
+
+    CommandPools::initialize();
 }
 
 void
@@ -91,6 +94,8 @@ finalize() {
     ImageSystem::clear();
 
     ShaderModuleSystem::clear();
+
+    CommandPools::finalize();
 
     LogicalDevice::finalize();
 

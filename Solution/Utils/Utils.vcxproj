@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CommandPools.cpp" />
     <ClCompile Include="DebugMessenger.cpp" />
     <ClCompile Include="device\LogicalDevice.cpp" />
     <ClCompile Include="device\PhysicalDevice.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommandPools.h" />
     <ClInclude Include="DebugMessenger.h" />
     <ClInclude Include="device\LogicalDevice.h" />
     <ClInclude Include="device\PhysicalDevice.h" />

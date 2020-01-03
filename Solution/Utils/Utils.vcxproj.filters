@@ -104,6 +104,7 @@
     <ClCompile Include="resource\ModelSystem.cpp">
       <Filter>resource</Filter>
     </ClCompile>
+    <ClCompile Include="CommandPools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="device\LogicalDevice.h">
@@ -192,5 +193,6 @@
     <ClInclude Include="resource\ModelSystem.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="CommandPools.h" />
   </ItemGroup>
 </Project>

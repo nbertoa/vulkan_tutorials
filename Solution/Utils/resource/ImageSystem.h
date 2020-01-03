@@ -17,8 +17,7 @@ public:
     const ImageSystem& operator=(const ImageSystem&) = delete;
 
     static Image&
-    getOrLoadImage(const std::string& imageFilePath,
-                   const vk::CommandPool transferCommandPool);
+    getOrLoadImage(const std::string& imageFilePath);
 
     static void
     eraseImage(const std::string& imageFilePath);

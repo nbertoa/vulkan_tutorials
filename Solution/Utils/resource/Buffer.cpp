@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "../CommandPools.h"
 #include "../device/LogicalDevice.h"
 #include "../device/PhysicalDevice.h"
 
@@ -111,8 +112,7 @@ Buffer::copyToHostMemory(const void* sourceData,
 }
 
 void
-Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                     const vk::CommandPool transferCommandPool) {
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer) {
 
     // Fence to be signaled once
     // the copy operation is complete. 
@@ -124,7 +124,7 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
     
     vk::CommandBufferAllocateInfo allocInfo;
     allocInfo.setCommandBufferCount(1);
-    allocInfo.setCommandPool(transferCommandPool);
+    allocInfo.setCommandPool(CommandPools::transferCommandPool());
     allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
     vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
 
@@ -153,16 +153,14 @@ Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
 
 void
 Buffer::copyFromDataToDeviceMemory(const void* sourceData,
-                                   const vk::DeviceSize size,
-                                   const vk::CommandPool transferCommandPool) {
+                                   const vk::DeviceSize size) {
     assert(sourceData != nullptr);
     assert(size > 0);
 
     Buffer buffer = createAndFillStagingBuffer(sourceData,
                                                size);
 
-    copyFromBufferToDeviceMemory(buffer,
-                                 transferCommandPool);
+    copyFromBufferToDeviceMemory(buffer);
 }
 
 Buffer

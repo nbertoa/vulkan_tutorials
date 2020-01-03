@@ -70,10 +70,7 @@ protected:
     initSemaphoresAndFences();
 
     vulkan::SwapChain mSwapChain;
-
-    vk::UniqueCommandPool mGraphicsCommandPool;
-    vk::UniqueCommandPool mTransferCommandPool;
-
+    
     vk::UniqueRenderPass mRenderPass;
     std::vector<vk::UniqueFramebuffer> mFrameBuffers;
 

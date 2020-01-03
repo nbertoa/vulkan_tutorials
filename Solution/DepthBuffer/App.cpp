@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "Utils/CommandPools.h"
 #include "Utils/SwapChain.h"
 #include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
@@ -17,15 +18,6 @@
 using namespace vulkan;
 
 App::App() {
-    // Init command pools
-    vk::CommandPoolCreateInfo info;
-    info.setQueueFamilyIndex(PhysicalDevice::graphicsQueueFamilyIndex());
-    mGraphicsCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
-
-    info.setQueueFamilyIndex(PhysicalDevice::transferQueueFamilyIndex());
-    info.setFlags(vk::CommandPoolCreateFlagBits::eTransient);
-    mTransferCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
-
     initUniformBuffers();
     initVertexBuffer();
     initIndexBuffer();
@@ -158,16 +150,14 @@ App::initImages() {
     mTextureSampler = LogicalDevice::device().createSamplerUnique({});
 
     const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
-    Image& image = ImageSystem::getOrLoadImage(path,
-                                               *mTransferCommandPool);
+    Image& image = ImageSystem::getOrLoadImage(path);
 
-    image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal,
-                                *mTransferCommandPool);
+    image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 
     vk::ImageViewCreateInfo info;
     info.setImage(image.vkImage());
     info.setFormat(vk::Format::eR8G8B8A8Unorm);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, image.mipLevelCount(), 0, 1});
     info.setViewType(vk::ImageViewType::e2D);
     mImageView = LogicalDevice::device().createImageViewUnique(info);
 }
@@ -188,8 +178,7 @@ App::initDepthBuffer() {
     info.setViewType(vk::ImageViewType::e2D);
     mDepthBufferView = LogicalDevice::device().createImageViewUnique(info);
 
-    mDepthBuffer->transitionImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal,
-                                        *mTransferCommandPool);
+    mDepthBuffer->transitionImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 }
 
 void 
@@ -217,8 +206,7 @@ App::initVertexBuffer() {
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
-                                                 verticesSize,
-                                                 *mTransferCommandPool);
+                                                 verticesSize);
 }
 
 void 
@@ -241,8 +229,7 @@ App::initIndexBuffer() {
                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
-                                                indicesSize,
-                                                *mTransferCommandPool);
+                                                indicesSize);
 }
 
 void
@@ -522,7 +509,7 @@ App::initCommandBuffers() {
     vk::CommandBufferAllocateInfo info;
     info.setCommandBufferCount(static_cast<uint32_t>(mFrameBuffers.size()));
     info.setLevel(vk::CommandBufferLevel::ePrimary);
-    info.setCommandPool(mGraphicsCommandPool.get());
+    info.setCommandPool(CommandPools::graphicsCommandPool());
     mCommandBuffers = LogicalDevice::device().allocateCommandBuffersUnique(info);
 }
 

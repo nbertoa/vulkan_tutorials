@@ -125,18 +125,12 @@ public:
     // These methods create internal staging buffers to be able to do the copy,
     // and use fences to be signaled once the copy operation finishes.
     //
-    //
-    // * transferCommandPool that will be used to create 
-    //  the CommandBuffer which will do the transfer operation.
-    //
     // Notes: The global physical device is used to create the staging buffer
     void 
-    copyFromBufferToDeviceMemory(const Buffer& sourceBuffer,
-                                 const vk::CommandPool transferCommandPool);
+    copyFromBufferToDeviceMemory(const Buffer& sourceBuffer);
     void
     copyFromDataToDeviceMemory(const void* sourceData,
-                               const vk::DeviceSize size,
-                               const vk::CommandPool transferCommandPool);
+                               const vk::DeviceSize size);
 
     // Creates a staging buffer with flags:
     // - VK_BUFFER_USAGE_TRANSFER_SRC_BIT,

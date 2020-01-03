@@ -59,8 +59,6 @@ public:
     //
     // * memoryPropertyFlags is used to create the DeviceMemory
     //
-    // * mipLevelCount of detail available for minified sampling of the image.
-    //
     // * initialImageLayout of all image subresources of the image
     //   Images are stored in implementation-dependent opaque layouts in memory.
     //   Each layout has limitations on what kinds of operations are supported for 
@@ -95,7 +93,6 @@ public:
           const vk::Format format,
           const vk::ImageUsageFlags imageUsageFlags,
           const vk::MemoryPropertyFlags deviceMemoryProperties,
-          const uint32_t mipLevelCount = 1,
           const vk::ImageLayout initialImageLayout = vk::ImageLayout::eUndefined,
           const vk::ImageType imageType = vk::ImageType::e2D,
           const vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1,
@@ -118,6 +115,9 @@ public:
     uint32_t
     height() const;
 
+    uint32_t
+    mipLevelCount() const;
+
     vk::ImageLayout
     lastImageLayout() const;
 
@@ -126,28 +126,20 @@ public:
     //
     // This method creates an internal staging buffer to be able to do the copy,
     // and use fences to be signaled once the copy operation finishes.
-    //    
-    // * transferCommandPool that will be used to create 
-    //  the CommandBuffer which will do the transfer operation.
     //
     // Notes: The global physical device is used to create the staging buffer
     void
     copyFromDataToDeviceMemory(void* sourceData,
-                               const vk::DeviceSize size,
-                               const vk::CommandPool transferCommandPool);
+                               const vk::DeviceSize size);
 
-    // * transitionCommandPool that will be used to create 
-    //  the CommandBuffer which will do the transition operation.
     void
-    transitionImageLayout(const vk::ImageLayout newImageLayout,
-                          const vk::CommandPool transitionCommandPool);
+    transitionImageLayout(const vk::ImageLayout newImageLayout);
 
 private:
     // Read Image() constructor to understand the parameters.
     vk::Image
     createImage(const vk::Format format,
                 const vk::ImageUsageFlags imageUsageFlags,
-                const uint32_t mipLevelCount,
                 const vk::ImageType imageType,
                 const vk::SampleCountFlagBits sampleCount,
                 const vk::ImageTiling imageTiling,
@@ -156,6 +148,7 @@ private:
                 const std::vector<uint32_t>& queueFamilyIndices);
                 
     vk::Extent3D mExtent;
+    uint32_t mMipLevelCount = 0;
     vk::ImageLayout mLastLayout;
     vk::AccessFlags mLastAccessType;
     vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;

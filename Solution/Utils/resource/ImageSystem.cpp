@@ -12,8 +12,7 @@ ImageSystem::ImageByPath
 ImageSystem::mImageByPath = {};
 
 Image&
-ImageSystem::getOrLoadImage(const std::string& imageFilePath,
-                            const vk::CommandPool transferCommandPool) {
+ImageSystem::getOrLoadImage(const std::string& imageFilePath) {
     Image* image = nullptr;
 
     // Check if the image was already loaded.
@@ -38,13 +37,13 @@ ImageSystem::getOrLoadImage(const std::string& imageFilePath,
         image = new Image(textureWidth,
                           textureHeight,
                           vk::Format::eR8G8B8A8Unorm,
+                          vk::ImageUsageFlagBits::eTransferSrc |
                           vk::ImageUsageFlagBits::eTransferDst | 
                           vk::ImageUsageFlagBits::eSampled,
                           vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         image->copyFromDataToDeviceMemory(imageData,
-                                          imageSize,
-                                          transferCommandPool);
+                                          imageSize);
 
         mImageByPath[imageFilePath] = image;
     }

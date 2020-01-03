@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "Utils/CommandPools.h"
 #include "Utils/SwapChain.h"
 #include "Utils/Window.h"
 #include "Utils/device/LogicalDevice.h"
@@ -15,15 +16,6 @@
 using namespace vulkan;
 
 App::App() {
-    // Init command pools
-    vk::CommandPoolCreateInfo info;
-    info.setQueueFamilyIndex(PhysicalDevice::graphicsQueueFamilyIndex());
-    mGraphicsCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
-
-    info.setQueueFamilyIndex(PhysicalDevice::transferQueueFamilyIndex());
-    info.setFlags(vk::CommandPoolCreateFlagBits::eTransient);
-    mTransferCommandPool = LogicalDevice::device().createCommandPoolUnique(info);
-
     initRenderPass();
     initFrameBuffers();
     initCommandBuffers();
@@ -76,8 +68,7 @@ App::initVertexBuffer() {
                                       vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuVertexBuffer->copyFromDataToDeviceMemory(screenSpaceVertices.data(),
-                                                 verticesSize,
-                                                 *mTransferCommandPool);
+                                                 verticesSize);
 }
 
 void 
@@ -98,8 +89,7 @@ App::initIndexBuffer() {
                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
 
     mGpuIndexBuffer->copyFromDataToDeviceMemory(indices.data(),
-                                                indicesSize,
-                                                *mTransferCommandPool);
+                                                indicesSize);
 }
 
 void
@@ -285,7 +275,7 @@ App::initCommandBuffers() {
     vk::CommandBufferAllocateInfo info;
     info.setCommandBufferCount(static_cast<uint32_t>(mFrameBuffers.size()));
     info.setLevel(vk::CommandBufferLevel::ePrimary);
-    info.setCommandPool(mGraphicsCommandPool.get());
+    info.setCommandPool(CommandPools::graphicsCommandPool());
     mCommandBuffers = LogicalDevice::device().allocateCommandBuffersUnique(info);
 }
 
