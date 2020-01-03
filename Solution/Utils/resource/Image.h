@@ -135,11 +135,13 @@ public:
     void
     transitionImageLayout(const vk::ImageLayout newImageLayout);
 
+    vk::UniqueImageView
+    createImageView(const vk::ImageAspectFlags aspectFlags) const;
+
 private:
     // Read Image() constructor to understand the parameters.
     vk::Image
-    createImage(const vk::Format format,
-                const vk::ImageUsageFlags imageUsageFlags,
+    createImage(const vk::ImageUsageFlags imageUsageFlags,
                 const vk::ImageType imageType,
                 const vk::SampleCountFlagBits sampleCount,
                 const vk::ImageTiling imageTiling,
@@ -148,6 +150,7 @@ private:
                 const std::vector<uint32_t>& queueFamilyIndices);
                 
     vk::Extent3D mExtent;
+    vk::Format mFormat;
     uint32_t mMipLevelCount = 0;
     vk::ImageLayout mLastLayout;
     vk::AccessFlags mLastAccessType;

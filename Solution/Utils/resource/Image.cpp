@@ -20,10 +20,9 @@ Image::Image(const uint32_t imageWidth,
              const vk::SharingMode sharingMode,
              const std::vector<uint32_t>& queueFamilyIndices)
     : mExtent {imageWidth, imageHeight, imageDepth}
-    , mMipLevelCount(static_cast<uint32_t>(std::floor(std::log2(std::max(imageWidth, imageHeight)))) + 1)
+    , mFormat(format)
     , mLastLayout(initialImageLayout)
-    , mImage(createImage(format,
-                         imageUsageFlags,
+    , mImage(createImage(imageUsageFlags,
                          imageType,
                          sampleCount,
                          imageTiling,
@@ -109,13 +108,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     Buffer stagingBuffer = Buffer::createAndFillStagingBuffer(sourceData,
                                                               size);
 
-    vk::CommandBufferAllocateInfo allocInfo;
-    allocInfo.setCommandBufferCount(1);
-    allocInfo.setCommandPool(CommandPools::transferCommandPool());
-    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
-    vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
-
-    commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
+    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
 
     vk::BufferImageCopy bufferImageCopy;
     vk::ImageSubresourceLayers imageSubresource;
@@ -128,27 +121,7 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
                                      vk::ImageLayout::eTransferDstOptimal,
                                      {bufferImageCopy});
 
-    commandBuffer->end();
-
-    // Fence to be signaled once
-    // the copy operation is complete. 
-    vk::UniqueFence fence = LogicalDevice::device().createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    LogicalDevice::device().waitForFences({fence.get()},
-                                          VK_TRUE,
-                                          std::numeric_limits<uint64_t>::max());
-    LogicalDevice::device().resetFences({fence.get()});
-    
-    vk::SubmitInfo info;
-    info.setCommandBufferCount(1);
-    info.setPCommandBuffers(&commandBuffer.get());
-    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
-    info.setPWaitDstStageMask(&flags);
-    LogicalDevice::transferQueue().submit({info},
-                                          fence.get());
-
-    LogicalDevice::device().waitForFences({fence.get()},
-                                          VK_TRUE,
-                                          std::numeric_limits<uint64_t>::max());
+    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
 }
 
 void
@@ -205,72 +178,64 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout) {
     } else {
         imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
     }    
-    imageSubresourceRange.setLevelCount(1);
+    imageSubresourceRange.setLevelCount(mMipLevelCount);
     imageSubresourceRange.setLayerCount(1);
     
     barrier.setSrcAccessMask(mLastAccessType);
     barrier.setDstAccessMask(destAccessType);
+    barrier.setSubresourceRange(imageSubresourceRange);
+    
+    // Command buffer for the transition
+    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
 
-    for (uint32_t i = 0; i < mMipLevelCount; ++i) {
-        imageSubresourceRange.setBaseMipLevel(i);
-        barrier.setSubresourceRange(imageSubresourceRange);
+    commandBuffer->pipelineBarrier(mLastPipelineStages,
+                                   destPipelineStages,
+                                   vk::DependencyFlagBits::eByRegion,
+                                   {}, // memory barriers
+                                   {}, // buffer memory barriers
+                                   {barrier});
 
-        // Fence to be signaled once
-        // the transition operation is complete. 
-        vk::UniqueFence fence = LogicalDevice::device().createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-        LogicalDevice::device().waitForFences({fence.get()},
-                                              VK_TRUE,
-                                              std::numeric_limits<uint64_t>::max());
-        LogicalDevice::device().resetFences({fence.get()});
-
-        // Command buffer for the transition
-        vk::CommandBufferAllocateInfo allocInfo;
-        allocInfo.setCommandBufferCount(1);
-        allocInfo.setCommandPool(CommandPools::transferCommandPool());
-        allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
-        vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
-        commandBuffer->begin(vk::CommandBufferBeginInfo {vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
-
-        commandBuffer->pipelineBarrier(mLastPipelineStages,
-                                       destPipelineStages,
-                                       vk::DependencyFlagBits::eByRegion,
-                                       {}, // memory barriers
-                                       {}, // buffer memory barriers
-                                       {barrier});
-
-        commandBuffer->end();
-
-        vk::SubmitInfo info;
-        info.setCommandBufferCount(1);
-        info.setPCommandBuffers(&commandBuffer.get());
-        const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
-        info.setPWaitDstStageMask(&flags);
-        LogicalDevice::transferQueue().submit({info},
-                                              fence.get());
-
-        LogicalDevice::device().waitForFences({fence.get()},
-                                              VK_TRUE,
-                                              std::numeric_limits<uint64_t>::max());
-    }    
+    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
 
     mLastLayout = newImageLayout;
     mLastAccessType = destAccessType;
     mLastPipelineStages = destPipelineStages;
 }
 
+vk::UniqueImageView
+Image::createImageView(const vk::ImageAspectFlags aspectFlags) const {
+    assert(mImage != VK_NULL_HANDLE);
+
+    vk::ImageViewCreateInfo info;
+    info.setImage(mImage);
+    info.setFormat(mFormat);
+    info.setSubresourceRange(vk::ImageSubresourceRange {aspectFlags, 0, mMipLevelCount, 0, 1});
+    info.setViewType(vk::ImageViewType::e2D);
+    return LogicalDevice::device().createImageViewUnique(info);
+}
+
 vk::Image
-Image::createImage(const vk::Format format,
-                   const vk::ImageUsageFlags imageUsageFlags,
+Image::createImage(const vk::ImageUsageFlags imageUsageFlags,
                    const vk::ImageType imageType,
                    const vk::SampleCountFlagBits sampleCount,
                    const vk::ImageTiling imageTiling,
                    const uint32_t arrayLayerCount,
                    const vk::SharingMode sharingMode,
                    const std::vector<uint32_t>& queueFamilyIndices) {
+
+    // Frame buffers or depth buffer must have a single mip level.
+    if (imageUsageFlags & vk::ImageUsageFlagBits::eDepthStencilAttachment ||
+        imageUsageFlags & vk::ImageUsageFlagBits::eColorAttachment) {
+        mMipLevelCount = 1;
+    } else {
+        mMipLevelCount = static_cast<uint32_t>(std::floor(std::log2(std::max(mExtent.width, 
+                                                                             mExtent.height)))) + 1;
+    }
+
     vk::ImageCreateInfo info = {};
     info.setImageType(imageType);
     info.setExtent(mExtent);
-    info.setFormat(format);
+    info.setFormat(mFormat);
     info.setUsage(imageUsageFlags);
     info.setMipLevels(mMipLevelCount);
     info.setInitialLayout(mLastLayout);

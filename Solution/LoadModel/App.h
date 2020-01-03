@@ -38,10 +38,7 @@ protected:
     initDepthBuffer();
 
     void 
-    initVertexBuffer();
-
-    void 
-    initIndexBuffer();
+    initBuffers();
 
     void 
     initUniformBuffers();

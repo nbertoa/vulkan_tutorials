@@ -154,12 +154,7 @@ App::initImages() {
 
     image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 
-    vk::ImageViewCreateInfo info;
-    info.setImage(image.vkImage());
-    info.setFormat(vk::Format::eR8G8B8A8Unorm);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, image.mipLevelCount(), 0, 1});
-    info.setViewType(vk::ImageViewType::e2D);
-    mImageView = LogicalDevice::device().createImageViewUnique(info);
+    mImageView = image.createImageView(vk::ImageAspectFlagBits::eColor);
 }
 
 void
@@ -171,12 +166,7 @@ App::initDepthBuffer() {
                                  vk::ImageUsageFlagBits::eDepthStencilAttachment,
                                  vk::MemoryPropertyFlagBits::eDeviceLocal));
 
-    vk::ImageViewCreateInfo info;
-    info.setImage(mDepthBuffer->vkImage());
-    info.setFormat(vk::Format::eD32Sfloat);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1});
-    info.setViewType(vk::ImageViewType::e2D);
-    mDepthBufferView = LogicalDevice::device().createImageViewUnique(info);
+    mDepthBufferView = mDepthBuffer->createImageView(vk::ImageAspectFlagBits::eDepth);
 
     mDepthBuffer->transitionImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 }

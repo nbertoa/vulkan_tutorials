@@ -112,43 +112,16 @@ Buffer::copyToHostMemory(const void* sourceData,
 }
 
 void
-Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer) {
-
-    // Fence to be signaled once
-    // the copy operation is complete. 
-    vk::UniqueFence fence = LogicalDevice::device().createFenceUnique({vk::FenceCreateFlagBits::eSignaled});
-    LogicalDevice::device().waitForFences({fence.get()},
-                                          VK_TRUE,
-                                          std::numeric_limits<uint64_t>::max());
-    LogicalDevice::device().resetFences({fence.get()});
-    
-    vk::CommandBufferAllocateInfo allocInfo;
-    allocInfo.setCommandBufferCount(1);
-    allocInfo.setCommandPool(CommandPools::transferCommandPool());
-    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
-    vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
-
-    commandBuffer->begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
+Buffer::copyFromBufferToDeviceMemory(const Buffer& sourceBuffer) {    
+    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
 
     vk::BufferCopy bufferCopy;
     bufferCopy.size = sourceBuffer.size();
     commandBuffer->copyBuffer(sourceBuffer.vkBuffer(),
                               mBuffer,
                               {bufferCopy});
-
-    commandBuffer->end();
     
-    vk::SubmitInfo info;
-    info.setCommandBufferCount(1);
-    info.setPCommandBuffers(&commandBuffer.get());
-    const vk::PipelineStageFlags flags(vk::PipelineStageFlagBits::eTransfer);
-    info.setPWaitDstStageMask(&flags);
-    LogicalDevice::transferQueue().submit({info},
-                                          fence.get());
-
-    LogicalDevice::device().waitForFences({fence.get()},
-                                          VK_TRUE,
-                                          std::numeric_limits<uint64_t>::max());
+    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
 }
 
 void

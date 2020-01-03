@@ -20,8 +20,7 @@ using namespace vulkan;
 
 App::App() {
     initUniformBuffers();
-    initVertexBuffer();
-    initIndexBuffer();
+    initBuffers();
     initImages();
     initDepthBuffer();
     initDescriptorSets();
@@ -155,12 +154,7 @@ App::initImages() {
 
     image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 
-    vk::ImageViewCreateInfo info;
-    info.setImage(image.vkImage());
-    info.setFormat(vk::Format::eR8G8B8A8Unorm);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, image.mipLevelCount(), 0, 1});
-    info.setViewType(vk::ImageViewType::e2D);
-    mImageView = LogicalDevice::device().createImageViewUnique(info);
+    mImageView = image.createImageView(vk::ImageAspectFlagBits::eColor);
 }
 
 void
@@ -172,48 +166,22 @@ App::initDepthBuffer() {
                                  vk::ImageUsageFlagBits::eDepthStencilAttachment,
                                  vk::MemoryPropertyFlagBits::eDeviceLocal));
 
-    vk::ImageViewCreateInfo info;
-    info.setImage(mDepthBuffer->vkImage());
-    info.setFormat(vk::Format::eD32Sfloat);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1});
-    info.setViewType(vk::ImageViewType::e2D);
-    mDepthBufferView = LogicalDevice::device().createImageViewUnique(info);
+    mDepthBufferView = mDepthBuffer->createImageView(vk::ImageAspectFlagBits::eDepth);
 
     mDepthBuffer->transitionImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 }
 
 void 
-App::initVertexBuffer() {
+App::initBuffers() {
     assert(mGpuVertexBuffer == nullptr);
-
-    const vulkan::Model<PosTexCoordVertex>& model = ModelSystem::getOrLoadModelWithPosTexCoordVertex("../../../external/resources/models/chalet.obj");
-    
-    const size_t verticesSize = sizeof(PosTexCoordVertex) * model.mVertices.size();
-
-    mGpuVertexBuffer.reset(new Buffer(verticesSize,
-                                      vk::BufferUsageFlagBits::eTransferDst |
-                                      vk::BufferUsageFlagBits::eVertexBuffer,
-                                      vk::MemoryPropertyFlagBits::eDeviceLocal));
-
-    mGpuVertexBuffer->copyFromDataToDeviceMemory(model.mVertices.data(),
-                                                 verticesSize);
-}
-
-void 
-App::initIndexBuffer() {
     assert(mGpuIndexBuffer == nullptr);
 
-    const vulkan::Model<PosTexCoordVertex>& model = ModelSystem::getOrLoadModelWithPosTexCoordVertex("../../../external/resources/models/chalet.obj");
+    const vulkan::Model<PosTexCoordVertex>& model = 
+        ModelSystem::getOrLoadModelWithPosTexCoordVertex("../../../external/resources/models/chalet.obj");
     
-    const size_t indicesSize = sizeof(uint32_t) * model.mIndices.size();
+    mGpuVertexBuffer.reset(model.createVertexBuffer());
 
-    mGpuIndexBuffer.reset(new Buffer(indicesSize,
-                                     vk::BufferUsageFlagBits::eTransferDst |
-                                     vk::BufferUsageFlagBits::eIndexBuffer,
-                                     vk::MemoryPropertyFlagBits::eDeviceLocal));
-
-    mGpuIndexBuffer->copyFromDataToDeviceMemory(model.mIndices.data(),
-                                                indicesSize);
+    mGpuIndexBuffer.reset(model.createIndexBuffer());
 }
 
 void

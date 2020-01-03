@@ -157,12 +157,7 @@ App::initImages() {
 
     image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 
-    vk::ImageViewCreateInfo info;
-    info.setImage(image.vkImage());
-    info.setFormat(vk::Format::eR8G8B8A8Unorm);
-    info.setSubresourceRange(vk::ImageSubresourceRange {vk::ImageAspectFlagBits::eColor, 0, image.mipLevelCount(), 0, 1});
-    info.setViewType(vk::ImageViewType::e2D);
-    mImageView = LogicalDevice::device().createImageViewUnique(info);
+    mImageView = image.createImageView(vk::ImageAspectFlagBits::eColor);
 }
 
 void 
