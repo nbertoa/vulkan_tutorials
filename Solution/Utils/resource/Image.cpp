@@ -21,7 +21,7 @@ Image::Image(const uint32_t imageWidth,
              const std::vector<uint32_t>& queueFamilyIndices)
     : mExtent {imageWidth, imageHeight, imageDepth}
     , mFormat(format)
-    , mLastLayout(initialImageLayout)
+    , mSrcLayout(initialImageLayout)
     , mImage(createImage(imageUsageFlags,
                          imageType,
                          sampleCount,
@@ -57,9 +57,9 @@ Image::~Image() {
 Image::Image(Image&& other) noexcept
     : mExtent(other.mExtent)
     , mMipLevelCount(other.mMipLevelCount)
-    , mLastLayout(other.mLastLayout)
-    , mLastAccessType(other.mLastAccessType)
-    , mLastPipelineStages(other.mLastPipelineStages)
+    , mSrcLayout(other.mSrcLayout)
+    , mSrcAccesses(other.mSrcAccesses)
+    , mSrcPipelineStages(other.mSrcPipelineStages)
     , mImage(other.mImage)
     , mHasDeviceMemoryOwnership(other.mHasDeviceMemoryOwnership)
     , mDeviceMemory(other.mDeviceMemory) {
@@ -94,7 +94,7 @@ Image::mipLevelCount() const {
 vk::ImageLayout
 Image::lastImageLayout() const {
     assert(mImage != VK_NULL_HANDLE);
-    return mLastLayout;
+    return mSrcLayout;
 }
 
 void
@@ -103,35 +103,37 @@ Image::copyFromDataToDeviceMemory(void* sourceData,
     assert(sourceData != nullptr);
     assert(size > 0);
 
-    transitionImageLayout(vk::ImageLayout::eTransferDstOptimal);
+    transitionImageLayout(vk::ImageLayout::eTransferDstOptimal);    
 
     Buffer stagingBuffer = Buffer::createAndFillStagingBuffer(sourceData,
                                                               size);
-
-    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
+    
+    vk::ImageSubresourceLayers layer;
+    layer.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    layer.setLayerCount(1);
 
     vk::BufferImageCopy bufferImageCopy;
-    vk::ImageSubresourceLayers imageSubresource;
-    imageSubresource.setAspectMask(vk::ImageAspectFlagBits::eColor);
-    imageSubresource.setLayerCount(1);
-    bufferImageCopy.setImageSubresource(imageSubresource);
+    bufferImageCopy.setImageSubresource(layer);
     bufferImageCopy.setImageExtent(mExtent);
+
+    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
     commandBuffer->copyBufferToImage(stagingBuffer.vkBuffer(),
                                      mImage,
                                      vk::ImageLayout::eTransferDstOptimal,
                                      {bufferImageCopy});
-
     CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
+
+    generateMipmaps();
 }
 
 void
-Image::transitionImageLayout(const vk::ImageLayout newImageLayout) {
+Image::transitionImageLayout(const vk::ImageLayout destLayout) {
     assert(mImage != VK_NULL_HANDLE);
-    assert(mLastLayout != newImageLayout);
+    assert(mSrcLayout != destLayout);
 
     // Initialize to the first value in the enum
-    vk::AccessFlags destAccessType;
-    vk::PipelineStageFlagBits destPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
+    vk::AccessFlags destAccesses;
+    vk::PipelineStageFlags destPipelineStages;
 
     // Transfer writes must occur in the pipeline transfer stage. 
     // Since the writes do not have to wait on anything,
@@ -141,65 +143,52 @@ Image::transitionImageLayout(const vk::ImageLayout newImageLayout) {
     // It should be noted that VK_PIPELINE_STAGE_TRANSFER_BIT is not 
     // a real stage within the graphics and compute pipelines.
     // It is more of a pseudo-stage where transfers happen.
-    if (mLastLayout == vk::ImageLayout::eUndefined &&
-        newImageLayout == vk::ImageLayout::eTransferDstOptimal) {
-        destAccessType = vk::AccessFlagBits::eTransferWrite;
-
-        assert(mLastPipelineStages == vk::PipelineStageFlagBits::eTopOfPipe);
+    if (mSrcLayout == vk::ImageLayout::eUndefined &&
+        destLayout == vk::ImageLayout::eTransferDstOptimal) {
         destPipelineStages = vk::PipelineStageFlagBits::eTransfer;
-    } else if (mLastLayout == vk::ImageLayout::eTransferDstOptimal &&
-               newImageLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
-        // The image will be written in the same pipeline stage and
-        // subsequently read by a shader, which is why 
-        // we specify shader reading access in the shader
-        // pipeline stage.
-        assert(mLastAccessType == vk::AccessFlagBits::eTransferWrite);
-        destAccessType = vk::AccessFlagBits::eShaderRead;
-
-        assert(mLastPipelineStages == vk::PipelineStageFlagBits::eTransfer);
+        destAccesses = vk::AccessFlagBits::eTransferWrite;
+    } else if (mSrcLayout == vk::ImageLayout::eTransferDstOptimal &&
+               destLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
         destPipelineStages = vk::PipelineStageFlagBits::eFragmentShader;
-    } else if (mLastLayout == vk::ImageLayout::eUndefined &&
-               newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
-        destAccessType = vk::AccessFlagBits::eDepthStencilAttachmentRead |
-                         vk::AccessFlagBits::eDepthStencilAttachmentWrite;
-
+        destAccesses = vk::AccessFlagBits::eShaderRead;
+    } else if (mSrcLayout == vk::ImageLayout::eUndefined &&
+               destLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
         destPipelineStages = vk::PipelineStageFlagBits::eEarlyFragmentTests;
+        destAccesses = vk::AccessFlagBits::eDepthStencilAttachmentRead |
+                       vk::AccessFlagBits::eDepthStencilAttachmentWrite;
     } else {
         assert(false && "Unsupported image layout transition");
     }
 
+    vk::ImageSubresourceRange range;
+    if (destLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+        range.setAspectMask(vk::ImageAspectFlagBits::eDepth);
+    } else {
+        range.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    }
+    range.setLevelCount(mMipLevelCount);
+    range.setLayerCount(1);
+
     vk::ImageMemoryBarrier barrier;
     barrier.setImage(mImage);
-    barrier.setOldLayout(mLastLayout);
-    barrier.setNewLayout(newImageLayout);
-    vk::ImageSubresourceRange imageSubresourceRange;
-    if (newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
-        imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eDepth);
-    } else {
-        imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
-    }    
-    imageSubresourceRange.setLevelCount(mMipLevelCount);
-    imageSubresourceRange.setLayerCount(1);
+    barrier.setOldLayout(mSrcLayout);
+    barrier.setNewLayout(destLayout);
+    barrier.setSrcAccessMask(mSrcAccesses);
+    barrier.setDstAccessMask(destAccesses);
+    barrier.setSubresourceRange(range);
     
-    barrier.setSrcAccessMask(mLastAccessType);
-    barrier.setDstAccessMask(destAccessType);
-    barrier.setSubresourceRange(imageSubresourceRange);
-    
-    // Command buffer for the transition
     vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
-
-    commandBuffer->pipelineBarrier(mLastPipelineStages,
+    commandBuffer->pipelineBarrier(mSrcPipelineStages,
                                    destPipelineStages,
                                    vk::DependencyFlagBits::eByRegion,
                                    {}, // memory barriers
                                    {}, // buffer memory barriers
                                    {barrier});
-
     CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
 
-    mLastLayout = newImageLayout;
-    mLastAccessType = destAccessType;
-    mLastPipelineStages = destPipelineStages;
+    mSrcLayout = destLayout;
+    mSrcAccesses = destAccesses;
+    mSrcPipelineStages = destPipelineStages;
 }
 
 vk::UniqueImageView
@@ -238,7 +227,7 @@ Image::createImage(const vk::ImageUsageFlags imageUsageFlags,
     info.setFormat(mFormat);
     info.setUsage(imageUsageFlags);
     info.setMipLevels(mMipLevelCount);
-    info.setInitialLayout(mLastLayout);
+    info.setInitialLayout(mSrcLayout);
     info.setSamples(sampleCount);
     info.setTiling(imageTiling);
     info.setArrayLayers(arrayLayerCount);
@@ -249,6 +238,52 @@ Image::createImage(const vk::ImageUsageFlags imageUsageFlags,
                                 queueFamilyIndices.data());
                                 
     return LogicalDevice::device().createImage(info);
+}
+
+void
+Image::generateMipmaps() {
+    assert(mImage != VK_NULL_HANDLE);
+
+    if (mMipLevelCount == 1) {
+        return;
+    }
+
+    vk::ImageSubresourceRange range;
+    range.setAspectMask(vk::ImageAspectFlagBits::eColor);
+    range.setBaseArrayLayer(0);
+    range.setLayerCount(1);
+    range.setLevelCount(1);
+
+    vk::ImageMemoryBarrier barrier;
+    barrier.setImage(mImage);
+    assert(mSrcLayout == vk::ImageLayout::eTransferDstOptimal);
+    barrier.setOldLayout(mSrcLayout);
+    barrier.setNewLayout(vk::ImageLayout::eTransferSrcOptimal);
+    assert(mSrcAccesses == vk::AccessFlagBits::eTransferWrite);
+    barrier.setSrcAccessMask(mSrcAccesses);
+    barrier.setDstAccessMask(vk::AccessFlagBits::eTransferRead);
+
+    std::vector<vk::ImageMemoryBarrier> barriers;
+    barriers.reserve(mMipLevelCount - 1);  
+    for (uint32_t i = 1; i < mMipLevelCount; ++i) {
+        range.setBaseMipLevel(i - 1);
+        barrier.setSubresourceRange(range); 
+        barriers.push_back(barrier);        
+    }
+
+    vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
+    assert(mSrcPipelineStages == vk::PipelineStageFlagBits::eTransfer);
+    commandBuffer->pipelineBarrier(mSrcPipelineStages,
+                                   vk::PipelineStageFlagBits::eTransfer,
+                                   vk::DependencyFlagBits::eByRegion,
+                                   {}, // memory barriers
+                                   {}, // buffer memory barriers
+                                   barriers);
+    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
+
+    mSrcLayout = vk::ImageLayout::eTransferSrcOptimal;
+    mSrcAccesses = vk::AccessFlagBits::eTransferRead;
+    mSrcPipelineStages = vk::PipelineStageFlagBits::eTransfer;
 }
 
 }

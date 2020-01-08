@@ -133,7 +133,7 @@ public:
                                const vk::DeviceSize size);
 
     void
-    transitionImageLayout(const vk::ImageLayout newImageLayout);
+    transitionImageLayout(const vk::ImageLayout destLayout);
 
     vk::UniqueImageView
     createImageView(const vk::ImageAspectFlags aspectFlags) const;
@@ -148,13 +148,16 @@ private:
                 const uint32_t arrayLayerCount,
                 const vk::SharingMode sharingMode,
                 const std::vector<uint32_t>& queueFamilyIndices);
+
+    void
+    generateMipmaps();
                 
     vk::Extent3D mExtent;
     vk::Format mFormat;
     uint32_t mMipLevelCount = 0;
-    vk::ImageLayout mLastLayout;
-    vk::AccessFlags mLastAccessType;
-    vk::PipelineStageFlagBits mLastPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
+    vk::ImageLayout mSrcLayout;
+    vk::AccessFlags mSrcAccesses;
+    vk::PipelineStageFlags mSrcPipelineStages = vk::PipelineStageFlagBits::eTopOfPipe;
 
     vk::Image mImage;    
 

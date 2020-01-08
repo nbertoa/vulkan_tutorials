@@ -19,9 +19,9 @@
 using namespace vulkan;
 
 App::App() {
-    initUniformBuffers();
-    initBuffers();
     initImages();
+    initUniformBuffers();
+    initBuffers();    
     initDepthBuffer();
     initDescriptorSets();
     initRenderPass();
