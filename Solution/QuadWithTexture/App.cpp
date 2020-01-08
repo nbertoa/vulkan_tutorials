@@ -155,8 +155,6 @@ App::initImages() {
     const std::string path = "../../../external/resources/textures/flowers/dahlia.jpg";
     Image& image = ImageSystem::getOrLoadImage(path);
 
-    image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
-
     mImageView = image.createImageView(vk::ImageAspectFlagBits::eColor);
 }
 

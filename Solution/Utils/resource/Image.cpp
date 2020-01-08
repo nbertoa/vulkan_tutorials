@@ -254,36 +254,121 @@ Image::generateMipmaps() {
     range.setLayerCount(1);
     range.setLevelCount(1);
 
-    vk::ImageMemoryBarrier barrier;
-    barrier.setImage(mImage);
-    assert(mSrcLayout == vk::ImageLayout::eTransferDstOptimal);
-    barrier.setOldLayout(mSrcLayout);
-    barrier.setNewLayout(vk::ImageLayout::eTransferSrcOptimal);
-    assert(mSrcAccesses == vk::AccessFlagBits::eTransferWrite);
-    barrier.setSrcAccessMask(mSrcAccesses);
-    barrier.setDstAccessMask(vk::AccessFlagBits::eTransferRead);
-
-    std::vector<vk::ImageMemoryBarrier> barriers;
-    barriers.reserve(mMipLevelCount - 1);  
-    for (uint32_t i = 1; i < mMipLevelCount; ++i) {
-        range.setBaseMipLevel(i - 1);
-        barrier.setSubresourceRange(range); 
-        barriers.push_back(barrier);        
-    }
+    int32_t previousMipMapWidth = mExtent.width;
+    int32_t previousMipMapHeight = mExtent.height;
 
     vk::UniqueCommandBuffer commandBuffer = CommandPools::beginOneTimeSubmitCommandBuffer();
-    assert(mSrcPipelineStages == vk::PipelineStageFlagBits::eTransfer);
-    commandBuffer->pipelineBarrier(mSrcPipelineStages,
-                                   vk::PipelineStageFlagBits::eTransfer,
-                                   vk::DependencyFlagBits::eByRegion,
-                                   {}, // memory barriers
-                                   {}, // buffer memory barriers
-                                   barriers);
-    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
+    for (uint32_t i = 1; i < mMipLevelCount; ++i) {
+        // We set the previous mipmap as the transfer source that will be read, 
+        // because we are going to write to the current mip map.
+        {
+            range.setBaseMipLevel(i - 1);
+            vk::ImageMemoryBarrier barrier;
+            barrier.setImage(mImage);
+            barrier.setOldLayout(vk::ImageLayout::eTransferDstOptimal);
+            barrier.setNewLayout(vk::ImageLayout::eTransferSrcOptimal);
+            barrier.setSrcAccessMask(vk::AccessFlagBits::eTransferWrite);
+            barrier.setDstAccessMask(vk::AccessFlagBits::eTransferRead);
+            barrier.setSubresourceRange(range);
+                        
+            commandBuffer->pipelineBarrier(vk::PipelineStageFlagBits::eTransfer,
+                                           vk::PipelineStageFlagBits::eTransfer,
+                                           vk::DependencyFlagBits(),
+                                           {},
+                                           {},
+                                           {barrier});
+        }
 
-    mSrcLayout = vk::ImageLayout::eTransferSrcOptimal;
-    mSrcAccesses = vk::AccessFlagBits::eTransferRead;
-    mSrcPipelineStages = vk::PipelineStageFlagBits::eTransfer;
+        // Blit previous mip map to current mip map
+        {
+            std::array<vk::Offset3D, 2> srcOffsets;
+            srcOffsets[0] = {0, 0, 0};
+            srcOffsets[1] = {previousMipMapWidth, previousMipMapHeight, 1};
+
+            std::array<vk::Offset3D, 2> destOffsets;
+            destOffsets[0] = {0, 0, 0};
+            destOffsets[1] = {previousMipMapWidth > 1 ? previousMipMapWidth / 2 : 1,
+                              previousMipMapHeight > 1 ? previousMipMapHeight / 2 : 1,
+                              1};
+
+            vk::ImageSubresourceLayers srcLayer;
+            srcLayer.setAspectMask(vk::ImageAspectFlagBits::eColor);
+            srcLayer.setMipLevel(i - 1);
+            srcLayer.setBaseArrayLayer(0);
+            srcLayer.setLayerCount(1);
+
+            vk::ImageSubresourceLayers destLayer;
+            destLayer.setAspectMask(vk::ImageAspectFlagBits::eColor);
+            destLayer.setMipLevel(i);
+            destLayer.setBaseArrayLayer(0);
+            destLayer.setLayerCount(1);
+
+            vk::ImageBlit blit;
+            blit.setSrcOffsets(srcOffsets);
+            blit.setDstOffsets(destOffsets);
+            blit.setSrcSubresource(srcLayer);
+            blit.setDstSubresource(destLayer);
+
+            commandBuffer->blitImage(mImage,
+                                     vk::ImageLayout::eTransferSrcOptimal,
+                                     mImage,
+                                     vk::ImageLayout::eTransferDstOptimal,
+                                     {blit},
+                                     vk::Filter::eLinear);
+        }
+
+        // Now, set the previous mip map to be read by the fragment shader.
+        {
+            vk::ImageMemoryBarrier barrier;
+            barrier.setImage(mImage);
+            barrier.setOldLayout(vk::ImageLayout::eTransferSrcOptimal);
+            barrier.setNewLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
+            barrier.setSrcAccessMask(vk::AccessFlagBits::eTransferRead);
+            barrier.setDstAccessMask(vk::AccessFlagBits::eShaderRead);
+            barrier.setSubresourceRange(range);
+
+            commandBuffer->pipelineBarrier(vk::PipelineStageFlagBits::eTransfer,
+                                           vk::PipelineStageFlagBits::eFragmentShader,
+                                           vk::DependencyFlags(),
+                                           {},
+                                           {},
+                                           {barrier});
+        }
+
+        // Update previous mip map dimensions
+        if (previousMipMapWidth > 1) {
+            previousMipMapWidth /= 2;
+        }
+
+        if (previousMipMapHeight > 1) {
+            previousMipMapHeight /= 2;
+        }
+    }
+
+    // Now, set the last mip map to be read by the fragment shader.
+    {
+        range.setBaseMipLevel(mMipLevelCount - 1);
+        vk::ImageMemoryBarrier barrier;
+        barrier.setImage(mImage);
+        barrier.setOldLayout(vk::ImageLayout::eTransferDstOptimal);
+        barrier.setNewLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
+        barrier.setSrcAccessMask(vk::AccessFlagBits::eTransferWrite);
+        barrier.setDstAccessMask(vk::AccessFlagBits::eShaderRead);
+        barrier.setSubresourceRange(range);
+
+        commandBuffer->pipelineBarrier(vk::PipelineStageFlagBits::eTransfer,
+                                       vk::PipelineStageFlagBits::eFragmentShader,
+                                       vk::DependencyFlags(),
+                                       {}, 
+                                       {}, 
+                                       {barrier});
+    }    
+
+    CommandPools::endAndWaitOneTimeSubmitCommandBuffer(commandBuffer.get());
+        
+    mSrcLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+    mSrcAccesses = vk::AccessFlagBits::eShaderRead;
+    mSrcPipelineStages = vk::PipelineStageFlagBits::eFragmentShader;
 }
 
 }

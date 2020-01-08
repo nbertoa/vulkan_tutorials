@@ -152,8 +152,6 @@ App::initImages() {
     const std::string path = "../../../external/resources/textures/chalet.jpg";
     Image& image = ImageSystem::getOrLoadImage(path);
 
-    image.transitionImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
-
     mImageView = image.createImageView(vk::ImageAspectFlagBits::eColor);
 }
 
