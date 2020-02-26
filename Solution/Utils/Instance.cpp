@@ -51,7 +51,7 @@ Instance::instance() {
 }
 
 std::vector<PhysicalDeviceData>
-Instance::getCandidatePhysicalDevices(const std::vector<const char*>& deviceExtensionNames) {
+Instance::getSupportedPhysicalDevices(const std::vector<const char*>& deviceExtensionNames) {
     assert(mInstance != VK_NULL_HANDLE);
 
     std::vector<PhysicalDeviceData> supportedPhysicalDevices;

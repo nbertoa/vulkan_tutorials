@@ -50,8 +50,10 @@ CommandPools::beginOneTimeSubmitCommandBuffer() {
     allocInfo.setCommandBufferCount(1);
     allocInfo.setCommandPool(mTransferCommandPool.get());
     allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+
     vk::UniqueCommandBuffer commandBuffer = std::move(LogicalDevice::device().allocateCommandBuffersUnique(allocInfo).front());
     commandBuffer->begin(vk::CommandBufferBeginInfo {vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
+
     return commandBuffer;
 }
 

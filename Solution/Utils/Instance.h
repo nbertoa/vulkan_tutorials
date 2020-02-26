@@ -51,14 +51,15 @@ public:
     // Return a list of candidate physical devices
     // based on window's surface support and device extension support.
     static std::vector<PhysicalDeviceData>
-    getCandidatePhysicalDevices(const std::vector<const char*>& deviceExtensionNames);
+    getSupportedPhysicalDevices(const std::vector<const char*>& deviceExtensionNames);
 
 private:
     Instance() = delete;
     ~Instance() = delete;
     Instance(Instance&& other) = delete;
     Instance(const Instance&) = delete;
-    const Instance& operator=(const Instance&) = delete;
+    const Instance& 
+    operator=(const Instance&) = delete;
         
     static bool 
     areInstanceLayersSupported(const std::vector<const char*>& instanceLayers);

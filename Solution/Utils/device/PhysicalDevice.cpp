@@ -24,7 +24,7 @@ PhysicalDevice::initialize(const std::vector<const char*>& deviceExtensionNames)
     assert(deviceExtensionNames.empty() == false);
 
     const std::vector<PhysicalDeviceData> candidatePhysicalDevices = 
-        Instance::getCandidatePhysicalDevices(deviceExtensionNames);
+        Instance::getSupportedPhysicalDevices(deviceExtensionNames);
 
     assert(candidatePhysicalDevices.empty() == false);
 

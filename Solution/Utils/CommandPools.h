@@ -21,7 +21,6 @@ public:
     // These methods are used for transfer operations.
     static vk::UniqueCommandBuffer
     beginOneTimeSubmitCommandBuffer();
-
     static void
     endAndWaitOneTimeSubmitCommandBuffer(vk::CommandBuffer commandBuffer);
 

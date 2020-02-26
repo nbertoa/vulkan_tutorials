@@ -35,7 +35,7 @@ namespace vulkan {
 // - Get the Images and its views
 //
 // To create/use the SwapChain you need:
-// - Surface
+// - SurfaceKHR
 //
 class SwapChain {
 public:

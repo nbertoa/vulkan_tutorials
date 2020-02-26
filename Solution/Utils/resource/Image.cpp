@@ -263,6 +263,7 @@ Image::generateMipmaps() {
         // because we are going to write to the current mip map.
         {
             range.setBaseMipLevel(i - 1);
+
             vk::ImageMemoryBarrier barrier;
             barrier.setImage(mImage);
             barrier.setOldLayout(vk::ImageLayout::eTransferDstOptimal);
